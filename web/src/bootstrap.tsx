@@ -7,6 +7,7 @@ import { ClientWorker } from './data/ClientWorker'
 import type { ClientRuntime } from './data/runtime'
 import { API_URL, IDENTITY } from './api/client'
 import { startPwa } from './pwa'
+import { loadServerPin } from './data/service-profile'
 
 let root: Root | undefined
 let router: ReturnType<typeof createAppRouter> | undefined
@@ -23,7 +24,9 @@ import.meta.hot?.dispose(() => {
 async function bootstrap() {
   let runtime: ClientRuntime | undefined
   try {
-    runtime = await initializeClient(API_URL, IDENTITY.owner, import.meta.env.VITE_PINELINK_DEVICE ?? '', import.meta.env.VITE_PINELINK_HISTORY_KEY ?? '')
+    const pin = await loadServerPin(API_URL, import.meta.env.VITE_PINELINK_HISTORY_KEY ?? '', import.meta.env.VITE_PINELINK_SERVICE_PROFILE === 'runtime')
+    if (disposed) return
+    runtime = await initializeClient(API_URL, IDENTITY.owner, import.meta.env.VITE_PINELINK_DEVICE ?? '', pin)
     IDENTITY.device = runtime.profile.device
   } catch { /* Existing request error states handle unavailable local storage. */ }
   if (disposed) return

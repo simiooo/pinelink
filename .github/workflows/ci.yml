@@ -7,6 +7,18 @@ on:
 permissions:
   contents: read
 jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - run: python3 infra/scripts/test_flutter_offline_shell.py
+      - run: |
+          mkdir -p "$RUNNER_TEMP/pinelink-helm"
+          curl -fsSL https://get.helm.sh/helm-v4.3.1-linux-amd64.tar.gz -o "$RUNNER_TEMP/pinelink-helm/helm.tar.gz"
+          echo "0403a88ae20913d11b10a2467b50087721fea7581736da6b9d3992f5357fe54b  $RUNNER_TEMP/pinelink-helm/helm.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/pinelink-helm/helm.tar.gz" -C "$RUNNER_TEMP/pinelink-helm"
+          "$RUNNER_TEMP/pinelink-helm/linux-amd64/helm" lint infra/helm/pinelink
+          "$RUNNER_TEMP/pinelink-helm/linux-amd64/helm" template pinelink infra/helm/pinelink --namespace pinelink-staging >/dev/null
   go:
     runs-on: ubuntu-latest
     strategy:
@@ -26,13 +38,23 @@ jobs:
   integration:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        relay_transport: [webrtc, websocket]
+    env:
+      PINELINK_RELAY_TRANSPORT: ${{ matrix.relay_transport }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16
         with:
           go-version-file: backend/go.mod
           cache-dependency-path: '**/go.sum'
-      - run: bash infra/scripts/integration.sh
+      - run: |
+          if [[ "$PINELINK_RELAY_TRANSPORT" == websocket ]]; then
+            export PINELINK_TEST_FILTER='^(TestP2PDirectRelayAndFallback|TestRelayPreuploadConsentAndRestore)$'
+          fi
+          bash infra/scripts/integration.sh
   web:
     runs-on: ubuntu-latest
     defaults:

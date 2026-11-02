@@ -15,8 +15,10 @@ import (
 )
 
 type Client struct {
-	baseURL string
-	http    *http.Client
+	baseURL  string
+	http     *http.Client
+	ownerID  string
+	deviceID string
 }
 
 func New(baseURL string, identity *secure.Identity, ownerID, deviceID string) (*Client, error) {
@@ -28,7 +30,7 @@ func NewWithClock(baseURL string, identity *secure.Identity, ownerID, deviceID s
 		return nil, fmt.Errorf("invalid server URL: %w", err)
 	}
 	transport := &signingTransport{base: http.DefaultTransport, identity: identity, ownerID: ownerID, deviceID: deviceID, offset: offset}
-	return &Client{baseURL: baseURL, http: &http.Client{Timeout: 5 * time.Minute, Transport: transport, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}}, nil
+	return &Client{baseURL: baseURL, ownerID: ownerID, deviceID: deviceID, http: &http.Client{Timeout: 5 * time.Minute, Transport: transport, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}}, nil
 }
 
 func (c *Client) Prepare(ctx context.Context, request PrepareRequest) (PrepareResponse, error) {

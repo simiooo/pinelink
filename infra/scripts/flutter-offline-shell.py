@@ -5,6 +5,15 @@ from pathlib import Path
 import sys
 
 root=Path(sys.argv[1]).resolve()
+if not all((root/name).is_file() for name in ['index.html','flutter_bootstrap.js','main.dart.js']):
+    raise SystemExit('Expected a built Flutter release directory; source files were not changed')
+# The dependency graph can contain absolute workstation/cache paths. Filtering
+# it out of precaching alone still leaves it publicly downloadable in an archive.
+for generated in root.rglob('*'):
+    if generated.is_file() and generated.suffix in {'.map','.dart','.deps'}:
+        if not generated.resolve().is_relative_to(root):
+            raise SystemExit('Generated metadata escaped the release directory')
+        generated.unlink()
 files=sorted(p for p in root.rglob('*') if p.is_file() and p.suffix not in {'.map','.dart','.deps'} and p.name not in {'pinelink-sw.js','flutter_service_worker.js'})
 version=hashlib.sha256(b''.join(p.relative_to(root).as_posix().encode()+hashlib.sha256(p.read_bytes()).digest() for p in files)).hexdigest()[:24]
 paths=['./']+[p.relative_to(root).as_posix() for p in files]

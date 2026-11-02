@@ -50,6 +50,15 @@ func RunSender(ctx context.Context, api *client.Client, transfer client.Transfer
 }
 
 func runSenderPath(ctx context.Context, api *client.Client, transfer client.Transfer, filePath, path string, timeout time.Duration) error {
+	if path == "relay" {
+		transport, err := api.RelayTransport(ctx, transfer.ID)
+		if err != nil {
+			return err
+		}
+		if transport == "websocket" {
+			return runSocketSender(ctx, api, transfer, filePath)
+		}
+	}
 	pc, err := newPeer()
 	if err != nil {
 		return err
@@ -127,7 +136,12 @@ func runSenderPath(ctx context.Context, api *client.Client, transfer client.Tran
 	}
 }
 
-func sendFile(ctx context.Context, channel *webrtc.DataChannel, path string, connectionErrors <-chan error) error {
+type fileSender interface {
+	BufferedAmount() uint64
+	Send([]byte) error
+}
+
+func sendFile(ctx context.Context, channel fileSender, path string, connectionErrors <-chan error) error {
 	file, err := os.Open(path)
 	if err != nil {
 		return err
@@ -205,11 +219,8 @@ func RunReceiver(ctx context.Context, api *client.Client, transfer client.Transf
 }
 
 func runReceiverPath(ctx context.Context, api *client.Client, transfer client.Transfer, partPath, path string, timeout time.Duration, check func() error, epoch int64, finalize func() error) error {
-	pc, err := newPeer()
-	if err != nil {
-		return err
-	}
-	defer pc.Close()
+	ctx, stop := context.WithDeadline(ctx, transfer.ExpiresAt)
+	defer stop()
 	done := make(chan error, 1)
 	reporter := newProgressReporter(ctx, 500*time.Millisecond, func() error {
 		file, err := os.OpenFile(partPath, os.O_RDWR, 0o600)
@@ -227,7 +238,7 @@ func runReceiverPath(ctx context.Context, api *client.Client, transfer client.Tr
 		defer cancel()
 		_ = reporter.Flush(flush)
 	}()
-	configure := func(channel *webrtc.DataChannel) {
+	configure := func(channel receiveChannel) {
 		var frames sync.Mutex
 		finished := false
 		channel.OnMessage(func(message webrtc.DataChannelMessage) {
@@ -278,21 +289,43 @@ func runReceiverPath(ctx context.Context, api *client.Client, transfer client.Tr
 			}
 		})
 	}
-	receiveCtx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
+	transport := "webrtc"
 	if path == "relay" {
-		channel, err := pc.CreateDataChannel("file", nil)
+		var err error
+		transport, err = api.RelayTransport(ctx, transfer.ID)
 		if err != nil {
 			return err
 		}
-		configure(channel)
-		if err := offer(receiveCtx, api, transfer.ID, transfer.RecipientOwnerID, transfer.RecipientDeviceID, "RECEIVER", downlinkOffer, downlinkAnswer, pc); err != nil {
+	}
+	receiveCtx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+	if transport == "websocket" {
+		channel, err := openSocketReceiver(ctx, api, transfer.ID, done)
+		if err != nil {
 			return err
 		}
+		defer channel.close()
+		configure(channel)
 	} else {
-		pc.OnDataChannel(configure)
-		if err := answer(receiveCtx, api, transfer.ID, transfer.RecipientOwnerID, transfer.RecipientDeviceID, "RECEIVER", directOffer, directAnswer, pc); err != nil {
+		pc, err := newPeer()
+		if err != nil {
 			return err
+		}
+		defer pc.Close()
+		if path == "relay" {
+			channel, err := pc.CreateDataChannel("file", nil)
+			if err != nil {
+				return err
+			}
+			configure(channel)
+			if err := offer(receiveCtx, api, transfer.ID, transfer.RecipientOwnerID, transfer.RecipientDeviceID, "RECEIVER", downlinkOffer, downlinkAnswer, pc); err != nil {
+				return err
+			}
+		} else {
+			pc.OnDataChannel(func(channel *webrtc.DataChannel) { configure(channel) })
+			if err := answer(receiveCtx, api, transfer.ID, transfer.RecipientOwnerID, transfer.RecipientDeviceID, "RECEIVER", directOffer, directAnswer, pc); err != nil {
+				return err
+			}
 		}
 	}
 	doneCtx, doneCancel := context.WithDeadline(ctx, transfer.ExpiresAt)

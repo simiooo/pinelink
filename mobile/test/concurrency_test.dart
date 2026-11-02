@@ -134,6 +134,28 @@ void main() {
     await runtime.close();
   });
 
+  test(
+    'a started transaction is rolled back without replaying its action',
+    () async {
+      final db = ClientDatabase.testing(NativeDatabase.memory());
+      addTearDown(db.close);
+      var calls = 0;
+      await expectLater(
+        db.transaction(() async {
+          calls++;
+          await db.putMetadata('must-rollback', {});
+          throw SqliteException(
+            extendedResultCode: 5,
+            message: 'busy after BEGIN',
+          );
+        }),
+        throwsA(isA<SqliteException>()),
+      );
+      expect(calls, 1);
+      expect(await db.metadata('must-rollback'), isNull);
+    },
+  );
+
   test('cache order is persistent and serial across separate SQLite connections', () async {
     final directory = await Directory.systemTemp.createTemp('pinelink-race-');
     addTearDown(() async {
@@ -155,6 +177,26 @@ void main() {
     try {
       await a.target();
       await b.target();
+      // Force a real SQLITE_BUSY at BEGIN on the independent connection. The
+      // operation must wait asynchronously and acquire a fresh transaction.
+      await b.customStatement('PRAGMA busy_timeout=1');
+      final locked = Completer<void>(), release = Completer<void>();
+      final holder = a.transaction(() async {
+        await a.putMetadata('held-writer', {});
+        locked.complete();
+        await release.future;
+      });
+      await locked.future;
+      final waiting = b.beginRead();
+      final timer = Timer(const Duration(milliseconds: 80), release.complete);
+      try {
+        await waiting;
+      } finally {
+        if (!release.isCompleted) release.complete();
+        timer.cancel();
+        await holder;
+      }
+      await b.customStatement('PRAGMA busy_timeout=5000');
       // Seed a legacy entry ahead of wall time to model clock rollback.
       final future = DateTime.now().millisecondsSinceEpoch + 100000;
       await a.cacheResponse(path, running, future);

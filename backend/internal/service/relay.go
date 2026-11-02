@@ -87,6 +87,10 @@ func NewRelayManager(service *Service, logger *slog.Logger) *RelayManager {
 }
 
 func (m *RelayManager) Start(ctx context.Context) error {
+	if m.service.RelayTransport() == "websocket" {
+		<-ctx.Done()
+		return nil
+	}
 	tick := time.NewTicker(200 * time.Millisecond)
 	defer tick.Stop()
 	defer func() {
@@ -339,7 +343,13 @@ func relayWait(ctx context.Context, d time.Duration) error {
 	}
 }
 
-func (m *RelayManager) pumpDownlink(ctx context.Context, channel *webrtc.DataChannel, spool uploadObject) error {
+type relayChannel interface {
+	ReadyState() webrtc.DataChannelState
+	BufferedAmount() uint64
+	Send([]byte) error
+}
+
+func (m *RelayManager) pumpDownlink(ctx context.Context, channel relayChannel, spool uploadObject) error {
 	for channel.ReadyState() != webrtc.DataChannelStateOpen {
 		if channel.ReadyState() == webrtc.DataChannelStateClosed {
 			return io.EOF

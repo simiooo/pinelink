@@ -13,6 +13,8 @@ require (
 	modernc.org/sqlite v1.61.1
 )
 
+require github.com/coder/websocket v1.8.15
+
 require (
 	filippo.io/hpke v0.4.0 // indirect
 	github.com/dustin/go-humanize v1.1.0 // indirect

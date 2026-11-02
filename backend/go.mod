@@ -3,6 +3,7 @@ module github.com/simiooo/pinelink/backend
 go 1.26.0
 
 require (
+	github.com/coder/websocket v1.8.15
 	github.com/go-kratos/kratos/v2 v2.9.2
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.11.0

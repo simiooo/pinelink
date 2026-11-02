@@ -22,6 +22,7 @@ self.addEventListener('sync', raw => {
     owner: import.meta.env.VITE_PINELINK_OWNER ?? 'dev-owner',
     device: import.meta.env.VITE_PINELINK_DEVICE ?? '',
     pin: import.meta.env.VITE_PINELINK_HISTORY_KEY ?? '',
+    runtimeProfile: import.meta.env.VITE_PINELINK_SERVICE_PROFILE === 'runtime',
   }).finally(() => { active = undefined })
   event.waitUntil(active)
 })

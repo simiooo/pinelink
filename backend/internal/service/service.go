@@ -27,11 +27,23 @@ type Service struct {
 	blobs          BlobStore
 	now            func() time.Time
 	replicationKey ed25519.PrivateKey
+	relayTransport string
 }
 
 func New(db *pgxpool.Pool, blobs BlobStore) *Service {
-	return &Service{db: db, blobs: blobs, now: time.Now}
+	return &Service{db: db, blobs: blobs, now: time.Now, relayTransport: "webrtc"}
 }
+
+// ConfigureRelayTransport is startup-only configuration, before handlers run.
+func (s *Service) ConfigureRelayTransport(value string) error {
+	if value != "webrtc" && value != "websocket" {
+		return fmt.Errorf("unsupported relay transport")
+	}
+	s.relayTransport = value
+	return nil
+}
+
+func (s *Service) RelayTransport() string { return s.relayTransport }
 
 func (s *Service) Ready(ctx context.Context) error {
 	return s.db.Ping(ctx)
