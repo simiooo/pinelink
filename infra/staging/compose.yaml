@@ -50,6 +50,7 @@ services:
     network_mode: host
     environment:
       PINELINK_HTTP_ADDR: 0.0.0.0:18680
+      PINELINK_RELAY_TRANSPORT: ${PINELINK_RELAY_TRANSPORT:-webrtc}
       PINELINK_DATABASE_URL: postgres://pinelink:${PINELINK_STAGING_DB_PASSWORD}@127.0.0.1:55435/pinelink?sslmode=disable
       PINELINK_NATS_URL: nats://127.0.0.1:54225
       PINELINK_S3_ENDPOINT: 127.0.0.1:59005

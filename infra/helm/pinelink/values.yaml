@@ -1,0 +1,19 @@
+environment: staging
+version: development
+images:
+  api: pinelink.local/api:development
+  web: pinelink.local/web:development
+  postgres: postgres:17-alpine
+  nats: nats:2.12-alpine
+  cloudflared: cloudflare/cloudflared:2026.10.0
+imagePullPolicy: IfNotPresent
+existingSecrets:
+  api: pinelink-api
+  postgres: pinelink-postgres
+  nats: pinelink-nats
+  tunnel: pinelink-tunnel
+  edge: pinelink-edge
+storage:
+  class: local-path
+  postgres: 8Gi
+  nats: 1Gi

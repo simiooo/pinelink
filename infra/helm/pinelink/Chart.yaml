@@ -1,0 +1,6 @@
+apiVersion: v2
+name: pinelink
+description: Isolated private-preview deployment using external runtime Secrets
+type: application
+version: 0.1.0
+appVersion: "development"

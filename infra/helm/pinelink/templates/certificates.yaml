@@ -1,0 +1,42 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ .Release.Name }}-selfsigned
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-ca
+spec:
+  isCA: true
+  commonName: {{ .Release.Name }}-{{ .Values.environment }}-internal-ca
+  secretName: {{ .Release.Name }}-ca
+  duration: 87600h
+  renewBefore: 8760h
+  privateKey: {algorithm: ECDSA, size: 256, rotationPolicy: Never}
+  issuerRef: {name: {{ .Release.Name }}-selfsigned, kind: Issuer}
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ .Release.Name }}-ca
+spec:
+  ca: {secretName: {{ .Release.Name }}-ca}
+{{- range $component := list "api" "web" "postgres" "nats" }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $.Release.Name }}-{{ $component }}
+spec:
+  secretName: {{ $.Release.Name }}-{{ $component }}-tls
+  duration: 2160h
+  renewBefore: 720h
+  privateKey: {algorithm: ECDSA, size: 256, rotationPolicy: Always}
+  dnsNames:
+    - {{ $.Release.Name }}-{{ $component }}
+    - {{ $.Release.Name }}-{{ $component }}.{{ $.Release.Namespace }}.svc.cluster.local
+  issuerRef: {name: {{ $.Release.Name }}-ca, kind: Issuer}
+{{- end }}

@@ -105,7 +105,11 @@ func TestP2PDirectRelayAndFallback(t *testing.T) {
 		if err := pool.QueryRow(t.Context(), `SELECT count(*) FROM peer_signals WHERE transfer_id=$1 AND channel='relay-uplink-offer'`, transfer.ID).Scan(&relaySignals); err != nil {
 			t.Fatal(err)
 		}
-		if directSignals == 0 || relaySignals == 0 {
+		var spoolCount int
+		if err := pool.QueryRow(t.Context(), `SELECT count(*) FROM relay_spools WHERE transfer_id=$1`, transfer.ID).Scan(&spoolCount); err != nil {
+			t.Fatal(err)
+		}
+		if directSignals == 0 || spoolCount != 1 || (os.Getenv("PINELINK_RELAY_TRANSPORT") != "websocket" && relaySignals == 0) {
 			t.Fatalf("mid-transfer fallback did not use both paths: direct=%d relay=%d", directSignals, relaySignals)
 		}
 	})

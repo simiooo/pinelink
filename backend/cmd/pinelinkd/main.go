@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"crypto/ed25519"
+	"crypto/tls"
 	"database/sql"
 	"encoding/base64"
 	"fmt"
@@ -50,7 +51,7 @@ func run(logger log.Logger) error {
 		return err
 	}
 
-	objects, err := blob.NewS3(cfg.S3Endpoint, cfg.S3AccessKey, cfg.S3SecretKey, cfg.S3Bucket, cfg.S3UseSSL)
+	objects, err := blob.NewS3(cfg.S3Endpoint, cfg.S3AccessKey, cfg.S3SecretKey, cfg.S3Bucket, cfg.S3UseSSL, cfg.S3Region)
 	if err != nil {
 		return err
 	}
@@ -67,19 +68,26 @@ func run(logger log.Logger) error {
 		}
 		break
 	}
-	connection, err := nats.Connect(cfg.NATSURL,
+	natsOptions := []nats.Option{
 		nats.Name("pinelinkd"),
-		nats.Timeout(3*time.Second),
+		nats.Timeout(3 * time.Second),
 		nats.RetryOnFailedConnect(true),
 		nats.MaxReconnects(30),
 		nats.ReconnectWait(time.Second),
-	)
+	}
+	if cfg.NATSCAFile != "" {
+		natsOptions = append(natsOptions, nats.RootCAs(cfg.NATSCAFile))
+	}
+	connection, err := nats.Connect(cfg.NATSURL, natsOptions...)
 	if err != nil {
 		return err
 	}
 	defer connection.Close()
 
 	svc := service.New(pool, objects)
+	if err := svc.ConfigureRelayTransport(cfg.RelayTransport); err != nil {
+		return err
+	}
 	if cfg.HistorySigningSeed != "" {
 		seed, e := base64.StdEncoding.DecodeString(cfg.HistorySigningSeed)
 		if e != nil || len(seed) != ed25519.SeedSize {
@@ -89,7 +97,14 @@ func run(logger log.Logger) error {
 			return e
 		}
 	}
-	httpServer := httpapi.NewServer(cfg.HTTPAddr, svc, logger, cfg.DeviceAuthRequired, cfg.CORSOrigins)
+	var serverTLS *tls.Config
+	if cfg.HTTPTLSCertFile != "" || cfg.HTTPTLSKeyFile != "" {
+		serverTLS, err = httpapi.LoadTLSConfig(cfg.HTTPTLSCertFile, cfg.HTTPTLSKeyFile)
+		if err != nil {
+			return err
+		}
+	}
+	httpServer := httpapi.NewServerWithTLS(cfg.HTTPAddr, svc, logger, cfg.DeviceAuthRequired, serverTLS, cfg.CORSOrigins)
 	outbox := events.NewWorker(pool, connection, logger)
 	maintenance := service.NewMaintenance(pool, objects, time.Second, nil)
 	relay := service.NewRelayManager(svc, nil)

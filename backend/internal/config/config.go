@@ -19,6 +19,11 @@ type Config struct {
 	DeviceAuthRequired bool
 	CORSOrigins        []string
 	HistorySigningSeed string
+	RelayTransport     string
+	S3Region           string
+	NATSCAFile         string
+	HTTPTLSCertFile    string
+	HTTPTLSKeyFile     string
 }
 
 func FromEnv() Config {
@@ -41,6 +46,11 @@ func FromEnv() Config {
 		DeviceAuthRequired: deviceAuth,
 		CORSOrigins:        origins,
 		HistorySigningSeed: getenv("PINELINK_HISTORY_SIGNING_SEED", ""),
+		RelayTransport:     getenv("PINELINK_RELAY_TRANSPORT", "webrtc"),
+		S3Region:           getenv("PINELINK_S3_REGION", ""),
+		NATSCAFile:         getenv("PINELINK_NATS_CA_FILE", ""),
+		HTTPTLSCertFile:    getenv("PINELINK_HTTP_TLS_CERT_FILE", ""),
+		HTTPTLSKeyFile:     getenv("PINELINK_HTTP_TLS_KEY_FILE", ""),
 	}
 }
 

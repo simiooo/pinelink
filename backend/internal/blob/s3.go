@@ -15,11 +15,15 @@ type S3 struct {
 	bucket string
 }
 
-func NewS3(endpoint, accessKey, secretKey, bucket string, useSSL bool) (*S3, error) {
-	client, err := minio.New(endpoint, &minio.Options{
+func NewS3(endpoint, accessKey, secretKey, bucket string, useSSL bool, region ...string) (*S3, error) {
+	options := &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
 		Secure: useSSL,
-	})
+	}
+	if len(region) > 0 {
+		options.Region = region[0]
+	}
+	client, err := minio.New(endpoint, options)
 	if err != nil {
 		return nil, fmt.Errorf("create S3 client: %w", err)
 	}

@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -23,13 +25,23 @@ type API struct {
 	service            *service.Service
 	logger             *log.Helper
 	deviceAuthRequired bool
+	relaySlots         chan struct{}
+	relayContext       context.Context
+	relayCancel        context.CancelFunc
+	relayMutex         sync.Mutex
+	relayStopping      bool
+	relayWorkers       sync.WaitGroup
 }
 
 // Set by the release build; /healthz also identifies the actual deployed binary.
 var BuildVersion = "dev"
 
-func NewServer(addr string, svc *service.Service, logger log.Logger, deviceAuthRequired bool, corsOrigins ...[]string) *khttp.Server {
-	api := &API{service: svc, logger: log.NewHelper(logger), deviceAuthRequired: deviceAuthRequired}
+func NewServer(addr string, svc *service.Service, logger log.Logger, deviceAuthRequired bool, corsOrigins ...[]string) *Server {
+	return NewServerWithTLS(addr, svc, logger, deviceAuthRequired, nil, corsOrigins...)
+}
+
+func NewServerWithTLS(addr string, svc *service.Service, logger log.Logger, deviceAuthRequired bool, tlsConfig *tls.Config, corsOrigins ...[]string) *Server {
+	api := &API{service: svc, logger: log.NewHelper(logger), deviceAuthRequired: deviceAuthRequired, relaySlots: make(chan struct{}, 64)}
 	var origins []string
 	if len(corsOrigins) > 0 {
 		origins = corsOrigins[0]
@@ -51,10 +63,11 @@ func NewServer(addr string, svc *service.Service, logger log.Logger, deviceAuthR
 		// Storage operations enforce their own bounded I/O leases. Kratos' 1s
 		// default cancels a valid seal/stream once it spans several chunks.
 		khttp.Timeout(0),
+		khttp.TLSConfig(tlsConfig),
 		khttp.Middleware(recovery.Recovery(), logging.Server(logger)),
 	)
 	server.HandlePrefix("/", withCORS(api.withDeviceAuth(mux), origins))
-	return server
+	return wrapServer(server, api)
 }
 
 func (a *API) health(w http.ResponseWriter, r *http.Request) {

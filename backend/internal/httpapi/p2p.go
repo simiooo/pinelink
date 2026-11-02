@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/simiooo/pinelink/backend/internal/service"
 )
@@ -13,6 +14,8 @@ func (a *API) registerP2P(mux *http.ServeMux) {
 	mux.HandleFunc("POST /v1/p2p/{id}/progress", a.p2pProgress)
 	mux.HandleFunc("GET /v1/p2p/{id}/progress", a.p2pProgressSnapshot)
 	mux.HandleFunc("POST /v1/p2p/{id}/complete", a.completeP2P)
+	mux.HandleFunc("GET /v1/p2p/{id}/relay-transport", a.relayTransport)
+	mux.HandleFunc("GET /v1/p2p/{id}/relay", a.relaySocket)
 }
 
 func (a *API) p2pProgressSnapshot(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +35,10 @@ func (a *API) createP2P(w http.ResponseWriter, r *http.Request) {
 func (a *API) addP2PSignal(w http.ResponseWriter, r *http.Request) {
 	var req service.P2PSignalRequest
 	if !readRequest(w, r, &req) {
+		return
+	}
+	if a.service.RelayTransport() == "websocket" && strings.HasPrefix(req.Channel, "relay-") {
+		writeError(w, service.ErrInvalid)
 		return
 	}
 	signal, err := a.service.AddSignal(r.Context(), r.PathValue("id"), req)

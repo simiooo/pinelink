@@ -1,0 +1,75 @@
+{{ range $component := list "postgres" "nats" }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $.Release.Name }}-{{ $component }}
+spec:
+  clusterIP: None
+  selector: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}
+  ports: [{name: client, port: {{ if eq $component "postgres" }}5432{{ else }}4222{{ end }}, targetPort: client}]
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $.Release.Name }}-{{ $component }}
+spec:
+  replicas: 1
+  serviceName: {{ $.Release.Name }}-{{ $component }}
+  persistentVolumeClaimRetentionPolicy: {whenDeleted: Retain, whenScaled: Retain}
+  selector:
+    matchLabels: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}, pinelink.environment: {{ $.Values.environment }}}
+    spec:
+      serviceAccountName: {{ $.Release.Name }}
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 60
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: {{ if eq $component "postgres" }}70{{ else }}10001{{ end }}
+        fsGroup: {{ if eq $component "postgres" }}70{{ else }}10001{{ end }}
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: {{ $component }}
+          image: {{ index $.Values.images $component | quote }}
+          imagePullPolicy: IfNotPresent
+          command: [/bin/sh, /etc/pinelink-config/watch-tls.sh]
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
+            limits: {cpu: "500m", memory: {{ if eq $component "postgres" }}384Mi{{ else }}128Mi{{ end }}}
+          ports: [{name: client, containerPort: {{ if eq $component "postgres" }}5432{{ else }}4222{{ end }}}]
+{{- if eq $component "postgres" }}
+          args: [docker-entrypoint.sh, postgres, -c, ssl=on, -c, ssl_cert_file=/etc/pinelink/tls/tls.crt, -c, ssl_key_file=/etc/pinelink/tls/tls.key, -c, hba_file=/etc/pinelink-config/pg_hba.conf]
+          envFrom: [{secretRef: {name: {{ $.Values.existingSecrets.postgres }}}}]
+          env: [{name: PGDATA, value: /var/lib/postgresql/data/pgdata}]
+          readinessProbe: {exec: {command: [pg_isready, -U, pinelink, -d, pinelink]}, periodSeconds: 5}
+          volumeMounts: [{name: data, mountPath: /var/lib/postgresql/data}, {name: tmp, mountPath: /tmp}, {name: socket, mountPath: /var/run/postgresql}, {name: common, mountPath: /etc/pinelink-config, readOnly: true}, {name: tls, mountPath: /etc/pinelink/tls, readOnly: true}]
+{{- else }}
+          args: [/nats-server, -c, /etc/pinelink/server.conf]
+          readinessProbe: {httpGet: {path: /healthz, port: 8222}, periodSeconds: 5}
+          volumeMounts: [{name: data, mountPath: /data}, {name: config, mountPath: /etc/pinelink, readOnly: true}, {name: tmp, mountPath: /tmp}, {name: common, mountPath: /etc/pinelink-config, readOnly: true}, {name: tls, mountPath: /etc/pinelink/tls, readOnly: true}]
+{{- end }}
+      volumes:
+        - {name: tmp, emptyDir: {medium: Memory, sizeLimit: 32Mi}}
+        - name: common
+          configMap: {name: {{ $.Release.Name }}-config}
+        - name: tls
+          secret: {secretName: {{ $.Release.Name }}-{{ $component }}-tls, defaultMode: 288}
+{{- if eq $component "postgres" }}
+        - {name: socket, emptyDir: {medium: Memory, sizeLimit: 4Mi}}
+{{- else }}
+        - name: config
+          secret: {secretName: {{ $.Values.existingSecrets.nats }}, defaultMode: 288}
+{{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName: {{ $.Values.storage.class }}
+        resources:
+          requests: {storage: {{ index $.Values.storage $component }}}
+{{- end }}

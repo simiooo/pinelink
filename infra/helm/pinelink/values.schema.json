@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "environment",
+    "version",
+    "images",
+    "existingSecrets",
+    "storage",
+    "imagePullPolicy"
+  ],
+  "properties": {
+    "environment": {
+      "enum": [
+        "staging",
+        "production"
+      ]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(development|[a-f0-9]{40})$"
+    },
+    "imagePullPolicy": {
+      "enum": [
+        "IfNotPresent",
+        "Never",
+        "Always"
+      ]
+    },
+    "images": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "api",
+        "web",
+        "postgres",
+        "nats",
+        "cloudflared"
+      ],
+      "properties": {
+        "api": {
+          "type": "string",
+          "minLength": 1
+        },
+        "web": {
+          "type": "string",
+          "minLength": 1
+        },
+        "postgres": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nats": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cloudflared": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "existingSecrets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "api",
+        "postgres",
+        "nats",
+        "tunnel",
+        "edge"
+      ],
+      "properties": {
+        "api": {
+          "type": "string",
+          "pattern": "^[a-z0-9]([-a-z0-9.]*[a-z0-9])?$",
+          "maxLength": 253
+        },
+        "postgres": {
+          "type": "string",
+          "pattern": "^[a-z0-9]([-a-z0-9.]*[a-z0-9])?$",
+          "maxLength": 253
+        },
+        "nats": {
+          "type": "string",
+          "pattern": "^[a-z0-9]([-a-z0-9.]*[a-z0-9])?$",
+          "maxLength": 253
+        },
+        "tunnel": {
+          "type": "string",
+          "pattern": "^[a-z0-9]([-a-z0-9.]*[a-z0-9])?$",
+          "maxLength": 253
+        },
+        "edge": {
+          "type": "string",
+          "pattern": "^[a-z0-9]([-a-z0-9.]*[a-z0-9])?$",
+          "maxLength": 253
+        }
+      }
+    },
+    "storage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "class",
+        "postgres",
+        "nats"
+      ],
+      "properties": {
+        "class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "postgres": {
+          "type": "string",
+          "pattern": "^[0-9]+Gi$"
+        },
+        "nats": {
+          "type": "string",
+          "pattern": "^[0-9]+Gi$"
+        }
+      }
+    }
+  }
+}

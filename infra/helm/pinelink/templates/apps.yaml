@@ -1,0 +1,101 @@
+{{ range $component := list "api" "web" "tunnel" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Release.Name }}-{{ $component }}
+  labels: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}, pinelink.environment: {{ $.Values.environment }}}
+      annotations:
+        pinelink.source-revision: {{ $.Values.version | quote }}
+    spec:
+      serviceAccountName: {{ $.Release.Name }}
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 25
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: {{ if eq $component "web" }}101{{ else if eq $component "tunnel" }}65532{{ else }}10001{{ end }}
+        fsGroup: {{ if eq $component "web" }}101{{ else if eq $component "tunnel" }}65532{{ else }}10001{{ end }}
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: {{ $component }}
+          image: {{ index $.Values.images $component | default (index $.Values.images "cloudflared") | quote }}
+          imagePullPolicy: {{ if eq $component "tunnel" }}IfNotPresent{{ else }}{{ $.Values.imagePullPolicy }}{{ end }}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {cpu: "500m", memory: {{ if eq $component "api" }}384Mi{{ else }}128Mi{{ end }}}
+{{- if eq $component "api" }}
+          envFrom: [{secretRef: {name: {{ $.Values.existingSecrets.api }}}}]
+          env:
+            - {name: PINELINK_HTTP_ADDR, value: "0.0.0.0:8080"}
+            - {name: PINELINK_DEVICE_AUTH_REQUIRED, value: "true"}
+            - {name: PINELINK_RELAY_TRANSPORT, value: websocket}
+            - {name: PINELINK_S3_USE_SSL, value: "true"}
+            - {name: PINELINK_S3_REGION, value: auto}
+            - {name: PINELINK_NATS_CA_FILE, value: /etc/pinelink/ca/ca.crt}
+            - {name: PINELINK_HTTP_TLS_CERT_FILE, value: /etc/pinelink/tls/tls.crt}
+            - {name: PINELINK_HTTP_TLS_KEY_FILE, value: /etc/pinelink/tls/tls.key}
+          ports: [{name: http, containerPort: 8080}]
+          startupProbe: {httpGet: {path: /healthz, port: http, scheme: HTTPS}, periodSeconds: 2, failureThreshold: 90}
+          readinessProbe: {httpGet: {path: /healthz, port: http, scheme: HTTPS}, periodSeconds: 5}
+          livenessProbe: {httpGet: {path: /healthz, port: http, scheme: HTTPS}, periodSeconds: 15, failureThreshold: 4}
+          volumeMounts: [{name: tmp, mountPath: /tmp}, {name: ca, mountPath: /etc/pinelink/ca, readOnly: true}, {name: tls, mountPath: /etc/pinelink/tls, readOnly: true}]
+{{- else if eq $component "web" }}
+          command: [/bin/sh, /etc/pinelink/watch-tls.sh]
+          args: [nginx, -c, /etc/pinelink/nginx.conf, -g, "daemon off;"]
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /ready, port: 8081}, periodSeconds: 5}
+          livenessProbe: {httpGet: {path: /ready, port: 8081}, periodSeconds: 15}
+          volumeMounts:
+            - {name: config, mountPath: /etc/pinelink, readOnly: true}
+            - {name: tmp, mountPath: /tmp}
+            - {name: ca, mountPath: /etc/pinelink/ca, readOnly: true}
+            - {name: tls, mountPath: /etc/pinelink/tls, readOnly: true}
+            - {name: auth, mountPath: /etc/pinelink/auth, readOnly: true}
+{{- else }}
+          args: [tunnel, --no-autoupdate, --protocol, http2, --metrics, "0.0.0.0:2000", run, --token-file, /etc/pinelink/token]
+          ports: [{name: metrics, containerPort: 2000}]
+          readinessProbe: {httpGet: {path: /ready, port: metrics}, periodSeconds: 5}
+          livenessProbe: {httpGet: {path: /ready, port: metrics}, periodSeconds: 15, failureThreshold: 6}
+          volumeMounts: [{name: token, mountPath: /etc/pinelink, readOnly: true}, {name: tmp, mountPath: /tmp}, {name: ca, mountPath: /etc/pinelink/ca, readOnly: true}]
+{{- end }}
+      volumes:
+        - {name: tmp, emptyDir: {medium: Memory, sizeLimit: 64Mi}}
+        - name: ca
+          secret:
+            secretName: {{ $.Release.Name }}-ca
+            items: [{key: tls.crt, path: ca.crt}]
+            defaultMode: 288
+{{- if ne $component "tunnel" }}
+        - name: tls
+          secret: {secretName: {{ $.Release.Name }}-{{ $component }}-tls, defaultMode: 288}
+{{- end }}
+{{- if eq $component "web" }}
+        - name: auth
+          secret: {secretName: {{ $.Values.existingSecrets.edge }}, defaultMode: 288}
+        - name: config
+          configMap: {name: {{ $.Release.Name }}-config}
+{{- else if eq $component "tunnel" }}
+        - name: token
+          secret: {secretName: {{ $.Values.existingSecrets.tunnel }}, defaultMode: 288}
+{{- end }}
+{{- if ne $component "tunnel" }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $.Release.Name }}-{{ $component }}
+spec:
+  type: ClusterIP
+  selector: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}}
+  ports: [{name: http, port: 8080, targetPort: http}]
+{{- end }}
+{{- end }}
