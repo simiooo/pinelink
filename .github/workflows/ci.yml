@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - run: python3 infra/scripts/test_flutter_offline_shell.py
       - run: |
           mkdir -p "$RUNNER_TEMP/pinelink-helm"
           curl -fsSL https://get.helm.sh/helm-v4.3.1-linux-amd64.tar.gz -o "$RUNNER_TEMP/pinelink-helm/helm.tar.gz"
