@@ -227,7 +227,7 @@ def main():
                         'PINELINK_HISTORY_SIGNING_SEED': base64.b64encode(secrets.token_bytes(32)).decode(),
                         'PINELINK_CORS_ORIGINS': 'https://' + host},
                 'postgres': {'POSTGRES_USER': 'pinelink', 'POSTGRES_DB': 'pinelink', 'POSTGRES_PASSWORD': database_password},
-                'nats': {'server.conf': f'port: 4222\nhttp_port: 8222\njetstream {{ store_dir: /data }}\nauthorization {{ user: pinelink, password: "{nats_password}" }}\ntls {{ cert_file: "/etc/pinelink/tls/tls.crt", key_file: "/etc/pinelink/tls/tls.key" }}\n'},
+                'nats': {'server.conf': f'port: 4222\nhttp_port: 8222\njetstream {{ store_dir: /data, max_memory_store: 32MB, max_file_store: 768MB }}\nauthorization {{ user: pinelink, password: "{nats_password}" }}\ntls {{ cert_file: "/etc/pinelink/tls/tls.crt", key_file: "/etc/pinelink/tls/tls.key" }}\n'},
             })
 
         # The chart requires this environment's auth Secret before the web can start.
