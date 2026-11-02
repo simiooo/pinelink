@@ -1,6 +1,8 @@
 package httpapi
 
 import (
+	"context"
+	"errors"
 	"net/http"
 
 	"github.com/coder/websocket"
@@ -42,5 +44,7 @@ func (a *API) relaySocket(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	_ = session.Run(ctx, conn)
+	if err := session.Run(ctx, conn); err != nil && !errors.Is(err, context.Canceled) && websocket.CloseStatus(err) != websocket.StatusNormalClosure {
+		a.logger.Warnf("relay %s (%s) stopped: %v", r.PathValue("id"), r.URL.Query().Get("role"), err)
+	}
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -15,6 +16,51 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pion/webrtc/v4"
 )
+
+func TestSocketDownlinkPreservesStorageFailure(t *testing.T) {
+	s, _, blobs := testStorage(t)
+	data := make([]byte, 64<<10)
+	tr := newTestTransfer(t, s, data, false)
+	spoolData(t, s, tr, data)
+	tr = transferAction(t, s, tr, "accept")
+	blobs.mu.Lock()
+	for key := range blobs.objects {
+		blobs.objects[key][0] ^= 1
+	}
+	blobs.mu.Unlock()
+	socket, err := s.PrepareRelaySocket(t.Context(), tr.ID, tr.RecipientOwnerID, tr.RecipientDeviceID, "receiver")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
+	defer cancel()
+	done := make(chan error, 1)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		conn, err := websocket.Accept(w, r, nil)
+		if err != nil {
+			done <- err
+			return
+		}
+		done <- socket.Run(ctx, conn)
+	}))
+	defer server.Close()
+	conn, _, err := websocket.Dial(ctx, "ws"+strings.TrimPrefix(server.URL, "http"), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.CloseNow()
+	if _, _, err := conn.Read(ctx); err == nil {
+		t.Fatal("corrupt storage was sent to the receiver")
+	}
+	select {
+	case err := <-done:
+		if !errors.Is(err, ErrChecksum) {
+			t.Fatal("storage cause lost at transport cancellation", err)
+		}
+	case <-ctx.Done():
+		t.Fatal("failed downlink did not terminate")
+	}
+}
 
 func TestSocketUplinkBoundsStorageAndSealsOnce(t *testing.T) {
 	s, _, blobs := testStorage(t)

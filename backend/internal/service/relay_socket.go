@@ -79,15 +79,21 @@ func (s *RelaySocket) Run(ctx context.Context, conn *websocket.Conn) error {
 	if s.uplink {
 		return s.receiveUplink(ctx, conn)
 	}
+	downlink := make(chan error, 1)
 	workers.Add(1)
 	go func() {
 		defer workers.Done()
-		_ = s.manager.pumpDownlink(ctx, socketChannel{ctx, conn}, s.spool)
+		downlink <- s.manager.pumpDownlink(ctx, socketChannel{ctx, conn}, s.spool)
 		cancel()
 	}()
 	for {
 		kind, data, err := conn.Read(ctx)
 		if err != nil {
+			select {
+			case cause := <-downlink:
+				return cause
+			default:
+			}
 			return err
 		}
 		if kind == websocket.MessageText && string(data) == "DONE" {

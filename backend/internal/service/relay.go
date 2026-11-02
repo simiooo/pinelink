@@ -398,6 +398,9 @@ func (m *RelayManager) pumpDownlink(ctx context.Context, channel relayChannel, s
 		for {
 			data, err := m.service.readRelayChunk(read, spool.ID, index)
 			if !errors.Is(err, ErrIncomplete) && !isPaused(err) {
+				if err != nil {
+					return nil, fmt.Errorf("read relay chunk %d: %w", index, err)
+				}
 				return data, err
 			}
 			if err := relayWait(read, 100*time.Millisecond); err != nil {
@@ -416,6 +419,9 @@ func (m *RelayManager) pumpDownlink(ctx context.Context, channel relayChannel, s
 			// generation and task again at the actual send boundary.
 			err := m.service.sendRelayFrame(ctx, spool, channel, encodeRelayFrame(index, data))
 			if !isPaused(err) {
+				if err != nil {
+					return fmt.Errorf("send relay chunk %d: %w", index, err)
+				}
 				return err
 			}
 			if err := relayWait(ctx, 100*time.Millisecond); err != nil {
