@@ -1,8 +1,12 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+// Drift's local-isolate error wrapper is public; its wire protocol is experimental.
+// ignore: experimental_member_use
+import 'package:drift/remote.dart' show DriftRemoteException;
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/foundation.dart';
+import 'package:sqlite3/common.dart' show SqliteException;
 
 part 'database.g.dart';
 
@@ -85,6 +89,38 @@ class ClientDatabase extends _$ClientDatabase {
         ),
       );
   ClientDatabase.testing(super.executor);
+  @override
+  Future<T> transaction<T>(
+    Future<T> Function() action, {
+    bool requireNew = false,
+  }) async {
+    final elapsed = Stopwatch()..start();
+    for (var attempt = 0; ; attempt++) {
+      var entered = false;
+      try {
+        return await super.transaction(() {
+          entered = true;
+          return action();
+        }, requireNew: requireNew);
+      } catch (error) {
+        final cause = error is DriftRemoteException ? error.remoteCause : error;
+        // Another process may hold the writer past SQLite's busy timeout.
+        // Yield before trying BEGIN again; never replay an action or commit.
+        if (entered ||
+            cause is! SqliteException ||
+            cause.resultCode != 5 ||
+            cause.causingStatement != 'BEGIN IMMEDIATE' ||
+            attempt >= 5 ||
+            elapsed.elapsed >= const Duration(seconds: 10)) {
+          rethrow;
+        }
+        await Future<void>.delayed(
+          Duration(milliseconds: 20 << (attempt > 3 ? 3 : attempt)),
+        );
+      }
+    }
+  }
+
   @override
   int get schemaVersion => 1;
   @override

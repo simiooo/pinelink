@@ -1,4 +1,4 @@
-FROM node:24-alpine AS build
+FROM node:24-alpine@sha256:8a32c8cf649a49915a66e81e7a609223c708d0adabf288ee3f4077d765542f85 AS build
 WORKDIR /source/web
 COPY web/package.json web/package-lock.json ./
 RUN npm ci
@@ -9,10 +9,11 @@ RUN npm run build
 ARG VERSION
 RUN node -e 'const fs=require("fs"); if(!process.env.VERSION) throw Error("Missing version"); fs.writeFileSync("dist/version.json",JSON.stringify({version:process.env.VERSION,client:"web",profile:"private-preview"}))'
 
-FROM nginx:stable-alpine
+FROM nginx:stable-alpine@sha256:0e52bd054126cdc040b1276c0af347aeb02a41b9cfe305d6094767ac30e97949
 ARG VERSION
 LABEL org.opencontainers.image.source="https://github.com/simiooo/pinelink" org.opencontainers.image.revision=$VERSION
 COPY --from=build /source/web/dist/ /usr/share/nginx/html/
+COPY LICENSE NOTICE /usr/share/licenses/pinelink/
 USER 101:101
 EXPOSE 8080
 ENTRYPOINT ["nginx", "-c", "/etc/pinelink/nginx.conf", "-g", "daemon off;"]
