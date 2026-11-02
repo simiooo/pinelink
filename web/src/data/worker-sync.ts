@@ -1,7 +1,8 @@
 import { ClientRuntime } from './runtime'
 import { LocalStore, storeName } from './store'
+import { loadServerPin } from './service-profile'
 
-export type WorkerConfiguration = { server: string; owner: string; device: string; pin: string }
+export type WorkerConfiguration = { server: string; owner: string; device: string; pin: string; runtimeProfile?: boolean }
 
 // Resume the same verified journal and identity. A worker must never generate a
 // replacement device when the application's local identity is unavailable.
@@ -11,7 +12,8 @@ export async function runWorkerSync(configuration: WorkerConfiguration) {
   let runtime: ClientRuntime | undefined
   try {
     if (!await store.profiles.get('self')) return
-    runtime = await ClientRuntime.open(server, configuration.owner, configuration.device, configuration.pin, store)
+    const pin = await loadServerPin(server, configuration.pin, configuration.runtimeProfile)
+    runtime = await ClientRuntime.open(server, configuration.owner, configuration.device, pin, store)
     const target = await store.target()
     const through = target.backgroundThrough || await store.beginRead()
     if (!target.backgroundThrough) await store.patchTarget({ backgroundThrough: through })

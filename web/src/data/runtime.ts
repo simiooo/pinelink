@@ -76,7 +76,7 @@ export class ClientRuntime {
       }
       this.assertOpen()
       controller.signal.throwIfAborted()
-      const response = await fetch(this.server + path, { method, headers, body: method === 'GET' ? undefined : body, signal: controller.signal, redirect: 'error', credentials: 'omit', cache: 'no-store' })
+      const response = await fetch(this.server + path, { method, headers, body: method === 'GET' ? undefined : body, signal: controller.signal, redirect: 'error', credentials: 'same-origin', cache: 'no-store' })
       const reader = response.body?.getReader()
       let text = ''
       if (reader) {

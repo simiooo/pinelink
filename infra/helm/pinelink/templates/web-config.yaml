@@ -105,6 +105,7 @@ data:
           proxy_ssl_name {{ .Release.Name }}-api.{{ .Release.Namespace }}.svc.cluster.local;
         }
         location = /sw.js { expires -1; }
+        location = /service-config.json { alias /etc/pinelink/service-profile/service-config.json; default_type application/json; }
         location = /version.json { expires -1; }
         location / { try_files $uri $uri/ /index.html; }
       }

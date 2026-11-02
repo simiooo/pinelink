@@ -24,6 +24,8 @@ Kubernetes Secret base64 is not encryption. Enable and verify datastore Secret e
 
 The operator commands use Nuto's staging vault as configured for this workspace. `resolve --raw` is captured by the consuming process, never printed. Values are streamed to Kubernetes with server-side apply, without a last-applied annotation. Helm state contains references, not credential values. Keep the metadata-only operator state outside Git or in the verified ignored `.stage/` directory. Keep backups encrypted, including the matching datastore, server token and encryption configuration. Never discard encryption keys while encrypted records still exist.
 
+The operator derives the history verification public key in memory and writes only that public key to a namespaced runtime ConfigMap. Cloud Web builds require this same-origin service profile. Foreground tabs and background workers atomically retain the first trusted key in IndexedDB, so offline startup does not need configuration access and a changed key cannot silently replace the pin. API requests include same-origin ingress credentials; cross-origin credentials are omitted. This supplies the private preview's verification configuration without embedding any runtime secret in a build. The consumer identity and advanced service-switching UI remain separate work.
+
 ```powershell
 python infra/scripts/provision-cloudflare.py --token-reference 'secret:<operator-reference>' --zone example.com --staging-host staging-transfer.example.com --production-host transfer.example.com --state .stage/cloudflare-state.json
 # Inspect the preflight, then add --apply to provision.

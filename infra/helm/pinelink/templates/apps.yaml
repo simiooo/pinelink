@@ -60,6 +60,7 @@ spec:
             - {name: ca, mountPath: /etc/pinelink/ca, readOnly: true}
             - {name: tls, mountPath: /etc/pinelink/tls, readOnly: true}
             - {name: auth, mountPath: /etc/pinelink/auth, readOnly: true}
+            - {name: profile, mountPath: /etc/pinelink/service-profile, readOnly: true}
 {{- else }}
           args: [tunnel, --no-autoupdate, --protocol, http2, --metrics, "0.0.0.0:2000", run, --token-file, /etc/pinelink/token]
           ports: [{name: metrics, containerPort: 2000}]
@@ -79,6 +80,8 @@ spec:
           secret: {secretName: {{ $.Release.Name }}-{{ $component }}-tls, defaultMode: 288}
 {{- end }}
 {{- if eq $component "web" }}
+        - name: profile
+          configMap: {name: {{ $.Release.Name }}-service-profile}
         - name: auth
           secret: {secretName: {{ $.Values.existingSecrets.edge }}, defaultMode: 288}
         - name: config

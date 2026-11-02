@@ -4,7 +4,7 @@ COPY web/package.json web/package-lock.json ./
 RUN npm ci
 COPY web/ ./
 COPY i18n/ /source/i18n/
-ENV VITE_PINELINK_API_URL=/api VITE_PINELINK_OWNER=dev-owner
+ENV VITE_PINELINK_API_URL=/api VITE_PINELINK_OWNER=dev-owner VITE_PINELINK_SERVICE_PROFILE=runtime
 RUN npm run build
 ARG VERSION
 RUN node -e 'const fs=require("fs"); if(!process.env.VERSION) throw Error("Missing version"); fs.writeFileSync("dist/version.json",JSON.stringify({version:process.env.VERSION,client:"web",profile:"private-preview"}))'
