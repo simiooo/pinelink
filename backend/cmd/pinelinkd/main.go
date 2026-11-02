@@ -21,6 +21,7 @@ import (
 	"github.com/simiooo/pinelink/backend/internal/config"
 	"github.com/simiooo/pinelink/backend/internal/events"
 	"github.com/simiooo/pinelink/backend/internal/httpapi"
+	"github.com/simiooo/pinelink/backend/internal/lifecycle"
 	"github.com/simiooo/pinelink/backend/internal/service"
 )
 
@@ -95,7 +96,12 @@ func run(logger log.Logger) error {
 	history := service.NewHistoryReplicator(svc, time.Second, nil)
 	app := kratos.New(
 		kratos.Name("pinelinkd"),
-		kratos.Server(httpServer, outbox, maintenance, relay, history),
+		kratos.Server(httpServer,
+			lifecycle.NewWorker(outbox.Start),
+			lifecycle.NewWorker(maintenance.Start),
+			lifecycle.NewWorker(relay.Start),
+			lifecycle.NewWorker(history.Start)),
+		kratos.StopTimeout(15*time.Second),
 		kratos.Signal(os.Interrupt, syscall.SIGTERM),
 		kratos.Logger(logger),
 	)

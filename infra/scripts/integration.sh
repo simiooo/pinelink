@@ -24,19 +24,33 @@ BACKEND_PID=""
 AUTH_BACKEND_PID=""
 cleanup() {
   status=$?
+  trap - EXIT
+  for pid in "$BACKEND_PID" "$AUTH_BACKEND_PID"; do
+    [[ -n "$pid" ]] && kill "$pid" 2>/dev/null || true
+  done
+  for _ in $(seq 1 200); do
+    running=false
+    for pid in "$BACKEND_PID" "$AUTH_BACKEND_PID"; do
+      if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then running=true; fi
+    done
+    if [[ "$running" == false ]]; then break; fi
+    sleep 0.1
+  done
+  for pid in "$BACKEND_PID" "$AUTH_BACKEND_PID"; do
+    [[ -z "$pid" ]] && continue
+    if kill -0 "$pid" 2>/dev/null; then
+      echo "Backend $pid did not shut down gracefully within 20 seconds" >&2
+      status=1
+      kill -KILL "$pid" 2>/dev/null || true
+    fi
+    if ! wait "$pid"; then status=1; fi
+  done
   if [[ $status -ne 0 ]]; then
     [[ -f "$TMP/backend.log" ]] && cat "$TMP/backend.log"
     [[ -f "$TMP/auth-backend.log" ]] && cat "$TMP/auth-backend.log"
   fi
-  if [[ -n "$BACKEND_PID" ]]; then
-    kill "$BACKEND_PID" 2>/dev/null || true
-    wait "$BACKEND_PID" 2>/dev/null || true
-  fi
-  if [[ -n "$AUTH_BACKEND_PID" ]]; then
-    kill "$AUTH_BACKEND_PID" 2>/dev/null || true
-    wait "$AUTH_BACKEND_PID" 2>/dev/null || true
-  fi
   rm -rf "$TMP"
+  exit "$status"
 }
 trap cleanup EXIT
 
