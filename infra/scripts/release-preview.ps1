@@ -33,7 +33,7 @@ try {
         New-Item -ItemType Directory -Force -Path $destination | Out-Null
         $executable=Join-Path $destination $(if ($env:GOOS -eq 'windows') {'pinelink.exe'} else {'pinelink'})
         Push-Location (Join-Path $taskRoot 'cli')
-        try { go build -trimpath -buildvcs=false -ldflags "-s -w -X github.com/simiooo/pinelink/cli/internal/cmd.BuildVersion=$Revision" -o $executable ./cmd/pinelink; if ($LASTEXITCODE -ne 0) { throw "CLI build failed: $target" } } finally { Pop-Location }
+        try { go build -p 2 -trimpath -buildvcs=false -ldflags "-s -w -X github.com/simiooo/pinelink/cli/internal/cmd.BuildVersion=$Revision" -o $executable ./cmd/pinelink; if ($LASTEXITCODE -ne 0) { throw "CLI build failed: $target" } } finally { Pop-Location }
         @"
 # Pinelink CLI developer preview
 
@@ -50,7 +50,7 @@ This preview is not the completed official consumer client. Keep the included LI
         $destination=Join-Path $scratch "server-$target"
         New-Item -ItemType Directory -Force -Path $destination | Out-Null
         Push-Location (Join-Path $taskRoot 'backend')
-        try { go build -trimpath -buildvcs=false -ldflags "-s -w -X github.com/simiooo/pinelink/backend/internal/httpapi.BuildVersion=$Revision" -o (Join-Path $destination 'pinelinkd') ./cmd/pinelinkd; if ($LASTEXITCODE -ne 0) { throw "Server build failed: $target" } } finally { Pop-Location }
+        try { go build -p 2 -trimpath -buildvcs=false -ldflags "-s -w -X github.com/simiooo/pinelink/backend/internal/httpapi.BuildVersion=$Revision" -o (Join-Path $destination 'pinelinkd') ./cmd/pinelinkd; if ($LASTEXITCODE -ne 0) { throw "Server build failed: $target" } } finally { Pop-Location }
         Copy-Item -LiteralPath (Join-Path $taskRoot 'infra/migrations') -Destination $destination -Recurse -Force
         @"
 # Pinelink server developer preview
@@ -100,7 +100,12 @@ if (-not $SkipClients) {
     if ($LASTEXITCODE -ne 0) { throw 'Flutter offline shell generation failed' }
     Publish-Package 'pinelink' $destination 'flutter-web'
 }
-$manifest=[ordered]@{tag=$Tag;revision=$Revision;repository='https://github.com/simiooo/pinelink';profile='self-host-development-preview';created_at=[DateTimeOffset]::UtcNow.ToString('o');go=(& go version);artifacts=@($artifacts);limits=@('Official hosted identity/bootstrap and service switching are unfinished.','Complete Web/Flutter file transfer and offline intent queue are unfinished.','Desktop and mobile node-graph migration is incomplete.','Web archives require a same-origin /api reverse proxy, trusted HTTPS or localhost, SPA fallback and the documented isolation headers.')}
+$noticesFile=Join-Path $bundle "pinelink-third-party-notices-$Tag.zip"
+python (Join-Path $PSScriptRoot 'archive-preview.py') $licenses $noticesFile
+if ($LASTEXITCODE -ne 0) { throw 'Notices archive failed' }
+$artifacts.Add(@{file=[IO.Path]::GetFileName($noticesFile);bytes=(Get-Item -LiteralPath $noticesFile).Length;sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath $noticesFile).Hash.ToLowerInvariant();platform='notices'})
+if (& git -C $taskRoot status --porcelain --untracked-files=no) { throw 'Packaging changed tracked source; commit and rebuild before publishing' }
+$manifest=[ordered]@{tag=$Tag;revision=$Revision;repository='https://github.com/simiooo/pinelink';profile='self-host-development-preview';created_at=[DateTimeOffset]::UtcNow.ToString('o');go=(& go version);artifacts=$artifacts.ToArray();limits=@('Official hosted identity/bootstrap and service switching are unfinished.','Complete Web/Flutter file transfer and offline intent queue are unfinished.','Desktop and mobile node-graph migration is incomplete.','Web archives require a same-origin /api reverse proxy, trusted HTTPS or localhost, SPA fallback and the documented isolation headers.','Other OS/CPU targets are cross-compiled; this build script performs no native runtime smoke.')}
 $manifest | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $bundle 'manifest.json')
 $artifacts | Sort-Object file | ForEach-Object { "$($_.sha256)  $($_.file)" } | Set-Content -LiteralPath (Join-Path $bundle 'SHA256SUMS')
 Write-Output $bundle

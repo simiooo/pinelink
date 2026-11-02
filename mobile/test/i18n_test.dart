@@ -22,6 +22,7 @@ void main() {
   });
 
   test('both locales contain all message keys and format metadata', () {
+    final localEvening = DateTime(2026, 10, 31, 18).toUtc().toIso8601String();
     expect(enMessages.keys.toSet(), zhMessages.keys.toSet());
     expect(
       translateLocale(const Locale('en', 'US'), 'encryptedFile'),
@@ -31,12 +32,9 @@ void main() {
       fileMetadataLabel('encrypted', 127, const Locale('en', 'US')),
       contains('127 B'),
     );
+    expect(formatTime(localEvening, const Locale('en', 'US')), contains('PM'));
     expect(
-      formatTime('2026-10-31T10:00:00Z', const Locale('en', 'US')),
-      contains('PM'),
-    );
-    expect(
-      formatTime('2026-10-31T10:00:00Z', const Locale('zh', 'CN')),
+      formatTime(localEvening, const Locale('zh', 'CN')),
       isNot(contains('PM')),
     );
   });
