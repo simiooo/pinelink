@@ -14,8 +14,9 @@ import (
 func TestP2PDirectRelayAndFallback(t *testing.T) {
 	sender := &harness{t: t, server: requiredEnv("PINELINK_TEST_SERVER"), cli: requiredEnv("PINELINK_TEST_CLI"),
 		scope: "p2p-" + uuid.NewString(), domain: "p2p-domain", owner: "p2p-sender", device: "p2p-sender-device", dedupSecret: "p2p-secret"}
+	sender.owner += "-" + sender.scope
 	receiver := *sender
-	receiver.owner, receiver.device = "p2p-receiver", "p2p-receiver-device"
+	receiver.owner, receiver.device = "p2p-receiver-"+sender.scope, "p2p-receiver-device"
 	directory := t.TempDir()
 	input := filepath.Join(directory, "input.bin")
 	data := make([]byte, 300_000)
