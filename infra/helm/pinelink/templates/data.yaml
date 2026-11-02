@@ -48,7 +48,7 @@ spec:
           readinessProbe: {exec: {command: [pg_isready, -U, pinelink, -d, pinelink]}, periodSeconds: 5}
           volumeMounts: [{name: data, mountPath: /var/lib/postgresql/data}, {name: tmp, mountPath: /tmp}, {name: socket, mountPath: /var/run/postgresql}, {name: common, mountPath: /etc/pinelink-config, readOnly: true}, {name: tls, mountPath: /etc/pinelink/tls, readOnly: true}]
 {{- else }}
-          args: [/nats-server, -c, /etc/pinelink/server.conf]
+          args: [nats-server, -c, /etc/pinelink/server.conf]
           readinessProbe: {httpGet: {path: /healthz, port: 8222}, periodSeconds: 5}
           volumeMounts: [{name: data, mountPath: /data}, {name: config, mountPath: /etc/pinelink, readOnly: true}, {name: tmp, mountPath: /tmp}, {name: common, mountPath: /etc/pinelink-config, readOnly: true}, {name: tls, mountPath: /etc/pinelink/tls, readOnly: true}]
 {{- end }}

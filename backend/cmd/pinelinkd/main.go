@@ -72,7 +72,8 @@ func run(logger log.Logger) error {
 		nats.Name("pinelinkd"),
 		nats.Timeout(3 * time.Second),
 		nats.RetryOnFailedConnect(true),
-		nats.MaxReconnects(30),
+		// The durable outbox must recover even after an extended broker outage.
+		nats.MaxReconnects(-1),
 		nats.ReconnectWait(time.Second),
 	}
 	if cfg.NATSCAFile != "" {

@@ -12,6 +12,8 @@ The central relay uses binary WebSocket frames, which Cloudflare can proxy. Nati
 
 Internal traffic also uses TLS, including when cluster nodes communicate across public networks. Namespace-scoped cert-manager issuers provide separate Web/API/PostgreSQL/NATS certificates. Clients verify the CA and service name. PostgreSQL rejects non-TLS TCP connections; NATS authenticates over TLS. Projected Secret rotation reloads Web/PostgreSQL/NATS, while the API loads its projected certificate on each TLS handshake. The connector verifies the internal Web certificate. Application pods do not receive CA private keys.
 
+The database-backed outbox survives broker outages, and its NATS connection keeps reconnecting until shutdown. The API health check covers the primary database; Helm also waits for PostgreSQL, NATS, Web and the connector individually. Use `nats-server` from the pinned Alpine image's PATH when wrapping its process for certificate reload.
+
 R2 buckets stay private. A bucket-scoped Object Read & Write credential is sufficient for the application; the Cloudflare administrative token stays with the operator. Set `PINELINK_S3_USE_SSL=true` and `PINELINK_S3_REGION=auto`. The application performs resource-aware expiry and garbage collection. Do not add a bucket-wide time-to-live that can delete an object still referenced by Keep or Restore grants.
 
 ## Runtime credentials
