@@ -380,29 +380,7 @@ func (s *Service) sealUpload(ctx context.Context, uploadID string) (CompleteResp
 }
 
 func (s *Service) readVerificationChunk(ctx context.Context, uploadID, operation string, c Chunk) ([]byte, error) {
-	if c.Size < 0 || c.Size > 64<<10 {
-		return nil, ErrInvalid
-	}
-	if err := s.renewUploadIO(ctx, operation, uploadID); err != nil {
-		return nil, err
-	}
-	read, cancel := context.WithTimeout(ctx, 30*time.Second)
-	defer cancel()
-	object, err := s.blobs.GetChunk(read, c.Key, 0, c.Size-1)
-	if err != nil {
-		return nil, err
-	}
-	data, err := io.ReadAll(io.LimitReader(object, c.Size+1))
-	closeErr := object.Close()
-	if err != nil {
-		return nil, err
-	}
-	if closeErr != nil {
-		return nil, closeErr
-	}
-	digest := sha256.Sum256(data)
-	if int64(len(data)) != c.Size || hex.EncodeToString(digest[:]) != c.Hash {
-		return nil, ErrChecksum
-	}
-	return data, nil
+	return s.readSmallChunk(ctx, c, func(check context.Context) error {
+		return s.renewUploadIO(check, operation, uploadID)
+	})
 }

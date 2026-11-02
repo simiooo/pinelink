@@ -2,13 +2,9 @@ package service
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"errors"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"io"
-	"time"
 )
 
 func (s *Service) OpenPullRead(ctx context.Context, pullID string) (Content, string, error) {
@@ -160,33 +156,22 @@ func (s *Service) readRelayChunk(ctx context.Context, uploadID string, index int
 		return nil, err
 	}
 	defer s.closeIO(ctx, lease, false)
-	read, cancel := context.WithTimeout(ctx, 30*time.Second)
-	defer cancel()
-	object, err := s.blobs.GetChunk(read, c.Key, 0, c.Size-1)
+	authorize := func(check context.Context) error {
+		final, current, err := s.beginUploadObject(check, uploadID, true)
+		if err != nil {
+			return err
+		}
+		defer final.Rollback(check)
+		if err = relayDownloadAccess(check, final, current); err != nil {
+			return err
+		}
+		return checkUploadIO(check, final, current, lease)
+	}
+	data, err := s.readSmallChunk(ctx, c, authorize)
 	if err != nil {
 		return nil, err
 	}
-	data, err := io.ReadAll(io.LimitReader(object, c.Size+1))
-	closeErr := object.Close()
-	if err != nil {
-		return nil, err
-	}
-	if closeErr != nil {
-		return nil, closeErr
-	}
-	digest := sha256.Sum256(data)
-	if int64(len(data)) != c.Size || hex.EncodeToString(digest[:]) != c.Hash {
-		return nil, ErrChecksum
-	}
-	final, current, err := s.beginUploadObject(ctx, uploadID, true)
-	if err != nil {
-		return nil, err
-	}
-	defer final.Rollback(ctx)
-	if err = relayDownloadAccess(ctx, final, current); err != nil {
-		return nil, err
-	}
-	if err = checkUploadIO(ctx, final, current, lease); err != nil {
+	if err = authorize(ctx); err != nil {
 		return nil, err
 	}
 	return data, nil
