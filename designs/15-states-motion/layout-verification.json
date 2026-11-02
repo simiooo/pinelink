@@ -1,0 +1,30 @@
+[
+  {
+    "width": 320,
+    "overflow": false,
+    "brandOffset": 0,
+    "reduced": true,
+    "pass": true
+  },
+  {
+    "width": 390,
+    "overflow": false,
+    "brandOffset": 0,
+    "reduced": true,
+    "pass": true
+  },
+  {
+    "width": 736,
+    "overflow": false,
+    "brandOffset": 276.6875,
+    "reduced": true,
+    "pass": true
+  },
+  {
+    "width": 1024,
+    "overflow": false,
+    "brandOffset": 420.6875,
+    "reduced": true,
+    "pass": true
+  }
+]

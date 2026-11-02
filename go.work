@@ -1,0 +1,10 @@
+go 1.26.0
+
+use (
+	./backend
+	./cli
+	./infra
+	./protocol
+)
+
+replace github.com/simiooo/pinelink/protocol v0.1.0-preview.1 => ./protocol

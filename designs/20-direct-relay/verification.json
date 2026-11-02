@@ -1,0 +1,291 @@
+{
+  "date": "2026-11-01",
+  "nativeFile": "../20-pinelink-direct-relay.fig",
+  "sha256": "C9C9A50086CF52A38EBE4C2E7687E84522EC31B4F93051B33ABFFEA508078145",
+  "status": "Design and architecture proposal only; backend/client implementation and staging deployment not performed",
+  "saveCloseReopen": true,
+  "pages": 20,
+  "topFrames": 141,
+  "components": 12,
+  "variables": 58,
+  "addedScreens": 12,
+  "addedContractBoards": 2,
+  "nativeActionChecks": [
+    {
+      "id": "989906431:19709",
+      "screen": 2,
+      "name": "Action-Cancel transfer",
+      "x": 420,
+      "y": 516,
+      "width": 174,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19711",
+      "screen": 2,
+      "name": "Action-Pause",
+      "x": 606,
+      "y": 516,
+      "width": 174,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19713",
+      "screen": 3,
+      "name": "Action-Cancel transfer",
+      "x": 16,
+      "y": 748,
+      "width": 173,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19715",
+      "screen": 3,
+      "name": "Action-Pause",
+      "x": 201,
+      "y": 748,
+      "width": 173,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19717",
+      "screen": 6,
+      "name": "Action-Cancel transfer",
+      "x": 420,
+      "y": 516,
+      "width": 174,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19719",
+      "screen": 6,
+      "name": "Action-Pause",
+      "x": 606,
+      "y": 516,
+      "width": 174,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19721",
+      "screen": 7,
+      "name": "Action-Cancel transfer",
+      "x": 16,
+      "y": 748,
+      "width": 173,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19723",
+      "screen": 7,
+      "name": "Action-Pause",
+      "x": 201,
+      "y": 748,
+      "width": 173,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19725",
+      "screen": 10,
+      "name": "Action-Close",
+      "x": 420,
+      "y": 516,
+      "width": 360,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19727",
+      "screen": 11,
+      "name": "Action-Close",
+      "x": 16,
+      "y": 748,
+      "width": 358,
+      "height": 48,
+      "ok": true
+    }
+  ],
+  "baselinePatches": {
+    "textReplacements": [
+      {
+        "text": "Relay / consent is independent from upload",
+        "replacement": "Cloud preupload / consent is independent"
+      },
+      {
+        "text": "Product states and motion / additive proposal, not an implemented backend contract",
+        "replacement": "Cloud phase only. Live relay keeps peer nodes; see the direct / relay pages."
+      },
+      {
+        "text": "Accept and receive",
+        "replacement": "Accept and receive from cloud"
+      },
+      {
+        "text": "An accepted recipient may receive available chunks before full seal.",
+        "replacement": "Cloud is a storage source. Live relay uses the peer graph."
+      }
+    ],
+    "frameRenames": [
+      {
+        "old": "Desktop / Recipient / accepted, receiving",
+        "new": "Desktop / Cloud phase / recipient receiving"
+      },
+      {
+        "old": "Mobile / Recipient / accepted, receiving",
+        "new": "Mobile / Cloud phase / recipient receiving"
+      },
+      {
+        "old": "Desktop / Recipient / received",
+        "new": "Desktop / Cloud phase / recipient received"
+      },
+      {
+        "old": "Mobile / Recipient / received",
+        "new": "Mobile / Cloud phase / recipient received"
+      }
+    ]
+  },
+  "accessibility": [
+    {
+      "page": "17 / Atomic lifecycle",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    },
+    {
+      "page": "18 / Direct and relay",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    },
+    {
+      "page": "19 / Route continuity",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    }
+  ],
+  "fonts": [
+    {
+      "page": "17 / Atomic lifecycle",
+      "faithful": true,
+      "issues": []
+    },
+    {
+      "page": "18 / Direct and relay",
+      "faithful": true,
+      "issues": []
+    },
+    {
+      "page": "19 / Route continuity",
+      "faithful": true,
+      "issues": []
+    }
+  ],
+  "nativeExports": [
+    {
+      "name": "Desktop / Direct / recipient progress",
+      "id": "0:6170",
+      "file": "18-desktop-direct-running-native.png",
+      "page": "18 / Direct and relay"
+    },
+    {
+      "name": "Mobile / Direct / recipient progress",
+      "id": "0:6191",
+      "file": "18-mobile-direct-running-native.png",
+      "page": "18 / Direct and relay"
+    },
+    {
+      "name": "Desktop / Direct / delivery details",
+      "id": "0:6217",
+      "file": "18-desktop-direct-details-native.png",
+      "page": "18 / Direct and relay"
+    },
+    {
+      "name": "Mobile / Direct / delivery details",
+      "id": "0:6267",
+      "file": "18-mobile-direct-details-native.png",
+      "page": "18 / Direct and relay"
+    },
+    {
+      "name": "Desktop / Relay live / recipient progress",
+      "id": "0:6331",
+      "file": "18-desktop-relay-running-native.png",
+      "page": "18 / Direct and relay"
+    },
+    {
+      "name": "Mobile / Relay live / recipient progress",
+      "id": "0:6352",
+      "file": "18-mobile-relay-running-native.png",
+      "page": "18 / Direct and relay"
+    },
+    {
+      "name": "Desktop / Relay live / independent cloud copy",
+      "id": "0:6378",
+      "file": "18-desktop-relay-details-native.png",
+      "page": "18 / Direct and relay"
+    },
+    {
+      "name": "Mobile / Relay live / independent cloud copy",
+      "id": "0:6428",
+      "file": "18-mobile-relay-details-native.png",
+      "page": "18 / Direct and relay"
+    },
+    {
+      "name": "Desktop / Direct to relay / preserve delivery progress",
+      "id": "0:6492",
+      "file": "18-desktop-switching-native.png",
+      "page": "18 / Direct and relay"
+    },
+    {
+      "name": "Mobile / Direct to relay / preserve delivery progress",
+      "id": "0:6516",
+      "file": "18-mobile-switching-native.png",
+      "page": "18 / Direct and relay"
+    },
+    {
+      "name": "Desktop / Delivered / cloud copy unavailable",
+      "id": "0:6545",
+      "file": "18-desktop-delivered-copy-unavailable-native.png",
+      "page": "18 / Direct and relay"
+    },
+    {
+      "name": "Mobile / Delivered / cloud copy unavailable",
+      "id": "0:6594",
+      "file": "18-mobile-delivered-copy-unavailable-native.png",
+      "page": "18 / Direct and relay"
+    },
+    {
+      "name": "Contract / route and cloud semantics",
+      "id": "0:7195",
+      "file": "19-route-semantics-native.png",
+      "page": "19 / Route continuity"
+    },
+    {
+      "name": "Contract / route handoff and completion",
+      "id": "0:7283",
+      "file": "19-route-continuity-native.png",
+      "page": "19 / Route continuity"
+    }
+  ],
+  "visualReview": [
+    "18-mobile-relay-details-native.png",
+    "contact-sheet.png",
+    "19-route-semantics-native.png",
+    "19-route-continuity-native.png"
+  ],
+  "originalV19HashUnchanged": "27383F7EEA7C9BC31763C24D87C888507C36D291A57CAFE0F962ACE713DFFAE1",
+  "scope": "Direct vs live relay vs actual cloud upload/pull; shared delivery checkpoint during route handoff; cloud storage and delivery outcomes independent",
+  "contract": "../../infra/docs/direct-relay-delivery.md"
+}

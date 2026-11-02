@@ -1,0 +1,235 @@
+<div id="pinelink-motion">
+  <div class="viz-controls">
+    <label class="form-label">动效
+      <select class="form-select" data-scenario aria-label="选择动效场景">
+        <option value="drop">拖拽 → 确认 → 发送</option><option value="entry">节点入场</option><option value="selection">选中 / 取消选中</option><option value="complete">传输 → 确认送达</option><option value="receive">接收确认</option><option value="pause">暂停 / 继续</option><option value="reconnect">连接中断 / 恢复</option><option value="failed">失败 / 重新尝试</option><option value="queued">排队 / 连接</option><option value="stored">云端保管</option><option value="rejected">请求被拒绝</option><option value="expired">请求过期</option><option value="cancelled">取消传输</option><option value="unavailable">文件不可用</option><option value="exit">节点离场</option><option value="panel">弹层入场 / 离场</option>
+      </select>
+    </label>
+    <button class="btn btn-primary" type="button" data-play>播放</button>
+    <button class="btn" type="button" draggable="true" data-sample aria-label="拖动或点选示例文件"><i data-lucide="file" aria-hidden="true"></i>示例文件</button>
+    <label class="form-check"><input class="form-check-input" type="checkbox" data-reduce><span class="form-check-label">减少动态</span></label>
+  </div>
+  <div class="pl-app" data-phase="idle" data-pose="default">
+    <header class="pl-header">
+      <span class="pl-brand">pinelink</span><span class="pl-context">Devices</span>
+      <button class="pl-icon pl-top cursor-interaction" type="button" aria-label="选择文件" data-tooltip="Choose files" data-pick><i data-lucide="plus" aria-hidden="true"></i></button>
+      <button class="pl-icon pl-top cursor-interaction" type="button" aria-label="更多" data-tooltip="More" data-more><i data-lucide="ellipsis" aria-hidden="true"></i></button>
+      <input type="file" multiple hidden data-file>
+    </header>
+    <div class="pl-graph" aria-label="设备节点图">
+      <svg class="pl-lines" aria-hidden="true"><path data-branch="0"></path><path data-branch="1"></path><path data-branch="2"></path><path data-branch="3"></path><path class="pl-track" data-track></path><path class="pl-segment" pathLength="200" data-segment></path></svg>
+      <button class="pl-node cursor-interaction" type="button" data-node="0" aria-label="MacBook Pro，在线，可发送文件"><span class="pl-halo"></span><span class="pl-disc"><i data-lucide="laptop" aria-hidden="true"></i></span><span class="pl-dot"></span><span class="pl-cue"><i data-lucide="plus" aria-hidden="true"></i></span><span class="pl-name">MacBook Pro</span><span class="pl-drop-label"></span></button>
+      <button class="pl-node cursor-interaction" type="button" data-node="1" aria-label="iPhone，正在连接" aria-disabled="true"><span class="pl-halo"></span><span class="pl-disc"><i data-lucide="smartphone" aria-hidden="true"></i></span><span class="pl-dot pl-wait"></span><span class="pl-cue"><i data-lucide="ban" aria-hidden="true"></i></span><span class="pl-name">iPhone</span><span class="pl-drop-label"></span></button>
+      <button class="pl-node cursor-interaction" type="button" data-node="2" aria-label="Cloud vault，可保存到云端"><span class="pl-halo"></span><span class="pl-disc"><i data-lucide="server" aria-hidden="true"></i></span><span class="pl-cloud"><i data-lucide="cloud" aria-hidden="true"></i></span><span class="pl-cue"><i data-lucide="plus" aria-hidden="true"></i></span><span class="pl-name">Cloud vault</span><span class="pl-drop-label"></span></button>
+      <button class="pl-node pl-offline cursor-interaction" type="button" data-node="3" aria-label="iPad，离线" aria-disabled="true"><span class="pl-halo"></span><span class="pl-disc"><i data-lucide="tablet" aria-hidden="true"></i></span><span class="pl-dot"></span><span class="pl-cue"><i data-lucide="ban" aria-hidden="true"></i></span><span class="pl-name">iPad</span><span class="pl-drop-label"></span></button>
+      <button class="pl-node pl-own cursor-interaction" type="button" data-node="own" aria-label="本机，不能向自己发送"><span class="pl-halo"></span><span class="pl-disc"><i data-lucide="laptop" aria-hidden="true"></i></span><span class="pl-dot"></span><span class="pl-cue"><i data-lucide="ban" aria-hidden="true"></i></span><span class="pl-name">This device</span><span class="pl-drop-label"></span></button>
+      <div class="pl-orbit" hidden>
+        <button type="button" class="pl-round pl-send cursor-interaction" aria-label="发送文件" data-tooltip="Send files" data-orbit-send><i data-lucide="arrow-up-from-line" aria-hidden="true"></i></button>
+        <button type="button" class="pl-round pl-folder cursor-interaction" aria-label="打开文件夹" data-tooltip="Open folder" data-folder><i data-lucide="folder" aria-hidden="true"></i></button>
+        <button type="button" class="pl-round pl-orbit-more cursor-interaction" aria-label="设备更多操作" data-tooltip="More" data-orbit-more><i data-lucide="ellipsis" aria-hidden="true"></i></button>
+      </div>
+      <div class="pl-hint" hidden></div>
+      <div class="pl-ghost" hidden><i data-lucide="mouse-pointer-2" aria-hidden="true"></i><span><i data-lucide="file" aria-hidden="true"></i>Design source.fig</span></div>
+    </div>
+    <div class="pl-shade" hidden></div>
+    <section class="pl-sheet" role="dialog" aria-modal="true" aria-labelledby="pl-dialog-title" hidden>
+      <div class="pl-handle" aria-hidden="true"></div><div class="pl-sheet-icon" aria-hidden="true"><i data-lucide="arrow-up-from-line"></i></div>
+      <h2 id="pl-dialog-title">Ready to send</h2><p class="pl-sheet-note">To MacBook Pro</p>
+      <div class="pl-file-row"><i data-lucide="file" aria-hidden="true"></i><span><strong data-filename>Design source.fig</strong><small data-filecount>and 2 more files</small></span></div>
+      <div class="pl-actions"><button class="cursor-interaction" type="button" data-secondary>Cancel</button><button class="pl-primary cursor-interaction" type="button" data-primary>Send</button></div>
+    </section>
+  </div>
+  <p class="text-small" data-status role="status" aria-live="polite">拖动“示例文件”到节点或附近；也可点选文件，再用键盘选择设备。仅演示动效。</p>
+</div>
+<style>
+#pinelink-motion{display:flex;flex-direction:column;gap:16px}
+#pinelink-motion .pl-app{--pl-blue:#0866ff;--pl-ink:#101010;--pl-gray:#6e6e6e;--pl-fill:#f5f5f5;--pl-line:#ebebeb;--pl-soft:#eef5ff;--pl-ease:cubic-bezier(.16,1,.3,1);position:relative;background:#fff;color:var(--pl-ink);font:15px/20px "Segoe UI",system-ui,sans-serif;isolation:isolate;overflow:hidden}
+#pinelink-motion .pl-app *{box-sizing:border-box}
+#pinelink-motion .pl-header{height:80px;display:flex;align-items:center;gap:8px;padding:16px 24px 16px 32px}
+#pinelink-motion .pl-brand{font-size:24px;line-height:32px;font-weight:600;margin-right:auto}
+#pinelink-motion .pl-context{position:absolute;left:50%;transform:translateX(-50%);font-weight:600}
+#pinelink-motion .pl-icon{border:0;background:transparent;color:inherit;width:48px;height:48px;display:grid;place-items:center;border-radius:50%}
+#pinelink-motion .pl-icon:hover{background:var(--pl-fill)}
+#pinelink-motion .pl-icon svg{--icon-size:24px;width:24px;height:24px;stroke-width:1.8}
+#pinelink-motion .pl-graph{position:relative;width:100%;max-width:800px;height:560px;margin:0 auto}
+#pinelink-motion .pl-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+#pinelink-motion .pl-lines path{fill:none;stroke:var(--pl-line);stroke-width:1.5;stroke-linecap:round}
+#pinelink-motion .pl-node{--size:64px;position:absolute;width:160px;padding:0;left:50%;top:96px;transform:translate(-50%,calc(var(--size) / -2));background:none;border:0;color:inherit;font:inherit;text-align:center;transition:left 180ms var(--pl-ease),top 180ms var(--pl-ease),opacity 140ms,transform 180ms var(--pl-ease);z-index:1}
+#pinelink-motion .pl-disc{display:grid;place-items:center;position:relative;z-index:1;width:var(--size);height:var(--size);margin:0 auto;background:var(--pl-fill);border:2px solid transparent;border-radius:50%;transition:width 180ms var(--pl-ease),height 180ms var(--pl-ease),transform 120ms var(--pl-ease),border-color 120ms,background 120ms}
+#pinelink-motion .pl-disc svg{--icon-size:calc(var(--size) / 2);width:calc(var(--size) / 2);height:calc(var(--size) / 2);stroke-width:1.7}
+#pinelink-motion .pl-disc *,#pinelink-motion .pl-cue *,#pinelink-motion .pl-name,#pinelink-motion .pl-dot,#pinelink-motion .pl-cloud,#pinelink-motion .pl-drop-label{pointer-events:none}
+#pinelink-motion .pl-name{position:relative;z-index:2;display:inline-block;margin-top:12px;padding:0 8px;background:#fff;color:var(--pl-gray);white-space:nowrap}
+#pinelink-motion .pl-dot{position:absolute;z-index:3;top:calc(var(--size) - 16px);left:calc(50% + var(--size) / 2 - 16px);width:14px;height:14px;background:var(--pl-ink);border:3px solid #fff;border-radius:50%}
+#pinelink-motion .pl-wait{background:#fff;box-shadow:inset 0 0 0 1.5px var(--pl-gray)}
+#pinelink-motion .pl-cloud{position:absolute;z-index:3;left:calc(50% + 17px);top:calc(var(--size) - 17px);width:18px;height:18px;background:#fff;border-radius:50%;color:var(--pl-gray)}
+#pinelink-motion .pl-cloud svg{--icon-size:16px;width:16px;height:16px}
+#pinelink-motion .pl-offline{opacity:.42}
+#pinelink-motion [data-node="0"]{left:calc(50% - 288px);top:160px}
+#pinelink-motion [data-node="1"]{left:calc(50% - 104px)}
+#pinelink-motion [data-node="2"]{left:calc(50% + 104px)}
+#pinelink-motion [data-node="3"]{left:calc(50% + 288px);top:160px}
+#pinelink-motion .pl-own{--size:96px;top:448px}
+#pinelink-motion .pl-own .pl-name{color:var(--pl-ink);font-weight:600}
+#pinelink-motion .pl-app[data-pose="selected"] .pl-node{opacity:.13}
+#pinelink-motion .pl-app[data-pose="selected"] [data-node="0"]{--size:96px;left:50%;top:208px;opacity:1}
+#pinelink-motion .pl-app[data-pose="selected"] [data-node="0"] .pl-disc{background:#fff;border-color:var(--pl-blue)}
+#pinelink-motion .pl-app[data-pose="selected"] [data-node="0"] .pl-name{color:var(--pl-ink);font-weight:600}
+#pinelink-motion .pl-orbit{position:absolute;left:50%;top:208px;z-index:2}
+#pinelink-motion .pl-round{position:absolute;width:48px;height:48px;border:0;border-radius:50%;display:grid;place-items:center;background:var(--pl-fill);color:inherit}
+#pinelink-motion .pl-round svg{--icon-size:24px;width:24px;height:24px;stroke-width:1.8}
+#pinelink-motion .pl-send{left:-136px;top:-24px;background:var(--pl-blue);color:#fff}
+#pinelink-motion .pl-folder{left:-24px;top:-136px}
+#pinelink-motion .pl-orbit-more{left:88px;top:-24px}
+#pinelink-motion .pl-track,#pinelink-motion .pl-segment{display:none}
+#pinelink-motion .pl-app[data-pose="transfer"] .pl-lines [data-branch]{opacity:0}
+#pinelink-motion .pl-app[data-pose="transfer"] .pl-node:not([data-node="0"]):not(.pl-own){opacity:0;pointer-events:none}
+#pinelink-motion .pl-app[data-pose="transfer"] [data-node="0"]{--size:64px;left:62%;top:96px;opacity:1}
+#pinelink-motion .pl-app[data-pose="transfer"] .pl-own{left:38%;top:448px}
+#pinelink-motion .pl-app[data-pose="transfer"] .pl-track{display:block;stroke-width:3}
+#pinelink-motion .pl-app[data-pose="transfer"] .pl-segment{display:block;stroke:var(--pl-blue);stroke-width:4;stroke-dasharray:24 176;animation:pl-flow 1800ms linear infinite;animation-play-state:paused;opacity:0}
+#pinelink-motion .pl-app[data-phase="running"] .pl-segment{animation-play-state:running;opacity:1}
+#pinelink-motion .pl-app[data-phase="verifying"] .pl-segment{opacity:1}
+#pinelink-motion .pl-app[data-phase="waiting"] .pl-track,#pinelink-motion .pl-app[data-phase="connecting"] .pl-track,#pinelink-motion .pl-app[data-phase="queued"] .pl-track{stroke-dasharray:4 8}
+#pinelink-motion .pl-app[data-phase="delivered"] .pl-track{opacity:0;transition:opacity 180ms}
+#pinelink-motion .pl-app[data-phase="delivered"]:not([data-direction="receive"]) [data-node="0"] .pl-cue,#pinelink-motion .pl-app[data-phase="delivered"][data-direction="receive"] .pl-own .pl-cue{opacity:1;background:var(--pl-ink);transform:scale(1)}
+#pinelink-motion .pl-app[data-direction="receive"] .pl-segment{animation-direction:reverse}
+#pinelink-motion .pl-app[data-pose="transfer"] .pl-dot{opacity:0}
+#pinelink-motion .pl-app[data-phase="running"] .pl-top{visibility:hidden}
+#pinelink-motion .pl-halo{position:absolute;z-index:0;left:50%;top:calc(var(--size) / 2);width:112px;height:112px;transform:translate(-50%,-50%);background:var(--pl-soft);border:1.5px dashed var(--pl-blue);border-radius:50%;opacity:0;pointer-events:none;transition:opacity 120ms}
+#pinelink-motion .pl-cue{position:absolute;z-index:4;left:calc(50% + 14px);top:calc(var(--size) / 2 + 14px);width:24px;height:24px;border:3px solid #fff;border-radius:50%;background:var(--pl-blue);color:#fff;display:grid;place-items:center;opacity:0;transform:scale(.8);transition:opacity 120ms,transform 120ms var(--pl-ease)}
+#pinelink-motion .pl-cue svg{--icon-size:14px;width:14px;height:14px;stroke-width:2}
+#pinelink-motion .pl-drop-label{position:relative;display:block;top:8px;color:var(--pl-blue);white-space:nowrap;font-weight:600;min-height:20px;opacity:0}
+#pinelink-motion .pl-app.pl-drag .pl-node{transition:opacity 120ms;opacity:.28}
+#pinelink-motion .pl-app.pl-drag .pl-node.pl-target{opacity:1}
+#pinelink-motion .pl-target .pl-halo,#pinelink-motion .pl-target .pl-cue,#pinelink-motion .pl-target .pl-drop-label{opacity:1;transform:scale(1)}
+#pinelink-motion .pl-target .pl-halo{transform:translate(-50%,-50%)}
+#pinelink-motion .pl-target .pl-disc{transform:scale(1.125)}
+#pinelink-motion .pl-target .pl-dot,#pinelink-motion .pl-target .pl-cloud{opacity:0}
+#pinelink-motion .pl-invalid .pl-halo{background:var(--pl-fill);border-color:#dbdbdb}
+#pinelink-motion .pl-invalid .pl-cue{background:#fff;color:var(--pl-ink)}
+#pinelink-motion .pl-invalid .pl-drop-label{color:var(--pl-ink)}
+#pinelink-motion .pl-invalid .pl-disc{transform:none}
+#pinelink-motion .pl-hint{position:absolute;z-index:4;left:50%;top:288px;transform:translateX(-50%);padding:10px 16px;background:var(--pl-fill);border-radius:20px;white-space:nowrap;max-width:calc(100% - 40px);text-overflow:ellipsis;overflow:hidden}
+#pinelink-motion .pl-drag .pl-hint{top:8px}
+#pinelink-motion .pl-ghost{position:absolute;z-index:5;display:flex;align-items:center;gap:4px;pointer-events:none;font-size:13px;line-height:18px}
+#pinelink-motion .pl-ghost>svg{--icon-size:24px;width:24px;height:24px}
+#pinelink-motion .pl-ghost>span{display:flex;align-items:center;gap:8px;background:#fff;padding:12px 16px;border:1px solid var(--pl-line);border-radius:16px}
+#pinelink-motion .pl-ghost>span svg{--icon-size:24px;width:24px;height:24px}
+#pinelink-motion .pl-shade{position:absolute;inset:0;z-index:7;background:rgb(16 16 16 / .06)}
+#pinelink-motion .pl-sheet{position:absolute;z-index:8;left:50%;top:50%;transform:translate(-50%,-50%);width:400px;max-width:calc(100% - 40px);padding:24px;background:#fff;border-radius:24px;box-shadow:0 4px 24px rgb(16 16 16 / .04)}
+#pinelink-motion .pl-sheet h2{font:600 20px/28px "Segoe UI",system-ui,sans-serif;color:var(--pl-ink);margin:0 0 8px;padding-left:40px}
+#pinelink-motion .pl-sheet-note{margin:0 0 24px;padding-left:40px;color:var(--pl-gray);font-size:15px;line-height:20px}
+#pinelink-motion .pl-sheet-icon{position:absolute;left:24px;top:26px;width:24px;height:24px}
+#pinelink-motion .pl-sheet-icon svg{--icon-size:24px;width:24px;height:24px;stroke-width:1.8}
+#pinelink-motion .pl-handle{display:none}
+#pinelink-motion .pl-file-row{display:flex;align-items:center;gap:16px;background:var(--pl-fill);padding:16px 12px;border-radius:20px;margin-bottom:32px}
+#pinelink-motion .pl-file-row>svg{--icon-size:40px;flex-shrink:0;width:40px;height:40px;color:#808080;stroke-width:1.5}
+#pinelink-motion .pl-file-row>span{min-width:0;display:flex;flex-direction:column;gap:8px}
+#pinelink-motion .pl-file-row strong{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pinelink-motion .pl-file-row small{color:var(--pl-gray);font-size:13px;line-height:18px}
+#pinelink-motion .pl-actions{display:flex;gap:12px;margin-top:24px}
+#pinelink-motion .pl-actions button{width:50%;min-height:48px;padding:12px 8px;border:0;border-radius:24px;background:var(--pl-fill);color:var(--pl-ink);font:600 15px/20px "Segoe UI",system-ui,sans-serif}
+#pinelink-motion .pl-actions .pl-primary{background:var(--pl-blue);color:#fff}
+#pinelink-motion .pl-sheet.pl-message h2,#pinelink-motion .pl-sheet.pl-message .pl-sheet-note{padding-left:0}
+#pinelink-motion .pl-sheet.pl-message h2{margin-top:44px}
+#pinelink-motion .pl-sheet.pl-message .pl-file-row{display:none}
+#pinelink-motion .pl-app [hidden]{display:none!important}
+#pinelink-motion .pl-reduced *,#pinelink-motion .pl-reduced *::before{transition-duration:0ms!important}
+#pinelink-motion .pl-reduced .pl-segment{animation:none!important;stroke-dashoffset:-88}
+@keyframes pl-flow{to{stroke-dashoffset:-200}}
+@media(max-width:680px){
+ #pinelink-motion .pl-header{height:72px;padding:12px 20px}#pinelink-motion .pl-context{display:none}
+ #pinelink-motion .pl-brand{font-size:24px;line-height:32px}
+ #pinelink-motion .pl-brand{position:absolute;left:50%;transform:translateX(-50%);margin:0}
+ #pinelink-motion .pl-header [data-pick]{position:absolute;left:12px;top:12px}
+ #pinelink-motion .pl-header [data-more]{margin-left:auto}
+ #pinelink-motion .pl-graph{height:640px}
+ #pinelink-motion [data-node="0"]{left:calc(50% - 88px);top:120px}
+ #pinelink-motion [data-node="1"]{left:calc(50% + 88px);top:120px}
+ #pinelink-motion [data-node="2"]{left:calc(50% - 88px);top:264px}
+ #pinelink-motion [data-node="3"]{left:calc(50% + 88px);top:264px}
+ #pinelink-motion .pl-node{--size:56px}#pinelink-motion .pl-node.pl-own{--size:80px;top:528px}
+ #pinelink-motion .pl-app[data-pose="selected"] [data-node="0"]{--size:80px;top:264px}
+ #pinelink-motion .pl-orbit{top:264px}
+ #pinelink-motion .pl-app[data-pose="transfer"] [data-node="0"]{--size:56px;left:50%;top:144px}
+ #pinelink-motion .pl-app[data-pose="transfer"] .pl-own{left:50%;top:528px}
+ #pinelink-motion .pl-sheet{top:auto;bottom:0;left:0;transform:none;width:100%;max-width:none;border-radius:28px 28px 0 0;padding:40px 20px 48px}
+ #pinelink-motion .pl-sheet-icon{left:20px;top:42px}
+ #pinelink-motion .pl-handle{display:block;position:absolute;top:12px;left:calc(50% - 16px);width:32px;height:4px;background:#dbdbdb;border-radius:2px}
+}
+@media(prefers-reduced-motion:reduce){#pinelink-motion .pl-app *{transition-duration:0ms!important}#pinelink-motion .pl-segment{animation:none!important;stroke-dashoffset:-88}}
+</style>
+<script>
+(() => {
+ const root=document.getElementById('pinelink-motion');
+ const $=s=>root.querySelector(s),$$=s=>Array.from(root.querySelectorAll(s));
+ const app=$('.pl-app'),graph=$('.pl-graph'),nodes=$$('[data-node]'),sheet=$('.pl-sheet'),shade=$('.pl-shade'),scenario=$('[data-scenario]'),reduce=$('[data-reduce]'),hint=$('.pl-hint'),ghost=$('.pl-ghost'),orbit=$('.pl-orbit');
+ const media=matchMedia('(prefers-reduced-motion: reduce)');
+ let generation=0,timers=[],chosen='drop',activeTarget=null,dragging=false,dragDepth=0,files=['Design source.fig','Photos','Product demo.mp4'],sheetKind='',cancelReturnPhase='running',lastFocus=null,samplePicked=false,frameDeadline=0,raf=0,animations=[];
+ const fixture=['Design source.fig','Photos','Product demo.mp4'];
+ const saved=window.openai?.widgetState?.privateContent;if(saved?.scenario&&Array.from(scenario.options).some(o=>o.value===saved.scenario)){scenario.value=saved.scenario;chosen=saved.scenario;}
+ reduce.checked=media.matches||!!saved?.reduced;
+ const reduced=()=>media.matches||reduce.checked;
+ const icons=()=>{if(globalThis.lucide?.createIcons){$$('svg[data-lucide]').forEach(n=>n.removeAttribute('data-lucide'));lucide.createIcons({attrs:{'stroke-width':1.8}});$$('svg[data-lucide]').forEach(n=>n.removeAttribute('data-lucide'));}};
+ const say=s=>{$('[data-status]').textContent=s;};
+ const persist=()=>{if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{scenario:chosen,reduced:reduced()},privateContent:{scenario:chosen,reduced:reduce.checked}}).catch(()=>{});};
+ const cue=(node,name)=>{node.querySelector('.pl-cue').innerHTML='<i data-lucide="'+name+'" aria-hidden="true"></i>';icons();};
+ function later(fn,ms){const g=generation;const id=setTimeout(()=>{if(g===generation)fn();},ms);timers.push(id);return id;}
+ function animate(el,keyframes,options={}){const opts={duration:reduced()?120:180,easing:'cubic-bezier(.16,1,.3,1)',...options};if(reduced()){keyframes=keyframes.map(k=>({opacity:k.opacity??1}));opts.duration=120;opts.delay=0;}const a=el.animate(keyframes,opts);animations.push(a);return a;}
+ function clearWork(){generation++;timers.forEach(clearTimeout);timers=[];animations.forEach(a=>a.cancel());animations=[];cancelAnimationFrame(raf);raf=0;}
+ function draw(){const gr=graph.getBoundingClientRect(),coords=nodes.map(n=>{const r=n.querySelector('.pl-disc').getBoundingClientRect();return{x:r.x-gr.x+r.width/2,y:r.y-gr.y+r.height/2,r:r.height/2};}),own=coords[4],target=coords[0];
+  $$('[data-branch]').forEach((p,i)=>{const n=coords[i],sx=own.x,sy=own.y-own.r;let c1x=sx,c2x=n.x;if(gr.width<680&&i<2){const side=i===0?-1:1;c1x=sx+side*176;c2x=n.x+side*88;}p.setAttribute('d',`M${sx} ${sy} C${c1x} ${sy-96} ${c2x} ${n.y+160} ${n.x} ${n.y+n.r}`);});
+  const d=`M${own.x} ${own.y-own.r} C${own.x-104} ${own.y-184} ${target.x+104} ${target.y+176} ${target.x} ${target.y+target.r}`;$('[data-track]').setAttribute('d',d);$('[data-segment]').setAttribute('d',d);
+ }
+ function follow(){draw();if(performance.now()<frameDeadline)raf=requestAnimationFrame(follow);else raf=0;}
+ function redrawMotion(ms=260){frameDeadline=performance.now()+(reduced()?0:ms);if(!raf)follow();}
+ function phase(name,pose='transfer'){app.dataset.phase=name;app.dataset.pose=pose;orbit.hidden=true;redrawMotion();}
+ function showHint(copy){hint.textContent=copy;hint.hidden=!copy;}
+ function clearTargets(){nodes.forEach(n=>{n.classList.remove('pl-target','pl-invalid');n.querySelector('.pl-drop-label').textContent='';});activeTarget=null;}
+ function endDrag(){dragging=false;dragDepth=0;app.classList.remove('pl-drag');clearTargets();ghost.hidden=true;showHint('');}
+ function idle(){phase('idle','default');showHint('');nodes.forEach(n=>{n.style.opacity='';n.style.visibility='';});cue(nodes[0],'plus');}
+ function reset(){clearWork();endDrag();sheet.hidden=true;shade.hidden=true;graph.inert=false;$$('.pl-top').forEach(n=>n.inert=false);app.dataset.direction='send';nodes[0].querySelector('.pl-disc').innerHTML='<i data-lucide="laptop" aria-hidden="true"></i>';nodes[0].querySelector('.pl-name').textContent='MacBook Pro';cue(nodes[4],'ban');idle();sheetKind='';samplePicked=false;app.classList.toggle('pl-reduced',reduced());icons();}
+ function setTarget(n){if(activeTarget===n)return;clearTargets();activeTarget=n;if(!n)return;const id=n.dataset.node,valid=id==='0'||id==='2';n.classList.add('pl-target');n.classList.toggle('pl-invalid',!valid);n.querySelector('.pl-drop-label').textContent=valid?'Drop to store':id==='own'?'Choose another device':id==='1'?'Device is connecting':'Device is offline';if(id==='0')n.querySelector('.pl-drop-label').textContent='Drop to send';}
+ function beginDrag(){if(dragging)return;sheet.hidden=true;shade.hidden=true;graph.inert=false;clearWork();idle();dragging=true;app.classList.add('pl-drag');showHint('Drop on a device');say('靠近节点即可放置；离线设备和本机不会成为发送目标。');}
+ function nearest(x,y){const available=nodes.map(n=>{const r=n.querySelector('.pl-disc').getBoundingClientRect(),base=parseFloat(getComputedStyle(n).getPropertyValue('--size'))/2;return{n,d:Math.hypot(x-r.x-r.width/2,y-r.y-r.height/2),radius:base+24};});const current=available.find(v=>v.n===activeTarget);if(current&&current.d<=current.radius+8)return current.n;return available.filter(v=>v.d<=v.radius).sort((a,b)=>a.d-b.d)[0]?.n||null;}
+ const titles={prepared:['Ready to send','To MacBook Pro','Cancel','Send','arrow-up-from-line'],async:['Save for later?','MacBook Pro is offline.','Cancel','Store in cloud','cloud'],receive:['Receive files?','From MacBook Pro','Decline','Accept','download'],task:['Transfer options','To MacBook Pro','Cancel transfer','Pause','pause'],pending:['Request pending','To MacBook Pro','Keep waiting','Cancel request','history'],paused:['Transfer paused','Resume from where you left off.','Cancel transfer','Resume','pause'],reconnect:['Connection lost','Trying to reconnect.','Cancel transfer','Reconnect','wifi'],failed:['Couldn\u2019t send files','Check your connection and try again.','Close','Try again','triangle-alert'],rejected:['Request declined','MacBook Pro declined this request.','Close','Choose device','ban'],expired:['Request expired','Send a new request when you\u2019re ready.','Close','Send again','history'],unavailable:['File unavailable','Choose the file again to continue.','Close','Choose files','file-x'],cancel:['Cancel transfer?','The current transfer will stop.','Keep transfer','Cancel transfer','circle-x']};
+ async function closeSheet(){if(sheet.hidden)return true;const g=generation;const mobile=app.getBoundingClientRect().width<680;const a=animate(sheet,[{opacity:1,translate:'0 0',scale:1},{opacity:0,translate:mobile?'0 24px':'0 4px',scale:mobile?1:.985}],{duration:reduced()?120:mobile?180:120,easing:'cubic-bezier(.4,0,1,1)'});animate(shade,[{opacity:1},{opacity:0}],{duration:120});await a.finished.catch(()=>{});if(g!==generation)return false;sheet.hidden=true;shade.hidden=true;graph.inert=false;$$('.pl-top').forEach(n=>n.inert=false);if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true});return true;}
+ function openSheet(kind){endDrag();if(kind==='cancel')cancelReturnPhase=app.dataset.phase;const v=titles[kind];sheetKind=kind;lastFocus=document.activeElement;const fileKind=['prepared','async','receive'].includes(kind);sheet.classList.toggle('pl-message',!fileKind);$('#pl-dialog-title').textContent=v[0];$('.pl-sheet-note').textContent=v[1];$('[data-secondary]').textContent=v[2];$('[data-primary]').textContent=v[3];$('.pl-sheet-icon').innerHTML='<i data-lucide="'+v[4]+'" aria-hidden="true"></i>';$('[data-filename]').textContent=files[0]||'Design source.fig';$('[data-filecount]').textContent=files.length>1?'and '+(files.length-1)+' more files':'1 file';sheet.hidden=false;shade.hidden=false;graph.inert=true;$$('.pl-top').forEach(n=>n.inert=true);icons();const mobile=app.getBoundingClientRect().width<680;animate(sheet,[{opacity:0,translate:mobile?'0 24px':'0 8px',scale:mobile?1:.98},{opacity:1,translate:'0 0',scale:1}],{duration:reduced()?120:mobile?240:180});animate(shade,[{opacity:0},{opacity:1}],{duration:160});$('[data-secondary]').focus({preventScroll:true});}
+ function runTransfer(){phase('running');showHint('');say('传输活动：只保留两个节点和曲线，活动段不代表真实完成百分比。');}
+ function complete(){phase('verifying');showHint('Confirming delivery');say('字节传完后等待接收回执，仍不能提前显示成功。');later(()=>{phase('delivered');const receiver=app.dataset.direction==='receive'?nodes[4]:nodes[0],copy=app.dataset.direction==='receive'?'Received':'Delivered';cue(receiver,'check');showHint(copy);say('已收到有效送达回执，成功标记显示在接收设备上。');animate(receiver.querySelector('.pl-cue'),[{opacity:0,scale:.85},{opacity:1,scale:1}],{duration:140});later(()=>{idle();showHint(copy);later(()=>showHint(''),1200);},1800);},1500);}
+ function autoSend(){phase('waiting');showHint('Waiting for MacBook Pro');say('请求等待接受，尚未开始传输。');later(()=>{phase('connecting');showHint('Connecting');},1200);later(()=>runTransfer(),2200);later(complete,4800);}
+ function dragDropDemo(){beginDrag();ghost.hidden=false;const gr=graph.getBoundingClientRect(),d=nodes[0].querySelector('.pl-disc').getBoundingClientRect(),x=d.x-gr.x+d.width/2,y=d.y-gr.y+d.height/2;ghost.style.left=(x+18)+'px';ghost.style.top=(y+10)+'px';animate(ghost,[{translate:'160px 100px',opacity:0},{translate:'40px 20px',opacity:1},{translate:'0 0',opacity:1}],{duration:reduced()?120:1000});later(()=>{setTarget(nodes[0]);say('光圈扩大命中范围：节点半径以外还有 24px；退出多留 8px，防止闪烁。');},700);later(()=>{animate(ghost,[{opacity:1,scale:1},{opacity:0,scale:.88}],{duration:140});},1800);later(()=>{files=[...fixture];endDrag();openSheet('prepared');say('放下只暂存文件；点击 Send 后才进入请求与传输流程。');},1960);}
+ function play(){chosen=scenario.value;reset();files=[...fixture];persist();const key=chosen;
+  if(key==='entry'){nodes.forEach((n,i)=>animate(n,[{opacity:0,translate:'0 8px',scale:.96},{opacity:parseFloat(getComputedStyle(n).opacity),translate:'0 0',scale:1}],{duration:200,delay:Math.min(i*40,120)}));say('节点入场：图标与标签一起进入，200ms，最多 120ms 短错峰，不弹跳。');}
+  else if(key==='selection'){phase('idle','selected');orbit.hidden=false;animate(orbit,[{opacity:0,scale:.9},{opacity:1,scale:1}],{duration:180});say('选中：64 → 96px，其余节点退到 0.13；退出后恢复原位置。');later(()=>{idle();say('取消选中：180ms 恢复设备图，并保留原设备位置。');},2400);}
+  else if(key==='drop')dragDropDemo();
+  else if(key==='complete'){runTransfer();later(complete,2400);}
+  else if(key==='receive'){openSheet('receive');say('接收确认独立进入；先聚焦 Decline，防止误按回车接受。');}
+  else if(key==='pause'||key==='reconnect'){runTransfer();later(()=>{phase(key==='pause'?'paused':'reconnect');openSheet(key==='pause'?'paused':'reconnect');say(key==='pause'?'暂停：停止活动段，继续后沿同一条曲线恢复。':'连接中断：停止活动提示，保留任务上下文，再进行恢复。');},1700);}
+  else if(key==='queued'){phase('queued');showHint('Queued');say('排队时不播放活动段，真正开始传输才进入 RUNNING。');later(()=>{phase('connecting');showHint('Connecting');},1600);later(runTransfer,3000);}
+  else if(key==='stored'){nodes[0].querySelector('.pl-disc').innerHTML='<i data-lucide="server" aria-hidden="true"></i>';nodes[0].querySelector('.pl-name').textContent='Cloud vault';icons();phase('running');later(()=>{phase('stored');showHint('Stored in cloud');say('云端保管：上传完成只表示已保存，不能表示对方收到。');},1900);}
+  else if(key==='exit'){animate(nodes[0],[{opacity:1,translate:'0 0',scale:1},{opacity:0,translate:'0 -4px',scale:.96}],{duration:160,fill:'forwards'});say('节点退出：160ms；拖拽期间冻结节点位置，结束后再处理重排。');}
+  else if(key==='panel'){openSheet('prepared');say('弹层入场与离场独立处理；手机从底部进入，桌面只移动 8px。');later(async()=>{if(await closeSheet())idle();},2000);}
+  else if(key==='cancelled'){runTransfer();later(()=>openSheet('cancel'),1000);}
+  else{phase(key);openSheet(key);say(key==='failed'?'失败后 Try again 会创建新的尝试，不把失败任务伪装成可继续的暂停任务。':'终态只提供适合当前状态的下一步，关闭后回到设备图。');}
+ }
+ $('[data-play]').addEventListener('click',play);scenario.addEventListener('change',()=>{chosen=scenario.value;reset();persist();say('已选择场景，点击播放查看过渡。');});
+ reduce.addEventListener('change',()=>{app.classList.toggle('pl-reduced',reduced());persist();animations.forEach(a=>a.finish());redrawMotion(0);say(reduced()?'减少动态已开启：保留状态变化，取消位移、缩放和循环。':'恢复标准动效。');});media.addEventListener('change',()=>{app.classList.toggle('pl-reduced',reduced());redrawMotion(0);});
+ $('[data-secondary]').addEventListener('click',async()=>{const kind=sheetKind;if(['task','paused','reconnect'].includes(kind)){openSheet('cancel');return;}if(kind==='cancel'){if(!await closeSheet())return;if(cancelReturnPhase==='running')runTransfer();else{phase(cancelReturnPhase);openSheet(cancelReturnPhase==='paused'?'paused':'reconnect');}return;}if(kind==='pending'){await closeSheet();return;}if(kind==='receive'){if(!await closeSheet())return;idle();showHint('Request declined');say('已拒绝演示请求，未进入传输。');return;}if(!await closeSheet())return;idle();say('已关闭，未发送文件。');});
+ $('[data-primary]').addEventListener('click',async()=>{const kind=sheetKind;if(!await closeSheet())return;if(kind==='task'&&app.dataset.phase!=='running'){say('状态已更新，暂停操作没有覆盖新的状态。');return;}clearWork();if(kind==='task'){phase('paused');openSheet('paused');say('演示服务已确认暂停；活动段停止。');return;}if(['prepared','expired','failed'].includes(kind)){app.dataset.direction='send';autoSend();return;}if(kind==='receive'){app.dataset.direction='receive';phase('connecting');showHint('Connecting');later(runTransfer,900);later(complete,3400);return;}if(['paused','reconnect'].includes(kind)){runTransfer();later(complete,2200);return;}if(kind==='async'){phase('stored','default');showHint('Stored in cloud');say('文件保存在云端，不显示已送达。');return;}if(kind==='cancel'||kind==='pending'){idle();showHint('Cancelled');say('取消经确认后生效，活动曲线退出。');return;}if(kind==='unavailable'){$('[data-file]').click();idle();return;}idle();samplePicked=true;say('选择另一个在线设备，或重新选择文件。');});
+ function selectedFiles(names){reset();files=names.length?names:[...fixture];samplePicked=true;showHint('Choose a device');nodes[0].focus({preventScroll:true});say('文件已暂存。选择目标后确认发送；Esc 可取消。');}
+ $('[data-sample]').addEventListener('click',()=>selectedFiles([...fixture]));$('[data-sample]').addEventListener('dragstart',e=>{e.dataTransfer.setData('application/x-pinelink-demo','fixture');e.dataTransfer.effectAllowed='copy';files=[...fixture];beginDrag();});$('[data-sample]').addEventListener('dragend',()=>{if(dragging){endDrag();say('已退出拖拽，未发送文件。');}});
+ $('[data-pick]').addEventListener('click',()=>$('[data-file]').click());$('[data-file]').addEventListener('change',e=>selectedFiles(Array.from(e.target.files||[],f=>f.name)));
+ nodes.forEach(n=>n.addEventListener('click',()=>{const id=n.dataset.node;if(['0','own'].includes(id)&&app.dataset.pose==='transfer'){if(app.dataset.phase==='running'){openSheet('task');return;}if(['waiting','connecting','queued'].includes(app.dataset.phase)){openSheet('pending');return;}if(['paused','reconnect'].includes(app.dataset.phase)){openSheet(app.dataset.phase==='paused'?'paused':'reconnect');return;}}if(id==='0'){if(samplePicked)openSheet('prepared');else{phase('idle','selected');orbit.hidden=false;redrawMotion();}}else if(id==='2'){openSheet('async');}else say(id==='own'?'请选择另一台设备。':id==='1'?'该设备仍在连接，暂不可发送。':'该设备离线；可通过云端入口显式选择保管。');}));
+ $('[data-orbit-send]').addEventListener('click',()=>openSheet('prepared'));$('[data-folder]').addEventListener('click',()=>{showHint('No files yet');say('文件夹入口：在真实应用中打开设备文件；本演示不读取文件。');});$('[data-orbit-more]').addEventListener('click',()=>{showHint('Transfer history');say('历史入口从节点更多菜单打开，浮层采用同一组入场与离场参数。');});$('[data-more]').addEventListener('click',()=>{showHint('Choose a device');say('选择设备后可查看该设备的操作。');});
+ app.addEventListener('dragenter',e=>{if(Array.from(e.dataTransfer?.types||[]).some(x=>x==='Files'||x==='application/x-pinelink-demo')){e.preventDefault();dragDepth++;beginDrag();}});
+ app.addEventListener('dragover',e=>{if(!dragging)return;e.preventDefault();const n=nearest(e.clientX,e.clientY);setTarget(n);e.dataTransfer.dropEffect=n&&['0','2'].includes(n.dataset.node)?'copy':'none';});
+ app.addEventListener('dragleave',e=>{if(!dragging)return;dragDepth=Math.max(0,dragDepth-1);if(dragDepth===0&&!app.contains(e.relatedTarget)){endDrag();say('拖拽已离开，界面恢复。');}});
+ app.addEventListener('drop',e=>{if(!dragging)return;e.preventDefault();const target=nearest(e.clientX,e.clientY),id=target?.dataset.node;const names=Array.from(e.dataTransfer.files||[],f=>f.name),demo=Array.from(e.dataTransfer.types||[]).includes('application/x-pinelink-demo');endDrag();if(!names.length&&!demo){openSheet('unavailable');say('无法读取拖入的文件，请重新选择；没有创建虚假文件。');return;}files=names.length?names:[...fixture];if(id==='0'||id==='2'){openSheet(id==='2'?'async':'prepared');say('文件已放下并暂存，确认后才发送。');}else{showHint('Choose another device');say('该位置不可放置，文件未发送。');}});
+ root.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();if(!sheet.hidden){const retain=['paused','reconnect','cancel'].includes(sheetKind);closeSheet().then(ok=>{if(ok){if(retain)showHint('Transfer paused');else idle();}});}else{reset();say('已取消当前界面操作，未发送文件。');}}if(e.key==='Tab'&&!sheet.hidden){const a=$('[data-secondary]'),b=$('[data-primary]');if(e.shiftKey&&document.activeElement===a){e.preventDefault();b.focus();}else if(!e.shiftKey&&document.activeElement===b){e.preventDefault();a.focus();}}});
+ window.addEventListener('openai:set_globals',e=>{const incoming=e.detail?.globals?.widgetState?.privateContent;if(incoming?.scenario&&Array.from(scenario.options).some(o=>o.value===incoming.scenario)&&incoming.scenario!==chosen){chosen=incoming.scenario;scenario.value=chosen;reduce.checked=!!incoming.reduced||media.matches;reset();}});
+ document.addEventListener('visibilitychange',()=>app.classList.toggle('pl-reduced',document.hidden||reduced()));
+ new ResizeObserver(()=>{draw();}).observe(graph);app.classList.toggle('pl-reduced',reduced());icons();requestAnimationFrame(draw);
+ root.pinelinkPreview={play,reset,openSheet,phase,draw,getState:()=>({phase:app.dataset.phase,pose:app.dataset.pose,sheet:sheet.hidden?null:sheetKind,reduced:reduced(),dragging,target:activeTarget?.dataset.node||null,files:files.length})};
+})();
+</script>

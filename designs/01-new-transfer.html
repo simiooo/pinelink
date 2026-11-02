@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pinelink 01 新建传输</title>
+<style>
+:root{--bg:#F5F6F7;--paper:#FFFFFF;--text:#30363D;--muted:#626C76;--line:#E2E6EA;--accent:#6B4A34;--soft:#E9E2D9}*{box-sizing:border-box}body{margin:0;width:1440px;height:900px;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.label{position:absolute;font-size:18px;font-weight:650}.desktop{position:absolute;left:40px;top:70px;width:1000px;height:790px;background:var(--paper);border:1px solid var(--line);border-radius:18px}.mobile{position:absolute;left:1092px;top:70px;width:308px;height:790px;background:var(--paper);border:1px solid var(--line);border-radius:28px}.brand{position:absolute;left:36px;top:32px;font-size:25px;font-weight:700}.actions{position:absolute;right:36px;top:28px;display:flex;gap:16px}.chip{padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:13px;color:var(--muted);text-align:center}.divider{position:absolute;left:36px;right:36px;top:78px;border-top:1px solid var(--line)}h1{position:absolute;left:36px;top:104px;margin:0;font-size:28px;font-weight:650}h1+p{position:absolute;left:36px;top:148px;margin:0;font-size:15px;color:var(--muted)}.drop{position:absolute;left:36px;top:206px;width:928px;height:300px;border:1px dashed #C9D0D6;border-radius:16px;background:var(--bg)}.upload-icon{position:absolute;left:32px;top:36px;width:56px;height:56px;border-radius:14px;background:var(--soft);color:var(--accent);display:grid;place-items:center;font-size:30px;font-weight:500}.drop-title{position:absolute;left:112px;top:52px;font-size:18px;font-weight:650}.drop-sub{position:absolute;left:112px;top:84px;font-size:14px;color:var(--muted)}.primary{position:absolute;left:32px;top:128px;width:180px;height:46px;border-radius:12px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:15px;font-weight:600}.drop-note{position:absolute;left:32px;top:208px;font-size:13px;color:var(--muted)}.notice{position:absolute;left:36px;top:538px;width:928px;height:74px;border-radius:12px;background:var(--bg);padding:20px 24px;color:var(--muted);font-size:13px;line-height:1.8}.recent-title{position:absolute;left:36px;top:662px;font-size:17px;font-weight:650}.recent{position:absolute;left:36px;top:688px;width:928px;height:64px;border-radius:12px;background:var(--bg);padding:22px 20px;color:var(--muted);font-size:14px}.mobile .brand{left:22px;top:32px;font-size:23px}.mobile .actions{right:22px;top:26px;gap:12px}.mobile .chip{padding:7px 10px;font-size:12px}.mobile .divider{left:22px;right:22px}.mobile h1{left:22px;top:98px;font-size:23px}.mobile h1+p{left:22px;top:134px;font-size:12px}.mobile .drop{left:22px;top:180px;width:264px;height:306px}.mobile .upload-icon{left:22px;top:28px;width:50px;height:50px;font-size:26px}.mobile .drop-title{left:22px;top:100px;font-size:16px}.mobile .drop-sub{left:22px;top:128px;font-size:12px}.mobile .primary{left:22px;top:166px;width:168px;height:44px;font-size:14px}.mobile .drop-note{left:22px;top:236px;font-size:12px}.mobile .notice{left:22px;top:508px;width:264px;height:112px;padding:14px;font-size:12px;line-height:1.8}.mobile .recent-title{left:22px;top:656px;font-size:16px}.mobile .recent{left:22px;top:682px;width:264px;height:70px;padding:16px 14px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="label" style="left:40px;top:28px">01 · 新建传输 / 主屏仅三个操作</div>
+<div class="label" style="left:1092px;top:28px">移动端 390 × 844</div>
+<section class="desktop">
+  <div class="brand">Pinelink</div><div class="actions"><div class="chip">通知</div><div class="chip">更多</div></div><div class="divider"></div>
+  <h1>发送文件</h1><p>选择文件后，再选择接收设备。对方同意前不会发送内容。</p>
+  <div class="drop"><div class="upload-icon">↓</div><div class="drop-title">把文件拖到这里</div><div class="drop-sub">或点击选择文件</div><div class="primary">选择文件</div><div class="drop-note">支持任意类型；发送前可核对文件大小与接收设备。</div></div>
+  <div class="notice">经过中转时，会保留一份 24 小时后删除的加密临时副本。<br>默认点对点；持久化保存需另行选择。</div>
+  <div class="recent-title">最近任务</div><div class="recent">暂无任务。文件与接收设备确认后会出现在这里。</div>
+</section>
+<section class="mobile">
+  <div class="brand">Pinelink</div><div class="actions"><div class="chip">通知</div><div class="chip">更多</div></div><div class="divider"></div>
+  <h1>发送文件</h1><p>对方同意前不会发送内容。</p>
+  <div class="drop"><div class="upload-icon">↓</div><div class="drop-title">把文件拖到这里</div><div class="drop-sub">或点击选择文件</div><div class="primary">选择文件</div><div class="drop-note">发送前可核对大小与设备。</div></div>
+  <div class="notice">经过中转时，会保留一份 24 小时后删除的加密临时副本。<br>持久化保存需另行选择。</div>
+  <div class="recent-title">最近任务</div><div class="recent">暂无任务。确认后会显示在这里。</div>
+</section>
+</body>
+</html>

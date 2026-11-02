@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="960" viewBox="0 0 1440 960">
+  <defs>
+    <g id="courier">
+      <path d="M143 195C56 190 24 104 61 49c29-43 101-50 132-12 28 34 13 83-23 94-28 8-56-12-49-35 5-17 27-22 35-10" fill="#B86F3C"/>
+      <path d="M138 177C83 164 57 104 79 66c16-27 57-37 79-18" fill="none" stroke="#E2A56E" stroke-width="18" stroke-linecap="round"/>
+      <ellipse cx="150" cy="168" rx="55" ry="62" fill="#C9844A"/>
+      <ellipse cx="150" cy="177" rx="34" ry="43" fill="#F2D4AC"/>
+      <circle cx="150" cy="88" r="54" fill="#C9844A"/>
+      <path d="M105 55L99 18l34 27M192 55l10-37-36 25" fill="#B86F3C"/>
+      <path d="M142 38l6-27 9 29" fill="none" stroke="#7A4B2E" stroke-width="7" stroke-linecap="round"/>
+      <ellipse cx="131" cy="87" rx="6" ry="8" fill="#3C2E27"/>
+      <ellipse cx="171" cy="87" rx="6" ry="8" fill="#3C2E27"/>
+      <path d="M146 102q5 6 10 0" fill="none" stroke="#7A4B2E" stroke-width="4" stroke-linecap="round"/>
+      <path d="M108 105l16-8 8 12-16 8zM127 115l16-8 8 12-16 8zM174 105l16-8 8 12-16 8z" fill="#7A4B2E" opacity=".75"/>
+      <path d="M117 217l-15 22h28l5-22M177 217l14 22h-28l-4-22" fill="#B86F3C"/>
+      <rect x="166" y="143" width="70" height="48" rx="10" fill="#E7C79B"/>
+      <path d="M170 147l60 40" stroke="#D3A977" stroke-width="4"/>
+      <path d="M194 160l10 8-10 8-10-8z" fill="#7A4B2E"/>
+    </g>
+    <g id="courier-side">
+      <path d="M143 195C56 190 24 104 61 49c29-43 101-50 132-12 28 34 13 83-23 94-28 8-56-12-49-35 5-17 27-22 35-10" fill="#B86F3C"/>
+      <path d="M138 177C83 164 57 104 79 66c16-27 57-37 79-18" fill="none" stroke="#E2A56E" stroke-width="18" stroke-linecap="round"/>
+      <ellipse cx="150" cy="168" rx="55" ry="62" fill="#C9844A"/>
+      <ellipse cx="150" cy="177" rx="34" ry="43" fill="#F2D4AC"/>
+      <circle cx="150" cy="88" r="54" fill="#C9844A"/>
+      <path d="M105 55L99 18l34 27M192 55l10-37-36 25" fill="#B86F3C"/>
+      <path d="M142 38l6-27 9 29" fill="none" stroke="#7A4B2E" stroke-width="7" stroke-linecap="round"/>
+      <ellipse cx="171" cy="87" rx="6" ry="8" fill="#3C2E27"/>
+      <path d="M166 102q5 6 10 0" fill="none" stroke="#7A4B2E" stroke-width="4" stroke-linecap="round"/>
+      <path d="M174 105l16-8 8 12-16 8z" fill="#7A4B2E" opacity=".75"/>
+      <path d="M117 217l-15 22h28l5-22M177 217l14 22h-28l-4-22" fill="#B86F3C"/>
+      <rect x="166" y="143" width="70" height="48" rx="10" fill="#E7C79B"/>
+      <path d="M170 147l60 40" stroke="#D3A977" stroke-width="4"/>
+      <path d="M194 160l10 8-10 8-10-8z" fill="#7A4B2E"/>
+    </g>
+    <g id="courier-back">
+      <path d="M143 195C56 190 24 104 61 49c29-43 101-50 132-12 28 34 13 83-23 94-28 8-56-12-49-35 5-17 27-22 35-10" fill="#B86F3C"/>
+      <path d="M138 177C83 164 57 104 79 66c16-27 57-37 79-18" fill="none" stroke="#E2A56E" stroke-width="18" stroke-linecap="round"/>
+      <ellipse cx="150" cy="168" rx="55" ry="62" fill="#C9844A"/>
+      <ellipse cx="150" cy="177" rx="34" ry="43" fill="#F2D4AC"/>
+      <circle cx="150" cy="88" r="54" fill="#C9844A"/>
+      <path d="M105 55L99 18l34 27M192 55l10-37-36 25" fill="#B86F3C"/>
+      <path d="M142 38l6-27 9 29" fill="none" stroke="#7A4B2E" stroke-width="7" stroke-linecap="round"/>
+      <path d="M117 217l-15 22h28l5-22M177 217l14 22h-28l-4-22" fill="#B86F3C"/>
+      <rect x="166" y="143" width="70" height="48" rx="10" fill="#E7C79B"/>
+      <path d="M170 147l60 40" stroke="#D3A977" stroke-width="4"/>
+      <path d="M194 160l10 8-10 8-10-8z" fill="#7A4B2E"/>
+    </g>
+  </defs>
+  <rect width="1440" height="960" fill="#FAF7F0"/>
+  <text x="64" y="72" font-family="ui-rounded,system-ui,sans-serif" font-size="32" font-weight="700" fill="#3C2E27">栗小递</text>
+  <text x="64" y="106" font-family="system-ui,sans-serif" font-size="16" letter-spacing="3" fill="#8A7160">PINELINK COURIER · CHARACTER 01</text>
+  <g font-family="system-ui,sans-serif" fill="#8A7160" font-size="16">
+    <text x="160" y="166">正面</text><text x="640" y="166">侧面</text><text x="1120" y="166">背面</text>
+  </g>
+  <g transform="translate(100 150) scale(1.15)"><use href="#courier"/></g>
+  <g transform="translate(580 150) scale(1.15)"><use href="#courier-side"/></g>
+  <g transform="translate(1060 150) scale(1.15)"><use href="#courier-back"/></g>
+  <g font-family="system-ui,sans-serif">
+    <rect x="64" y="520" width="400" height="160" rx="24" fill="#F1E5D3"/>
+    <text x="92" y="558" font-size="19" font-weight="700" fill="#7A4B2E">01 · 顺时针尾卷</text>
+    <text x="92" y="592" font-size="15" fill="#8A7160">大尾巴是主剪影，尾尖方向不得翻转。</text>
+    <rect x="520" y="520" width="400" height="160" rx="24" fill="#F1E5D3"/>
+    <text x="548" y="558" font-size="19" font-weight="700" fill="#7A4B2E">02 · 几何坚果壳纹</text>
+    <text x="548" y="592" font-size="15" fill="#8A7160">三块纹理，扁平几何，不画毛发。</text>
+    <rect x="976" y="520" width="400" height="160" rx="24" fill="#F1E5D3"/>
+    <text x="1004" y="558" font-size="19" font-weight="700" fill="#7A4B2E">03 · 20° 呆毛</text>
+    <text x="1004" y="592" font-size="15" fill="#8A7160">一撮右倾呆毛，角度固定，不增减。</text>
+  </g>
+  <g font-family="system-ui,sans-serif">
+    <text x="64" y="756" font-size="18" font-weight="700" fill="#7A4B2E">核心色板</text>
+    <rect x="64" y="784" width="180" height="64" rx="16" fill="#FAF7F0" stroke="#E5D7C3"/>
+    <rect x="264" y="784" width="180" height="64" rx="16" fill="#B86F3C"/>
+    <rect x="464" y="784" width="180" height="64" rx="16" fill="#C9844A"/>
+    <rect x="664" y="784" width="180" height="64" rx="16" fill="#7A4B2E"/>
+    <rect x="864" y="784" width="180" height="64" rx="16" fill="#E2A56E"/>
+    <rect x="1064" y="784" width="180" height="64" rx="16" fill="#3C2E27"/>
+    <g font-size="12" fill="#8A7160">
+      <text x="64" y="876">暖米白</text><text x="264" y="876">栗壳棕</text><text x="464" y="876">焦糖</text>
+      <text x="664" y="876">深栗</text><text x="864" y="876">暖橙</text><text x="1064" y="876">墨色</text>
+    </g>
+    <text x="64" y="924" font-size="14" fill="#8A7160">角色是可靠快递员，不是聊天机器人；动作服从真实状态，不伪造交付。</text>
+  </g>
+</svg>

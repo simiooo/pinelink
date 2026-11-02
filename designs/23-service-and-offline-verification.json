@@ -1,0 +1,20 @@
+{
+  "file": "23-pinelink-service-and-offline.fig",
+  "sha256": "e991e3b03b0a29db7f01602e490b4a5be707b3a1d42d4a0f2973990b613f64ff",
+  "generator": "OpenPencil core 0.16.0 with an independent CanvasKit 0.41.1 renderer",
+  "verification": {
+    "fig_readback": "passed",
+    "pages": [
+      {"name": "22 / Official and self-hosted", "frames": 14},
+      {"name": "23 / PWA offline files and intents", "frames": 22}
+    ],
+    "nonempty_editable_text_nodes": 355,
+    "svg_xml_sources": 36,
+    "service_mode_readback_previews_checked": 6,
+    "native_application_reopen": "pending; open/save/font RPC timeouts and blank text persist after desktop unlock",
+    "product_acceptance": "pending"
+  },
+  "source_generators": ["build-22-service-modes.py", "build-23-pwa-offline.py"],
+  "system_fonts": "Segoe UI Regular and SemiBold used locally for rendering; font binaries are not included",
+  "updated_at": "2026-11-02T13:47:45+08:00"
+}

@@ -1,0 +1,232 @@
+[
+  {
+    "name": "Desktop / Offline / local network remains available",
+    "file": "desktop-offline-home.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 0,
+    "y": 0,
+    "controls": []
+  },
+  {
+    "name": "Mobile / Offline / local network remains available",
+    "file": "mobile-offline-home.svg",
+    "width": 390,
+    "height": 844,
+    "x": 1264,
+    "y": 0,
+    "controls": []
+  },
+  {
+    "name": "Desktop / Local / durability not yet confirmed",
+    "file": "desktop-local-saving.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 1680,
+    "y": 0,
+    "controls": []
+  },
+  {
+    "name": "Mobile / Local / durability not yet confirmed",
+    "file": "mobile-local-saving.svg",
+    "width": 390,
+    "height": 844,
+    "x": 2944,
+    "y": 0,
+    "controls": []
+  },
+  {
+    "name": "Desktop / Local / durable file, target not reachable",
+    "file": "desktop-local-prepared.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 3360,
+    "y": 0,
+    "controls": [
+      {
+        "label": "Persist send intent; receiving still needs consent",
+        "x": 632,
+        "y": 288,
+        "width": 512,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "name": "Mobile / Local / durable file, target not reachable",
+    "file": "mobile-local-prepared.svg",
+    "width": 390,
+    "height": 844,
+    "x": 4624,
+    "y": 0,
+    "controls": [
+      {
+        "label": "Persist send intent; receiving still needs consent",
+        "x": 20,
+        "y": 728,
+        "width": 350,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "name": "Desktop / Local / durable file, direct route available",
+    "file": "desktop-local-lan-ready.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 0,
+    "y": 960,
+    "controls": [
+      {
+        "label": "Persist send intent; receiving still needs consent",
+        "x": 632,
+        "y": 288,
+        "width": 512,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "name": "Mobile / Local / durable file, direct route available",
+    "file": "mobile-local-lan-ready.svg",
+    "width": 390,
+    "height": 844,
+    "x": 1264,
+    "y": 960,
+    "controls": [
+      {
+        "label": "Persist send intent; receiving still needs consent",
+        "x": 20,
+        "y": 728,
+        "width": 350,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "name": "Desktop / Intent / waiting, no transfer activity",
+    "file": "desktop-queued.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 1680,
+    "y": 960,
+    "controls": []
+  },
+  {
+    "name": "Mobile / Intent / waiting, no transfer activity",
+    "file": "mobile-queued.svg",
+    "width": 390,
+    "height": 844,
+    "x": 2944,
+    "y": 960,
+    "controls": []
+  },
+  {
+    "name": "Desktop / Intent / queued detail",
+    "file": "desktop-queued-detail.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 3360,
+    "y": 960,
+    "controls": []
+  },
+  {
+    "name": "Mobile / Intent / queued detail",
+    "file": "mobile-queued-detail.svg",
+    "width": 390,
+    "height": 844,
+    "x": 4624,
+    "y": 960,
+    "controls": []
+  },
+  {
+    "name": "Desktop / History / local queue under All",
+    "file": "desktop-local-history.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 0,
+    "y": 1920,
+    "controls": []
+  },
+  {
+    "name": "Mobile / History / local queue under All",
+    "file": "mobile-local-history.svg",
+    "width": 390,
+    "height": 844,
+    "x": 1264,
+    "y": 1920,
+    "controls": []
+  },
+  {
+    "name": "Desktop / Direct / local network active without center",
+    "file": "desktop-lan-active.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 1680,
+    "y": 1920,
+    "controls": []
+  },
+  {
+    "name": "Mobile / Direct / local network active without center",
+    "file": "mobile-lan-active.svg",
+    "width": 390,
+    "height": 844,
+    "x": 2944,
+    "y": 1920,
+    "controls": []
+  },
+  {
+    "name": "Desktop / Conflict / expired request",
+    "file": "desktop-expired.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 3360,
+    "y": 1920,
+    "controls": []
+  },
+  {
+    "name": "Mobile / Conflict / expired request",
+    "file": "mobile-expired.svg",
+    "width": 390,
+    "height": 844,
+    "x": 4624,
+    "y": 1920,
+    "controls": []
+  },
+  {
+    "name": "Desktop / Storage / local commit failed",
+    "file": "desktop-space.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 0,
+    "y": 2880,
+    "controls": []
+  },
+  {
+    "name": "Mobile / Storage / local commit failed",
+    "file": "mobile-space.svg",
+    "width": 390,
+    "height": 844,
+    "x": 1264,
+    "y": 2880,
+    "controls": []
+  },
+  {
+    "name": "Desktop / Intent / cancellation not acknowledged",
+    "file": "desktop-cancel-pending.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 1680,
+    "y": 2880,
+    "controls": []
+  },
+  {
+    "name": "Mobile / Intent / cancellation not acknowledged",
+    "file": "mobile-cancel-pending.svg",
+    "width": 390,
+    "height": 844,
+    "x": 2944,
+    "y": 2880,
+    "controls": []
+  }
+]

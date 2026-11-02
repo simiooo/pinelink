@@ -1,0 +1,427 @@
+<div id="pinelink-spacing" data-preview="progress-v16">
+  <div class="viz-controls">
+    <label class="form-label">场景
+      <select class="form-select" data-scenario aria-label="选择动效场景">
+        <option value="history" selected>历史 · 可用性分类</option><option value="restore">云端恢复</option>
+        <option value="progress">真实进度 · 发送中</option><option value="complete">0% → 校验 → 送达</option><option value="unknown">总量未知</option><option value="pause">暂停 / 继续</option><option value="reconnect">连接中断 / 恢复</option><option value="zero">空文件</option><option value="batch">多个文件</option><option value="stored">云端保管</option><option value="receive">接收确认</option><option value="drop">拖拽 → 确认 → 发送</option><option value="entry">节点入场</option><option value="selection">选中 / 取消选中</option><option value="failed">失败 / 重新尝试</option><option value="queued">排队 / 连接</option><option value="rejected">请求被拒绝</option><option value="expired">请求过期</option><option value="cancelled">取消传输</option><option value="unavailable">文件不可用</option><option value="exit">节点离场</option><option value="panel">弹层入场 / 离场</option>
+      </select>
+    </label>
+    <button class="btn btn-primary" type="button" data-play>播放</button>
+    <button class="btn" type="button" draggable="true" data-sample aria-label="拖动或点选示例文件"><i data-lucide="file" aria-hidden="true"></i>示例文件</button>
+    <label class="form-check"><input class="form-check-input" type="checkbox" data-reduce><span class="form-check-label">减少动态</span></label>
+  </div>
+  <div class="pl-app" data-phase="idle" data-pose="default">
+    <header class="pl-header">
+      <button class="pl-icon cursor-interaction" type="button" aria-label="Back to devices" data-history-back hidden><i data-lucide="arrow-left" aria-hidden="true"></i></button>
+      <span class="pl-brand">pinelink</span><span class="pl-context">Devices</span>
+      <button class="pl-icon pl-top cursor-interaction" type="button" aria-label="选择文件" data-tooltip="Choose files" data-pick><i data-lucide="plus" aria-hidden="true"></i></button>
+      <button class="pl-icon pl-top cursor-interaction" type="button" aria-label="更多" data-tooltip="More" data-more><i data-lucide="ellipsis" aria-hidden="true"></i></button>
+      <input type="file" multiple hidden data-file>
+    </header>
+    <div class="pl-graph" aria-label="设备节点图">
+      <svg class="pl-lines" aria-hidden="true"><defs><mask id="pl-ack-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%"><path class="pl-ack-mask" pathLength="100" data-ack-mask></path></mask></defs><path data-branch="0"></path><path data-branch="1"></path><path data-branch="2"></path><path data-branch="3"></path><path class="pl-track" data-track></path><path class="pl-segment" pathLength="100" data-segment></path><g class="pl-sheen-wrap"><path class="pl-sheen" pathLength="100" mask="url(#pl-ack-mask)" data-sheen></path></g><path class="pl-curve-hit cursor-interaction" data-curve-hit></path></svg>
+      <button class="pl-node cursor-interaction" type="button" data-node="0" aria-label="MacBook Pro，在线，可发送文件"><span class="pl-halo"></span><span class="pl-disc"><i data-lucide="laptop" aria-hidden="true"></i></span><span class="pl-dot"></span><span class="pl-cue"><i data-lucide="plus" aria-hidden="true"></i></span><span class="pl-name">MacBook Pro</span><span class="pl-drop-label"></span></button>
+      <button class="pl-node cursor-interaction" type="button" data-node="1" aria-label="iPhone，正在连接" aria-disabled="true"><span class="pl-halo"></span><span class="pl-disc"><i data-lucide="smartphone" aria-hidden="true"></i></span><span class="pl-dot pl-wait"></span><span class="pl-cue"><i data-lucide="ban" aria-hidden="true"></i></span><span class="pl-name">iPhone</span><span class="pl-drop-label"></span></button>
+      <button class="pl-node cursor-interaction" type="button" data-node="2" aria-label="Cloud vault，可保存到云端"><span class="pl-halo"></span><span class="pl-disc"><i data-lucide="server" aria-hidden="true"></i></span><span class="pl-cloud"><i data-lucide="cloud" aria-hidden="true"></i></span><span class="pl-cue"><i data-lucide="plus" aria-hidden="true"></i></span><span class="pl-name">Cloud vault</span><span class="pl-drop-label"></span></button>
+      <button class="pl-node pl-offline cursor-interaction" type="button" data-node="3" aria-label="iPad，离线" aria-disabled="true"><span class="pl-halo"></span><span class="pl-disc"><i data-lucide="tablet" aria-hidden="true"></i></span><span class="pl-dot"></span><span class="pl-cue"><i data-lucide="ban" aria-hidden="true"></i></span><span class="pl-name">iPad</span><span class="pl-drop-label"></span></button>
+      <button class="pl-node pl-own cursor-interaction" type="button" data-node="own" aria-label="本机，不能向自己发送"><span class="pl-halo"></span><span class="pl-disc"><i data-lucide="laptop" aria-hidden="true"></i></span><span class="pl-dot"></span><span class="pl-cue"><i data-lucide="ban" aria-hidden="true"></i></span><span class="pl-name">This device</span><span class="pl-drop-label"></span></button>
+      <div class="pl-orbit" hidden>
+        <button type="button" class="pl-round pl-send cursor-interaction" aria-label="发送文件" data-tooltip="Send files" data-orbit-send><i data-lucide="arrow-up-from-line" aria-hidden="true"></i></button>
+        <button type="button" class="pl-round pl-folder cursor-interaction" aria-label="打开文件夹" data-tooltip="Open folder" data-folder><i data-lucide="folder" aria-hidden="true"></i></button>
+        <button type="button" class="pl-round pl-orbit-more cursor-interaction" aria-label="设备更多操作" data-tooltip="More" data-orbit-more><i data-lucide="ellipsis" aria-hidden="true"></i></button>
+      </div>
+      <div class="pl-hint" hidden></div>
+      <div class="pl-ghost" hidden><i data-lucide="mouse-pointer-2" aria-hidden="true"></i><span><i data-lucide="file" aria-hidden="true"></i>Design source.fig</span></div>
+    </div>
+    <section class="pl-history" aria-label="Transfer history" hidden>
+      <div class="pl-history-head"><h2>MacBook Pro</h2><button class="pl-icon cursor-interaction" type="button" aria-label="Close transfer history" data-history-close><i data-lucide="x" aria-hidden="true"></i></button></div>
+      <nav class="pl-history-filters" aria-label="File availability"><button type="button" class="cursor-interaction" data-filter="All" aria-pressed="true"><span>All</span></button><button type="button" class="cursor-interaction" data-filter="Reusable" aria-pressed="false"><span>Reusable</span></button><button type="button" class="cursor-interaction" data-filter="One-time" aria-pressed="false"><span>One-time</span></button><button type="button" class="cursor-interaction" data-filter="Expired" aria-pressed="false"><span>Expired</span></button></nav>
+      <div class="pl-history-grid"></div>
+    </section>
+    <div class="pl-shade" hidden></div>
+    <section class="pl-sheet" role="dialog" aria-modal="true" aria-labelledby="pl-dialog-title" hidden>
+      <div class="pl-handle" aria-hidden="true"></div><div class="pl-sheet-head"><div class="pl-sheet-icon" aria-hidden="true"><i data-lucide="arrow-up-from-line"></i></div><div class="pl-sheet-heading">
+      <button class="pl-icon pl-record-more cursor-interaction" type="button" aria-label="Keep file available" data-tooltip="Keep available" data-record-more hidden><i data-lucide="ellipsis" aria-hidden="true"></i></button>
+      <h2 id="pl-dialog-title">Ready to send</h2><p class="pl-sheet-note">To MacBook Pro</p></div></div>
+      <div class="pl-file-row"><i data-lucide="file" aria-hidden="true"></i><span><strong data-filename>Design source.fig</strong><small data-filecount>and 2 more files</small></span></div>
+      <p class="pl-policy-note" data-policy-note hidden></p>
+      <section class="pl-progress" aria-label="Transfer progress" hidden>
+        <div class="pl-progress-identity"><i data-lucide="file-video" aria-hidden="true"></i><p class="pl-progress-file" data-progress-file>Product demo.mp4</p></div>
+        <div class="pl-progress-head" role="progressbar" aria-label="Acknowledged file bytes" aria-valuemin="0" aria-valuemax="100" aria-valuenow="62"><strong data-percent>62%</strong><span class="pl-progress-meta" data-progress-bytes>320 MB of 512 MB</span></div>
+        <p class="pl-progress-meta" data-progress-rate>12.8 MB/s · About 15 sec left</p>
+      </section>
+      <div class="pl-actions"><button class="cursor-interaction" type="button" data-secondary>Cancel</button><button class="pl-primary cursor-interaction" type="button" data-primary>Send</button></div>
+    </section>
+  </div>
+  <p class="text-small" data-status role="status" aria-live="polite">演示数据；数字由确认字节样本驱动，曲线只表示活动。</p>
+</div>
+<style>
+#pinelink-spacing{display:flex;flex-direction:column;gap:16px}
+#pinelink-spacing .pl-app{--pl-blue:#0866ff;--pl-ink:#101010;--pl-gray:#6e6e6e;--pl-fill:#f5f5f5;--pl-line:#ebebeb;--pl-soft:#eef5ff;--pl-ease:cubic-bezier(.16,1,.3,1);position:relative;background:#fff;color:var(--pl-ink);font:15px/20px "Segoe UI",system-ui,sans-serif;isolation:isolate;overflow:hidden}
+#pinelink-spacing .pl-app *{box-sizing:border-box}
+#pinelink-spacing .pl-header{height:80px;display:flex;align-items:center;gap:8px;padding:16px 24px 16px 32px}
+#pinelink-spacing .pl-brand{font-size:24px;line-height:32px;font-weight:600;margin-right:auto}
+#pinelink-spacing .pl-context{position:absolute;left:50%;transform:translateX(-50%);font-weight:600}
+#pinelink-spacing .pl-icon{border:0;background:transparent;color:inherit;width:48px;height:48px;display:grid;place-items:center;border-radius:50%}
+#pinelink-spacing .pl-icon:hover{background:var(--pl-fill)}
+#pinelink-spacing .pl-icon svg{--icon-size:24px;width:24px;height:24px;stroke-width:1.8}
+#pinelink-spacing .pl-graph{position:relative;width:100%;max-width:800px;height:560px;margin:0 auto}
+#pinelink-spacing .pl-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+#pinelink-spacing .pl-lines path{fill:none;stroke:var(--pl-line);stroke-width:1.5;stroke-linecap:round}
+#pinelink-spacing .pl-node{--size:64px;position:absolute;width:160px;padding:0;left:50%;top:96px;transform:translate(-50%,calc(var(--size) / -2));background:none;border:0;color:inherit;font:inherit;text-align:center;transition:left 180ms var(--pl-ease),top 180ms var(--pl-ease),opacity 140ms,transform 180ms var(--pl-ease);z-index:1}
+#pinelink-spacing .pl-disc{display:grid;place-items:center;position:relative;z-index:1;width:var(--size);height:var(--size);margin:0 auto;background:var(--pl-fill);border:2px solid transparent;border-radius:50%;transition:width 180ms var(--pl-ease),height 180ms var(--pl-ease),transform 120ms var(--pl-ease),border-color 120ms,background 120ms}
+#pinelink-spacing .pl-disc svg{--icon-size:calc(var(--size) / 2);width:calc(var(--size) / 2);height:calc(var(--size) / 2);stroke-width:1.7}
+#pinelink-spacing .pl-disc *,#pinelink-spacing .pl-cue *,#pinelink-spacing .pl-name,#pinelink-spacing .pl-dot,#pinelink-spacing .pl-cloud,#pinelink-spacing .pl-drop-label{pointer-events:none}
+#pinelink-spacing .pl-name{position:relative;z-index:2;display:inline-block;margin-top:12px;padding:0 8px;background:#fff;color:var(--pl-gray);white-space:nowrap}
+#pinelink-spacing .pl-dot{position:absolute;z-index:3;top:calc(var(--size) - 16px);left:calc(50% + var(--size) / 2 - 16px);width:14px;height:14px;background:var(--pl-ink);border:3px solid #fff;border-radius:50%}
+#pinelink-spacing .pl-wait{background:#fff;box-shadow:inset 0 0 0 1.5px var(--pl-gray)}
+#pinelink-spacing .pl-cloud{position:absolute;z-index:3;left:calc(50% + 17px);top:calc(var(--size) - 17px);width:18px;height:18px;background:#fff;border-radius:50%;color:var(--pl-gray)}
+#pinelink-spacing .pl-cloud svg{--icon-size:16px;width:16px;height:16px}
+#pinelink-spacing .pl-offline{opacity:.42}
+#pinelink-spacing [data-node="0"]{left:max(80px,calc(50% - 288px));top:160px}
+#pinelink-spacing [data-node="1"]{left:calc(50% - 104px)}
+#pinelink-spacing [data-node="2"]{left:calc(50% + 104px)}
+#pinelink-spacing [data-node="3"]{left:min(calc(100% - 80px),calc(50% + 288px));top:160px}
+#pinelink-spacing .pl-own{--size:96px;top:448px}
+#pinelink-spacing .pl-own .pl-name{color:var(--pl-ink);font-weight:600}
+#pinelink-spacing .pl-app[data-pose="selected"] .pl-node{opacity:.13}
+#pinelink-spacing .pl-app[data-pose="selected"] [data-node="0"]{--size:96px;left:50%;top:208px;opacity:1}
+#pinelink-spacing .pl-app[data-pose="selected"] [data-node="0"] .pl-disc{background:#fff;border-color:var(--pl-blue)}
+#pinelink-spacing .pl-app[data-pose="selected"] [data-node="0"] .pl-name{color:var(--pl-ink);font-weight:600}
+#pinelink-spacing .pl-orbit{position:absolute;left:50%;top:208px;z-index:2}
+#pinelink-spacing .pl-round{position:absolute;width:48px;height:48px;border:0;border-radius:50%;display:grid;place-items:center;background:var(--pl-fill);color:inherit}
+#pinelink-spacing .pl-round svg{--icon-size:24px;width:24px;height:24px;stroke-width:1.8}
+#pinelink-spacing .pl-send{left:-136px;top:-24px;background:var(--pl-blue);color:#fff}
+#pinelink-spacing .pl-folder{left:-24px;top:-136px}
+#pinelink-spacing .pl-orbit-more{left:88px;top:-24px}
+#pinelink-spacing .pl-track,#pinelink-spacing .pl-segment{display:none}
+#pinelink-spacing .pl-app[data-pose="transfer"] .pl-lines [data-branch]{opacity:0}
+#pinelink-spacing .pl-app[data-pose="transfer"] .pl-node:not([data-node="0"]):not(.pl-own){opacity:0;pointer-events:none}
+#pinelink-spacing .pl-app[data-pose="transfer"] .pl-graph{height:680px}
+#pinelink-spacing .pl-app[data-pose="transfer"] [data-node="0"]{--size:64px;left:62%;top:168px;opacity:1}
+#pinelink-spacing .pl-app[data-pose="transfer"] .pl-own{left:38%;top:568px}
+#pinelink-spacing .pl-app[data-pose="transfer"] .pl-track{display:block;stroke-width:3}
+#pinelink-spacing .pl-app[data-pose="transfer"] .pl-segment{display:block;stroke:var(--pl-blue);stroke-width:3;stroke-dasharray:var(--pl-ack,0) 100;transition:stroke-dasharray 180ms var(--pl-ease);opacity:var(--pl-progress-visible,0)}
+#pinelink-spacing .pl-lines .pl-ack-mask{stroke:#fff;stroke-width:3;stroke-dasharray:var(--pl-ack,0) 100;transition:stroke-dasharray 180ms var(--pl-ease)}
+#pinelink-spacing .pl-sheen-wrap{opacity:0;transition:opacity 80ms;pointer-events:none}
+#pinelink-spacing .pl-lines .pl-sheen{stroke:#80b1ff;stroke-width:3;stroke-dasharray:6 194;animation:pl-sheen 1600ms linear infinite;animation-play-state:paused}
+#pinelink-spacing .pl-app[data-pose="transfer"][data-phase="running"] .pl-sheen-wrap{opacity:var(--pl-progress-visible,0);transition-duration:120ms}
+#pinelink-spacing .pl-app[data-pose="transfer"][data-phase="running"] .pl-sheen{animation-play-state:running}
+#pinelink-spacing .pl-app.pl-stale .pl-sheen-wrap{opacity:0!important}
+#pinelink-spacing .pl-app.pl-stale .pl-sheen{animation-play-state:paused!important}
+#pinelink-spacing .pl-curve-hit{display:none}
+#pinelink-spacing .pl-app[data-pose="transfer"] .pl-curve-hit{display:block;stroke:transparent;stroke-width:24;pointer-events:stroke}
+#pinelink-spacing .pl-app.pl-total-unknown .pl-track{stroke-dasharray:4 8}
+#pinelink-spacing .pl-app.pl-has-details .pl-graph{opacity:.13;transition:opacity 160ms}
+#pinelink-spacing .pl-app[data-phase="waiting"] .pl-track,#pinelink-spacing .pl-app[data-phase="connecting"] .pl-track,#pinelink-spacing .pl-app[data-phase="queued"] .pl-track{stroke-dasharray:4 8}
+#pinelink-spacing .pl-app[data-phase="delivered"] .pl-track,#pinelink-spacing .pl-app[data-phase="delivered"] .pl-segment,#pinelink-spacing .pl-app[data-phase="stored"] .pl-track,#pinelink-spacing .pl-app[data-phase="stored"] .pl-segment{opacity:0;transition:opacity 180ms}
+#pinelink-spacing .pl-app[data-phase="delivered"]:not([data-direction="receive"]) [data-node="0"] .pl-cue,#pinelink-spacing .pl-app[data-phase="delivered"][data-direction="receive"] .pl-own .pl-cue{opacity:1;background:var(--pl-ink);transform:scale(1)}
+#pinelink-spacing .pl-app[data-pose="transfer"] .pl-dot{opacity:0}
+#pinelink-spacing .pl-app[data-phase="running"] .pl-top{visibility:hidden}
+#pinelink-spacing .pl-halo{position:absolute;z-index:0;left:50%;top:calc(var(--size) / 2);width:112px;height:112px;transform:translate(-50%,-50%);background:var(--pl-soft);border:1.5px dashed var(--pl-blue);border-radius:50%;opacity:0;pointer-events:none;transition:opacity 120ms}
+#pinelink-spacing .pl-cue{position:absolute;z-index:4;left:calc(50% + 14px);top:calc(var(--size) / 2 + 14px);width:24px;height:24px;border:3px solid #fff;border-radius:50%;background:var(--pl-blue);color:#fff;display:grid;place-items:center;opacity:0;transform:scale(.8);transition:opacity 120ms,transform 120ms var(--pl-ease)}
+#pinelink-spacing .pl-cue svg{--icon-size:14px;width:14px;height:14px;stroke-width:2}
+#pinelink-spacing .pl-drop-label{position:relative;display:block;top:8px;color:var(--pl-blue);white-space:nowrap;font-weight:600;min-height:20px;opacity:0}
+#pinelink-spacing .pl-app.pl-drag .pl-node{transition:opacity 120ms;opacity:.28}
+#pinelink-spacing .pl-app.pl-drag .pl-node.pl-target{opacity:1}
+#pinelink-spacing .pl-target .pl-halo,#pinelink-spacing .pl-target .pl-cue,#pinelink-spacing .pl-target .pl-drop-label{opacity:1;transform:scale(1)}
+#pinelink-spacing .pl-target .pl-halo{transform:translate(-50%,-50%)}
+#pinelink-spacing .pl-target .pl-disc{transform:scale(1.125)}
+#pinelink-spacing .pl-target .pl-dot,#pinelink-spacing .pl-target .pl-cloud{opacity:0}
+#pinelink-spacing .pl-invalid .pl-halo{background:var(--pl-fill);border-color:#dbdbdb}
+#pinelink-spacing .pl-invalid .pl-cue{background:#fff;color:var(--pl-ink)}
+#pinelink-spacing .pl-invalid .pl-drop-label{color:var(--pl-ink)}
+#pinelink-spacing .pl-invalid .pl-disc{transform:none}
+#pinelink-spacing .pl-hint{position:absolute;z-index:4;left:50%;top:288px;transform:translateX(-50%);padding:10px 16px;background:var(--pl-fill);border-radius:20px;white-space:nowrap;max-width:calc(100% - 40px);text-overflow:ellipsis;overflow:hidden}
+#pinelink-spacing .pl-progress{position:static;width:100%;font-variant-numeric:tabular-nums;margin-top:32px}
+#pinelink-spacing .pl-progress-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;min-height:32px;margin-top:32px;font-weight:600}
+#pinelink-spacing .pl-progress-head strong{font:600 24px/32px "Segoe UI",system-ui,sans-serif;white-space:nowrap}
+#pinelink-spacing .pl-progress p{margin:0}
+#pinelink-spacing .pl-progress-file{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pinelink-spacing .pl-progress-meta{font:400 13px/18px "Segoe UI",system-ui,sans-serif;color:var(--pl-gray);margin-top:8px!important;min-height:18px}
+#pinelink-spacing .pl-sheet.pl-details .pl-file-row{display:none}
+#pinelink-spacing .pl-sheet.pl-details h2,#pinelink-spacing .pl-sheet.pl-details .pl-sheet-note{padding-left:0}
+#pinelink-spacing .pl-sheet.pl-details .pl-sheet-icon{display:none}
+#pinelink-spacing .pl-sheet.pl-details h2{margin-top:0}
+#pinelink-spacing .pl-sheet.pl-details .pl-actions{margin-top:40px}
+#pinelink-spacing .pl-sheet.pl-details .pl-actions button:only-of-type{width:100%}
+#pinelink-spacing .pl-history{position:absolute;z-index:5;left:clamp(32px,calc(50% - 88px),calc(100% - 560px));top:128px;width:528px;padding:24px;background:#fff;border:1px solid var(--pl-line);border-radius:24px;box-shadow:0 4px 24px rgb(16 16 16 / .025)}
+#pinelink-spacing .pl-app[data-view="history"]{min-height:800px}
+#pinelink-spacing .pl-app[data-view="history"] .pl-graph{opacity:.13}
+#pinelink-spacing .pl-app[data-view="history"] .pl-top{visibility:hidden}
+#pinelink-spacing .pl-history-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+#pinelink-spacing .pl-history-head h2{font:600 20px/28px "Segoe UI",system-ui,sans-serif;margin:0}
+#pinelink-spacing .pl-history-title-mobile,#pinelink-spacing .pl-header [data-history-back]{display:none}
+#pinelink-spacing .pl-history-head p{font:400 13px/18px "Segoe UI",system-ui,sans-serif;color:var(--pl-gray);margin:8px 0 0}
+#pinelink-spacing .pl-history-head>.pl-icon{margin:-8px -8px 0 0}
+#pinelink-spacing .pl-history-filters{display:flex;gap:8px;margin-top:16px;max-width:344px}
+#pinelink-spacing .pl-history-filters button{position:relative;flex:1;min-height:48px;padding:8px 4px;border:0;background:transparent;color:var(--pl-gray);font:400 13px/18px "Segoe UI",system-ui,sans-serif;white-space:nowrap}
+#pinelink-spacing .pl-history-filters button[aria-pressed="true"]{color:var(--pl-ink);font-weight:600}
+#pinelink-spacing .pl-history-filters button[aria-pressed="true"]::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:2px;border-radius:1px;background:var(--pl-ink)}
+#pinelink-spacing .pl-history-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 24px;margin-top:24px}
+#pinelink-spacing .pl-file{display:flex;align-items:center;flex-direction:column;min-width:0;padding:0;border:0;background:transparent;font:400 15px/20px "Segoe UI",system-ui,sans-serif;color:var(--pl-ink);min-height:112px}
+#pinelink-spacing .pl-file-visual{position:relative;display:grid;place-items:center;width:56px;height:56px;border-radius:16px}
+#pinelink-spacing .pl-file:hover .pl-file-visual{background:var(--pl-fill)}
+#pinelink-spacing .pl-file-visual>svg{--icon-size:40px;stroke:#808080;stroke-width:1.4}
+#pinelink-spacing .pl-file-badge{position:absolute;right:-2px;bottom:0;background:#fff;border-radius:50%;width:20px;height:20px;display:grid;place-items:center;font:600 13px/18px "Segoe UI",system-ui,sans-serif}
+#pinelink-spacing .pl-file-badge svg{--icon-size:16px;color:var(--pl-gray)}
+#pinelink-spacing .pl-file-badge.pl-once{background:var(--pl-ink);color:#fff;border:2px solid #fff}
+#pinelink-spacing .pl-file-name{margin-top:12px;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pinelink-spacing .pl-file-state{font:400 13px/18px "Segoe UI",system-ui,sans-serif;color:var(--pl-gray);margin-top:8px}
+#pinelink-spacing .pl-file[data-availability="Expired"] .pl-file-visual>svg{opacity:.45}
+#pinelink-spacing .pl-file[data-availability="Expired"] .pl-file-name{color:var(--pl-gray)}
+#pinelink-spacing .pl-policy-note{font:400 13px/18px "Segoe UI",system-ui,sans-serif;color:var(--pl-gray);margin:0 0 24px}
+#pinelink-spacing .pl-record-more{position:absolute;right:12px;top:12px}
+#pinelink-spacing .pl-drag .pl-hint{top:8px}
+#pinelink-spacing .pl-ghost{position:absolute;z-index:5;display:flex;align-items:center;gap:4px;pointer-events:none;font-size:13px;line-height:18px}
+#pinelink-spacing .pl-ghost>svg{--icon-size:24px;width:24px;height:24px}
+#pinelink-spacing .pl-ghost>span{display:flex;align-items:center;gap:8px;background:#fff;padding:12px 16px;border:1px solid var(--pl-line);border-radius:16px}
+#pinelink-spacing .pl-ghost>span svg{--icon-size:24px;width:24px;height:24px}
+#pinelink-spacing .pl-shade{position:absolute;inset:0;z-index:7;background:rgb(16 16 16 / .06)}
+#pinelink-spacing .pl-sheet{position:absolute;z-index:8;left:50%;top:50%;transform:translate(-50%,-50%);width:400px;max-width:calc(100% - 40px);padding:24px;background:#fff;border-radius:24px;box-shadow:0 4px 24px rgb(16 16 16 / .04)}
+#pinelink-spacing .pl-sheet h2{font:600 20px/28px "Segoe UI",system-ui,sans-serif;color:var(--pl-ink);margin:0 0 8px;padding-left:40px}
+#pinelink-spacing .pl-sheet-note{margin:0 0 24px;padding-left:40px;color:var(--pl-gray);font-size:15px;line-height:20px}
+#pinelink-spacing .pl-sheet-icon{position:absolute;left:24px;top:26px;width:24px;height:24px}
+#pinelink-spacing .pl-sheet-icon svg{--icon-size:24px;width:24px;height:24px;stroke-width:1.8}
+#pinelink-spacing .pl-handle{display:none}
+#pinelink-spacing .pl-file-row{display:flex;align-items:center;gap:16px;background:var(--pl-fill);padding:16px 12px;border-radius:20px;margin-bottom:32px}
+#pinelink-spacing .pl-file-row>svg{--icon-size:40px;flex-shrink:0;width:40px;height:40px;color:#808080;stroke-width:1.5}
+#pinelink-spacing .pl-file-row>span{min-width:0;display:flex;flex-direction:column;gap:8px}
+#pinelink-spacing .pl-file-row strong{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pinelink-spacing .pl-file-row small{color:var(--pl-gray);font-size:13px;line-height:18px}
+#pinelink-spacing .pl-actions{display:flex;gap:12px;margin-top:24px}
+#pinelink-spacing .pl-actions button{width:50%;min-height:48px;padding:12px 8px;border:0;border-radius:24px;background:var(--pl-fill);color:var(--pl-ink);font:600 15px/20px "Segoe UI",system-ui,sans-serif}
+#pinelink-spacing .pl-actions .pl-primary{background:var(--pl-blue);color:#fff}
+#pinelink-spacing .pl-sheet.pl-message h2,#pinelink-spacing .pl-sheet.pl-message .pl-sheet-note{padding-left:0}
+#pinelink-spacing .pl-sheet.pl-message h2{margin-top:44px}
+#pinelink-spacing .pl-sheet.pl-message .pl-file-row{display:none}
+#pinelink-spacing .pl-app [hidden]{display:none!important}
+#pinelink-spacing .pl-reduced *,#pinelink-spacing .pl-reduced *::before{transition-duration:0ms!important}
+#pinelink-spacing .pl-reduced .pl-segment{transition:none!important}
+#pinelink-spacing .pl-reduced .pl-sheen-wrap{display:none}
+#pinelink-spacing .pl-reduced .pl-sheen{animation:none!important}
+@keyframes pl-sheen{0%{stroke-dashoffset:6;opacity:0}8%{opacity:1}92%{opacity:1}100%{stroke-dashoffset:calc(var(--pl-ack,0) * -1);opacity:0}}
+@media(max-width:680px){
+ #pinelink-spacing .pl-app[data-view="history"] .pl-graph{display:none}
+ #pinelink-spacing .pl-app[data-view="history"] .pl-brand,#pinelink-spacing .pl-app[data-view="history"] .pl-top{display:none}
+ #pinelink-spacing .pl-app[data-view="history"] .pl-context{display:block;font-size:16px;line-height:24px}
+ #pinelink-spacing .pl-app[data-view="history"] [data-history-back]{display:grid;position:absolute;left:12px;top:12px}
+ #pinelink-spacing .pl-history{position:relative;top:auto;left:auto;width:100%;padding:32px 20px;border:0;border-radius:0;box-shadow:none;min-height:712px}
+ #pinelink-spacing .pl-history-head h2{font-size:20px;line-height:28px}
+ #pinelink-spacing .pl-history-title-desktop{display:none}#pinelink-spacing .pl-history-title-mobile{display:inline}
+ #pinelink-spacing .pl-history-head p,#pinelink-spacing .pl-history-head>[data-history-close]{display:none}
+ #pinelink-spacing .pl-history-filters{max-width:none;gap:0}
+ #pinelink-spacing .pl-history-grid{column-gap:16px;row-gap:24px}
+ #pinelink-spacing .pl-file{font-size:13px;line-height:18px}
+ #pinelink-spacing .pl-header{height:72px;padding:12px 20px}#pinelink-spacing .pl-context{display:none}
+ #pinelink-spacing .pl-brand{font-size:24px;line-height:32px}
+ #pinelink-spacing .pl-brand{position:absolute;left:50%;transform:translateX(-50%);margin:0}
+ #pinelink-spacing .pl-header [data-pick]{position:absolute;left:12px;top:12px}
+ #pinelink-spacing .pl-header [data-more]{margin-left:auto}
+ #pinelink-spacing .pl-graph{height:640px}
+ #pinelink-spacing [data-node="0"]{left:calc(25% + 10px);top:120px}
+ #pinelink-spacing [data-node="1"]{left:calc(75% - 10px);top:120px}
+ #pinelink-spacing [data-node="2"]{left:calc(25% + 10px);top:264px}
+ #pinelink-spacing [data-node="3"]{left:calc(75% - 10px);top:264px}
+ #pinelink-spacing .pl-node{--size:56px;width:144px}#pinelink-spacing .pl-node.pl-own{--size:80px;top:528px}
+ #pinelink-spacing .pl-app[data-pose="selected"] [data-node="0"]{--size:80px;top:264px}
+ #pinelink-spacing .pl-orbit{top:264px}
+ #pinelink-spacing .pl-app[data-pose="transfer"] .pl-graph{height:712px}
+ #pinelink-spacing .pl-app[data-pose="transfer"] [data-node="0"]{--size:56px;left:50%;top:176px}
+ #pinelink-spacing .pl-app[data-pose="transfer"] .pl-own{left:50%;top:608px}
+ #pinelink-spacing .pl-sheet{top:auto;bottom:0;left:0;transform:none;width:100%;max-width:none;border-radius:28px 28px 0 0;padding:40px 20px 48px}
+ #pinelink-spacing .pl-sheet-icon{left:20px;top:42px}
+ #pinelink-spacing .pl-handle{display:block;position:absolute;top:12px;left:calc(50% - 16px);width:32px;height:4px;background:#dbdbdb;border-radius:2px}
+}
+@media(prefers-reduced-motion:reduce){#pinelink-spacing .pl-app *{transition-duration:0ms!important}#pinelink-spacing .pl-sheen-wrap{display:none}#pinelink-spacing .pl-sheen{animation:none!important}}
+</style>
+<style>
+#pinelink-spacing .pl-name{margin-top:8px}
+#pinelink-spacing .pl-history{padding:24px 16px}
+#pinelink-spacing .pl-history-head{position:relative;display:block;height:28px}
+#pinelink-spacing .pl-history-head>[data-history-close]{position:absolute;right:-12px;top:-10px;margin:0}
+#pinelink-spacing .pl-history-filters{gap:8px;margin-top:16px;max-width:none;justify-content:flex-start}
+#pinelink-spacing .pl-history-filters button{flex:0 0 auto;min-width:48px;height:48px;padding:14px 12px;font:400 15px/20px "Segoe UI",system-ui,sans-serif}
+#pinelink-spacing .pl-history-filters button::after{display:none}
+#pinelink-spacing .pl-history-filters span{position:relative;display:block;width:max-content;margin:0 auto}
+#pinelink-spacing .pl-history-filters button[aria-pressed="true"] span::after{content:"";position:absolute;left:0;right:0;bottom:-10px;height:2px;background:var(--pl-ink);border-radius:1px}
+#pinelink-spacing .pl-history-grid{gap:32px 24px;margin-top:32px}
+#pinelink-spacing .pl-file{align-items:flex-start;text-align:left;min-height:76px}
+#pinelink-spacing .pl-file-visual{width:48px;height:48px;border-radius:12px}
+#pinelink-spacing .pl-file-name{margin-top:8px;line-height:20px;text-align:left}
+#pinelink-spacing .pl-file-badge{width:16px;height:16px;right:-4px;bottom:0;border:1px solid #dbdbdb;font:500 11px/14px "Segoe UI",system-ui,sans-serif}
+#pinelink-spacing .pl-file-badge svg{--icon-size:12px}
+#pinelink-spacing .pl-file-badge.pl-once{background:#fff;color:var(--pl-ink);border:1px solid #dbdbdb}
+#pinelink-spacing .pl-file-state{display:none}
+#pinelink-spacing .pl-sheet-head{display:flex;align-items:flex-start;gap:12px;text-align:left}
+#pinelink-spacing .pl-sheet{padding:24px 20px}
+#pinelink-spacing .pl-sheet-heading{min-width:0;flex:1}
+#pinelink-spacing .pl-sheet h2,#pinelink-spacing .pl-sheet.pl-message h2,#pinelink-spacing .pl-sheet.pl-details h2{margin:0;padding:0;font:600 20px/28px "Segoe UI",system-ui,sans-serif;text-align:left}
+#pinelink-spacing .pl-sheet-note{margin:8px 0 0;padding:0;font:400 15px/20px "Segoe UI",system-ui,sans-serif;text-align:left}
+#pinelink-spacing .pl-sheet-note:empty{display:none}
+#pinelink-spacing .pl-sheet-icon{position:relative;top:auto;left:auto;flex-shrink:0;margin-top:2px;width:24px;height:24px}
+#pinelink-spacing .pl-sheet.pl-details .pl-sheet-icon{display:block}
+#pinelink-spacing .pl-sheet.pl-details .pl-sheet-note{display:none}
+#pinelink-spacing .pl-sheet.pl-details .pl-sheet-head{position:relative;display:block}
+#pinelink-spacing .pl-sheet.pl-details .pl-sheet-icon{position:absolute;left:auto;right:0;top:6px;margin:0;width:16px;height:16px;border:1px solid #dbdbdb;border-radius:50%;background:#fff}
+#pinelink-spacing .pl-sheet.pl-details .pl-sheet-icon svg{--icon-size:12px}
+#pinelink-spacing .pl-file-row{padding:0;background:transparent;border-radius:0;gap:12px;margin:24px 0 0;min-height:48px}
+#pinelink-spacing .pl-file-row>span{gap:4px;text-align:left}
+#pinelink-spacing .pl-file-row small{font-size:13px;line-height:20px}
+#pinelink-spacing .pl-actions,#pinelink-spacing .pl-sheet.pl-details .pl-actions{margin-top:32px;gap:12px}
+#pinelink-spacing .pl-progress{margin-top:24px}
+#pinelink-spacing .pl-progress-identity{display:flex;align-items:center;gap:12px;min-width:0}
+#pinelink-spacing .pl-progress-identity>svg{--icon-size:40px;flex-shrink:0;color:#808080;stroke-width:1.4}
+#pinelink-spacing .pl-progress-file{min-width:0;flex:1}
+#pinelink-spacing .pl-progress-head{margin-top:24px}
+#pinelink-spacing .pl-progress-meta{margin-top:4px!important;font:400 13px/20px "Segoe UI",system-ui,sans-serif;min-height:0}
+#pinelink-spacing .pl-policy-note{margin:24px 0 0;font:400 13px/20px "Segoe UI",system-ui,sans-serif;text-align:left}
+#pinelink-spacing .pl-sheet.pl-record .pl-sheet-note{display:none}
+#pinelink-spacing .pl-sheet.pl-record .pl-sheet-head{align-items:center}
+#pinelink-spacing .pl-sheet.pl-record .pl-sheet-icon{width:48px;height:48px;margin:0;display:grid;place-items:center}
+#pinelink-spacing .pl-sheet.pl-record .pl-sheet-icon>svg{--icon-size:40px;color:#808080;stroke-width:1.4}
+#pinelink-spacing .pl-sheet.pl-record .pl-sheet-heading{padding-right:0}
+#pinelink-spacing .pl-sheet.pl-record:has([data-record-more]:not([hidden])) .pl-sheet-heading{padding-right:36px}
+#pinelink-spacing .pl-sheet.pl-record h2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pinelink-spacing .pl-sheet.pl-retention .pl-file-row{display:flex}
+#pinelink-spacing .pl-record-more{top:24px;right:8px}
+#pinelink-spacing .pl-sheet-badge{position:absolute;right:-4px;bottom:0;width:16px;height:16px;display:grid;place-items:center;border:1px solid #dbdbdb;border-radius:50%;background:#fff;color:var(--pl-ink);font:500 11px/14px "Segoe UI",system-ui,sans-serif}
+#pinelink-spacing .pl-sheet-badge svg{--icon-size:12px}
+#pinelink-spacing .pl-app[data-pose="transfer"] .pl-cue{width:16px;height:16px;border:1px solid #dbdbdb;left:calc(50% + var(--size) * .36 - 8px);top:calc(var(--size) * .86 - 8px);background:#fff;color:var(--pl-ink);pointer-events:auto}
+#pinelink-spacing .pl-app[data-pose="transfer"] .pl-cue svg{--icon-size:12px}
+#pinelink-spacing .pl-app[data-pose="transfer"] .pl-status-on .pl-cue{opacity:1;transform:scale(1)}
+@media(max-width:680px){
+ #pinelink-spacing .pl-app[data-view="history"] .pl-context{font-size:20px;line-height:28px;max-width:calc(100% - 128px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ #pinelink-spacing .pl-history{padding:24px 16px;min-height:712px}
+ #pinelink-spacing .pl-history-head{display:none}
+ #pinelink-spacing .pl-history-filters{margin-top:0;gap:0}
+ #pinelink-spacing .pl-history-filters button{font-size:13px;padding:14px 8px}
+ #pinelink-spacing .pl-history-grid{column-gap:16px;row-gap:32px}
+ #pinelink-spacing .pl-file{font-size:13px;line-height:20px}
+ #pinelink-spacing .pl-sheet{padding:40px 16px 48px}
+ #pinelink-spacing .pl-app[data-view="history"] [data-history-back]{left:4px}
+ #pinelink-spacing .pl-record-more{top:40px;right:4px}
+}
+</style>
+<script>
+(() => {
+ const root=document.getElementById('pinelink-spacing');
+ const $=s=>root.querySelector(s),$$=s=>Array.from(root.querySelectorAll(s));
+ const app=$('.pl-app'),graph=$('.pl-graph'),nodes=$$('[data-node]'),sheet=$('.pl-sheet'),shade=$('.pl-shade'),scenario=$('[data-scenario]'),reduce=$('[data-reduce]'),hint=$('.pl-hint'),ghost=$('.pl-ghost'),orbit=$('.pl-orbit');
+ const media=matchMedia('(prefers-reduced-motion: reduce)');
+ let generation=0,timers=[],chosen='history',activeTarget=null,dragging=false,dragDepth=0,files=['Design source.fig','Photos','Product demo.mp4'],sheetKind='',cancelReturnPhase='running',lastFocus=null,samplePicked=false,frameDeadline=0,raf=0,animations=[],selectedRecord=0;
+ const records=[{name:'Design source.fig',icon:'file',state:'Reusable',source:'cloud',retention:'temporary'},{name:'Photos',icon:'folder',state:'Reusable',source:'local'},{name:'Product demo.mp4',icon:'file-video',state:'One-time'},{name:'Fonts.zip',icon:'archive',state:'Expired',source:'cloud'},{name:'Project files',icon:'folder',state:'Reusable',source:'cloud',retention:'persistent'},{name:'Contract.pdf',icon:'file-text',state:'One-time'},{name:'Presentation.key',icon:'file',state:'Reusable',source:'local'},{name:'Offline backup',icon:'folder',state:'Expired',source:'cloud'},{name:'Iteration notes.pdf',icon:'file-text',state:'Reusable',source:'cloud',retention:'temporary'}];
+ let progress={bytes:320000000,total:512000000,revision:3,samples:[],rate:12800000,batch:false,cloud:false};
+ const fixture=['Design source.fig','Photos','Product demo.mp4'];
+ const stored=window.openai?.widgetState?.privateContent,saved=stored?.version===18?stored:null;if(saved?.scenario&&Array.from(scenario.options).some(o=>o.value===saved.scenario)){scenario.value=saved.scenario;chosen=saved.scenario;}
+ reduce.checked=media.matches||!!saved?.reduced;
+ const reduced=()=>media.matches||reduce.checked;
+ const icons=()=>{if(globalThis.lucide?.createIcons){$$('svg[data-lucide]').forEach(n=>n.removeAttribute('data-lucide'));lucide.createIcons({attrs:{'stroke-width':1.8}});$$('svg[data-lucide]').forEach(n=>n.removeAttribute('data-lucide'));}};
+ const say=s=>{$('[data-status]').textContent=s;};
+ const persist=()=>{if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{scenario:chosen,reduced:reduced()},privateContent:{version:18,scenario:chosen,reduced:reduce.checked}}).catch(()=>{});};
+ const cue=(node,name)=>{const c=node.querySelector('.pl-cue');c.innerHTML='<i data-lucide="'+name+'" aria-hidden="true"></i>';c.dataset.statusIcon=name;icons();};
+ function later(fn,ms){const g=generation;const id=setTimeout(()=>{if(g===generation)fn();},ms);timers.push(id);return id;}
+ function animate(el,keyframes,options={}){const opts={duration:reduced()?120:180,easing:'cubic-bezier(.16,1,.3,1)',...options};if(reduced()){keyframes=keyframes.map(k=>({opacity:k.opacity??1}));opts.duration=120;opts.delay=0;}const a=el.animate(keyframes,opts);animations.push(a);return a;}
+ function clearWork(){generation++;timers.forEach(clearTimeout);timers=[];animations.forEach(a=>a.cancel());animations=[];cancelAnimationFrame(raf);raf=0;}
+ function draw(){const gr=graph.getBoundingClientRect(),coords=nodes.map(n=>{const r=n.querySelector('.pl-disc').getBoundingClientRect();return{x:r.x-gr.x+r.width/2,y:r.y-gr.y+r.height/2,r:r.height/2};}),own=coords[4],target=coords[0];
+  $$('[data-branch]').forEach((p,i)=>{const n=coords[i],sx=own.x,sy=own.y-own.r;let c1x=sx,c2x=n.x;if(gr.width<680&&i<2){const side=i===0?-1:1;c1x=sx+side*176;c2x=n.x+side*88;}p.setAttribute('d',`M${sx} ${sy} C${c1x} ${sy-96} ${c2x} ${n.y+160} ${n.x} ${n.y+n.r}`);});
+  const bend=gr.width<680?gr.width*(56/390):gr.width*(176/800),d=app.dataset.direction==='receive'?`M${target.x} ${target.y+target.r} C${bend} ${target.y+176} ${bend} ${own.y-176} ${own.x} ${own.y-own.r}`:`M${own.x} ${own.y-own.r} C${bend} ${own.y-176} ${bend} ${target.y+176} ${target.x} ${target.y+target.r}`;for(const selector of ['[data-track]','[data-segment]','[data-curve-hit]','[data-ack-mask]','[data-sheen]'])$(selector).setAttribute('d',d);
+ }
+ function follow(){draw();if(performance.now()<frameDeadline)raf=requestAnimationFrame(follow);else raf=0;}
+ function redrawMotion(ms=260){frameDeadline=performance.now()+(reduced()?0:ms);if(!raf)follow();}
+ function phase(name,pose='transfer'){app.dataset.phase=name;app.dataset.pose=pose;orbit.hidden=true;renderProgress();redrawMotion();}
+ function showHint(copy){if(app.dataset.pose==='transfer'&&!dragging){hint.textContent='';hint.hidden=true;return;}hint.textContent=copy;hint.hidden=!copy;}
+ function routineBadge(state,title){nodes.forEach(n=>n.classList.remove('pl-status-on'));if(app.dataset.pose!=='transfer')return;const receive=app.dataset.direction==='receive',map={waiting:'clock',connecting:'clock',queued:'clock',paused:'pause',reconnect:'wifi-off',verifying:receive?'shield':'clock',delivered:'check',stored:'check',failed:'triangle-alert'},kind=state==='running'&&progress.total===null?'download':map[state];if(!kind)return;const n=['paused','reconnect','failed'].includes(state)||receive?nodes[4]:nodes[0],c=n.querySelector('.pl-cue');if(c.dataset.statusIcon!==kind){cue(n,kind);c.dataset.statusIcon=kind;}c.dataset.tooltip=title;n.classList.add('pl-status-on');}
+ const bytesLabel=n=>n===0?'0 B':n<1000000?(n/1000).toFixed(n<10000?1:0)+' KB':(n/1000000).toFixed(n<10000000?1:0)+' MB';
+ function fixtureProgress(bytes=320000000,total=512000000,rate=12800000,extra={}){const now=performance.now();progress={bytes,total,revision:3,rate,activityAt:now,samples:bytes>rate*4?[{at:now-4000,bytes:bytes-rate*4},{at:now-2000,bytes:bytes-rate*2},{at:now,bytes}]:[{at:now,bytes}],batch:false,cloud:false,...extra};renderProgress();}
+ function sample(value){if(['delivered','stored','failed','cancelled'].includes(app.dataset.phase)||value.revision<=progress.revision||value.bytes<progress.bytes||value.bytes<0||(progress.total!==null&&value.bytes>progress.total))return false;if(value.bytes>progress.bytes)progress.activityAt=value.at;progress.bytes=value.bytes;progress.revision=value.revision;progress.samples.push({at:value.at,bytes:value.bytes});progress.samples=progress.samples.filter(s=>value.at-s.at<=8000);renderProgress();return true;}
+ function renderProgress(){const box=$('.pl-progress'),state=app.dataset.phase,shown=sheetKind==='progress'&&!sheet.hidden;box.hidden=!shown;app.classList.toggle('pl-has-details',shown);
+  const unknown=progress.total===null,done=['delivered','stored'].includes(state),pct=unknown?null:progress.total===0?(done?100:null):Math.min(100,progress.bytes/progress.total*100);
+  const title=state==='waiting'?'Waiting for response':state==='connecting'?'Connecting':state==='paused'?'Paused':state==='reconnect'?'Reconnecting':state==='queued'?'Queued':state==='verifying'?(progress.cloud?'Finalizing storage':progress.restore?'Verifying file':'Confirming delivery'):state==='delivered'?(progress.restore?'Restored':app.dataset.direction==='receive'?'Received':'Delivered'):state==='stored'?'Stored in cloud':state==='failed'?'Connection failed':progress.restore?'Restoring':progress.cloud?'Uploading':progress.batch?'Sending 3 files':app.dataset.direction==='receive'?'Receiving':'Sending';
+  $('[data-percent]').textContent=state==='queued'?'':pct===null?'—':Math.floor(pct)+'%';box.classList.toggle('pl-unknown',unknown);
+  app.style.setProperty('--pl-ack',pct??0);app.style.setProperty('--pl-progress-visible',pct>0?1:0);
+  app.classList.toggle('pl-stale',performance.now()-(progress.activityAt??0)>=3000);
+  const meter=$('.pl-progress-head');if(pct===null)meter.removeAttribute('aria-valuenow');else meter.setAttribute('aria-valuenow',pct.toFixed(2));meter.setAttribute('aria-valuetext',title+(pct===null?'':', '+Math.floor(pct)+'%'));
+  app.classList.toggle('pl-total-unknown',unknown);if(app.dataset.pose==='transfer'){for(const n of [nodes[0],nodes[4]]){n.setAttribute('aria-label',(n===nodes[0]?(progress.restore?'Cloud':'MacBook Pro'):'This device')+'. '+title+(pct===null?'':', '+Math.floor(pct)+'%')+'. View transfer details');n.dataset.tooltip='Transfer details';}showHint(state==='running'?(unknown?'Receiving':''):title);}else{nodes[0].setAttribute('aria-label','MacBook Pro, online');nodes[4].setAttribute('aria-label','This device');delete nodes[0].dataset.tooltip;delete nodes[4].dataset.tooltip;}
+  $('[data-progress-file]').textContent=progress.restore?records[selectedRecord].name:progress.batch?'Design source.fig + 2 more':'Product demo.mp4';$('[data-progress-bytes]').textContent=unknown?bytesLabel(progress.bytes)+' received':done?bytesLabel(progress.total):state==='queued'?bytesLabel(progress.total):bytesLabel(progress.bytes)+' of '+bytesLabel(progress.total);
+  const a=progress.samples[0],b=progress.samples.at(-1),windowMs=a&&b?b.at-a.at:0,rate=windowMs>0?(b.bytes-a.bytes)/(windowMs/1000):0,stable=windowMs>=3000&&rate>0&&performance.now()-b.at<3000;
+  const rateText=state==='verifying'?(progress.cloud?'':progress.restore?'Checking file integrity':'Waiting for MacBook Pro'):state==='reconnect'?'Progress saved':state==='failed'?'Try sending again':state!=='running'?'':unknown?'Total size unavailable':stable?((rate/1000000).toFixed(1)+' MB/s · About '+Math.max(1,Math.round((progress.total-progress.bytes)/rate))+' sec left'):'Estimating time…';$('[data-progress-rate]').textContent=rateText;
+  routineBadge(state,title);$('[data-progress-rate]').hidden=!rateText;
+  if(shown){$('#pl-dialog-title').textContent=progress.restore?'Cloud':progress.cloud?'Cloud vault':'MacBook Pro';$('.pl-sheet-note').textContent='';const icon=state==='paused'?'pause':state==='verifying'?'shield':app.dataset.direction==='receive'?'download':'upload',head=$('.pl-sheet-icon');if(head.dataset.statusIcon!==icon||head.querySelector('i[data-lucide]')){head.innerHTML='<i data-lucide="'+icon+'" aria-hidden="true"></i>';head.dataset.statusIcon=icon;icons();}head.dataset.tooltip=title;const actionable=['running','paused','reconnect','failed'].includes(state);$('[data-primary]').hidden=!actionable;$('[data-primary]').textContent=state==='paused'?'Resume':state==='reconnect'?'Reconnect':state==='failed'?'Try again':'Pause';$('[data-secondary]').textContent=actionable?'Cancel transfer':'Close';$('[data-secondary]').style.width=actionable?'50%':'100%';}
+ }
+ function clearTargets(){nodes.forEach(n=>{n.classList.remove('pl-target','pl-invalid');n.querySelector('.pl-drop-label').textContent='';});activeTarget=null;}
+ function endDrag(){dragging=false;dragDepth=0;app.classList.remove('pl-drag');clearTargets();ghost.hidden=true;showHint('');}
+ function idle(){phase('idle','default');showHint('');nodes.forEach(n=>{n.style.opacity='';n.style.visibility='';});cue(nodes[0],'plus');}
+ function reset(){clearWork();endDrag();sheet.hidden=true;shade.hidden=true;graph.inert=false;$('.pl-history').inert=false;hideHistory();$$('.pl-top').forEach(n=>n.inert=false);app.dataset.direction='send';nodes[0].querySelector('.pl-disc').innerHTML='<i data-lucide="laptop" aria-hidden="true"></i>';nodes[0].querySelector('.pl-name').textContent='MacBook Pro';cue(nodes[4],'ban');idle();fixtureProgress();sheetKind='';samplePicked=false;app.classList.toggle('pl-reduced',reduced());icons();}
+ function statusLabel(r){return r.state==='Expired'?'Expired cloud copy':r.state==='One-time'?'One-time · no retained copy':r.source==='cloud'?'Reusable · cloud copy':'Reusable · on this device';}
+ function statusBadge(r){return '<span class="pl-file-badge '+(r.state==='One-time'?'pl-once':'')+'" aria-hidden="true">'+(r.state==='One-time'?'1':'<i data-lucide="'+(r.state==='Expired'?'clock':r.source==='cloud'?'cloud':'repeat-2')+'"></i>')+'</span>';}
+ function renderHistory(filter='All'){const grid=$('.pl-history-grid');grid.replaceChildren();records.forEach((r,i)=>{if(filter!=='All'&&r.state!==filter)return;const b=document.createElement('button');b.type='button';b.className='pl-file cursor-interaction';b.dataset.record=i;b.dataset.availability=r.state;b.setAttribute('aria-label',r.name+'. '+statusLabel(r)+'. View record');b.dataset.tooltip=statusLabel(r);const visual=document.createElement('span');visual.className='pl-file-visual';visual.innerHTML='<i data-lucide="'+r.icon+'" aria-hidden="true"></i>'+statusBadge(r);const name=document.createElement('span');name.className='pl-file-name';name.textContent=r.name;b.append(visual,name);b.addEventListener('click',()=>openRecord(i));grid.append(b);});$$('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.filter===filter?'true':'false'));icons();}
+ function openHistory(){app.dataset.view='history';$('.pl-history').hidden=false;$('[data-history-back]').hidden=false;$('.pl-context').textContent=app.getBoundingClientRect().width<680?'MacBook Pro':'Devices';renderHistory();say('设备名作标题，状态收进徽标；鼠标悬停、键盘聚焦或点击文件查看含义。');}
+ function hideHistory(){app.dataset.view='graph';$('.pl-history').hidden=true;$('.pl-history').inert=false;$('[data-history-back]').hidden=true;$('.pl-context').textContent='Devices';}
+ function recordTitles(kind){const r=records[selectedRecord];if(kind==='record-reusable')return[r.name,'','Close',r.source==='cloud'?'Restore':'Send again',r.icon];if(kind==='record-one-time'||kind==='record-expired')return[r.name,'','Close','Choose files',r.icon];if(kind==='record-keep')return['Keep available?','Keep this copy beyond its current expiry.','Cancel','Keep available','cloud'];return null;}
+ function recordPolicy(){const r=records[selectedRecord],kind=sheetKind,isRecord=kind.startsWith('record-'),fileRecord=isRecord&&kind!=='record-keep';sheet.classList.toggle('pl-record',fileRecord);sheet.classList.toggle('pl-retention',kind==='record-keep');$('[data-record-more]').hidden=!(kind==='record-reusable'&&r.source==='cloud'&&r.retention==='temporary');const copy=kind==='record-reusable'?(r.source==='local'?'':r.retention==='persistent'?'Kept available':'Available until Nov 2, 16:00'):kind==='record-expired'?'Cloud copy expired. Choose the file again.':kind==='record-one-time'?'No retained copy. Choose the file again.':'';$('[data-policy-note]').textContent=copy;$('[data-policy-note]').hidden=!copy;
+  if(fileRecord){const h=$('.pl-sheet-icon');h.innerHTML='<i data-lucide="'+r.icon+'" aria-hidden="true"></i>'+statusBadge(r).replace('pl-file-badge','pl-sheet-badge');h.dataset.tooltip=statusLabel(r);}
+  if(kind==='record-keep'){$('[data-filename]').textContent=r.name;$('[data-filecount]').hidden=true;}else $('[data-filecount]').hidden=false;
+  if(isRecord)$('.pl-history').inert=true;
+ }
+ function openRecord(i){selectedRecord=i;const state=records[i].state;openSheet('record-'+(state==='Reusable'?'reusable':state==='Expired'?'expired':'one-time'));}
+ function startCloudRestore(seed=0){const r=records[selectedRecord];if(r.state!=='Reusable'||r.source!=='cloud'){say('此记录没有可恢复的云端副本。');return;}clearWork();hideHistory();app.dataset.direction='receive';nodes[0].querySelector('.pl-disc').innerHTML='<i data-lucide="cloud" aria-hidden="true"></i>';nodes[0].querySelector('.pl-name').textContent='Cloud';fixtureProgress(seed,512000000,12800000,{restore:true});icons();runTransfer();say('演示：从 Cloud 节点恢复到本机，校验通过后显示 Restored。');}
+ function setTarget(n){if(activeTarget===n)return;clearTargets();activeTarget=n;if(!n)return;const id=n.dataset.node,valid=id==='0'||id==='2';n.classList.add('pl-target');n.classList.toggle('pl-invalid',!valid);n.querySelector('.pl-drop-label').textContent=valid?'Drop to store':id==='own'?'Choose another device':id==='1'?'Device is connecting':'Device is offline';if(id==='0')n.querySelector('.pl-drop-label').textContent='Drop to send';}
+ function beginDrag(){if(dragging)return;sheet.hidden=true;shade.hidden=true;graph.inert=false;clearWork();idle();dragging=true;app.classList.add('pl-drag');showHint('Drop on a device');say('靠近节点即可放置；离线设备和本机不会成为发送目标。');}
+ function nearest(x,y){const available=nodes.map(n=>{const r=n.querySelector('.pl-disc').getBoundingClientRect(),base=parseFloat(getComputedStyle(n).getPropertyValue('--size'))/2;return{n,d:Math.hypot(x-r.x-r.width/2,y-r.y-r.height/2),radius:base+24};});const current=available.find(v=>v.n===activeTarget);if(current&&current.d<=current.radius+8)return current.n;return available.filter(v=>v.d<=v.radius).sort((a,b)=>a.d-b.d)[0]?.n||null;}
+ const titles={prepared:['Ready to send','To MacBook Pro','Cancel','Send','arrow-up-from-line'],async:['Save for later?','MacBook Pro is offline.','Cancel','Store in cloud','cloud'],receive:['Receive files?','From MacBook Pro','Decline','Accept','download'],task:['Transfer options','To MacBook Pro','Cancel transfer','Pause','pause'],pending:['Request pending','To MacBook Pro','Keep waiting','Cancel request','history'],paused:['Transfer paused','Resume from where you left off.','Cancel transfer','Resume','pause'],reconnect:['Connection lost','Trying to reconnect.','Cancel transfer','Reconnect','wifi'],failed:['Couldn\u2019t send files','Check your connection and try again.','Close','Try again','triangle-alert'],rejected:['Request declined','MacBook Pro declined this request.','Close','Choose device','ban'],expired:['Request expired','Send a new request when you\u2019re ready.','Close','Send again','history'],unavailable:['File unavailable','Choose the file again to continue.','Close','Choose files','file-x'],cancel:['Cancel transfer?','The current transfer will stop.','Keep transfer','Cancel transfer','circle-x']};
+ async function closeSheet(){if(sheet.hidden)return true;const g=generation;const mobile=app.getBoundingClientRect().width<680;const a=animate(sheet,[{opacity:1,translate:'0 0',scale:1},{opacity:0,translate:mobile?'0 24px':'0 4px',scale:mobile?1:.985}],{duration:reduced()?120:mobile?180:120,easing:'cubic-bezier(.4,0,1,1)'});animate(shade,[{opacity:1},{opacity:0}],{duration:120});await a.finished.catch(()=>{});if(g!==generation)return false;sheet.hidden=true;shade.hidden=true;graph.inert=false;$('.pl-history').inert=false;app.classList.remove('pl-has-details');$$('.pl-top').forEach(n=>n.inert=false);if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true});return true;}
+ function openSheet(kind){endDrag();if(kind==='cancel')cancelReturnPhase=app.dataset.phase;const v=kind==='progress'?['Sending','To MacBook Pro','Cancel transfer','Pause','upload']:recordTitles(kind)||titles[kind];sheetKind=kind;lastFocus=document.activeElement;const fileKind=['prepared','async','receive'].includes(kind);sheet.classList.toggle('pl-message',!fileKind&&kind!=='progress');sheet.classList.toggle('pl-details',kind==='progress');$('#pl-dialog-title').textContent=v[0];$('.pl-sheet-note').textContent=v[1];$('[data-secondary]').textContent=v[2];$('[data-secondary]').style.width='50%';$('[data-primary]').textContent=v[3];$('[data-primary]').hidden=false;$('.pl-sheet-icon').innerHTML='<i data-lucide="'+v[4]+'" aria-hidden="true"></i>';$('[data-filename]').textContent=files[0]||'Design source.fig';$('[data-filecount]').textContent=files.length>1?'and '+(files.length-1)+' more files':'1 file';sheet.hidden=false;shade.hidden=false;graph.inert=true;$$('.pl-top').forEach(n=>n.inert=true);renderProgress();recordPolicy();icons();const mobile=app.getBoundingClientRect().width<680;animate(sheet,[{opacity:0,translate:mobile?'0 24px':'0 8px',scale:mobile?1:.98},{opacity:1,translate:'0 0',scale:1}],{duration:reduced()?120:mobile?240:180});animate(shade,[{opacity:0},{opacity:1}],{duration:160});$('[data-secondary]').focus({preventScroll:true});}
+ function tick(){if(app.dataset.phase!=='running')return;const n=progress.total===null?progress.bytes+progress.rate*.5:Math.min(progress.total,progress.bytes+progress.rate*.5);sample({bytes:n,revision:progress.revision+1,at:performance.now()});if(progress.total!==null&&progress.bytes>=progress.total){complete();return;}later(tick,500);}
+ function runTransfer(){const previous=app.dataset.phase;if(['paused','reconnect'].includes(previous))progress.samples=[{at:performance.now(),bytes:progress.bytes}];phase('running');showHint(progress.total===null?'Receiving':'');later(tick,500);say('演示样本驱动蓝色弧长。点击曲线或节点查看详情；100% 后仍等待校验与回执。');}
+ function complete(){clearWork();if(progress.total!==null)progress.bytes=progress.total;phase('verifying');showHint(progress.cloud?'Finalizing storage':'Confirming delivery');say('字节已传完；等待校验和回执，尚未显示送达。');later(()=>{const cloud=progress.cloud;phase(cloud?'stored':'delivered');const receiver=app.dataset.direction==='receive'?nodes[4]:nodes[0],copy=cloud?'Stored in cloud':app.dataset.direction==='receive'?'Received':'Delivered';cue(receiver,'check');say(cloud?'已封存到云端，未声明对方收到。':'收到有效回执后才显示送达。');animate(receiver.querySelector('.pl-cue'),[{opacity:0,scale:.85},{opacity:1,scale:1}],{duration:140});},1500);}
+ function autoSend(){fixtureProgress(0,512000000,64000000);phase('waiting');showHint('Waiting for MacBook Pro');say('请求等待接受，尚未开始传输。');later(()=>{phase('connecting');showHint('Connecting');},1200);later(()=>runTransfer(),2200);}
+ function dragDropDemo(){beginDrag();ghost.hidden=false;const gr=graph.getBoundingClientRect(),d=nodes[0].querySelector('.pl-disc').getBoundingClientRect(),x=d.x-gr.x+d.width/2,y=d.y-gr.y+d.height/2;ghost.style.left=(x+18)+'px';ghost.style.top=(y+10)+'px';animate(ghost,[{translate:'160px 100px',opacity:0},{translate:'40px 20px',opacity:1},{translate:'0 0',opacity:1}],{duration:reduced()?120:1000});later(()=>{setTarget(nodes[0]);say('光圈扩大命中范围：节点半径以外还有 24px；退出多留 8px，防止闪烁。');},700);later(()=>{animate(ghost,[{opacity:1,scale:1},{opacity:0,scale:.88}],{duration:140});},1800);later(()=>{files=[...fixture];endDrag();openSheet('prepared');say('放下只暂存文件；点击 Send 后才进入请求与传输流程。');},1960);}
+ function play(){chosen=scenario.value;reset();files=[...fixture];persist();const key=chosen;
+  if(key==='history'){openHistory();}
+  else if(key==='restore'){selectedRecord=0;startCloudRestore(320000000);}
+  else if(key==='progress'){runTransfer();}
+  else if(key==='unknown'){fixtureProgress(320000000,null,12800000);app.dataset.direction='receive';runTransfer();}
+  else if(key==='zero'){fixtureProgress(0,0,0);complete();}
+  else if(key==='batch'){fixtureProgress(320000000,512000000,12800000,{batch:true});runTransfer();}
+  else if(key==='entry'){nodes.forEach((n,i)=>animate(n,[{opacity:0,translate:'0 8px',scale:.96},{opacity:parseFloat(getComputedStyle(n).opacity),translate:'0 0',scale:1}],{duration:200,delay:Math.min(i*40,120)}));say('节点入场：图标与标签一起进入，200ms，最多 120ms 短错峰，不弹跳。');}
+  else if(key==='selection'){phase('idle','selected');orbit.hidden=false;animate(orbit,[{opacity:0,scale:.9},{opacity:1,scale:1}],{duration:180});say('选中：64 → 96px，其余节点退到 0.13；退出后恢复原位置。');later(()=>{idle();say('取消选中：180ms 恢复设备图，并保留原设备位置。');},2400);}
+  else if(key==='drop')dragDropDemo();
+  else if(key==='complete'){fixtureProgress(0,512000000,64000000);runTransfer();}
+  else if(key==='receive'){openSheet('receive');say('接收确认独立进入；先聚焦 Decline，防止误按回车接受。');}
+  else if(key==='pause'||key==='reconnect'){runTransfer();later(()=>{clearWork();phase(key==='pause'?'paused':'reconnect');if(key==='reconnect')openSheet('reconnect');say(key==='pause'?'暂停：字节数保留，速度与剩余时间收起。':'连接中断：保留已确认进度，恢复后重新采样速度。');},1700);}
+  else if(key==='queued'){fixtureProgress(0);phase('queued');showHint('');say('排队不展示速度或剩余时间。');later(()=>{phase('connecting');showHint('Connecting');},1600);later(runTransfer,3000);}
+  else if(key==='stored'){nodes[0].querySelector('.pl-disc').innerHTML='<i data-lucide="server" aria-hidden="true"></i>';nodes[0].querySelector('.pl-name').textContent='Cloud vault';icons();fixtureProgress(0,512000000,256000000,{cloud:true});runTransfer();}
+  else if(key==='exit'){animate(nodes[0],[{opacity:1,translate:'0 0',scale:1},{opacity:0,translate:'0 -4px',scale:.96}],{duration:160,fill:'forwards'});say('节点退出：160ms；拖拽期间冻结节点位置，结束后再处理重排。');}
+  else if(key==='panel'){openSheet('prepared');say('弹层入场与离场独立处理；手机从底部进入，桌面只移动 8px。');later(async()=>{if(await closeSheet())idle();},2000);}
+  else if(key==='cancelled'){runTransfer();later(()=>openSheet('cancel'),1000);}
+  else{phase(key);openSheet(key);say(key==='failed'?'失败后 Try again 会创建新的尝试，不把失败任务伪装成可继续的暂停任务。':'终态只提供适合当前状态的下一步，关闭后回到设备图。');}
+ }
+ $('[data-play]').addEventListener('click',play);scenario.addEventListener('change',()=>{chosen=scenario.value;reset();persist();say('已选择场景，点击播放查看过渡。');});
+ $('[data-curve-hit]').addEventListener('click',()=>openSheet('progress'));
+ $$('[data-filter]').forEach(b=>b.addEventListener('click',()=>renderHistory(b.dataset.filter)));
+ $('[data-history-close]').addEventListener('click',hideHistory);$('[data-history-back]').addEventListener('click',hideHistory);
+ $('[data-record-more]').addEventListener('click',()=>{if(records[selectedRecord].state==='Reusable'&&records[selectedRecord].retention==='temporary')openSheet('record-keep');});
+ sheet.addEventListener('click',async e=>{const action=e.target.closest('[data-primary],[data-secondary]');if(!action||!sheetKind.startsWith('record-'))return;e.preventDefault();e.stopImmediatePropagation();const kind=sheetKind,primary=action.hasAttribute('data-primary'),r=records[selectedRecord];if(!await closeSheet())return;if(!primary)return;if(kind==='record-reusable'&&r.state==='Reusable'){if(r.source==='cloud')startCloudRestore();else{hideHistory();selectedFiles([r.name]);}}else if(kind==='record-keep'&&r.state==='Reusable'&&r.retention==='temporary'){r.retention='persistent';renderHistory();openRecord(selectedRecord);say('演示副本已设为 Keep available；这里不模拟收费或真实云存储写入。');}else if(kind==='record-one-time'||kind==='record-expired'){$('[data-file]').click();}},true);
+ reduce.addEventListener('change',()=>{app.classList.toggle('pl-reduced',reduced());persist();animations.forEach(a=>a.finish());redrawMotion(0);say(reduced()?'减少动态已开启：保留状态变化，取消位移、缩放和循环。':'恢复标准动效。');});media.addEventListener('change',()=>{app.classList.toggle('pl-reduced',reduced());redrawMotion(0);});
+ $('[data-secondary]').addEventListener('click',async()=>{const kind=sheetKind;if(kind==='progress'){if(['running','paused','reconnect','failed'].includes(app.dataset.phase))openSheet('cancel');else await closeSheet();return;}if(['task','paused','reconnect'].includes(kind)){openSheet('cancel');return;}if(kind==='cancel'){if(!await closeSheet())return;phase(cancelReturnPhase);return;}if(kind==='pending'){await closeSheet();return;}if(kind==='receive'){if(!await closeSheet())return;idle();showHint('Request declined');say('已拒绝演示请求，未进入传输。');return;}if(!await closeSheet())return;idle();say('已关闭，未发送文件。');});
+ $('[data-primary]').addEventListener('click',async()=>{const kind=sheetKind,expected=app.dataset.phase;if(!await closeSheet())return;if(kind==='progress'){if(app.dataset.phase!==expected)return;if(expected==='running'){clearWork();phase('paused');say('暂停已确认，蓝色弧长保留。');}else if(['paused','reconnect'].includes(expected)){clearWork();runTransfer();}else if(expected==='failed'){clearWork();autoSend();}return;}if(kind==='task'&&app.dataset.phase!=='running'){say('状态已更新，暂停操作没有覆盖新的状态。');return;}clearWork();if(kind==='task'){phase('paused');say('演示服务已确认暂停；活动段停止。');return;}if(['prepared','expired','failed'].includes(kind)){app.dataset.direction='send';autoSend();return;}if(kind==='receive'){app.dataset.direction='receive';fixtureProgress(0,512000000,64000000);phase('connecting');showHint('Connecting');later(runTransfer,900);return;}if(['paused','reconnect'].includes(kind)){runTransfer();return;}if(kind==='async'){nodes[0].querySelector('.pl-disc').innerHTML='<i data-lucide="server" aria-hidden="true"></i>';nodes[0].querySelector('.pl-name').textContent='Cloud vault';icons();fixtureProgress(0,512000000,64000000,{cloud:true});runTransfer();return;}if(kind==='cancel'||kind==='pending'){phase('cancelled','default');showHint('Cancelled');say('取消经确认后生效，活动曲线退出。');return;}if(kind==='unavailable'){$('[data-file]').click();idle();return;}idle();samplePicked=true;say('选择另一个在线设备，或重新选择文件。');});
+ function selectedFiles(names){reset();files=names.length?names:[...fixture];samplePicked=true;showHint('Choose a device');nodes[0].focus({preventScroll:true});say('文件已暂存。选择目标后确认发送；Esc 可取消。');}
+ $('[data-sample]').addEventListener('click',()=>selectedFiles([...fixture]));$('[data-sample]').addEventListener('dragstart',e=>{e.dataTransfer.setData('application/x-pinelink-demo','fixture');e.dataTransfer.effectAllowed='copy';files=[...fixture];beginDrag();});$('[data-sample]').addEventListener('dragend',()=>{if(dragging){endDrag();say('已退出拖拽，未发送文件。');}});
+ $('[data-pick]').addEventListener('click',()=>$('[data-file]').click());$('[data-file]').addEventListener('change',e=>selectedFiles(Array.from(e.target.files||[],f=>f.name)));
+ nodes.forEach(n=>n.addEventListener('click',()=>{const id=n.dataset.node;if(['0','own'].includes(id)&&app.dataset.pose==='transfer'){if(['waiting','connecting'].includes(app.dataset.phase))openSheet('pending');else openSheet('progress');return;}if(id==='0'){if(samplePicked)openSheet('prepared');else{phase('idle','selected');orbit.hidden=false;redrawMotion();}}else if(id==='2'){openSheet('async');}else say(id==='own'?'请选择另一台设备。':id==='1'?'该设备仍在连接，暂不可发送。':'该设备离线；可通过云端入口显式选择保管。');}));
+ $('[data-orbit-send]').addEventListener('click',()=>openSheet('prepared'));$('[data-folder]').addEventListener('click',()=>{showHint('No files yet');say('文件夹入口：在真实应用中打开设备文件；本演示不读取文件。');});$('[data-orbit-more]').addEventListener('click',openHistory);$('[data-more]').addEventListener('click',()=>{showHint('Choose a device');say('选择设备后可查看该设备的操作。');});
+ app.addEventListener('dragenter',e=>{if(Array.from(e.dataTransfer?.types||[]).some(x=>x==='Files'||x==='application/x-pinelink-demo')){e.preventDefault();dragDepth++;beginDrag();}});
+ app.addEventListener('dragover',e=>{if(!dragging)return;e.preventDefault();const n=nearest(e.clientX,e.clientY);setTarget(n);e.dataTransfer.dropEffect=n&&['0','2'].includes(n.dataset.node)?'copy':'none';});
+ app.addEventListener('dragleave',e=>{if(!dragging)return;dragDepth=Math.max(0,dragDepth-1);if(dragDepth===0&&!app.contains(e.relatedTarget)){endDrag();say('拖拽已离开，界面恢复。');}});
+ app.addEventListener('drop',e=>{if(!dragging)return;e.preventDefault();const target=nearest(e.clientX,e.clientY),id=target?.dataset.node;const names=Array.from(e.dataTransfer.files||[],f=>f.name),demo=Array.from(e.dataTransfer.types||[]).includes('application/x-pinelink-demo');endDrag();if(!names.length&&!demo){openSheet('unavailable');say('无法读取拖入的文件，请重新选择；没有创建虚假文件。');return;}files=names.length?names:[...fixture];if(id==='0'||id==='2'){openSheet(id==='2'?'async':'prepared');say('文件已放下并暂存，确认后才发送。');}else{showHint('Choose another device');say('该位置不可放置，文件未发送。');}});
+ root.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();if(!sheet.hidden){const retain=sheetKind.startsWith('record-')||['progress','task','pending','paused','reconnect','cancel'].includes(sheetKind);closeSheet().then(ok=>{if(ok&&!retain)idle();});}else if(app.dataset.view==='history'){hideHistory();}else if(app.dataset.pose==='transfer'){say('传输继续。点击曲线或节点可查看详情并取消。');}else{reset();say('已取消当前界面操作，未发送文件。');}}if(e.key==='Tab'&&!sheet.hidden){const buttons=Array.from(sheet.querySelectorAll('button')).filter(b=>!b.hidden&&!b.disabled&&b.getClientRects().length),a=buttons[0],b=buttons.at(-1);if(a===b){e.preventDefault();a.focus();}else if(e.shiftKey&&document.activeElement===a){e.preventDefault();b.focus();}else if(!e.shiftKey&&document.activeElement===b){e.preventDefault();a.focus();}}});
+ window.addEventListener('openai:set_globals',e=>{const incoming=e.detail?.globals?.widgetState?.privateContent;if(incoming?.scenario&&Array.from(scenario.options).some(o=>o.value===incoming.scenario)&&incoming.scenario!==chosen){chosen=incoming.scenario;scenario.value=chosen;reduce.checked=!!incoming.reduced||media.matches;reset();}});
+ document.addEventListener('visibilitychange',()=>app.classList.toggle('pl-reduced',document.hidden||reduced()));
+ function trimHistoryTooltips(){$$('.pl-file').forEach(b=>{const n=b.querySelector('.pl-file-name'),r=records[Number(b.dataset.record)];b.dataset.tooltip=(n.scrollWidth>n.clientWidth?n.textContent+' · ':'')+statusLabel(r);});}
+ new MutationObserver(()=>requestAnimationFrame(trimHistoryTooltips)).observe($('.pl-history-grid'),{childList:true});new ResizeObserver(trimHistoryTooltips).observe($('.pl-history-grid'));
+ new ResizeObserver(()=>{draw();}).observe(graph);app.classList.toggle('pl-reduced',reduced());icons();fixtureProgress();if(chosen==='history')openHistory();else phase('running');requestAnimationFrame(draw);
+ setInterval(()=>{if(!document.hidden&&app.dataset.phase==='running')renderProgress();},1000);
+ root.pinelinkPreview={play,reset,openSheet,phase,draw,sample,fixtureProgress,complete,openHistory,openRecord,startCloudRestore,getState:()=>({phase:app.dataset.phase,pose:app.dataset.pose,view:app.dataset.view,sheet:sheet.hidden?null:sheetKind,reduced:reduced(),dragging,target:activeTarget?.dataset.node||null,files:files.length,bytes:progress.bytes,total:progress.total,revision:progress.revision,selectedRecord,records:records.map(r=>({name:r.name,state:r.state,source:r.source,retention:r.retention}))})};
+})();
+</script>

@@ -1,0 +1,189 @@
+{
+  "version": 17,
+  "native_file": "designs/17-pinelink-history-cloud.fig",
+  "sha256": "49008EEBB4A711AB3F0FFEEE62C9F375C3CA2CE38B9078ECB7F533B815F116DE",
+  "reopened": true,
+  "pages": [
+    {
+      "id": "0:3",
+      "name": "00 / Foundations",
+      "frames": 1
+    },
+    {
+      "id": "0:4",
+      "name": "01 / Desktop",
+      "frames": 8
+    },
+    {
+      "id": "0:5",
+      "name": "02 / Mobile",
+      "frames": 8
+    },
+    {
+      "id": "0:6",
+      "name": "03 / Components",
+      "frames": 1
+    },
+    {
+      "id": "0:8",
+      "name": "04 / Node states",
+      "frames": 2
+    },
+    {
+      "id": "0:9",
+      "name": "05 / Transfer states",
+      "frames": 14
+    },
+    {
+      "id": "0:10",
+      "name": "06 / Drag and drop",
+      "frames": 9
+    },
+    {
+      "id": "0:11",
+      "name": "07 / Mobile states",
+      "frames": 9
+    },
+    {
+      "id": "0:12",
+      "name": "08 / Motion",
+      "frames": 2
+    },
+    {
+      "id": "0:13",
+      "name": "09 / Desktop progress",
+      "frames": 16
+    },
+    {
+      "id": "0:14",
+      "name": "10 / Mobile progress",
+      "frames": 16
+    },
+    {
+      "id": "0:15",
+      "name": "11 / Progress contract",
+      "frames": 2
+    },
+    {
+      "id": "0:16",
+      "name": "12 / History availability",
+      "frames": 10
+    },
+    {
+      "id": "0:17",
+      "name": "13 / Cloud restore",
+      "frames": 8
+    },
+    {
+      "id": "0:18",
+      "name": "14 / Retention contract",
+      "frames": 1
+    }
+  ],
+  "top_level_frames": 107,
+  "added_history_cloud_screens": 18,
+  "original_history_screens_updated": 2,
+  "controls": [
+    {
+      "screen": "desktop-reusable",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "desktop-reusable",
+      "action": "Restore",
+      "pass": true
+    },
+    {
+      "screen": "desktop-one-time",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "desktop-one-time",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "screen": "desktop-expired",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "desktop-expired",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "screen": "desktop-keep",
+      "action": "Cancel",
+      "pass": true
+    },
+    {
+      "screen": "desktop-keep",
+      "action": "Keep available",
+      "pass": true
+    },
+    {
+      "screen": "mobile-reusable",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "mobile-reusable",
+      "action": "Restore",
+      "pass": true
+    },
+    {
+      "screen": "mobile-one-time",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "mobile-one-time",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "screen": "mobile-expired",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "mobile-expired",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "screen": "mobile-keep",
+      "action": "Cancel",
+      "pass": true
+    },
+    {
+      "screen": "mobile-keep",
+      "action": "Keep available",
+      "pass": true
+    }
+  ],
+  "native_badges_structured": 24,
+  "fonts_faithful": true,
+  "accessibility": {
+    "pages": [
+      "12 / History availability",
+      "13 / Cloud restore",
+      "14 / Retention contract"
+    ],
+    "errors": 0,
+    "warnings": 0
+  },
+  "variables": 37,
+  "progress_browser_checks": 23,
+  "history_browser_checks": 11,
+  "responsive_widths": [
+    320,
+    390,
+    736,
+    1024
+  ],
+  "implementation": "Design and architecture contracts only; no application code or staging deployment."
+}

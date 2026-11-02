@@ -1,0 +1,327 @@
+{
+  "date": "2026-11-01",
+  "status": "Design and architecture proposal only; no backend implementation or deployment",
+  "nativeFile": "../19-pinelink-relay-consent.fig",
+  "sha256": "27383F7EEA7C9BC31763C24D87C888507C36D291A57CAFE0F962ACE713DFFAE1",
+  "saveCloseReopen": true,
+  "pages": 18,
+  "topFrames": 127,
+  "originalPages": 16,
+  "originalComponents": 12,
+  "originalVariables": 58,
+  "addedProductScreens": 16,
+  "addedContractBoards": 2,
+  "originalV18Hash": "CB2FEEA7255314DA128B7F7BEC4C2E40531E9594D663CEBC2029D0DECFEA88A3",
+  "nativeActions": [
+    {
+      "id": "989906431:19042",
+      "name": "Action-Decline",
+      "screen": 4,
+      "x": 420,
+      "y": 442,
+      "width": 174,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19044",
+      "name": "Action-Accept",
+      "screen": 4,
+      "x": 606,
+      "y": 442,
+      "width": 174,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19046",
+      "name": "Action-Decline",
+      "screen": 5,
+      "x": 16,
+      "y": 748,
+      "width": 173,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19048",
+      "name": "Action-Accept",
+      "screen": 5,
+      "x": 201,
+      "y": 748,
+      "width": 173,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19050",
+      "name": "Action-Cancel transfer",
+      "screen": 8,
+      "x": 420,
+      "y": 478,
+      "width": 174,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19052",
+      "name": "Action-Pause",
+      "screen": 8,
+      "x": 606,
+      "y": 478,
+      "width": 174,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19054",
+      "name": "Action-Cancel transfer",
+      "screen": 9,
+      "x": 16,
+      "y": 748,
+      "width": 173,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19056",
+      "name": "Action-Pause",
+      "screen": 9,
+      "x": 201,
+      "y": 748,
+      "width": 173,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19058",
+      "name": "Action-Close",
+      "screen": 10,
+      "x": 420,
+      "y": 420,
+      "width": 174,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19060",
+      "name": "Action-Send again",
+      "screen": 10,
+      "x": 606,
+      "y": 420,
+      "width": 174,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19062",
+      "name": "Action-Close",
+      "screen": 11,
+      "x": 16,
+      "y": 748,
+      "width": 173,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19064",
+      "name": "Action-Send again",
+      "screen": 11,
+      "x": 201,
+      "y": 748,
+      "width": 173,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19066",
+      "name": "Action-Close",
+      "screen": 12,
+      "x": 420,
+      "y": 420,
+      "width": 174,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19068",
+      "name": "Action-Send again",
+      "screen": 12,
+      "x": 606,
+      "y": 420,
+      "width": 174,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19070",
+      "name": "Action-Close",
+      "screen": 13,
+      "x": 16,
+      "y": 748,
+      "width": 173,
+      "height": 48,
+      "ok": true
+    },
+    {
+      "id": "989906431:19072",
+      "name": "Action-Send again",
+      "screen": 13,
+      "x": 201,
+      "y": 748,
+      "width": 173,
+      "height": 48,
+      "ok": true
+    }
+  ],
+  "accessibility": [
+    {
+      "page": "16 / Relay before consent",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    },
+    {
+      "page": "17 / Atomic lifecycle",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    }
+  ],
+  "fonts": {
+    "faithful": true,
+    "contractFaithful": true
+  },
+  "exports": [
+    {
+      "name": "Desktop / Sender / uploading before consent",
+      "id": "0:6098",
+      "file": "16-desktop-uploading-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Mobile / Sender / uploading before consent",
+      "id": "0:6119",
+      "file": "16-mobile-uploading-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Desktop / Sender / stored, awaiting recipient",
+      "id": "0:6145",
+      "file": "16-desktop-staged-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Mobile / Sender / stored, awaiting recipient",
+      "id": "0:6167",
+      "file": "16-mobile-staged-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Desktop / Recipient / request during upload",
+      "id": "0:6194",
+      "file": "16-desktop-request-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Mobile / Recipient / request during upload",
+      "id": "0:6235",
+      "file": "16-mobile-request-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Desktop / Recipient / accepted, receiving",
+      "id": "0:6290",
+      "file": "16-desktop-receiving-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Mobile / Recipient / accepted, receiving",
+      "id": "0:6311",
+      "file": "16-mobile-receiving-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Desktop / Sender / upload details",
+      "id": "0:6337",
+      "file": "16-desktop-details-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Mobile / Sender / upload details",
+      "id": "0:6381",
+      "file": "16-mobile-details-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Desktop / Sender / declined",
+      "id": "0:6439",
+      "file": "16-desktop-declined-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Mobile / Sender / declined",
+      "id": "0:6469",
+      "file": "16-mobile-declined-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Desktop / Sender / expired",
+      "id": "0:6513",
+      "file": "16-desktop-expired-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Mobile / Sender / expired",
+      "id": "0:6543",
+      "file": "16-mobile-expired-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Desktop / Recipient / received",
+      "id": "0:6587",
+      "file": "16-desktop-received-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Mobile / Recipient / received",
+      "id": "0:6609",
+      "file": "16-mobile-received-native.png",
+      "page": "16 / Relay before consent"
+    },
+    {
+      "name": "Relay / state transitions and motion",
+      "id": "0:6636",
+      "file": "17-relay-motion-native.png",
+      "page": "17 / Atomic lifecycle"
+    },
+    {
+      "name": "Architecture / atomic references and GC",
+      "id": "0:6674",
+      "file": "17-atomic-lifecycle-native.png",
+      "page": "17 / Atomic lifecycle"
+    }
+  ],
+  "productPreviewsVisuallyReviewed": [
+    "16-mobile-request-native.png",
+    "16-desktop-details-native.png",
+    "contact-sheet.png"
+  ],
+  "contractPreviewVisuallyReviewed": "17-atomic-lifecycle-native.png",
+  "motion": "Existing v18 motion timing retained; relay transitions are specified on the new contract board, not implemented in app code.",
+  "sources": [
+    "infra/docs/relay-preupload.md",
+    "backend/internal/service/transfer.go",
+    "backend/internal/service/p2p.go",
+    "backend/internal/service/relay.go",
+    "backend/internal/service/upload.go",
+    "backend/internal/service/maintenance.go",
+    "backend/internal/service/pull.go",
+    "backend/internal/service/manifests.go",
+    "cli/internal/p2p/transfer.go"
+  ]
+}

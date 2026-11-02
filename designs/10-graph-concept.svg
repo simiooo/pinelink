@@ -1,0 +1,402 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1560" viewBox="0 0 1920 1560">
+  <defs>
+    <radialGradient id="paper" cx="50%" cy="38%" r="78%">
+      <stop offset="0" stop-color="#FBF9F5"/>
+      <stop offset="1" stop-color="#F1EEE8"/>
+    </radialGradient>
+    <linearGradient id="nodeFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F4EEE6"/>
+    </linearGradient>
+    <linearGradient id="ownFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F7E9D7"/>
+      <stop offset="1" stop-color="#E7CFAF"/>
+    </linearGradient>
+    <linearGradient id="progressPaint" x1="0" y1="1" x2="0.8" y2="0">
+      <stop offset="0" stop-color="#7A4B2E"/>
+      <stop offset="1" stop-color="#C9844A"/>
+    </linearGradient>
+    <filter id="nodeShadow" x="-60%" y="-60%" width="220%" height="240%">
+      <feDropShadow dx="0" dy="15" stdDeviation="13" flood-color="#4B3829" flood-opacity="0.18"/>
+    </filter>
+    <filter id="floatShadow" x="-80%" y="-80%" width="260%" height="280%">
+      <feDropShadow dx="0" dy="30" stdDeviation="22" flood-color="#4B3829" flood-opacity="0.24"/>
+    </filter>
+    <filter id="gridShadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="24" stdDeviation="25" flood-color="#4B3829" flood-opacity="0.16"/>
+    </filter>
+    <filter id="lineBlur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+    <pattern id="microGrid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#B9AEA1" stroke-width="0.7" opacity="0.22"/>
+      <circle cx="0" cy="0" r="1.4" fill="#A99B8C" opacity="0.34"/>
+    </pattern>
+    <clipPath id="ownClip"><circle r="61"/></clipPath>
+    <clipPath id="smallClip"><circle r="34"/></clipPath>
+    <g id="courier">
+      <path d="M143 195C56 190 24 104 61 49c29-43 101-50 132-12 28 34 13 83-23 94-28 8-56-12-49-35 5-17 27-22 35-10" fill="#B86F3C"/>
+      <path d="M138 177C83 164 57 104 79 66c16-27 57-37 79-18" fill="none" stroke="#E2A56E" stroke-width="18" stroke-linecap="round"/>
+      <ellipse cx="150" cy="168" rx="55" ry="62" fill="#C9844A"/>
+      <ellipse cx="150" cy="177" rx="34" ry="43" fill="#F2D4AC"/>
+      <circle cx="150" cy="88" r="54" fill="#C9844A"/>
+      <path d="M105 55L99 18l34 27M192 55l10-37-36 25" fill="#B86F3C"/>
+      <path d="M142 38l6-27 9 29" fill="none" stroke="#7A4B2E" stroke-width="7" stroke-linecap="round"/>
+      <ellipse cx="131" cy="87" rx="6" ry="8" fill="#3C2E27"/>
+      <ellipse cx="171" cy="87" rx="6" ry="8" fill="#3C2E27"/>
+      <path d="M146 102q5 6 10 0" fill="none" stroke="#7A4B2E" stroke-width="4" stroke-linecap="round"/>
+      <path d="M108 105l16-8 8 12-16 8zM127 115l16-8 8 12-16 8zM174 105l16-8 8 12-16 8z" fill="#7A4B2E" opacity=".75"/>
+      <path d="M117 217l-15 22h28l5-22M177 217l14 22h-28l-4-22" fill="#B86F3C"/>
+      <rect x="166" y="143" width="70" height="48" rx="10" fill="#E7C79B"/>
+      <path d="M170 147l60 40" stroke="#D3A977" stroke-width="4"/>
+      <path d="M194 160l10 8-10 8-10-8z" fill="#7A4B2E"/>
+    </g>
+    <g id="laptop" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="-13" y="-10" width="26" height="18" rx="2"/>
+      <path d="M-18 12h36l-4-4h-28z"/>
+    </g>
+    <g id="phone" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+      <rect x="-8" y="-14" width="16" height="28" rx="3"/>
+      <path d="M-2 10h4"/>
+    </g>
+    <g id="nas" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+      <rect x="-12" y="-14" width="24" height="28" rx="2"/>
+      <path d="M-12-3h24M-6 7h.1M1 7h5"/>
+    </g>
+    <g id="send" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0 13V-10M-7-3l7-7 7 7M-11 13h22"/>
+    </g>
+    <g id="folder" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-14-9h10l4 4h14v17h-28z"/>
+    </g>
+    <g id="history" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-12-3a13 13 0 1 1-1 9M-14-10v8h8M0-7v8l6 3"/>
+    </g>
+    <g id="more" fill="currentColor">
+      <circle cx="-8" r="2.2"/><circle r="2.2"/><circle cx="8" r="2.2"/>
+    </g>
+    <g id="cloud" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-12 7h23a8 8 0 0 0 1-15 11 11 0 0 0-21-2A8.5 8.5 0 0 0-12 7z"/>
+    </g>
+    <g id="file" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-13-19H4l10 10v28h-27zM4-19v10h10M-6 3h13M-6 10h9"/>
+    </g>
+    <g id="arrowUp" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0 10V-9M-6-3l6-6 6 6"/>
+    </g>
+    <g id="arrowDown" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0-10V9M-6 3l6 6 6-6"/>
+    </g>
+    <g id="pause" fill="currentColor"><rect x="-6" y="-9" width="4" height="18" rx="1"/><rect x="3" y="-9" width="4" height="18" rx="1"/></g>
+    <g id="close" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M-6-6L6 6M6-6L-6 6"/></g>
+    <g id="check" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M-8 0l5 5L8-7"/></g>
+  </defs>
+
+  <rect width="1920" height="1560" fill="url(#paper)"/>
+  <rect width="1920" height="1560" fill="url(#microGrid)" opacity="0.42"/>
+
+  <g font-family="Inter, 'Microsoft YaHei', system-ui, sans-serif">
+    <g transform="translate(64 48)">
+      <circle cx="24" cy="24" r="24" fill="#7A4B2E"/>
+      <path d="M15 27c7-17 19-17 21-5 1 8-8 13-14 8" fill="none" stroke="#F7E9D7" stroke-width="4" stroke-linecap="round"/>
+      <text x="66" y="25" font-size="28" font-weight="700" fill="#302B27" letter-spacing="-0.5">Pinelink</text>
+      <text x="67" y="47" font-size="11" fill="#8A7D70" letter-spacing="3">GRAPH DIRECTION / 01</text>
+    </g>
+    <text x="1856" y="72" text-anchor="end" font-size="13" fill="#8A7D70" letter-spacing="2">空间节点 · 四态概念稿</text>
+    <path d="M64 116H1856" stroke="#D8D0C6"/>
+
+    <!-- 01 DEFAULT -->
+    <g transform="translate(48 150)">
+      <text x="20" y="20" font-size="12" font-weight="700" fill="#A86138" letter-spacing="2">01</text>
+      <text x="56" y="20" font-size="16" font-weight="650" fill="#3C3631">节点图</text>
+      <text x="858" y="20" text-anchor="end" font-size="11" fill="#9A8D80" letter-spacing="2">Z0 / REST</text>
+
+      <g fill="none" stroke="#C8BDB0" stroke-width="2">
+        <path d="M444 430C402 348 250 330 190 247"/>
+        <path d="M444 430C420 328 355 287 340 197"/>
+        <path d="M444 430C468 328 533 287 548 197"/>
+        <path d="M444 430C486 348 638 338 700 252"/>
+      </g>
+      <g fill="#F7F3ED" stroke="#B9AA99" stroke-width="2">
+        <circle cx="190" cy="247" r="4"/><circle cx="340" cy="197" r="4"/>
+        <circle cx="548" cy="197" r="4"/><circle cx="700" cy="252" r="4"/>
+      </g>
+      <ellipse cx="444" cy="500" rx="192" ry="42" fill="#DCD3C8" opacity="0.25"/>
+      <ellipse cx="444" cy="500" rx="144" ry="29" fill="none" stroke="#C9BBA9" opacity="0.55"/>
+      <ellipse cx="444" cy="500" rx="98" ry="20" fill="none" stroke="#C9BBA9" opacity="0.45"/>
+
+      <!-- available node -->
+      <g transform="translate(190 205)">
+        <ellipse cy="38" rx="43" ry="12" fill="#9C8A79" opacity="0.13"/>
+        <circle cy="8" r="38" fill="#C9BBAE"/>
+        <circle r="38" fill="url(#nodeFace)" stroke="#D8CEC3" filter="url(#nodeShadow)"/>
+        <use href="#laptop" color="#6E5B4C"/>
+        <circle cx="28" cy="27" r="8" fill="#F7F3ED"/>
+        <circle cx="28" cy="27" r="5" fill="#71836B"/>
+        <text y="70" text-anchor="middle" font-size="13" fill="#51483F">MacBook</text>
+      </g>
+      <!-- waiting node -->
+      <g transform="translate(340 155)">
+        <ellipse cy="34" rx="40" ry="11" fill="#9C8A79" opacity="0.12"/>
+        <circle cy="7" r="36" fill="#D1C3B5"/>
+        <circle r="36" fill="url(#nodeFace)" stroke="#C9844A" stroke-width="2" stroke-dasharray="3 5"/>
+        <use href="#phone" color="#7A4B2E"/>
+        <circle cx="27" cy="25" r="7" fill="#F7F3ED"/>
+        <circle cx="27" cy="25" r="4.5" fill="#C28A45"/>
+        <text y="66" text-anchor="middle" font-size="13" fill="#51483F">手机</text>
+      </g>
+      <!-- saved node -->
+      <g transform="translate(548 155)">
+        <ellipse cy="34" rx="40" ry="11" fill="#9C8A79" opacity="0.12"/>
+        <circle cy="7" r="36" fill="#C9BBAE"/>
+        <circle r="36" fill="url(#nodeFace)" stroke="#D8CEC3"/>
+        <use href="#nas" color="#6E5B4C"/>
+        <circle cx="27" cy="25" r="11" fill="#7A4B2E"/>
+        <use href="#cloud" transform="translate(27 25) scale(.48)" color="#FFF9F0"/>
+        <text y="66" text-anchor="middle" font-size="13" fill="#51483F">小窝云仓</text>
+      </g>
+      <!-- offline node -->
+      <g transform="translate(700 210)" opacity="0.52">
+        <ellipse cy="36" rx="41" ry="11" fill="#9C8A79" opacity="0.12"/>
+        <circle cy="7" r="37" fill="#C9C5C0"/>
+        <circle r="37" fill="#E7E4E0" stroke="#C8C2BC"/>
+        <use href="#laptop" color="#7E7872"/>
+        <circle cx="28" cy="26" r="7" fill="#F3F0EB"/>
+        <circle cx="28" cy="26" r="4.5" fill="#99938D"/>
+        <text y="68" text-anchor="middle" font-size="13" fill="#716B65">工作室</text>
+      </g>
+
+      <!-- own node -->
+      <g transform="translate(444 452)">
+        <ellipse cy="65" rx="81" ry="21" fill="#6F5844" opacity="0.2" filter="url(#lineBlur)"/>
+        <circle cy="15" r="68" fill="#B89C7D"/>
+        <circle cy="8" r="68" fill="#D7BC99"/>
+        <circle r="68" fill="url(#ownFace)" stroke="#F9F1E6" stroke-width="3" filter="url(#nodeShadow)"/>
+        <g clip-path="url(#ownClip)"><use href="#courier" transform="translate(-63 -67) scale(.5)"/></g>
+        <circle r="61" fill="none" stroke="#C9A77F" opacity="0.5"/>
+        <circle cx="50" cy="47" r="11" fill="#F7F3ED"/>
+        <circle cx="50" cy="47" r="7" fill="#71836B"/>
+        <text y="103" text-anchor="middle" font-size="15" font-weight="650" fill="#3C3631">本机</text>
+      </g>
+      <g transform="translate(680 510)" font-size="11" fill="#8B7E71">
+        <circle r="4" fill="#71836B"/><text x="12" y="4">在线</text>
+        <circle cx="70" r="4" fill="#C28A45"/><text x="82" y="4">等待</text>
+        <circle cx="140" r="4" fill="#99938D"/><text x="152" y="4">离线</text>
+      </g>
+    </g>
+
+    <!-- 02 SELECTED -->
+    <g transform="translate(984 150)">
+      <text x="20" y="20" font-size="12" font-weight="700" fill="#A86138" letter-spacing="2">02</text>
+      <text x="56" y="20" font-size="16" font-weight="650" fill="#3C3631">选中上浮</text>
+      <text x="858" y="20" text-anchor="end" font-size="11" fill="#9A8D80" letter-spacing="2">Z2 / FOCUS</text>
+
+      <g opacity="0.16">
+        <g fill="none" stroke="#B9AEA1" stroke-width="2">
+          <path d="M444 430C390 340 245 315 190 247M444 430C480 340 635 330 700 247"/>
+        </g>
+        <g transform="translate(190 205)"><circle cy="7" r="38" fill="#C9BBAE"/><circle r="38" fill="#F7F3ED"/><use href="#laptop" color="#6E5B4C"/><text y="68" text-anchor="middle" font-size="13">手机</text></g>
+        <g transform="translate(700 205)"><circle cy="7" r="38" fill="#C9BBAE"/><circle r="38" fill="#F7F3ED"/><use href="#nas" color="#6E5B4C"/><text y="68" text-anchor="middle" font-size="13">小窝云仓</text></g>
+        <g transform="translate(444 452)">
+          <circle cy="12" r="68" fill="#B89C7D"/><circle r="68" fill="#E7CFAF"/>
+          <use href="#courier" transform="translate(-63 -67) scale(.5)"/><text y="103" text-anchor="middle" font-size="15">本机</text>
+        </g>
+      </g>
+
+      <ellipse cx="444" cy="384" rx="142" ry="30" fill="#B9AA99" opacity="0.16"/>
+      <ellipse cx="444" cy="384" rx="94" ry="20" fill="none" stroke="#A89785" stroke-dasharray="3 6" opacity="0.65"/>
+      <path d="M444 274V381" stroke="#A88D73" stroke-width="1.5" stroke-dasharray="4 7"/>
+      <path d="M438 373l6 10 6-10" fill="none" stroke="#A88D73" stroke-width="1.5"/>
+      <text x="466" y="360" font-size="10" fill="#9B8672" letter-spacing="2">Z AXIS</text>
+
+      <circle cx="444" cy="202" r="119" fill="none" stroke="#B7A795" stroke-width="1.3" stroke-dasharray="3 7" opacity="0.7"/>
+      <path d="M350 159L384 179M388 95l20 50M500 95l-20 50M538 159l-34 20" stroke="#B7A795" stroke-width="1.3" opacity="0.7"/>
+
+      <g transform="translate(444 202)">
+        <circle cy="28" r="61" fill="#9D7B5D" opacity="0.55"/>
+        <circle cy="17" r="61" fill="#C3A585"/>
+        <circle cy="8" r="61" fill="#DEC7AA"/>
+        <circle r="61" fill="url(#nodeFace)" stroke="#C9844A" stroke-width="2.5" filter="url(#floatShadow)"/>
+        <circle r="49" fill="#F0E2D1"/>
+        <use href="#laptop" transform="scale(1.35)" color="#7A4B2E"/>
+        <circle cx="45" cy="43" r="10" fill="#F7F3ED"/>
+        <circle cx="45" cy="43" r="6" fill="#71836B"/>
+        <text y="107" text-anchor="middle" font-size="16" font-weight="650" fill="#3C3631">MacBook Pro</text>
+      </g>
+
+      <g transform="translate(340 145)">
+        <circle cy="5" r="27" fill="#BDA993"/><circle r="27" fill="#FFFDFC" stroke="#D8C9B8" filter="url(#nodeShadow)"/>
+        <use href="#send" color="#7A4B2E"/>
+      </g>
+      <g transform="translate(382 79)">
+        <circle cy="5" r="27" fill="#BDA993"/><circle r="27" fill="#FFFDFC" stroke="#D8C9B8" filter="url(#nodeShadow)"/>
+        <use href="#folder" color="#7A4B2E"/>
+      </g>
+      <g transform="translate(506 79)">
+        <circle cy="5" r="27" fill="#BDA993"/><circle r="27" fill="#FFFDFC" stroke="#D8C9B8" filter="url(#nodeShadow)"/>
+        <use href="#history" color="#7A4B2E"/>
+      </g>
+      <g transform="translate(548 145)">
+        <circle cy="5" r="27" fill="#BDA993"/><circle r="27" fill="#FFFDFC" stroke="#D8C9B8" filter="url(#nodeShadow)"/>
+        <use href="#more" color="#7A4B2E"/>
+      </g>
+      <text x="444" y="555" text-anchor="middle" font-size="12" fill="#998A7C">其余节点退至背景，仅保留当前操作</text>
+    </g>
+
+    <path d="M64 754H1856M960 138V1450" stroke="#D8D0C6"/>
+
+    <!-- 03 PROGRESS -->
+    <g transform="translate(48 792)">
+      <text x="20" y="20" font-size="12" font-weight="700" fill="#A86138" letter-spacing="2">03</text>
+      <text x="56" y="20" font-size="16" font-weight="650" fill="#3C3631">发送进度</text>
+      <text x="858" y="20" text-anchor="end" font-size="11" fill="#9A8D80" letter-spacing="2">Z1 / TRANSIT</text>
+
+      <g opacity="0.13" transform="translate(165 180)">
+        <circle cy="7" r="36" fill="#C9BBAE"/><circle r="36" fill="#F7F3ED"/><use href="#phone" color="#6E5B4C"/>
+      </g>
+      <g opacity="0.13" transform="translate(735 170)">
+        <circle cy="7" r="36" fill="#C9BBAE"/><circle r="36" fill="#F7F3ED"/><use href="#nas" color="#6E5B4C"/>
+      </g>
+
+      <path d="M350 493C350 370 560 375 560 240" fill="none" stroke="#8D7965" stroke-width="20" opacity="0.13" filter="url(#lineBlur)" transform="translate(0 15)"/>
+      <path d="M350 493C350 370 560 375 560 240" fill="none" stroke="#D8CEC2" stroke-width="12" stroke-linecap="round"/>
+      <path d="M350 493C350 370 560 375 560 240" fill="none" stroke="url(#progressPaint)" stroke-width="12" stroke-linecap="round" pathLength="100" stroke-dasharray="62 38"/>
+      <path d="M350 493C350 370 560 375 560 240" fill="none" stroke="#F5DFC8" stroke-width="2" stroke-linecap="round" pathLength="100" stroke-dasharray="62 38" opacity="0.55"/>
+      <circle cx="511" cy="313" r="10" fill="#F8F3EB"/>
+      <circle cx="511" cy="313" r="6" fill="#B86F3C"/>
+
+      <g transform="translate(560 188)">
+        <ellipse cy="49" rx="52" ry="14" fill="#7A624D" opacity="0.16"/>
+        <circle cy="10" r="48" fill="#B99E82"/>
+        <circle r="48" fill="url(#nodeFace)" stroke="#C9844A" stroke-width="2" filter="url(#nodeShadow)"/>
+        <use href="#laptop" transform="scale(1.15)" color="#7A4B2E"/>
+        <path d="M-34 34a48 48 0 0 1-12-58" fill="none" stroke="#C9844A" stroke-width="3" stroke-linecap="round"/>
+        <text y="83" text-anchor="middle" font-size="14" font-weight="650" fill="#3C3631">MacBook</text>
+      </g>
+
+      <g transform="translate(350 530)">
+        <ellipse cy="58" rx="78" ry="20" fill="#6F5844" opacity="0.18" filter="url(#lineBlur)"/>
+        <circle cy="13" r="64" fill="#B89C7D"/>
+        <circle cy="7" r="64" fill="#D7BC99"/>
+        <circle r="64" fill="url(#ownFace)" stroke="#F9F1E6" stroke-width="3" filter="url(#nodeShadow)"/>
+        <g clip-path="url(#ownClip)"><use href="#courier" transform="translate(-63 -67) scale(.5)"/></g>
+        <text y="98" text-anchor="middle" font-size="15" font-weight="650" fill="#3C3631">本机</text>
+      </g>
+
+      <!-- elevated file and cloud badge -->
+      <g transform="translate(434 316)">
+        <ellipse cy="55" rx="46" ry="13" fill="#725C48" opacity="0.18" filter="url(#lineBlur)"/>
+        <path d="M-31-43H9l24 24v65h-64z" fill="#B9A28A" transform="translate(0 8)"/>
+        <path d="M-31-43H9l24 24v65h-64z" fill="#FFFDFC" stroke="#CDBBA6" filter="url(#nodeShadow)"/>
+        <path d="M9-43v24h24" fill="#EADAC7" stroke="#CDBBA6"/>
+        <path d="M-15 3H16M-15 16H8" stroke="#A78E75" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="30" cy="34" r="19" fill="#7A4B2E" stroke="#F8F3EB" stroke-width="3"/>
+        <use href="#cloud" transform="translate(30 34) scale(.68)" color="#FFF8EE"/>
+      </g>
+      <text x="638" y="355" font-size="50" font-weight="650" fill="#5D422F" letter-spacing="-2">62%</text>
+      <text x="642" y="384" font-size="13" fill="#8A7B6D">3.2 / 5.1 GB</text>
+      <g transform="translate(672 488)">
+        <circle cy="5" r="25" fill="#BDA993"/><circle r="25" fill="#FFFDFC" stroke="#D8C9B8"/>
+        <use href="#pause" color="#7A4B2E"/>
+      </g>
+      <g transform="translate(734 488)">
+        <circle cy="5" r="25" fill="#BDA993"/><circle r="25" fill="#FFFDFC" stroke="#D8C9B8"/>
+        <use href="#close" color="#7A4B2E"/>
+      </g>
+    </g>
+
+    <!-- 04 HISTORY GRID -->
+    <g transform="translate(984 792)">
+      <text x="20" y="20" font-size="12" font-weight="700" fill="#A86138" letter-spacing="2">04</text>
+      <text x="56" y="20" font-size="16" font-weight="650" fill="#3C3631">次级记录</text>
+      <text x="858" y="20" text-anchor="end" font-size="11" fill="#9A8D80" letter-spacing="2">Z3 / ARCHIVE</text>
+
+      <g opacity="0.22">
+        <path d="M132 440C110 330 142 285 142 222" fill="none" stroke="#B9AEA1" stroke-width="2"/>
+        <g transform="translate(70 202)"><circle r="31" fill="#F7F3ED" stroke="#CFC3B5"/><use href="#phone" color="#6E5B4C"/></g>
+        <g transform="translate(211 176)"><circle r="31" fill="#F7F3ED" stroke="#CFC3B5"/><use href="#nas" color="#6E5B4C"/></g>
+      </g>
+      <circle cx="142" cy="188" r="76" fill="none" stroke="#B7A795" stroke-dasharray="3 6" opacity="0.6"/>
+      <g transform="translate(142 188)">
+        <circle cy="8" r="40" fill="#C9BBAE"/><circle r="40" fill="url(#nodeFace)" stroke="#C9844A"/>
+        <use href="#laptop" color="#7A4B2E"/>
+      </g>
+      <g transform="translate(64 255)">
+        <circle cy="5" r="25" fill="#9B7656"/><circle r="25" fill="#7A4B2E" filter="url(#nodeShadow)"/>
+        <use href="#history" color="#FFF8EE"/>
+      </g>
+      <g transform="translate(132 494)" opacity="0.32">
+        <circle cy="11" r="55" fill="#B89C7D"/><circle r="55" fill="#E7CFAF"/>
+        <use href="#courier" transform="translate(-58 -62) scale(.45)"/>
+        <text y="87" text-anchor="middle" font-size="13">本机</text>
+      </g>
+
+      <text x="304" y="83" font-size="22" font-weight="650" fill="#3C3631">传输记录</text>
+      <g transform="translate(798 75)"><circle r="21" fill="#F7F3ED" stroke="#D8CEC3"/><use href="#more" color="#7A4B2E"/></g>
+      <rect x="296" y="116" width="552" height="438" fill="#FBF9F5" filter="url(#gridShadow)"/>
+      <rect x="296" y="116" width="552" height="438" fill="none" stroke="#D8CEC3"/>
+      <path d="M572 116V554M296 262H848M296 408H848" stroke="#DED5CA"/>
+      <rect x="297" y="117" width="275" height="145" fill="#F0E5D8"/>
+      <path d="M296 116h48" stroke="#A86138" stroke-width="3"/>
+
+      <!-- record 1 -->
+      <g transform="translate(326 158)">
+        <use href="#file" color="#7A4B2E"/>
+        <circle cx="15" cy="17" r="11" fill="#7A4B2E"/><use href="#cloud" transform="translate(15 17) scale(.42)" color="#FFF8EE"/>
+        <text x="42" y="-6" font-size="14" font-weight="650" fill="#40372F">设计源文件.fig</text>
+        <text x="42" y="17" font-size="12" fill="#918275">84 MB</text>
+        <use href="#arrowUp" transform="translate(2 66)" color="#A86138"/>
+        <text x="22" y="70" font-size="11" fill="#8C7B6C">14:32</text>
+        <circle cx="197" cy="66" r="4" fill="#71836B"/>
+      </g>
+      <!-- record 2 -->
+      <g transform="translate(602 158)">
+        <use href="#file" color="#7A4B2E"/>
+        <text x="42" y="-6" font-size="14" font-weight="650" fill="#40372F">现场照片.zip</text>
+        <text x="42" y="17" font-size="12" fill="#918275">1.2 GB</text>
+        <use href="#arrowDown" transform="translate(2 66)" color="#71836B"/>
+        <text x="22" y="70" font-size="11" fill="#8C7B6C">昨天</text>
+        <use href="#check" transform="translate(203 66)" color="#71836B"/>
+      </g>
+      <!-- record 3 -->
+      <g transform="translate(326 304)">
+        <use href="#file" color="#7A4B2E"/>
+        <text x="42" y="-6" font-size="14" font-weight="650" fill="#40372F">产品演示.mp4</text>
+        <text x="42" y="17" font-size="12" fill="#918275">5.1 GB</text>
+        <use href="#pause" transform="translate(2 66) scale(.7)" color="#C28A45"/>
+        <text x="22" y="70" font-size="11" fill="#8C7B6C">62%</text>
+        <circle cx="197" cy="66" r="4" fill="#C28A45"/>
+      </g>
+      <!-- record 4 -->
+      <g transform="translate(602 304)">
+        <use href="#file" color="#7A4B2E"/>
+        <circle cx="15" cy="17" r="11" fill="#7A4B2E"/><use href="#cloud" transform="translate(15 17) scale(.42)" color="#FFF8EE"/>
+        <text x="42" y="-6" font-size="14" font-weight="650" fill="#40372F">字体包.zip</text>
+        <text x="42" y="17" font-size="12" fill="#918275">326 MB</text>
+        <use href="#arrowDown" transform="translate(2 66)" color="#71836B"/>
+        <text x="22" y="70" font-size="11" fill="#8C7B6C">周一</text>
+        <use href="#check" transform="translate(203 66)" color="#71836B"/>
+      </g>
+      <!-- record 5 -->
+      <g transform="translate(326 450)">
+        <use href="#file" color="#7A4B2E"/>
+        <text x="42" y="-6" font-size="14" font-weight="650" fill="#40372F">合同.pdf</text>
+        <text x="42" y="17" font-size="12" fill="#918275">2.4 MB</text>
+        <use href="#arrowUp" transform="translate(2 66)" color="#A86138"/>
+        <text x="22" y="70" font-size="11" fill="#8C7B6C">10月28日</text>
+        <use href="#check" transform="translate(197 66)" color="#71836B"/>
+      </g>
+      <!-- record 6 -->
+      <g transform="translate(602 450)" opacity="0.55">
+        <use href="#file" color="#7A4B2E"/>
+        <text x="42" y="-6" font-size="14" font-weight="650" fill="#40372F">离线备份.zip</text>
+        <text x="42" y="17" font-size="12" fill="#918275">9.8 GB</text>
+        <use href="#close" transform="translate(2 66) scale(.8)" color="#9B6655"/>
+        <text x="22" y="70" font-size="11" fill="#8C7B6C">已取消</text>
+      </g>
+    </g>
+
+    <text x="64" y="1504" font-size="11" fill="#948679" letter-spacing="2">CIRCULAR NODES / Z-LAYERED ACTIONS / MINIMAL COPY</text>
+    <text x="1856" y="1504" text-anchor="end" font-size="11" fill="#948679" letter-spacing="2">PINELINK · CONCEPT REVIEW</text>
+  </g>
+</svg>

@@ -1,0 +1,4 @@
+-- +goose Up
+ALTER TABLE upload_sessions ALTER COLUMN state SET DEFAULT 'OPEN';
+ALTER TABLE file_entries ALTER COLUMN state SET DEFAULT 'AVAILABLE';
+ALTER TABLE pull_sessions ALTER COLUMN state SET DEFAULT 'PULLING';

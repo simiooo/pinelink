@@ -1,0 +1,101 @@
+{
+  "enter": [
+    0.16,
+    1,
+    0.3,
+    1
+  ],
+  "exit": [
+    0.4,
+    0,
+    1,
+    1
+  ],
+  "activity_ms": 1800,
+  "transitions": [
+    {
+      "name": "Node enters",
+      "duration": "200ms",
+      "start": "opacity 0 / scale .96 / y +8",
+      "end": "opacity 1 / scale 1 / y 0",
+      "reduced": "120ms fade"
+    },
+    {
+      "name": "Node leaves",
+      "duration": "160ms",
+      "start": "current position",
+      "end": "opacity 0 / scale .96 / y -4",
+      "reduced": "120ms fade"
+    },
+    {
+      "name": "Select / unselect",
+      "duration": "180ms",
+      "start": "64px / 100% context",
+      "end": "96px / 13% context",
+      "reduced": "instant geometry"
+    },
+    {
+      "name": "Drag target enters",
+      "duration": "120ms",
+      "start": "64px / no halo",
+      "end": "72px / 112px halo / plus",
+      "reduced": "instant halo"
+    },
+    {
+      "name": "Drag target leaves",
+      "duration": "100ms",
+      "start": "active target",
+      "end": "normal node / no halo",
+      "reduced": "instant reset"
+    },
+    {
+      "name": "Drop accepted",
+      "duration": "140ms",
+      "start": "system drag image",
+      "end": "image ends / review opens",
+      "reduced": "no chip motion"
+    },
+    {
+      "name": "Desktop panel enters",
+      "duration": "180ms",
+      "start": "opacity 0 / y +8 / scale .98",
+      "end": "opacity 1 / y 0 / scale 1",
+      "reduced": "120ms fade"
+    },
+    {
+      "name": "Desktop panel leaves",
+      "duration": "120ms",
+      "start": "open panel",
+      "end": "opacity 0 / y +4 / scale .985",
+      "reduced": "120ms fade"
+    },
+    {
+      "name": "Mobile sheet enters",
+      "duration": "240ms",
+      "start": "opacity 0 / y +24",
+      "end": "opacity 1 / y 0",
+      "reduced": "120ms fade"
+    },
+    {
+      "name": "Mobile sheet leaves",
+      "duration": "180ms",
+      "start": "open sheet",
+      "end": "opacity 0 / y +24",
+      "reduced": "120ms fade"
+    },
+    {
+      "name": "Transfer activity",
+      "duration": "1800ms",
+      "start": "one 12% blue segment",
+      "end": "linear loop along same path",
+      "reduced": "static segment"
+    },
+    {
+      "name": "Delivery confirmed",
+      "duration": "320ms",
+      "start": "activity segment",
+      "end": "140ms settle / 180ms curve exit",
+      "reduced": "120ms fade"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+FROM alpine:3.22
+ARG VERSION
+LABEL org.opencontainers.image.revision=$VERSION
+RUN adduser -D -u 10001 pinelink && mkdir /state /received && chown pinelink:pinelink /state /received
+COPY --chmod=755 pinelink /usr/local/bin/pinelink
+USER pinelink
+ENV PINELINK_CONFIG_HOME=/state PINELINK_OWNER=local PINELINK_DEVICE=staging-peer
+EXPOSE 19091/tcp 5353/udp
+VOLUME ["/state", "/received"]
+ENTRYPOINT ["/usr/local/bin/pinelink"]

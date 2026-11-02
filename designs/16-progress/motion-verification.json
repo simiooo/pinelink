@@ -1,0 +1,126 @@
+{
+  "checks": [
+    {
+      "name": "main graph has no visible numeric detail or transfer toolbar",
+      "pass": true
+    },
+    {
+      "name": "blue arc represents acknowledged 62.5 percent without a loop",
+      "pass": true
+    },
+    {
+      "name": "1600ms soft activity pass is clipped to the acknowledged blue arc",
+      "pass": true
+    },
+    {
+      "name": "real click on the curve opens transfer details",
+      "pass": true
+    },
+    {
+      "name": "numeric details use acknowledged bytes and stable sample speed",
+      "pass": true
+    },
+    {
+      "name": "closing details preserves the active transfer",
+      "pass": true
+    },
+    {
+      "name": "keyboard node activation opens the same details",
+      "pass": true
+    },
+    {
+      "name": "pause holds the blue arc and acknowledged bytes",
+      "pass": true
+    },
+    {
+      "name": "pause stops and fades the light pass without changing blue extent",
+      "pass": true
+    },
+    {
+      "name": "cancel confirmation keeps the original paused state",
+      "pass": true
+    },
+    {
+      "name": "resume preserves bytes and restarts throughput sampling",
+      "pass": true
+    },
+    {
+      "name": "out of order and regressive samples cannot change the arc",
+      "pass": true
+    },
+    {
+      "name": "100 percent waits for a receipt and terminal state rejects late samples",
+      "pass": true
+    },
+    {
+      "name": "unknown total has no false fraction, percentage, or ETA",
+      "pass": true
+    },
+    {
+      "name": "zero-byte file does not divide by zero or complete before verification",
+      "pass": true
+    },
+    {
+      "name": "batch progress uses byte-weighted aggregate and keeps names in details",
+      "pass": true
+    },
+    {
+      "name": "receiving blue arc starts at the remote sender",
+      "pass": true
+    },
+    {
+      "name": "reduced motion removes interpolation but keeps real progress updates",
+      "pass": true
+    },
+    {
+      "name": "reduced motion removes the activity light pass",
+      "pass": true
+    },
+    {
+      "name": "drop still stages confirmation before creating the request",
+      "pass": true
+    },
+    {
+      "name": "native drag still reaches the send confirmation",
+      "pass": true
+    },
+    {
+      "name": "320 / 390 / 736 / 1024 layouts fit; mobile details use a bottom sheet",
+      "pass": true
+    },
+    {
+      "name": "zero browser runtime errors",
+      "pass": true
+    }
+  ],
+  "layouts": [
+    {
+      "width": 320,
+      "overflow": false,
+      "inside": true,
+      "bottom": true,
+      "mobile": true
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "inside": true,
+      "bottom": true,
+      "mobile": true
+    },
+    {
+      "width": 736,
+      "overflow": false,
+      "inside": true,
+      "bottom": false,
+      "mobile": false
+    },
+    {
+      "width": 1024,
+      "overflow": false,
+      "inside": true,
+      "bottom": false,
+      "mobile": false
+    }
+  ]
+}

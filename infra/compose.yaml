@@ -1,0 +1,94 @@
+name: pinelink-dev
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: pinelink
+      POSTGRES_USER: pinelink
+      POSTGRES_PASSWORD: pinelink_dev
+    ports:
+      - "${PINELINK_DEV_BIND:-127.0.0.1}:55432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pinelink -d pinelink"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  nats:
+    image: nats:2.12-alpine
+    command: ["-js", "-sd", "/data", "-m", "8222"]
+    ports:
+      - "${PINELINK_DEV_BIND:-127.0.0.1}:54222:4222"
+      - "${PINELINK_DEV_BIND:-127.0.0.1}:58222:8222"
+    volumes:
+      - nats-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8222/healthz"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.04
+    command:
+      - server
+      - -dir=/data
+      - -s3
+      - -s3.port=9000
+      - -s3.config=/etc/seaweedfs/s3-config.json
+    ports:
+      - "${PINELINK_DEV_BIND:-127.0.0.1}:59000:9000"
+      - "${PINELINK_DEV_BIND:-127.0.0.1}:59333:9333"
+      - "${PINELINK_DEV_BIND:-127.0.0.1}:58888:8888"
+    volumes:
+      - seaweedfs-data:/data
+    configs:
+      - source: seaweedfs-s3-config
+        target: /etc/seaweedfs/s3-config.json
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:9333/cluster/status"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  coturn:
+    image: coturn/coturn:4.6.3
+    command: >-
+      turnserver -n --log-file=stdout --realm=pinelink.dev
+      --user=pinelink:pinelink_dev_turn --listening-port=3478
+      --external-ip=${PINELINK_TURN_EXTERNAL_IP:-127.0.0.1}
+      --min-port=49160 --max-port=49180
+    ports:
+      - "${PINELINK_DEV_BIND:-127.0.0.1}:53478:3478"
+      - "${PINELINK_DEV_BIND:-127.0.0.1}:53478:3478/udp"
+      - "${PINELINK_DEV_BIND:-127.0.0.1}:49160-49180:49160-49180/udp"
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  nats-data:
+  seaweedfs-data:
+
+configs:
+  seaweedfs-s3-config:
+    content: |
+      {
+        "identities": [
+          {
+            "name": "pinelink",
+            "credentials": [
+              {
+                "accessKey": "pinelink",
+                "secretKey": "pinelink_dev_secret"
+              }
+            ],
+            "actions": ["Admin", "Read", "Write"]
+          }
+        ]
+      }

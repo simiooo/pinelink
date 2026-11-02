@@ -1,0 +1,76 @@
+{
+  "checks": [
+    {
+      "name": "host icons",
+      "count": 5
+    },
+    {
+      "name": "device icon uses half the node diameter",
+      "pass": true
+    },
+    {
+      "name": "drop stages confirmation",
+      "pass": true
+    },
+    {
+      "name": "receipt gates success",
+      "pass": true
+    },
+    {
+      "name": "receive reverses direction",
+      "pass": true
+    },
+    {
+      "name": "cancel requires confirmation",
+      "pass": true
+    },
+    {
+      "name": "keeping a paused task never resumes it",
+      "pass": true
+    },
+    {
+      "name": "active node opens task controls",
+      "pass": true
+    },
+    {
+      "name": "interrupted exit cannot hide new modal",
+      "pass": true
+    },
+    {
+      "name": "retry creates new request flow",
+      "pass": true
+    },
+    {
+      "name": "reduced motion has no loop",
+      "pass": true
+    },
+    {
+      "name": "nearby 24px capture area accepts drop",
+      "pass": true
+    },
+    {
+      "name": "offline drop blocked",
+      "pass": true
+    },
+    {
+      "name": "self drop blocked",
+      "pass": true
+    },
+    {
+      "name": "cloud drop requires explicit consent",
+      "pass": true
+    },
+    {
+      "name": "native browser drag reaches confirmation",
+      "pass": true
+    },
+    {
+      "name": "390px layout fits",
+      "pass": true
+    },
+    {
+      "name": "browser runtime errors",
+      "count": 0
+    }
+  ]
+}

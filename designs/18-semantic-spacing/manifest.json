@@ -1,0 +1,1675 @@
+[
+  {
+    "name": "D01 / Devices",
+    "file": "01-D01-Devices.svg",
+    "pageName": "01 / Desktop",
+    "pageId": "0:4",
+    "oldId": "0:105",
+    "x": 0,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "D02 / Selected device",
+    "file": "01-D02-Selected-device.svg",
+    "pageName": "01 / Desktop",
+    "pageId": "0:4",
+    "oldId": "0:167",
+    "x": 1248,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "D05 / Receive request",
+    "file": "01-D05-Receive-request.svg",
+    "pageName": "01 / Desktop",
+    "pageId": "0:4",
+    "oldId": "0:234",
+    "x": 0,
+    "y": 1696,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Decline",
+        "x": 420.0,
+        "y": 456.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Accept",
+        "x": 606.0,
+        "y": 456.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "D08 / Empty state",
+    "file": "01-D08-Empty-state.svg",
+    "pageName": "01 / Desktop",
+    "pageId": "0:4",
+    "oldId": "0:305",
+    "x": 1248,
+    "y": 2544,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Add device",
+        "x": 524,
+        "y": 452,
+        "width": 152,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "D03 / Transferring",
+    "file": "01-D03-Transferring.svg",
+    "pageName": "01 / Desktop",
+    "pageId": "0:4",
+    "oldId": "0:330",
+    "x": 0,
+    "y": 848,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "D06 / Paused",
+    "file": "01-D06-Paused.svg",
+    "pageName": "01 / Desktop",
+    "pageId": "0:4",
+    "oldId": "0:351",
+    "x": 1248,
+    "y": 1696,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "D07 / Connection lost",
+    "file": "01-D07-Connection-lost.svg",
+    "pageName": "01 / Desktop",
+    "pageId": "0:4",
+    "oldId": "0:372",
+    "x": 0,
+    "y": 2544,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "D04 / Transfer history",
+    "file": "01-D04-Transfer-history.svg",
+    "pageName": "01 / Desktop",
+    "pageId": "0:4",
+    "oldId": "0:393",
+    "x": 1248,
+    "y": 848,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "M01 / Devices",
+    "file": "02-M01-Devices.svg",
+    "pageName": "02 / Mobile",
+    "pageId": "0:5",
+    "oldId": "0:549",
+    "x": 0,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "M02 / Selected device",
+    "file": "02-M02-Selected-device.svg",
+    "pageName": "02 / Mobile",
+    "pageId": "0:5",
+    "oldId": "0:616",
+    "x": 438,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "M05 / Receive request",
+    "file": "02-M05-Receive-request.svg",
+    "pageName": "02 / Mobile",
+    "pageId": "0:5",
+    "oldId": "0:688",
+    "x": 0,
+    "y": 892,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Decline",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Accept",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "M08 / Empty state",
+    "file": "02-M08-Empty-state.svg",
+    "pageName": "02 / Mobile",
+    "pageId": "0:5",
+    "oldId": "0:773",
+    "x": 1314,
+    "y": 892,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Add device",
+        "x": 119,
+        "y": 436,
+        "width": 152,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "M03 / Transferring",
+    "file": "02-M03-Transferring.svg",
+    "pageName": "02 / Mobile",
+    "pageId": "0:5",
+    "oldId": "0:803",
+    "x": 876,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "M06 / Paused",
+    "file": "02-M06-Paused.svg",
+    "pageName": "02 / Mobile",
+    "pageId": "0:5",
+    "oldId": "0:829",
+    "x": 438,
+    "y": 892,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "M07 / Connection lost",
+    "file": "02-M07-Connection-lost.svg",
+    "pageName": "02 / Mobile",
+    "pageId": "0:5",
+    "oldId": "0:855",
+    "x": 876,
+    "y": 892,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "M04 / Transfer history",
+    "file": "02-M04-Transfer-history.svg",
+    "pageName": "02 / Mobile",
+    "pageId": "0:5",
+    "oldId": "0:881",
+    "x": 1314,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "desktop-01-waiting",
+    "file": "05-desktop-01-waiting.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1305",
+    "x": 0,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-02-connecting",
+    "file": "05-desktop-02-connecting.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1326",
+    "x": 1248,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-03-queued",
+    "file": "05-desktop-03-queued.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1347",
+    "x": 0,
+    "y": 848,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-04-verifying",
+    "file": "05-desktop-04-verifying.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1368",
+    "x": 1248,
+    "y": 848,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-05-delivered",
+    "file": "05-desktop-05-delivered.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1389",
+    "x": 0,
+    "y": 1696,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-06-stored",
+    "file": "05-desktop-06-stored.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1413",
+    "x": 1248,
+    "y": 1696,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-07-rejected",
+    "file": "05-desktop-07-rejected.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1437",
+    "x": 0,
+    "y": 2544,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 420.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Choose device",
+        "x": 606.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-08-expired",
+    "file": "05-desktop-08-expired.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1468",
+    "x": 1248,
+    "y": 2544,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 420.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Send again",
+        "x": 606.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-09-failed",
+    "file": "05-desktop-09-failed.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1499",
+    "x": 0,
+    "y": 3392,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 420.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Try again",
+        "x": 606.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-10-cancelled",
+    "file": "05-desktop-10-cancelled.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1530",
+    "x": 1248,
+    "y": 3392,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-11-unavailable",
+    "file": "05-desktop-11-unavailable.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1550",
+    "x": 0,
+    "y": 4240,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 420.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Choose files",
+        "x": 606.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-12-received",
+    "file": "05-desktop-12-received.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1581",
+    "x": 1248,
+    "y": 4240,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-13-cancel-confirm",
+    "file": "05-desktop-13-cancel-confirm.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1605",
+    "x": 0,
+    "y": 5088,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Keep transfer",
+        "x": 420.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Cancel transfer",
+        "x": 606.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-14-task-controls",
+    "file": "05-desktop-14-task-controls.svg",
+    "pageName": "05 / Transfer states",
+    "pageId": "0:9",
+    "oldId": "0:1636",
+    "x": 1248,
+    "y": 5088,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 420.0,
+        "y": 406.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 606.0,
+        "y": 406.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "drag-01-entered",
+    "file": "06-drag-01-entered.svg",
+    "pageName": "06 / Drag and drop",
+    "pageId": "0:10",
+    "oldId": "0:1667",
+    "x": 0,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "drag-02-near",
+    "file": "06-drag-02-near.svg",
+    "pageName": "06 / Drag and drop",
+    "pageId": "0:10",
+    "oldId": "0:1721",
+    "x": 1248,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "drag-03-target",
+    "file": "06-drag-03-target.svg",
+    "pageName": "06 / Drag and drop",
+    "pageId": "0:10",
+    "oldId": "0:1796",
+    "x": 2496,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "drag-04-offline",
+    "file": "06-drag-04-offline.svg",
+    "pageName": "06 / Drag and drop",
+    "pageId": "0:10",
+    "oldId": "0:1871",
+    "x": 0,
+    "y": 848,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "drag-05-revoked",
+    "file": "06-drag-05-revoked.svg",
+    "pageName": "06 / Drag and drop",
+    "pageId": "0:10",
+    "oldId": "0:1936",
+    "x": 1248,
+    "y": 848,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "drag-06-self",
+    "file": "06-drag-06-self.svg",
+    "pageName": "06 / Drag and drop",
+    "pageId": "0:10",
+    "oldId": "0:2001",
+    "x": 2496,
+    "y": 848,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "drag-07-prepared",
+    "file": "06-drag-07-prepared.svg",
+    "pageName": "06 / Drag and drop",
+    "pageId": "0:10",
+    "oldId": "0:2066",
+    "x": 0,
+    "y": 1696,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 420.0,
+        "y": 456.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Send",
+        "x": 606.0,
+        "y": 456.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "drag-08-async",
+    "file": "06-drag-08-async.svg",
+    "pageName": "06 / Drag and drop",
+    "pageId": "0:10",
+    "oldId": "0:2137",
+    "x": 1248,
+    "y": 1696,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 420.0,
+        "y": 456.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Store in cloud",
+        "x": 606.0,
+        "y": 456.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "drag-09-unreadable",
+    "file": "06-drag-09-unreadable.svg",
+    "pageName": "06 / Drag and drop",
+    "pageId": "0:10",
+    "oldId": "0:2208",
+    "x": 2496,
+    "y": 1696,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 420.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Choose files",
+        "x": 606.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-01-waiting",
+    "file": "07-mobile-01-waiting.svg",
+    "pageName": "07 / Mobile states",
+    "pageId": "0:11",
+    "oldId": "0:2272",
+    "x": 0,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-02-delivered",
+    "file": "07-mobile-02-delivered.svg",
+    "pageName": "07 / Mobile states",
+    "pageId": "0:11",
+    "oldId": "0:2298",
+    "x": 438,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-03-failed",
+    "file": "07-mobile-03-failed.svg",
+    "pageName": "07 / Mobile states",
+    "pageId": "0:11",
+    "oldId": "0:2327",
+    "x": 876,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Try again",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-04-prepared",
+    "file": "07-mobile-04-prepared.svg",
+    "pageName": "07 / Mobile states",
+    "pageId": "0:11",
+    "oldId": "0:2372",
+    "x": 0,
+    "y": 892,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Send",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-05-async",
+    "file": "07-mobile-05-async.svg",
+    "pageName": "07 / Mobile states",
+    "pageId": "0:11",
+    "oldId": "0:2457",
+    "x": 438,
+    "y": 892,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Store in cloud",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-06-unavailable",
+    "file": "07-mobile-06-unavailable.svg",
+    "pageName": "07 / Mobile states",
+    "pageId": "0:11",
+    "oldId": "0:2542",
+    "x": 876,
+    "y": 892,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Choose files",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-07-received",
+    "file": "07-mobile-07-received.svg",
+    "pageName": "07 / Mobile states",
+    "pageId": "0:11",
+    "oldId": "0:2587",
+    "x": 0,
+    "y": 1784,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-08-cancel-confirm",
+    "file": "07-mobile-08-cancel-confirm.svg",
+    "pageName": "07 / Mobile states",
+    "pageId": "0:11",
+    "oldId": "0:2616",
+    "x": 438,
+    "y": 1784,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Keep transfer",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Cancel transfer",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-09-task-controls",
+    "file": "07-mobile-09-task-controls.svg",
+    "pageName": "07 / Mobile states",
+    "pageId": "0:11",
+    "oldId": "0:2661",
+    "x": 876,
+    "y": 1784,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-01-sending",
+    "file": "09-desktop-01-sending.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:2892",
+    "x": 0,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-02-receiving",
+    "file": "09-desktop-02-receiving.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:2913",
+    "x": 1248,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-03-estimating",
+    "file": "09-desktop-03-estimating.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:2934",
+    "x": 0,
+    "y": 864,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-04-paused",
+    "file": "09-desktop-04-paused.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:2955",
+    "x": 1248,
+    "y": 864,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-05-reconnecting",
+    "file": "09-desktop-05-reconnecting.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:2976",
+    "x": 0,
+    "y": 1728,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-06-unknown",
+    "file": "09-desktop-06-unknown.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:2997",
+    "x": 1248,
+    "y": 1728,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-07-queued",
+    "file": "09-desktop-07-queued.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:3017",
+    "x": 0,
+    "y": 2592,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-08-confirming",
+    "file": "09-desktop-08-confirming.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:3037",
+    "x": 1248,
+    "y": 2592,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-09-delivered",
+    "file": "09-desktop-09-delivered.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:3058",
+    "x": 0,
+    "y": 3456,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-10-cloud",
+    "file": "09-desktop-10-cloud.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:3081",
+    "x": 1248,
+    "y": 3456,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-11-failed",
+    "file": "09-desktop-11-failed.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:3107",
+    "x": 0,
+    "y": 4320,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-12-batch",
+    "file": "09-desktop-12-batch.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:3128",
+    "x": 1248,
+    "y": 4320,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-detail-sending",
+    "file": "09-desktop-detail-sending.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:3149",
+    "x": 0,
+    "y": 5184,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 420.0,
+        "y": 478.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 606.0,
+        "y": 478.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-detail-paused",
+    "file": "09-desktop-detail-paused.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:3187",
+    "x": 1248,
+    "y": 5184,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 420.0,
+        "y": 466.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Resume",
+        "x": 606.0,
+        "y": 466.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-detail-confirming",
+    "file": "09-desktop-detail-confirming.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:3224",
+    "x": 0,
+    "y": 6048,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 420,
+        "y": 478.0,
+        "width": 360,
+        "primary": false
+      }
+    ]
+  },
+  {
+    "name": "desktop-detail-unknown",
+    "file": "09-desktop-detail-unknown.svg",
+    "pageName": "09 / Desktop progress",
+    "pageId": "0:13",
+    "oldId": "0:3260",
+    "x": 1248,
+    "y": 6048,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 420.0,
+        "y": 478.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 606.0,
+        "y": 478.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-01-sending",
+    "file": "10-mobile-01-sending.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3297",
+    "x": 0,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-02-receiving",
+    "file": "10-mobile-02-receiving.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3323",
+    "x": 438,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-03-estimating",
+    "file": "10-mobile-03-estimating.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3349",
+    "x": 876,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-04-paused",
+    "file": "10-mobile-04-paused.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3375",
+    "x": 1314,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-05-reconnecting",
+    "file": "10-mobile-05-reconnecting.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3401",
+    "x": 0,
+    "y": 908,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-06-unknown",
+    "file": "10-mobile-06-unknown.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3427",
+    "x": 438,
+    "y": 908,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-07-queued",
+    "file": "10-mobile-07-queued.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3452",
+    "x": 876,
+    "y": 908,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-08-confirming",
+    "file": "10-mobile-08-confirming.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3477",
+    "x": 1314,
+    "y": 908,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-09-delivered",
+    "file": "10-mobile-09-delivered.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3503",
+    "x": 0,
+    "y": 1816,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-10-cloud",
+    "file": "10-mobile-10-cloud.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3531",
+    "x": 438,
+    "y": 1816,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-11-failed",
+    "file": "10-mobile-11-failed.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3562",
+    "x": 876,
+    "y": 1816,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-12-batch",
+    "file": "10-mobile-12-batch.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3588",
+    "x": 1314,
+    "y": 1816,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-detail-sending",
+    "file": "10-mobile-detail-sending.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3614",
+    "x": 0,
+    "y": 2724,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-detail-paused",
+    "file": "10-mobile-detail-paused.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3666",
+    "x": 438,
+    "y": 2724,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Resume",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-detail-confirming",
+    "file": "10-mobile-detail-confirming.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3717",
+    "x": 876,
+    "y": 2724,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 16,
+        "y": 748,
+        "width": 358,
+        "primary": false
+      }
+    ]
+  },
+  {
+    "name": "mobile-detail-unknown",
+    "file": "10-mobile-detail-unknown.svg",
+    "pageName": "10 / Mobile progress",
+    "pageId": "0:14",
+    "oldId": "0:3767",
+    "x": 1314,
+    "y": 2724,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-history",
+    "file": "12-desktop-history.svg",
+    "pageName": "12 / History availability",
+    "pageId": "0:16",
+    "oldId": "0:3918",
+    "x": 0,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-reusable",
+    "file": "12-desktop-reusable.svg",
+    "pageName": "12 / History availability",
+    "pageId": "0:16",
+    "oldId": "0:4074",
+    "x": 1248,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 420.0,
+        "y": 438.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Restore",
+        "x": 606.0,
+        "y": 438.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-one-time",
+    "file": "12-desktop-one-time.svg",
+    "pageName": "12 / History availability",
+    "pageId": "0:16",
+    "oldId": "0:4249",
+    "x": 0,
+    "y": 864,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 420.0,
+        "y": 438.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Choose files",
+        "x": 606.0,
+        "y": 438.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-expired",
+    "file": "12-desktop-expired.svg",
+    "pageName": "12 / History availability",
+    "pageId": "0:16",
+    "oldId": "0:4420",
+    "x": 1248,
+    "y": 864,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 420.0,
+        "y": 438.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Choose files",
+        "x": 606.0,
+        "y": 438.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-keep",
+    "file": "12-desktop-keep.svg",
+    "pageName": "12 / History availability",
+    "pageId": "0:16",
+    "oldId": "0:4591",
+    "x": 0,
+    "y": 1728,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 420.0,
+        "y": 456.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Keep available",
+        "x": 606.0,
+        "y": 456.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-history",
+    "file": "12-mobile-history.svg",
+    "pageName": "12 / History availability",
+    "pageId": "0:16",
+    "oldId": "0:4762",
+    "x": 2544,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-reusable",
+    "file": "12-mobile-reusable.svg",
+    "pageName": "12 / History availability",
+    "pageId": "0:16",
+    "oldId": "0:4879",
+    "x": 2982,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Restore",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-one-time",
+    "file": "12-mobile-one-time.svg",
+    "pageName": "12 / History availability",
+    "pageId": "0:16",
+    "oldId": "0:5024",
+    "x": 3420,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Choose files",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-expired",
+    "file": "12-mobile-expired.svg",
+    "pageName": "12 / History availability",
+    "pageId": "0:16",
+    "oldId": "0:5165",
+    "x": 2544,
+    "y": 908,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Choose files",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-keep",
+    "file": "12-mobile-keep.svg",
+    "pageName": "12 / History availability",
+    "pageId": "0:16",
+    "oldId": "0:5306",
+    "x": 2982,
+    "y": 908,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Keep available",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-restoring",
+    "file": "13-desktop-restoring.svg",
+    "pageName": "13 / Cloud restore",
+    "pageId": "0:17",
+    "oldId": "0:5447",
+    "x": 0,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-paused",
+    "file": "13-desktop-paused.svg",
+    "pageName": "13 / Cloud restore",
+    "pageId": "0:17",
+    "oldId": "0:5468",
+    "x": 1248,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-verifying",
+    "file": "13-desktop-verifying.svg",
+    "pageName": "13 / Cloud restore",
+    "pageId": "0:17",
+    "oldId": "0:5489",
+    "x": 0,
+    "y": 864,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "desktop-restored",
+    "file": "13-desktop-restored.svg",
+    "pageName": "13 / Cloud restore",
+    "pageId": "0:17",
+    "oldId": "0:5510",
+    "x": 1248,
+    "y": 864,
+    "width": 1200,
+    "height": 800,
+    "controls": []
+  },
+  {
+    "name": "mobile-restoring",
+    "file": "13-mobile-restoring.svg",
+    "pageName": "13 / Cloud restore",
+    "pageId": "0:17",
+    "oldId": "0:5533",
+    "x": 2544,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-paused",
+    "file": "13-mobile-paused.svg",
+    "pageName": "13 / Cloud restore",
+    "pageId": "0:17",
+    "oldId": "0:5559",
+    "x": 2982,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-verifying",
+    "file": "13-mobile-verifying.svg",
+    "pageName": "13 / Cloud restore",
+    "pageId": "0:17",
+    "oldId": "0:5585",
+    "x": 3420,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  },
+  {
+    "name": "mobile-restored",
+    "file": "13-mobile-restored.svg",
+    "pageName": "13 / Cloud restore",
+    "pageId": "0:17",
+    "oldId": "0:5611",
+    "x": 2544,
+    "y": 908,
+    "width": 390,
+    "height": 844,
+    "controls": []
+  }
+]

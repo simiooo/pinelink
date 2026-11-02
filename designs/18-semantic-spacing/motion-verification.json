@@ -1,0 +1,173 @@
+{
+  "checks": [
+    {
+      "name": "history has one device title and narrower horizontal insets",
+      "pass": true,
+      "data": {
+        "title": "MacBook Pro",
+        "subtitle": 0,
+        "inset": [
+          "24px",
+          "16px",
+          "24px",
+          "16px"
+        ],
+        "headerToTabs": 16,
+        "tabsToGrid": 32,
+        "iconToName": 8,
+        "rowGap": 32,
+        "leftAxis": 0,
+        "align": "left",
+        "badge": 16,
+        "statusRows": 0,
+        "tabs": [
+          {
+            "w": 48,
+            "text": 17.921875,
+            "pad": "12px"
+          },
+          {
+            "w": 83.171875,
+            "text": 59.171875,
+            "pad": "12px"
+          },
+          {
+            "w": 87.125,
+            "text": 63.125,
+            "pad": "12px"
+          },
+          {
+            "w": 72.828125,
+            "text": 48.828125,
+            "pad": "12px"
+          }
+        ],
+        "tabGap": "8px"
+      }
+    },
+    {
+      "name": "semantic gaps distinguish header, navigation, collection and file identity",
+      "pass": true
+    },
+    {
+      "name": "tabs hug labels with independent padding; states use 16px badges",
+      "pass": true
+    },
+    {
+      "name": "hovering the file icon reveals its status tooltip",
+      "pass": true
+    },
+    {
+      "name": "keyboard and touch details retain the error reason and next action",
+      "pass": true
+    },
+    {
+      "name": "record details use local left alignment and semantic content/action gaps",
+      "pass": true,
+      "data": {
+        "padding": [
+          "24px",
+          "20px"
+        ],
+        "inline": 12,
+        "contentGap": 24,
+        "actionGap": 32,
+        "align": "left"
+      }
+    },
+    {
+      "name": "retention confirmation keeps one file identity and keyboard reachable actions",
+      "pass": true
+    },
+    {
+      "name": "send/receive file groups use 4px metadata, 24px sections and 32px actions",
+      "pass": true,
+      "data": {
+        "fileGap": 24,
+        "actionGap": 32,
+        "metadata": 4,
+        "rowBg": "rgba(0, 0, 0, 0)"
+      }
+    },
+    {
+      "name": "actionable errors retain visible short reasons",
+      "pass": true
+    },
+    {
+      "name": "routine graph states use a badge rather than standing captions",
+      "pass": true
+    },
+    {
+      "name": "progress details preserve real data and pause/resume behavior",
+      "pass": true
+    },
+    {
+      "name": "cloud restore still gates the success badge on verification",
+      "pass": true
+    },
+    {
+      "name": "all four widths retain local left axes, fit tabs and mobile sheets",
+      "pass": true
+    },
+    {
+      "name": "all remaining scenario entry points render without errors",
+      "pass": true
+    },
+    {
+      "name": "zero browser runtime errors",
+      "pass": true
+    }
+  ],
+  "layouts": [
+    {
+      "width": 320,
+      "overflow": false,
+      "inside": true,
+      "header": "MacBook Pro",
+      "leftAligned": true,
+      "bottom": true
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "inside": true,
+      "header": "MacBook Pro",
+      "leftAligned": true,
+      "bottom": true
+    },
+    {
+      "width": 736,
+      "overflow": false,
+      "inside": true,
+      "header": "Devices",
+      "leftAligned": true,
+      "bottom": false
+    },
+    {
+      "width": 1024,
+      "overflow": false,
+      "inside": true,
+      "header": "Devices",
+      "leftAligned": true,
+      "bottom": false
+    }
+  ],
+  "scenarios": [
+    "progress",
+    "unknown",
+    "zero",
+    "batch",
+    "receive",
+    "drop",
+    "entry",
+    "selection",
+    "queued",
+    "stored",
+    "reconnect",
+    "rejected",
+    "expired",
+    "cancelled",
+    "unavailable",
+    "exit"
+  ]
+}

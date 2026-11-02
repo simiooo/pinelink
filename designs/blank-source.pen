@@ -1,0 +1,903 @@
+{
+  "type": "document",
+  "children": [
+    {
+      "type": "element",
+      "tagName": "div",
+      "attrs": {
+        "class": "label",
+        "style": "left:40px;top:28px"
+      },
+      "children": [
+        {
+          "type": "text",
+          "text": "01 · 新建传输 / 主屏仅三个操作"
+        }
+      ],
+      "inlineStyle": {
+        "left": "40px",
+        "top": "28px"
+      },
+      "computedStyle": {
+        "box-sizing": "border-box",
+        "position": "absolute",
+        "font-size": "18px",
+        "font-weight": "650",
+        "left": "40px",
+        "top": "28px"
+      }
+    },
+    {
+      "type": "element",
+      "tagName": "div",
+      "attrs": {
+        "class": "label",
+        "style": "left:1092px;top:28px"
+      },
+      "children": [
+        {
+          "type": "text",
+          "text": "移动端 390 × 844"
+        }
+      ],
+      "inlineStyle": {
+        "left": "1092px",
+        "top": "28px"
+      },
+      "computedStyle": {
+        "box-sizing": "border-box",
+        "position": "absolute",
+        "font-size": "18px",
+        "font-weight": "650",
+        "left": "1092px",
+        "top": "28px"
+      }
+    },
+    {
+      "type": "element",
+      "tagName": "section",
+      "attrs": {
+        "class": "desktop"
+      },
+      "children": [
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "brand"
+          },
+          "children": [
+            {
+              "type": "text",
+              "text": "Pinelink"
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "36px",
+            "top": "32px",
+            "font-size": "25px",
+            "font-weight": "700"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "actions"
+          },
+          "children": [
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "chip"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "通知"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "padding": "8px 14px",
+                "padding-top": "8px",
+                "padding-right": "14px",
+                "padding-bottom": "8px",
+                "padding-left": "14px",
+                "border": "1px solid #E2E6EA",
+                "border-color": "#E2E6EA",
+                "border-width": "1px",
+                "border-style": "solid",
+                "border-radius": "10px",
+                "background": "#F5F6F7",
+                "background-color": "#F5F6F7",
+                "font-size": "13px",
+                "color": "#626C76",
+                "text-align": "center"
+              }
+            },
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "chip"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "更多"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "padding": "8px 14px",
+                "padding-top": "8px",
+                "padding-right": "14px",
+                "padding-bottom": "8px",
+                "padding-left": "14px",
+                "border": "1px solid #E2E6EA",
+                "border-color": "#E2E6EA",
+                "border-width": "1px",
+                "border-style": "solid",
+                "border-radius": "10px",
+                "background": "#F5F6F7",
+                "background-color": "#F5F6F7",
+                "font-size": "13px",
+                "color": "#626C76",
+                "text-align": "center"
+              }
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "right": "36px",
+            "top": "28px",
+            "display": "flex",
+            "gap": "16px"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "divider"
+          },
+          "children": [],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "36px",
+            "right": "36px",
+            "top": "78px",
+            "border-top": "1px solid #E2E6EA"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "h1",
+          "attrs": {},
+          "children": [
+            {
+              "type": "text",
+              "text": "发送文件"
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "36px",
+            "top": "104px",
+            "margin": "0",
+            "margin-top": "0",
+            "margin-right": "0",
+            "margin-bottom": "0",
+            "margin-left": "0",
+            "font-size": "28px",
+            "font-weight": "650"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "p",
+          "attrs": {},
+          "children": [
+            {
+              "type": "text",
+              "text": "选择文件后，再选择接收设备。对方同意前不会发送内容。"
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "drop"
+          },
+          "children": [
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "upload-icon"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "↓"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "position": "absolute",
+                "left": "32px",
+                "top": "36px",
+                "width": "56px",
+                "height": "56px",
+                "border-radius": "14px",
+                "background": "#E9E2D9",
+                "background-color": "#E9E2D9",
+                "color": "#6B4A34",
+                "display": "grid",
+                "place-items": "center",
+                "font-size": "30px",
+                "font-weight": "500"
+              }
+            },
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "drop-title"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "把文件拖到这里"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "position": "absolute",
+                "left": "112px",
+                "top": "52px",
+                "font-size": "18px",
+                "font-weight": "650"
+              }
+            },
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "drop-sub"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "或点击选择文件"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "position": "absolute",
+                "left": "112px",
+                "top": "84px",
+                "font-size": "14px",
+                "color": "#626C76"
+              }
+            },
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "primary"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "选择文件"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "position": "absolute",
+                "left": "32px",
+                "top": "128px",
+                "width": "180px",
+                "height": "46px",
+                "border-radius": "12px",
+                "background": "#6B4A34",
+                "background-color": "#6B4A34",
+                "color": "#fff",
+                "display": "grid",
+                "place-items": "center",
+                "font-size": "15px",
+                "font-weight": "600"
+              }
+            },
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "drop-note"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "支持任意类型；发送前可核对文件大小与接收设备。"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "position": "absolute",
+                "left": "32px",
+                "top": "208px",
+                "font-size": "13px",
+                "color": "#626C76"
+              }
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "36px",
+            "top": "206px",
+            "width": "928px",
+            "height": "300px",
+            "border": "1px dashed #C9D0D6",
+            "border-color": "#C9D0D6",
+            "border-width": "1px",
+            "border-style": "dashed",
+            "border-radius": "16px",
+            "background": "#F5F6F7",
+            "background-color": "#F5F6F7"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "notice"
+          },
+          "children": [
+            {
+              "type": "text",
+              "text": "经过中转时，会保留一份 24 小时后删除的加密临时副本。"
+            },
+            {
+              "type": "element",
+              "tagName": "br",
+              "attrs": {},
+              "children": [],
+              "computedStyle": {
+                "color": "#626C76",
+                "font-size": "13px",
+                "line-height": "1.8",
+                "box-sizing": "border-box"
+              }
+            },
+            {
+              "type": "text",
+              "text": "默认点对点；持久化保存需另行选择。"
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "36px",
+            "top": "538px",
+            "width": "928px",
+            "height": "74px",
+            "border-radius": "12px",
+            "background": "#F5F6F7",
+            "background-color": "#F5F6F7",
+            "padding": "20px 24px",
+            "padding-top": "20px",
+            "padding-right": "24px",
+            "padding-bottom": "20px",
+            "padding-left": "24px",
+            "color": "#626C76",
+            "font-size": "13px",
+            "line-height": "1.8"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "recent-title"
+          },
+          "children": [
+            {
+              "type": "text",
+              "text": "最近任务"
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "36px",
+            "top": "662px",
+            "font-size": "17px",
+            "font-weight": "650"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "recent"
+          },
+          "children": [
+            {
+              "type": "text",
+              "text": "暂无任务。文件与接收设备确认后会出现在这里。"
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "36px",
+            "top": "688px",
+            "width": "928px",
+            "height": "64px",
+            "border-radius": "12px",
+            "background": "#F5F6F7",
+            "background-color": "#F5F6F7",
+            "padding": "22px 20px",
+            "padding-top": "22px",
+            "padding-right": "20px",
+            "padding-bottom": "22px",
+            "padding-left": "20px",
+            "color": "#626C76",
+            "font-size": "14px"
+          }
+        }
+      ],
+      "computedStyle": {
+        "box-sizing": "border-box",
+        "position": "absolute",
+        "left": "40px",
+        "top": "70px",
+        "width": "1000px",
+        "height": "790px",
+        "background": "#FFFFFF",
+        "background-color": "#FFFFFF",
+        "border": "1px solid #E2E6EA",
+        "border-color": "#E2E6EA",
+        "border-width": "1px",
+        "border-style": "solid",
+        "border-radius": "18px"
+      }
+    },
+    {
+      "type": "element",
+      "tagName": "section",
+      "attrs": {
+        "class": "mobile"
+      },
+      "children": [
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "brand"
+          },
+          "children": [
+            {
+              "type": "text",
+              "text": "Pinelink"
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "22px",
+            "top": "32px",
+            "font-size": "23px",
+            "font-weight": "700"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "actions"
+          },
+          "children": [
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "chip"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "通知"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "padding": "7px 10px",
+                "padding-top": "7px",
+                "padding-right": "10px",
+                "padding-bottom": "7px",
+                "padding-left": "10px",
+                "border": "1px solid #E2E6EA",
+                "border-color": "#E2E6EA",
+                "border-width": "1px",
+                "border-style": "solid",
+                "border-radius": "10px",
+                "background": "#F5F6F7",
+                "background-color": "#F5F6F7",
+                "font-size": "11px",
+                "color": "#626C76",
+                "text-align": "center"
+              }
+            },
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "chip"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "更多"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "padding": "7px 10px",
+                "padding-top": "7px",
+                "padding-right": "10px",
+                "padding-bottom": "7px",
+                "padding-left": "10px",
+                "border": "1px solid #E2E6EA",
+                "border-color": "#E2E6EA",
+                "border-width": "1px",
+                "border-style": "solid",
+                "border-radius": "10px",
+                "background": "#F5F6F7",
+                "background-color": "#F5F6F7",
+                "font-size": "11px",
+                "color": "#626C76",
+                "text-align": "center"
+              }
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "right": "22px",
+            "top": "26px",
+            "display": "flex",
+            "gap": "12px"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "divider"
+          },
+          "children": [],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "22px",
+            "right": "22px",
+            "top": "78px",
+            "border-top": "1px solid #E2E6EA"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "h1",
+          "attrs": {},
+          "children": [
+            {
+              "type": "text",
+              "text": "发送文件"
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "22px",
+            "top": "98px",
+            "margin": "0",
+            "margin-top": "0",
+            "margin-right": "0",
+            "margin-bottom": "0",
+            "margin-left": "0",
+            "font-size": "23px",
+            "font-weight": "650"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "p",
+          "attrs": {},
+          "children": [
+            {
+              "type": "text",
+              "text": "对方同意前不会发送内容。"
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "drop"
+          },
+          "children": [
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "upload-icon"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "↓"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "position": "absolute",
+                "left": "22px",
+                "top": "28px",
+                "width": "50px",
+                "height": "50px",
+                "border-radius": "14px",
+                "background": "#E9E2D9",
+                "background-color": "#E9E2D9",
+                "color": "#6B4A34",
+                "display": "grid",
+                "place-items": "center",
+                "font-size": "26px",
+                "font-weight": "500"
+              }
+            },
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "drop-title"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "把文件拖到这里"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "position": "absolute",
+                "left": "22px",
+                "top": "100px",
+                "font-size": "16px",
+                "font-weight": "650"
+              }
+            },
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "drop-sub"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "或点击选择文件"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "position": "absolute",
+                "left": "22px",
+                "top": "128px",
+                "font-size": "12px",
+                "color": "#626C76"
+              }
+            },
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "primary"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "选择文件"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "position": "absolute",
+                "left": "22px",
+                "top": "166px",
+                "width": "168px",
+                "height": "44px",
+                "border-radius": "12px",
+                "background": "#6B4A34",
+                "background-color": "#6B4A34",
+                "color": "#fff",
+                "display": "grid",
+                "place-items": "center",
+                "font-size": "14px",
+                "font-weight": "600"
+              }
+            },
+            {
+              "type": "element",
+              "tagName": "div",
+              "attrs": {
+                "class": "drop-note"
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "text": "发送前可核对大小与设备。"
+                }
+              ],
+              "computedStyle": {
+                "box-sizing": "border-box",
+                "position": "absolute",
+                "left": "22px",
+                "top": "236px",
+                "font-size": "11px",
+                "color": "#626C76"
+              }
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "22px",
+            "top": "180px",
+            "width": "264px",
+            "height": "306px",
+            "border": "1px dashed #C9D0D6",
+            "border-color": "#C9D0D6",
+            "border-width": "1px",
+            "border-style": "dashed",
+            "border-radius": "16px",
+            "background": "#F5F6F7",
+            "background-color": "#F5F6F7"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "notice"
+          },
+          "children": [
+            {
+              "type": "text",
+              "text": "经过中转时，会保留一份 24 小时后删除的加密临时副本。"
+            },
+            {
+              "type": "element",
+              "tagName": "br",
+              "attrs": {},
+              "children": [],
+              "computedStyle": {
+                "color": "#626C76",
+                "font-size": "11px",
+                "line-height": "1.8",
+                "box-sizing": "border-box"
+              }
+            },
+            {
+              "type": "text",
+              "text": "持久化保存需另行选择。"
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "22px",
+            "top": "508px",
+            "width": "264px",
+            "height": "112px",
+            "border-radius": "12px",
+            "background": "#F5F6F7",
+            "background-color": "#F5F6F7",
+            "padding": "14px",
+            "padding-top": "14px",
+            "padding-right": "14px",
+            "padding-bottom": "14px",
+            "padding-left": "14px",
+            "color": "#626C76",
+            "font-size": "11px",
+            "line-height": "1.8"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "recent-title"
+          },
+          "children": [
+            {
+              "type": "text",
+              "text": "最近任务"
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "22px",
+            "top": "656px",
+            "font-size": "16px",
+            "font-weight": "650"
+          }
+        },
+        {
+          "type": "element",
+          "tagName": "div",
+          "attrs": {
+            "class": "recent"
+          },
+          "children": [
+            {
+              "type": "text",
+              "text": "暂无任务。确认后会显示在这里。"
+            }
+          ],
+          "computedStyle": {
+            "box-sizing": "border-box",
+            "position": "absolute",
+            "left": "22px",
+            "top": "682px",
+            "width": "264px",
+            "height": "70px",
+            "border-radius": "12px",
+            "background": "#F5F6F7",
+            "background-color": "#F5F6F7",
+            "padding": "16px 14px",
+            "padding-top": "16px",
+            "padding-right": "14px",
+            "padding-bottom": "16px",
+            "padding-left": "14px",
+            "color": "#626C76",
+            "font-size": "11px"
+          }
+        }
+      ],
+      "computedStyle": {
+        "box-sizing": "border-box",
+        "position": "absolute",
+        "left": "1092px",
+        "top": "70px",
+        "width": "308px",
+        "height": "790px",
+        "background": "#FFFFFF",
+        "background-color": "#FFFFFF",
+        "border": "1px solid #E2E6EA",
+        "border-color": "#E2E6EA",
+        "border-width": "1px",
+        "border-style": "solid",
+        "border-radius": "28px"
+      }
+    }
+  ]
+}

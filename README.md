@@ -1,0 +1,77 @@
+# Pinelink
+
+跨设备端到端加密文件传输，支持直连、中继、云端暂存与离线局域网。
+
+[源码](https://github.com/simiooo/pinelink) · [开发预览包](https://github.com/simiooo/pinelink/releases) · [Apache-2.0](LICENSE)
+
+## 当前进度
+
+这是开发预览版本。Go 服务端与 CLI 已具备加密传输、接收确认、真实接收进度、云副本生命周期、离线原生直传及加密增量同步。Web 已支持 PWA、既有页面离线冷启动、本地历史与恢复联网后的自动补同步；Flutter 已接入本地持久化和同步数据层。
+
+Web/Flutter 的完整文件传输数据面、离线文件与写入队列，以及新版节点图的全部界面仍在实施。设计稿与运行界面可能不同。
+
+产品计划默认连接官方服务 `pinelink.sqmem.top`，并允许使用自定义服务。官方模式不展示技术配置表单；高级配置只在主动连接自己的服务时提供。正式身份引导、服务切换和官方生产服务尚未发布。当前预览包用于开发和受控的自托管验证，默认开发身份不能用于公开多用户服务。
+
+## 仓库结构
+
+| 目录 | 内容 |
+| --- | --- |
+| `backend/` | Go API、传输协调与生命周期维护 |
+| `cli/` | CLI、WebRTC 与离线局域网传输 |
+| `protocol/` | 共享协议与加密增量复制格式 |
+| `web/` | React / TanStack Web 与 PWA |
+| `mobile/` | Flutter 客户端 |
+| `infra/` | 数据库迁移、本地开发、部署与集成检查 |
+| `designs/` | OpenPencil `.fig`、SVG 与动效原型 |
+
+四个 Go 模块通过根目录 `go.work` 协同开发，公开模块路径为 `github.com/simiooo/pinelink/<module>`。
+
+## 本地开发
+
+需要 Go 1.26、Node.js 24、Docker Compose；Flutter 使用 [.fvmrc](.fvmrc) 固定的 stable SDK。
+
+```sh
+git clone https://github.com/simiooo/pinelink.git
+cd pinelink
+docker compose -f infra/compose.yaml up -d --wait
+go -C backend run ./cmd/pinelinkd
+```
+
+后端环境变量、开发身份与 CLI 命令见[开发说明](infra/README.md)。开发 Compose 使用已知的本地测试凭据，默认仅绑定 loopback。跨设备验证需显式设置绑定地址与 ICE/TURN 地址。
+
+```sh
+go -C cli run ./cmd/pinelink --help
+cd web
+npm ci
+npm run dev
+```
+
+Flutter 在 `mobile/` 目录执行 `flutter pub get`、`flutter run`。Windows 可使用 `infra/scripts/setup-flutter.ps1` 安装项目独立 SDK，再通过 `infra/scripts/flutter.ps1` 调用。
+
+## 检查与构建
+
+```sh
+go -C protocol test ./...
+go -C backend test ./...
+go -C cli test ./...
+npm --prefix web test
+npm --prefix web run build
+```
+
+Flutter 执行 `flutter analyze` 与 `flutter test`；Windows 字体金图依赖 Microsoft YaHei，Linux CI 明确跳过这组字体专用参考图。完整数据库/API/双端传输检查通过 `bash infra/scripts/integration.sh` 启动服务后运行，`infra/integration` 需要相应环境变量，不能当作无服务的单元测试执行。
+
+Releases 预览包附带源代码版本、SHA-256 校验文件和第三方许可声明；构建脚本见 [release-preview.ps1](infra/scripts/release-preview.ps1)。
+
+## 设计与协议
+
+- [架构](infra/docs/architecture.md)
+- [直连与中继送达](infra/docs/direct-relay-delivery.md)
+- [离线局域网及本地配对](infra/docs/offline-local-delivery.md)
+- [本地持久化与三方增量同步](infra/docs/local-history-sync.md)
+- [Web 离线与 PWA](infra/docs/web-offline-pwa.md)
+- [已验收设计基线](designs/20-pinelink-direct-relay.fig)
+- [服务模式与离线补充稿](designs/23-pinelink-service-and-offline.fig)：仍待原生应用重开检查和产品验收。
+
+## 许可
+
+Pinelink 使用 Apache-2.0，见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)。第三方组件保留各自许可证，构建包中的许可附件属于对应版本的一部分。

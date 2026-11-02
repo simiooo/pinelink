@@ -1,0 +1,432 @@
+[
+  {
+    "name": "desktop-01-sending",
+    "file": "desktop-01-sending.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "sending",
+    "device": "desktop",
+    "controls": []
+  },
+  {
+    "name": "desktop-02-receiving",
+    "file": "desktop-02-receiving.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "receiving",
+    "device": "desktop",
+    "controls": []
+  },
+  {
+    "name": "desktop-03-estimating",
+    "file": "desktop-03-estimating.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "estimating",
+    "device": "desktop",
+    "controls": []
+  },
+  {
+    "name": "desktop-04-paused",
+    "file": "desktop-04-paused.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "paused",
+    "device": "desktop",
+    "controls": []
+  },
+  {
+    "name": "desktop-05-reconnecting",
+    "file": "desktop-05-reconnecting.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "reconnecting",
+    "device": "desktop",
+    "controls": []
+  },
+  {
+    "name": "desktop-06-unknown",
+    "file": "desktop-06-unknown.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "unknown",
+    "device": "desktop",
+    "controls": []
+  },
+  {
+    "name": "desktop-07-queued",
+    "file": "desktop-07-queued.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "queued",
+    "device": "desktop",
+    "controls": []
+  },
+  {
+    "name": "desktop-08-confirming",
+    "file": "desktop-08-confirming.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "confirming",
+    "device": "desktop",
+    "controls": []
+  },
+  {
+    "name": "desktop-09-delivered",
+    "file": "desktop-09-delivered.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "delivered",
+    "device": "desktop",
+    "controls": []
+  },
+  {
+    "name": "desktop-10-cloud",
+    "file": "desktop-10-cloud.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "cloud",
+    "device": "desktop",
+    "controls": []
+  },
+  {
+    "name": "desktop-11-failed",
+    "file": "desktop-11-failed.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "failed",
+    "device": "desktop",
+    "controls": []
+  },
+  {
+    "name": "desktop-12-batch",
+    "file": "desktop-12-batch.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "batch",
+    "device": "desktop",
+    "controls": []
+  },
+  {
+    "name": "desktop-detail-sending",
+    "file": "desktop-detail-sending.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "sending",
+    "device": "desktop",
+    "details": true,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 424,
+        "y": 496,
+        "width": 170.0,
+        "height": 48,
+        "mode": "text",
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 606.0,
+        "y": 496,
+        "width": 170.0,
+        "height": 48,
+        "mode": "text",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-detail-paused",
+    "file": "desktop-detail-paused.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "paused",
+    "device": "desktop",
+    "details": true,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 424,
+        "y": 496,
+        "width": 170.0,
+        "height": 48,
+        "mode": "text",
+        "primary": false
+      },
+      {
+        "label": "Resume",
+        "x": 606.0,
+        "y": 496,
+        "width": 170.0,
+        "height": 48,
+        "mode": "text",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "desktop-detail-confirming",
+    "file": "desktop-detail-confirming.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "confirming",
+    "device": "desktop",
+    "details": true,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 424,
+        "y": 496,
+        "width": 352,
+        "height": 48,
+        "mode": "text",
+        "primary": false
+      }
+    ]
+  },
+  {
+    "name": "desktop-detail-unknown",
+    "file": "desktop-detail-unknown.svg",
+    "width": 1200,
+    "height": 800,
+    "kind": "unknown",
+    "device": "desktop",
+    "details": true,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 424,
+        "y": 496,
+        "width": 170.0,
+        "height": 48,
+        "mode": "text",
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 606.0,
+        "y": 496,
+        "width": 170.0,
+        "height": 48,
+        "mode": "text",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-01-sending",
+    "file": "mobile-01-sending.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "sending",
+    "device": "mobile",
+    "controls": []
+  },
+  {
+    "name": "mobile-02-receiving",
+    "file": "mobile-02-receiving.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "receiving",
+    "device": "mobile",
+    "controls": []
+  },
+  {
+    "name": "mobile-03-estimating",
+    "file": "mobile-03-estimating.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "estimating",
+    "device": "mobile",
+    "controls": []
+  },
+  {
+    "name": "mobile-04-paused",
+    "file": "mobile-04-paused.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "paused",
+    "device": "mobile",
+    "controls": []
+  },
+  {
+    "name": "mobile-05-reconnecting",
+    "file": "mobile-05-reconnecting.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "reconnecting",
+    "device": "mobile",
+    "controls": []
+  },
+  {
+    "name": "mobile-06-unknown",
+    "file": "mobile-06-unknown.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "unknown",
+    "device": "mobile",
+    "controls": []
+  },
+  {
+    "name": "mobile-07-queued",
+    "file": "mobile-07-queued.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "queued",
+    "device": "mobile",
+    "controls": []
+  },
+  {
+    "name": "mobile-08-confirming",
+    "file": "mobile-08-confirming.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "confirming",
+    "device": "mobile",
+    "controls": []
+  },
+  {
+    "name": "mobile-09-delivered",
+    "file": "mobile-09-delivered.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "delivered",
+    "device": "mobile",
+    "controls": []
+  },
+  {
+    "name": "mobile-10-cloud",
+    "file": "mobile-10-cloud.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "cloud",
+    "device": "mobile",
+    "controls": []
+  },
+  {
+    "name": "mobile-11-failed",
+    "file": "mobile-11-failed.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "failed",
+    "device": "mobile",
+    "controls": []
+  },
+  {
+    "name": "mobile-12-batch",
+    "file": "mobile-12-batch.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "batch",
+    "device": "mobile",
+    "controls": []
+  },
+  {
+    "name": "mobile-detail-sending",
+    "file": "mobile-detail-sending.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "sending",
+    "device": "mobile",
+    "details": true,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 20,
+        "y": 744,
+        "width": 169.0,
+        "height": 48,
+        "mode": "text",
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 201.0,
+        "y": 744,
+        "width": 169.0,
+        "height": 48,
+        "mode": "text",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-detail-paused",
+    "file": "mobile-detail-paused.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "paused",
+    "device": "mobile",
+    "details": true,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 20,
+        "y": 744,
+        "width": 169.0,
+        "height": 48,
+        "mode": "text",
+        "primary": false
+      },
+      {
+        "label": "Resume",
+        "x": 201.0,
+        "y": 744,
+        "width": 169.0,
+        "height": 48,
+        "mode": "text",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "name": "mobile-detail-confirming",
+    "file": "mobile-detail-confirming.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "confirming",
+    "device": "mobile",
+    "details": true,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 20,
+        "y": 744,
+        "width": 350,
+        "height": 48,
+        "mode": "text",
+        "primary": false
+      }
+    ]
+  },
+  {
+    "name": "mobile-detail-unknown",
+    "file": "mobile-detail-unknown.svg",
+    "width": 390,
+    "height": 844,
+    "kind": "unknown",
+    "device": "mobile",
+    "details": true,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 20,
+        "y": 744,
+        "width": 169.0,
+        "height": 48,
+        "mode": "text",
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 201.0,
+        "y": 744,
+        "width": 169.0,
+        "height": 48,
+        "mode": "text",
+        "primary": true
+      }
+    ]
+  }
+]

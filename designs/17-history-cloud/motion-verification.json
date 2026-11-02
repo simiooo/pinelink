@@ -1,0 +1,82 @@
+{
+  "checks": [
+    {
+      "name": "history keeps nine records and explicit availability labels",
+      "pass": true
+    },
+    {
+      "name": "filters distinguish reusable, one-time and expired without deleting records",
+      "pass": true
+    },
+    {
+      "name": "expired copy keeps its record without restore or retention actions",
+      "pass": true
+    },
+    {
+      "name": "one-time transfer requires choosing a source again",
+      "pass": true
+    },
+    {
+      "name": "retention promotion is explicit, keyboard reachable and only offered before expiry",
+      "pass": true
+    },
+    {
+      "name": "restore creates a new zero-based flow from a cloud source node to this device",
+      "pass": true
+    },
+    {
+      "name": "cloud restore reuses pause and bounded light behavior",
+      "pass": true
+    },
+    {
+      "name": "restored is shown only after verification; source record is preserved",
+      "pass": true
+    },
+    {
+      "name": "verified local source offers resend without pretending to be a cloud copy",
+      "pass": true
+    },
+    {
+      "name": "history grid and details fit all four widths; mobile uses a full page and bottom sheet",
+      "pass": true
+    },
+    {
+      "name": "zero browser runtime errors",
+      "pass": true
+    }
+  ],
+  "layouts": [
+    {
+      "width": 320,
+      "overflow": false,
+      "inside": true,
+      "cols": 3,
+      "bottom": true,
+      "mobile": true
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "inside": true,
+      "cols": 3,
+      "bottom": true,
+      "mobile": true
+    },
+    {
+      "width": 736,
+      "overflow": false,
+      "inside": true,
+      "cols": 3,
+      "bottom": false,
+      "mobile": false
+    },
+    {
+      "width": 1024,
+      "overflow": false,
+      "inside": true,
+      "cols": 3,
+      "bottom": false,
+      "mobile": false
+    }
+  ]
+}

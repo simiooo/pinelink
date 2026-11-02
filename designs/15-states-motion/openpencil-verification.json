@@ -1,0 +1,247 @@
+{
+  "date": "2026-11-01",
+  "nativeFile": "../15-pinelink-states-motion.fig",
+  "sha256": "E1BA3FBB7839BA8C6EDE8B6A5D9C68527E1DDABFD0B847E08CBB713A9228C634",
+  "preservedV14": true,
+  "pages": [
+    {
+      "name": "Foundations",
+      "frames": 1
+    },
+    {
+      "name": "Desktop",
+      "frames": 8
+    },
+    {
+      "name": "Mobile",
+      "frames": 8
+    },
+    {
+      "name": "Components",
+      "frames": 1
+    },
+    {
+      "name": "Node states",
+      "frames": 2
+    },
+    {
+      "name": "Transfer states",
+      "frames": 14
+    },
+    {
+      "name": "Drag and drop",
+      "frames": 9
+    },
+    {
+      "name": "Mobile states",
+      "frames": 9
+    },
+    {
+      "name": "Motion",
+      "frames": 2
+    }
+  ],
+  "newScreens": 32,
+  "existingScreens": 16,
+  "components": 12,
+  "colorAndMotionVariables": 32,
+  "roundtrip": "saved, closed, reopened; drop and mobile review exported after reopening",
+  "fonts": {
+    "faithful": true,
+    "issues": []
+  },
+  "lint": [
+    {
+      "page": "989906431:1266",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    },
+    {
+      "page": "989906431:1267",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    },
+    {
+      "page": "989906431:1268",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    },
+    {
+      "page": "989906431:1269",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    },
+    {
+      "page": "989906431:1270",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    }
+  ],
+  "actions": [
+    {
+      "screen": "desktop-07-rejected",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "desktop-07-rejected",
+      "action": "Choose device",
+      "pass": true
+    },
+    {
+      "screen": "desktop-08-expired",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "desktop-08-expired",
+      "action": "Send again",
+      "pass": true
+    },
+    {
+      "screen": "desktop-09-failed",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "desktop-09-failed",
+      "action": "Try again",
+      "pass": true
+    },
+    {
+      "screen": "desktop-11-unavailable",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "desktop-11-unavailable",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "screen": "drag-07-prepared",
+      "action": "Cancel",
+      "pass": true
+    },
+    {
+      "screen": "drag-07-prepared",
+      "action": "Send",
+      "pass": true
+    },
+    {
+      "screen": "drag-08-async",
+      "action": "Cancel",
+      "pass": true
+    },
+    {
+      "screen": "drag-08-async",
+      "action": "Store in cloud",
+      "pass": true
+    },
+    {
+      "screen": "drag-09-unreadable",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "drag-09-unreadable",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "screen": "mobile-03-failed",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "mobile-03-failed",
+      "action": "Try again",
+      "pass": true
+    },
+    {
+      "screen": "mobile-04-prepared",
+      "action": "Cancel",
+      "pass": true
+    },
+    {
+      "screen": "mobile-04-prepared",
+      "action": "Send",
+      "pass": true
+    },
+    {
+      "screen": "mobile-05-async",
+      "action": "Cancel",
+      "pass": true
+    },
+    {
+      "screen": "mobile-05-async",
+      "action": "Store in cloud",
+      "pass": true
+    },
+    {
+      "screen": "mobile-06-unavailable",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "mobile-06-unavailable",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "screen": "desktop-13-cancel-confirm",
+      "action": "Keep transfer",
+      "pass": true
+    },
+    {
+      "screen": "desktop-13-cancel-confirm",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "screen": "mobile-08-cancel-confirm",
+      "action": "Keep transfer",
+      "pass": true
+    },
+    {
+      "screen": "mobile-08-cancel-confirm",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "screen": "desktop-14-task-controls",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "screen": "desktop-14-task-controls",
+      "action": "Pause",
+      "pass": true
+    },
+    {
+      "screen": "mobile-09-task-controls",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "screen": "mobile-09-task-controls",
+      "action": "Pause",
+      "pass": true
+    }
+  ]
+}

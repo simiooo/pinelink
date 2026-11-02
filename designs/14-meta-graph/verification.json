@@ -1,0 +1,147 @@
+{
+  "date": "2026-11-01",
+  "document": "../14-pinelink-meta-graph.fig",
+  "sha256": "DA640CC72A5583E8406BEC13D4E495A84BAA1A68AECF5829486B4CA94C641DEE",
+  "pages": 4,
+  "screens": {
+    "desktop": 8,
+    "mobile": 8
+  },
+  "components": 12,
+  "primary": "#0866FF",
+  "language": "en",
+  "roundtrip": "closed, reopened, and rendered after final corrections",
+  "font": "Segoe UI Regular and SemiBold available locally",
+  "lint": [
+    {
+      "page": "0:4",
+      "result": {
+        "errors": 0,
+        "warnings": 0,
+        "info": 0,
+        "fixable": 0,
+        "issues": []
+      }
+    },
+    {
+      "page": "0:5",
+      "result": {
+        "errors": 0,
+        "warnings": 0,
+        "info": 0,
+        "fixable": 0,
+        "issues": []
+      }
+    },
+    {
+      "page": "0:6",
+      "result": {
+        "errors": 0,
+        "warnings": 0,
+        "info": 0,
+        "fixable": 0,
+        "issues": []
+      }
+    }
+  ],
+  "buttonBounds": [
+    {
+      "screen": "D05 / Receive request",
+      "button": "Button-Decline",
+      "pass": true,
+      "x": 424,
+      "y": 456
+    },
+    {
+      "screen": "D05 / Receive request",
+      "button": "Button-Accept",
+      "pass": true,
+      "x": 606,
+      "y": 456
+    },
+    {
+      "screen": "D06 / Paused",
+      "button": "Button-Cancel",
+      "pass": true,
+      "x": 424,
+      "y": 424
+    },
+    {
+      "screen": "D06 / Paused",
+      "button": "Button-Resume",
+      "pass": true,
+      "x": 606,
+      "y": 424
+    },
+    {
+      "screen": "D07 / Connection lost",
+      "button": "Button-Cancel",
+      "pass": true,
+      "x": 424,
+      "y": 424
+    },
+    {
+      "screen": "D07 / Connection lost",
+      "button": "Button-Resume",
+      "pass": true,
+      "x": 606,
+      "y": 424
+    },
+    {
+      "screen": "D08 / Empty state",
+      "button": "Button-Add device",
+      "pass": true,
+      "x": 544,
+      "y": 440
+    },
+    {
+      "screen": "M05 / Receive request",
+      "button": "Button-Accept",
+      "pass": true,
+      "x": 201,
+      "y": 712
+    },
+    {
+      "screen": "M05 / Receive request",
+      "button": "Button-Decline",
+      "pass": true,
+      "x": 20,
+      "y": 712
+    },
+    {
+      "screen": "M06 / Paused",
+      "button": "Button-Cancel",
+      "pass": true,
+      "x": 20,
+      "y": 720
+    },
+    {
+      "screen": "M06 / Paused",
+      "button": "Button-Resume",
+      "pass": true,
+      "x": 201,
+      "y": 720
+    },
+    {
+      "screen": "M07 / Connection lost",
+      "button": "Button-Cancel",
+      "pass": true,
+      "x": 20,
+      "y": 720
+    },
+    {
+      "screen": "M07 / Connection lost",
+      "button": "Button-Resume",
+      "pass": true,
+      "x": 201,
+      "y": 720
+    },
+    {
+      "screen": "M08 / Empty state",
+      "button": "Button-Add device",
+      "pass": true,
+      "x": 139,
+      "y": 424
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "controls": [
+    {
+      "screen": "desktop-detail-sending",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "screen": "desktop-detail-sending",
+      "action": "Pause",
+      "pass": true
+    },
+    {
+      "screen": "desktop-detail-paused",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "screen": "desktop-detail-paused",
+      "action": "Resume",
+      "pass": true
+    },
+    {
+      "screen": "desktop-detail-confirming",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "desktop-detail-unknown",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "screen": "desktop-detail-unknown",
+      "action": "Pause",
+      "pass": true
+    },
+    {
+      "screen": "mobile-detail-sending",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "screen": "mobile-detail-sending",
+      "action": "Pause",
+      "pass": true
+    },
+    {
+      "screen": "mobile-detail-paused",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "screen": "mobile-detail-paused",
+      "action": "Resume",
+      "pass": true
+    },
+    {
+      "screen": "mobile-detail-confirming",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "screen": "mobile-detail-unknown",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "screen": "mobile-detail-unknown",
+      "action": "Pause",
+      "pass": true
+    }
+  ],
+  "lint": [
+    {
+      "page_id": "989906431:3260",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    },
+    {
+      "page_id": "989906431:3261",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    },
+    {
+      "page_id": "989906431:3262",
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "fixable": 0,
+      "issues": []
+    }
+  ],
+  "faithfulFonts": true,
+  "screensAdded": 32,
+  "mainScreensUpdated": 6,
+  "motionAdopted": true
+}

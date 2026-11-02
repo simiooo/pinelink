@@ -1,0 +1,318 @@
+[
+  {
+    "page": "flow",
+    "name": "Desktop / Sender / uploading before consent",
+    "file": "16-desktop-uploading.svg",
+    "x": 0,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": [],
+    "note": "Pending recipient; durable uplink acknowledgements drive the blue prefix."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Sender / uploading before consent",
+    "file": "16-mobile-uploading.svg",
+    "x": 1264,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": [],
+    "note": "Pending recipient; durable uplink acknowledgements drive the blue prefix."
+  },
+  {
+    "page": "flow",
+    "name": "Desktop / Sender / stored, awaiting recipient",
+    "file": "16-desktop-staged.svg",
+    "x": 1680,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": [],
+    "note": "Upload sealed. Clock badge: waiting. No sheen and no delivered receipt."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Sender / stored, awaiting recipient",
+    "file": "16-mobile-staged.svg",
+    "x": 2944,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": [],
+    "note": "Upload sealed. Clock badge: waiting. No sheen and no delivered receipt."
+  },
+  {
+    "page": "flow",
+    "name": "Desktop / Recipient / request during upload",
+    "file": "16-desktop-request.svg",
+    "x": 3360,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Decline",
+        "x": 420.0,
+        "y": 442.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Accept",
+        "x": 606.0,
+        "y": 442.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ],
+    "note": "Accept and Decline remain available. Metadata only; no byte or key access."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Recipient / request during upload",
+    "file": "16-mobile-request.svg",
+    "x": 4624,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Decline",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Accept",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ],
+    "note": "Accept and Decline remain available. Metadata only; no byte or key access."
+  },
+  {
+    "page": "flow",
+    "name": "Desktop / Recipient / accepted, receiving",
+    "file": "16-desktop-receiving.svg",
+    "x": 5040,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": [],
+    "note": "Cloud is the source. A new downlink progress leg starts from its own byte count."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Recipient / accepted, receiving",
+    "file": "16-mobile-receiving.svg",
+    "x": 6304,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": [],
+    "note": "Cloud is the source. A new downlink progress leg starts from its own byte count."
+  },
+  {
+    "page": "flow",
+    "name": "Desktop / Sender / upload details",
+    "file": "16-desktop-details.svg",
+    "x": 0,
+    "y": 1000,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 420.0,
+        "y": 478.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 606.0,
+        "y": 478.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ],
+    "note": "Per-leg metrics live in the secondary surface, not on the main graph."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Sender / upload details",
+    "file": "16-mobile-details.svg",
+    "x": 1264,
+    "y": 1000,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ],
+    "note": "Per-leg metrics live in the secondary surface, not on the main graph."
+  },
+  {
+    "page": "flow",
+    "name": "Desktop / Sender / declined",
+    "file": "16-desktop-declined.svg",
+    "x": 1680,
+    "y": 1000,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 420.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Send again",
+        "x": 606.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ],
+    "note": "Revoke immediately. Keep history. Release this delivery reference and queue GC."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Sender / declined",
+    "file": "16-mobile-declined.svg",
+    "x": 2944,
+    "y": 1000,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Send again",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ],
+    "note": "Revoke immediately. Keep history. Release this delivery reference and queue GC."
+  },
+  {
+    "page": "flow",
+    "name": "Desktop / Sender / expired",
+    "file": "16-desktop-expired.svg",
+    "x": 3360,
+    "y": 1000,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 420.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Send again",
+        "x": 606.0,
+        "y": 420.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ],
+    "note": "Same cleanup path. Existing request and content expiry clocks stay unchanged."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Sender / expired",
+    "file": "16-mobile-expired.svg",
+    "x": 4624,
+    "y": 1000,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Send again",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ],
+    "note": "Same cleanup path. Existing request and content expiry clocks stay unchanged."
+  },
+  {
+    "page": "flow",
+    "name": "Desktop / Recipient / received",
+    "file": "16-desktop-received.svg",
+    "x": 5040,
+    "y": 1000,
+    "width": 1200,
+    "height": 800,
+    "controls": [],
+    "note": "Only after decryption, integrity verification, local commit and delivery receipt."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Recipient / received",
+    "file": "16-mobile-received.svg",
+    "x": 6304,
+    "y": 1000,
+    "width": 390,
+    "height": 844,
+    "controls": [],
+    "note": "Only after decryption, integrity verification, local commit and delivery receipt."
+  },
+  {
+    "page": "contract",
+    "name": "Relay / state transitions and motion",
+    "file": "17-relay-motion.svg",
+    "x": 0,
+    "y": 0,
+    "width": 1440,
+    "height": 1056,
+    "controls": []
+  },
+  {
+    "page": "contract",
+    "name": "Architecture / atomic references and GC",
+    "file": "17-atomic-lifecycle.svg",
+    "x": 1536,
+    "y": 0,
+    "width": 1440,
+    "height": 1056,
+    "controls": []
+  }
+]

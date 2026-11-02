@@ -1,0 +1,230 @@
+[
+  {
+    "page": "flow",
+    "name": "Desktop / Direct / recipient progress",
+    "file": "18-desktop-direct-running.svg",
+    "x": 0,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": [],
+    "note": "Two peer nodes. Blue = recipient acknowledgement; no cloud-upload stage."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Direct / recipient progress",
+    "file": "18-mobile-direct-running.svg",
+    "x": 1264,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": [],
+    "note": "Two peer nodes. Blue = recipient acknowledgement; no cloud-upload stage."
+  },
+  {
+    "page": "flow",
+    "name": "Desktop / Direct / delivery details",
+    "file": "18-desktop-direct-details.svg",
+    "x": 1680,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 420.0,
+        "y": 516.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 606.0,
+        "y": 516.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ],
+    "note": "Direct path, no retained cloud copy. Completion still requires verification and receipt."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Direct / delivery details",
+    "file": "18-mobile-direct-details.svg",
+    "x": 2944,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ],
+    "note": "Direct path, no retained cloud copy. Completion still requires verification and receipt."
+  },
+  {
+    "page": "flow",
+    "name": "Desktop / Relay live / recipient progress",
+    "file": "18-desktop-relay-running.svg",
+    "x": 3360,
+    "y": 0,
+    "width": 1200,
+    "height": 800,
+    "controls": [],
+    "note": "Same peer graph and delivery metric as Direct. Relay is a route, not the recipient."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Relay live / recipient progress",
+    "file": "18-mobile-relay-running.svg",
+    "x": 4624,
+    "y": 0,
+    "width": 390,
+    "height": 844,
+    "controls": [],
+    "note": "Same peer graph and delivery metric as Direct. Relay is a route, not the recipient."
+  },
+  {
+    "page": "flow",
+    "name": "Desktop / Relay live / independent cloud copy",
+    "file": "18-desktop-relay-details.svg",
+    "x": 0,
+    "y": 1000,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 420.0,
+        "y": 516.0,
+        "width": 174.0,
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 606.0,
+        "y": 516.0,
+        "width": 174.0,
+        "primary": true
+      }
+    ],
+    "note": "Delivery 62%; spool upload 88%. Never add, average or substitute these metrics."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Relay live / independent cloud copy",
+    "file": "18-mobile-relay-details.svg",
+    "x": 1264,
+    "y": 1000,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Cancel transfer",
+        "x": 16.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": false
+      },
+      {
+        "label": "Pause",
+        "x": 201.0,
+        "y": 748,
+        "width": 173.0,
+        "primary": true
+      }
+    ],
+    "note": "Delivery 62%; spool upload 88%. Never add, average or substitute these metrics."
+  },
+  {
+    "page": "flow",
+    "name": "Desktop / Direct to relay / preserve delivery progress",
+    "file": "18-desktop-switching.svg",
+    "x": 1680,
+    "y": 1000,
+    "width": 1200,
+    "height": 800,
+    "controls": [],
+    "note": "Same attempt and receiver ledger. Keep 62%; stop sheen only during a real observation gap."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Direct to relay / preserve delivery progress",
+    "file": "18-mobile-switching.svg",
+    "x": 2944,
+    "y": 1000,
+    "width": 390,
+    "height": 844,
+    "controls": [],
+    "note": "Same attempt and receiver ledger. Keep 62%; stop sheen only during a real observation gap."
+  },
+  {
+    "page": "flow",
+    "name": "Desktop / Delivered / cloud copy unavailable",
+    "file": "18-desktop-delivered-copy-unavailable.svg",
+    "x": 3360,
+    "y": 1000,
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 420,
+        "y": 516.0,
+        "width": 360,
+        "primary": false
+      }
+    ],
+    "note": "Delivery receipt stays successful even if the optional cloud copy fails."
+  },
+  {
+    "page": "flow",
+    "name": "Mobile / Delivered / cloud copy unavailable",
+    "file": "18-mobile-delivered-copy-unavailable.svg",
+    "x": 4624,
+    "y": 1000,
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 16,
+        "y": 748,
+        "width": 358,
+        "primary": false
+      }
+    ],
+    "note": "Delivery receipt stays successful even if the optional cloud copy fails."
+  },
+  {
+    "page": "contract",
+    "name": "Contract / route and cloud semantics",
+    "file": "19-route-semantics.svg",
+    "x": 0,
+    "y": 0,
+    "width": 1440,
+    "height": 928,
+    "controls": []
+  },
+  {
+    "page": "contract",
+    "name": "Contract / route handoff and completion",
+    "file": "19-route-continuity.svg",
+    "x": 1536,
+    "y": 0,
+    "width": 1440,
+    "height": 1080,
+    "controls": []
+  }
+]

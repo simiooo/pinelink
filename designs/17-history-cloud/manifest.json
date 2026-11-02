@@ -1,0 +1,302 @@
+[
+  {
+    "name": "desktop-history",
+    "file": "desktop-history.svg",
+    "device": "desktop",
+    "kind": "history",
+    "width": 1200,
+    "height": 800,
+    "controls": [],
+    "page": "history"
+  },
+  {
+    "name": "desktop-reusable",
+    "file": "desktop-reusable.svg",
+    "device": "desktop",
+    "kind": "reusable",
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 424,
+        "y": 496,
+        "width": 170.0,
+        "primary": false
+      },
+      {
+        "label": "Restore",
+        "x": 606.0,
+        "y": 496,
+        "width": 170.0,
+        "primary": true
+      }
+    ],
+    "page": "history"
+  },
+  {
+    "name": "desktop-one-time",
+    "file": "desktop-one-time.svg",
+    "device": "desktop",
+    "kind": "one-time",
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 424,
+        "y": 496,
+        "width": 170.0,
+        "primary": false
+      },
+      {
+        "label": "Choose files",
+        "x": 606.0,
+        "y": 496,
+        "width": 170.0,
+        "primary": true
+      }
+    ],
+    "page": "history"
+  },
+  {
+    "name": "desktop-expired",
+    "file": "desktop-expired.svg",
+    "device": "desktop",
+    "kind": "expired",
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 424,
+        "y": 496,
+        "width": 170.0,
+        "primary": false
+      },
+      {
+        "label": "Choose files",
+        "x": 606.0,
+        "y": 496,
+        "width": 170.0,
+        "primary": true
+      }
+    ],
+    "page": "history"
+  },
+  {
+    "name": "desktop-keep",
+    "file": "desktop-keep.svg",
+    "device": "desktop",
+    "kind": "keep",
+    "width": 1200,
+    "height": 800,
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 424,
+        "y": 496,
+        "width": 170.0,
+        "primary": false
+      },
+      {
+        "label": "Keep available",
+        "x": 606.0,
+        "y": 496,
+        "width": 170.0,
+        "primary": true
+      }
+    ],
+    "page": "history"
+  },
+  {
+    "name": "desktop-restoring",
+    "file": "desktop-restoring.svg",
+    "device": "desktop",
+    "kind": "restoring",
+    "width": 1200,
+    "height": 800,
+    "controls": [],
+    "page": "restore"
+  },
+  {
+    "name": "desktop-paused",
+    "file": "desktop-paused.svg",
+    "device": "desktop",
+    "kind": "paused",
+    "width": 1200,
+    "height": 800,
+    "controls": [],
+    "page": "restore"
+  },
+  {
+    "name": "desktop-verifying",
+    "file": "desktop-verifying.svg",
+    "device": "desktop",
+    "kind": "verifying",
+    "width": 1200,
+    "height": 800,
+    "controls": [],
+    "page": "restore"
+  },
+  {
+    "name": "desktop-restored",
+    "file": "desktop-restored.svg",
+    "device": "desktop",
+    "kind": "restored",
+    "width": 1200,
+    "height": 800,
+    "controls": [],
+    "page": "restore"
+  },
+  {
+    "name": "mobile-history",
+    "file": "mobile-history.svg",
+    "device": "mobile",
+    "kind": "history",
+    "width": 390,
+    "height": 844,
+    "controls": [],
+    "page": "history"
+  },
+  {
+    "name": "mobile-reusable",
+    "file": "mobile-reusable.svg",
+    "device": "mobile",
+    "kind": "reusable",
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 20,
+        "y": 744,
+        "width": 169.0,
+        "primary": false
+      },
+      {
+        "label": "Restore",
+        "x": 201.0,
+        "y": 744,
+        "width": 169.0,
+        "primary": true
+      }
+    ],
+    "page": "history"
+  },
+  {
+    "name": "mobile-one-time",
+    "file": "mobile-one-time.svg",
+    "device": "mobile",
+    "kind": "one-time",
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 20,
+        "y": 744,
+        "width": 169.0,
+        "primary": false
+      },
+      {
+        "label": "Choose files",
+        "x": 201.0,
+        "y": 744,
+        "width": 169.0,
+        "primary": true
+      }
+    ],
+    "page": "history"
+  },
+  {
+    "name": "mobile-expired",
+    "file": "mobile-expired.svg",
+    "device": "mobile",
+    "kind": "expired",
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Close",
+        "x": 20,
+        "y": 744,
+        "width": 169.0,
+        "primary": false
+      },
+      {
+        "label": "Choose files",
+        "x": 201.0,
+        "y": 744,
+        "width": 169.0,
+        "primary": true
+      }
+    ],
+    "page": "history"
+  },
+  {
+    "name": "mobile-keep",
+    "file": "mobile-keep.svg",
+    "device": "mobile",
+    "kind": "keep",
+    "width": 390,
+    "height": 844,
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 20,
+        "y": 744,
+        "width": 169.0,
+        "primary": false
+      },
+      {
+        "label": "Keep available",
+        "x": 201.0,
+        "y": 744,
+        "width": 169.0,
+        "primary": true
+      }
+    ],
+    "page": "history"
+  },
+  {
+    "name": "mobile-restoring",
+    "file": "mobile-restoring.svg",
+    "device": "mobile",
+    "kind": "restoring",
+    "width": 390,
+    "height": 844,
+    "controls": [],
+    "page": "restore"
+  },
+  {
+    "name": "mobile-paused",
+    "file": "mobile-paused.svg",
+    "device": "mobile",
+    "kind": "paused",
+    "width": 390,
+    "height": 844,
+    "controls": [],
+    "page": "restore"
+  },
+  {
+    "name": "mobile-verifying",
+    "file": "mobile-verifying.svg",
+    "device": "mobile",
+    "kind": "verifying",
+    "width": 390,
+    "height": 844,
+    "controls": [],
+    "page": "restore"
+  },
+  {
+    "name": "mobile-restored",
+    "file": "mobile-restored.svg",
+    "device": "mobile",
+    "kind": "restored",
+    "width": 390,
+    "height": 844,
+    "controls": [],
+    "page": "restore"
+  }
+]

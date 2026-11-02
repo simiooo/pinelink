@@ -1,0 +1,28 @@
+{
+  "schema_version": 3,
+  "arc_ms": 180,
+  "number_interpolation": false,
+  "easing": "cubic-bezier(.16,1,.3,1)",
+  "progress_loop": false,
+  "activity_sheen": {
+    "duration_ms": 1600,
+    "color": "#80B1FF",
+    "width": 3,
+    "max_path_fraction": 0.06,
+    "clip": "acknowledged arc only",
+    "pause_fade_ms": 80,
+    "resume_fade_ms": 120
+  },
+  "curve_width": 3,
+  "curve_hit_width": 24,
+  "report_interval_ms": 500,
+  "remote_snapshot_ms": 1000,
+  "stale_after_ms": 3000,
+  "estimate_min_window_ms": 3000,
+  "estimate_max_window_ms": 8000,
+  "reduce_motion": {
+    "arc_ms": 0,
+    "activity": false
+  },
+  "byte_basis": "acknowledged ciphertext bytes in v1; plaintext size remains encrypted"
+}

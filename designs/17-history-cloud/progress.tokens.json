@@ -1,0 +1,26 @@
+{
+  "color": {
+    "progress-sheen": {
+      "$type": "color",
+      "$value": "#80B1FF"
+    }
+  },
+  "duration": {
+    "sheen": {
+      "$type": "number",
+      "$value": 1600
+    },
+    "sheenPause": {
+      "$type": "number",
+      "$value": 80
+    },
+    "sheenResume": {
+      "$type": "number",
+      "$value": 120
+    },
+    "progressArc": {
+      "$type": "number",
+      "$value": 180
+    }
+  }
+}

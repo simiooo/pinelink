@@ -1,0 +1,47 @@
+const fs=require('node:fs');
+const path=require('node:path');
+const assert=require('node:assert/strict');
+const {chromium}=require('./.render/node_modules/playwright-core');
+let sessionBrowser;
+(async()=>{
+ const browser=sessionBrowser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--allow-file-access-from-files']});
+ const page=await browser.newPage({viewport:{width:1100,height:950}});
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.clock.install();
+ await page.goto(require('node:url').pathToFileURL(require('node:path').join(__dirname,'15-states-motion/motion-preview.html')).href);
+ const frame=await page.waitForEvent('framenavigated',{predicate:f=>f.parentFrame()!==null,timeout:5000}).catch(()=>page.frames().find(f=>f.parentFrame()));
+ await frame.waitForSelector('#pinelink-motion');
+ await page.waitForTimeout(1200);
+ const get=()=>frame.evaluate(()=>document.getElementById('pinelink-motion').pinelinkPreview.getState());
+ const play=async value=>{await frame.locator('[data-scenario]').selectOption(value);await frame.locator('[data-play]').click();};
+ const checks=[];
+ assert.equal((await get()).phase,'idle');
+ const icons=await frame.locator('.pl-disc svg').count();checks.push({name:'host icons',count:icons});assert.equal(icons,5);
+ const iconBounds=await frame.locator('[data-node="0"] .pl-disc svg').boundingBox();assert.equal(iconBounds.width,32);assert.equal(iconBounds.height,32);checks.push({name:'device icon uses half the node diameter',pass:true});
+ await play('drop');await page.clock.fastForward(2100);assert.equal((await get()).sheet,'prepared');checks.push({name:'drop stages confirmation',pass:true});
+ await frame.locator('[data-primary]').click();await page.waitForTimeout(250);assert.equal((await get()).phase,'waiting');
+ await page.clock.fastForward(2300);assert.equal((await get()).phase,'running');
+ await page.clock.fastForward(2600);assert.equal((await get()).phase,'verifying');
+ await page.clock.fastForward(1500);assert.equal((await get()).phase,'delivered');checks.push({name:'receipt gates success',pass:true});
+ await play('receive');assert.equal((await get()).sheet,'receive');await frame.locator('[data-primary]').click();await page.waitForTimeout(250);assert.equal((await get()).phase,'connecting');await page.clock.fastForward(1000);assert.equal((await get()).phase,'running');assert.equal(await frame.locator('.pl-app').getAttribute('data-direction'),'receive');checks.push({name:'receive reverses direction',pass:true});
+ await play('pause');await page.clock.fastForward(1800);assert.equal((await get()).sheet,'paused');await frame.locator('[data-secondary]').click();assert.equal((await get()).sheet,'cancel');checks.push({name:'cancel requires confirmation',pass:true});
+ await frame.locator('[data-secondary]').click();await page.waitForTimeout(250);assert.equal((await get()).phase,'paused');checks.push({name:'keeping a paused task never resumes it',pass:true});
+ await play('complete');await frame.locator('[data-node="0"]').click();assert.equal((await get()).sheet,'task');await frame.locator('[data-primary]').click();await page.waitForTimeout(250);assert.equal((await get()).phase,'paused');assert.equal((await get()).sheet,'paused');checks.push({name:'active node opens task controls',pass:true});
+ await play('panel');await page.waitForTimeout(200);await frame.locator('[data-secondary]').click();await frame.locator('[data-scenario]').selectOption('receive');await frame.locator('[data-play]').click();await page.waitForTimeout(300);assert.equal((await get()).sheet,'receive');checks.push({name:'interrupted exit cannot hide new modal',pass:true});
+ await play('failed');assert.equal((await get()).sheet,'failed');await frame.locator('[data-primary]').click();await page.waitForTimeout(250);assert.equal((await get()).phase,'waiting');checks.push({name:'retry creates new request flow',pass:true});
+ await frame.locator('[data-reduce]').check();await play('complete');assert.equal(await frame.locator('[data-segment]').evaluate(n=>getComputedStyle(n).animationName),'none');checks.push({name:'reduced motion has no loop',pass:true});
+ // External file drops use names only; no content is read and no request is sent.
+ await frame.evaluate(()=>document.getElementById('pinelink-motion').pinelinkPreview.reset());
+ async function dropOn(id,dx=0){return frame.evaluate(({id,dx})=>{const app=document.querySelector('#pinelink-motion .pl-app'),n=document.querySelector('[data-node="'+id+'"] .pl-disc'),r=n.getBoundingClientRect(),x=r.x+r.width/2+dx,y=r.y+r.height/2;const dt=new DataTransfer();dt.items.add(new File(['fixture'],'drop-test.txt'));for(const type of ['dragenter','dragover','drop'])app.dispatchEvent(new DragEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,dataTransfer:dt}));return document.getElementById('pinelink-motion').pinelinkPreview.getState();},{id,dx});}
+ assert.equal((await dropOn('0',45)).sheet,'prepared');checks.push({name:'nearby 24px capture area accepts drop',pass:true});
+ await frame.evaluate(()=>document.getElementById('pinelink-motion').pinelinkPreview.reset());assert.equal((await dropOn('3')).sheet,null);assert.equal((await get()).phase,'idle');checks.push({name:'offline drop blocked',pass:true});
+ await frame.evaluate(()=>document.getElementById('pinelink-motion').pinelinkPreview.reset());assert.equal((await dropOn('own')).sheet,null);checks.push({name:'self drop blocked',pass:true});
+ await frame.evaluate(()=>document.getElementById('pinelink-motion').pinelinkPreview.reset());assert.equal((await dropOn('2')).sheet,'async');checks.push({name:'cloud drop requires explicit consent',pass:true});
+ await frame.evaluate(()=>document.getElementById('pinelink-motion').pinelinkPreview.reset());await frame.locator('[data-sample]').dragTo(frame.locator('[data-node="0"] .pl-disc'));assert.equal((await get()).sheet,'prepared');checks.push({name:'native browser drag reaches confirmation',pass:true});
+ await page.setViewportSize({width:390,height:1000});await page.waitForTimeout(100);await play('receive');await page.waitForTimeout(250);
+ const overflow=await frame.evaluate(()=>{const r=document.getElementById('pinelink-motion'),s=r.querySelector('.pl-sheet'),a=r.querySelector('.pl-app');return{doc:document.documentElement.scrollWidth>innerWidth,app:a.scrollWidth>a.clientWidth,sheet:s.getBoundingClientRect().right>a.getBoundingClientRect().right+.5};});assert.deepEqual(overflow,{doc:false,app:false,sheet:false});checks.push({name:'390px layout fits',pass:true});
+ await frame.locator('.pl-app').screenshot({path:path.join(__dirname,'15-states-motion','motion-mobile.png')});
+ await page.setViewportSize({width:1100,height:950});await play('drop');await page.clock.fastForward(1000);await page.waitForTimeout(200);await frame.locator('.pl-app').screenshot({path:path.join(__dirname,'15-states-motion','motion-drag.png')});
+ assert.deepEqual(errors,[]);checks.push({name:'browser runtime errors',count:0});fs.writeFileSync(path.join(__dirname,'15-states-motion','motion-verification.json'),JSON.stringify({checks},null,2));
+ console.log(JSON.stringify({passed:checks.length,checks},null,2));await browser.close();
+})().catch(async e=>{console.error(e);await sessionBrowser?.close();process.exitCode=1;});

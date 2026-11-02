@@ -1,0 +1,754 @@
+{
+  "baseline_version": 17,
+  "reviewed_original_pages": 15,
+  "reviewed_original_top_frames": 107,
+  "rebuilt_product_frames": 98,
+  "components_reviewed": 12,
+  "documentation_text_changes": [
+    {
+      "page": "00 / Foundations",
+      "old": "13 / 18 Metadata and mobile filenames",
+      "new": "13 / 20 Metadata and mobile filenames"
+    },
+    {
+      "page": "00 / Foundations",
+      "old": "Related actions",
+      "new": "Object + name"
+    },
+    {
+      "page": "00 / Foundations",
+      "old": "Node to label",
+      "new": "Inline icon + text"
+    },
+    {
+      "page": "00 / Foundations",
+      "old": "Mobile margins",
+      "new": "Dialog horizontal inset"
+    },
+    {
+      "page": "00 / Foundations",
+      "old": "Panel padding",
+      "new": "Vertical inset / groups"
+    },
+    {
+      "page": "00 / Foundations",
+      "old": "Desktop margins",
+      "new": "Action / page separation"
+    },
+    {
+      "page": "00 / Foundations",
+      "old": "File row gaps",
+      "new": "Minimum touch targets"
+    },
+    {
+      "page": "00 / Foundations",
+      "old": "History: 528 × 352px / 24px padding",
+      "new": "History: 528 × 472px / 16h, 24v insets"
+    },
+    {
+      "page": "00 / Foundations",
+      "old": "File columns: 144px / 24px gaps",
+      "new": "3 columns / 24px gaps / local left axes"
+    },
+    {
+      "page": "00 / Foundations",
+      "old": "History: full screen / 3 × 106px / 16px gaps",
+      "new": "History: full screen / 16px horizontal inset"
+    },
+    {
+      "page": "00 / Foundations",
+      "old": "File cell: 80px / Row pitch: 128px",
+      "new": "File identity: 76px / Row gap: 32px"
+    },
+    {
+      "page": "03 / Components",
+      "old": "Activity and recovery",
+      "new": "Progress and status"
+    },
+    {
+      "page": "03 / Components",
+      "old": "3px gray track + one 4px blue segment.",
+      "new": "3px arc. Blue = acknowledged bytes."
+    },
+    {
+      "page": "03 / Components",
+      "old": "1.8s loop",
+      "new": "1.6s light pass"
+    },
+    {
+      "page": "03 / Components",
+      "old": "Linear motion. About 12% of the path.",
+      "new": "Bounded within acknowledged bytes."
+    },
+    {
+      "page": "03 / Components",
+      "old": "Static segment. No looping activity.",
+      "new": "Static arc. No light pass."
+    },
+    {
+      "page": "03 / Components",
+      "old": "Static track + a short recovery sheet.",
+      "new": "Frozen arc + compact detail sheet."
+    },
+    {
+      "page": "03 / Components",
+      "old": "The loop shows activity. It never implies a real completion percentage.",
+      "new": "Byte extent is data. Light pass is activity. Badges reveal details on hover / focus."
+    },
+    {
+      "page": "04 / Node states",
+      "old": "One activity segment. Reverse for receive.",
+      "new": "Byte arc. Reverse for receive."
+    },
+    {
+      "page": "08 / Motion",
+      "old": "activity segment",
+      "new": "acknowledged byte arc"
+    }
+  ],
+  "caption_mask_shifts": 40,
+  "reviewed_frames": [
+    {
+      "page": "00 / Foundations",
+      "name": "Product foundations",
+      "type": "specification",
+      "result": "reviewed; specification and component updates applied where needed"
+    },
+    {
+      "page": "01 / Desktop",
+      "name": "D01 / Devices",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "01 / Desktop",
+      "name": "D02 / Selected device",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "01 / Desktop",
+      "name": "D05 / Receive request",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "01 / Desktop",
+      "name": "D08 / Empty state",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "01 / Desktop",
+      "name": "D03 / Transferring",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "01 / Desktop",
+      "name": "D06 / Paused",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "01 / Desktop",
+      "name": "D07 / Connection lost",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "01 / Desktop",
+      "name": "D04 / Transfer history",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "02 / Mobile",
+      "name": "M01 / Devices",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "02 / Mobile",
+      "name": "M02 / Selected device",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "02 / Mobile",
+      "name": "M05 / Receive request",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "02 / Mobile",
+      "name": "M08 / Empty state",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "02 / Mobile",
+      "name": "M03 / Transferring",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "02 / Mobile",
+      "name": "M06 / Paused",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "02 / Mobile",
+      "name": "M07 / Connection lost",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "02 / Mobile",
+      "name": "M04 / Transfer history",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "03 / Components",
+      "name": "Components and interaction",
+      "type": "specification",
+      "result": "reviewed; specification and component updates applied where needed"
+    },
+    {
+      "page": "04 / Node states",
+      "name": "Node state language",
+      "type": "specification",
+      "result": "reviewed; specification and component updates applied where needed"
+    },
+    {
+      "page": "04 / Node states",
+      "name": "State authority mapping",
+      "type": "specification",
+      "result": "reviewed; specification and component updates applied where needed"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-01-waiting",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-02-connecting",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-03-queued",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-04-verifying",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-05-delivered",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-06-stored",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-07-rejected",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-08-expired",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-09-failed",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-10-cancelled",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-11-unavailable",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-12-received",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-13-cancel-confirm",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "05 / Transfer states",
+      "name": "desktop-14-task-controls",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "06 / Drag and drop",
+      "name": "drag-01-entered",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "06 / Drag and drop",
+      "name": "drag-02-near",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "06 / Drag and drop",
+      "name": "drag-03-target",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "06 / Drag and drop",
+      "name": "drag-04-offline",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "06 / Drag and drop",
+      "name": "drag-05-revoked",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "06 / Drag and drop",
+      "name": "drag-06-self",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "06 / Drag and drop",
+      "name": "drag-07-prepared",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "06 / Drag and drop",
+      "name": "drag-08-async",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "06 / Drag and drop",
+      "name": "drag-09-unreadable",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "07 / Mobile states",
+      "name": "mobile-01-waiting",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "07 / Mobile states",
+      "name": "mobile-02-delivered",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "07 / Mobile states",
+      "name": "mobile-03-failed",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "07 / Mobile states",
+      "name": "mobile-04-prepared",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "07 / Mobile states",
+      "name": "mobile-05-async",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "07 / Mobile states",
+      "name": "mobile-06-unavailable",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "07 / Mobile states",
+      "name": "mobile-07-received",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "07 / Mobile states",
+      "name": "mobile-08-cancel-confirm",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "07 / Mobile states",
+      "name": "mobile-09-task-controls",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "08 / Motion",
+      "name": "08-motion-contract",
+      "type": "specification",
+      "result": "reviewed; specification and component updates applied where needed"
+    },
+    {
+      "page": "08 / Motion",
+      "name": "Motion keyframes / verified completion",
+      "type": "specification",
+      "result": "reviewed; specification and component updates applied where needed"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-01-sending",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-02-receiving",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-03-estimating",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-04-paused",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-05-reconnecting",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-06-unknown",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-07-queued",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-08-confirming",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-09-delivered",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-10-cloud",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-11-failed",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-12-batch",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-detail-sending",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-detail-paused",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-detail-confirming",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "09 / Desktop progress",
+      "name": "desktop-detail-unknown",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-01-sending",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-02-receiving",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-03-estimating",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-04-paused",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-05-reconnecting",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-06-unknown",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-07-queued",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-08-confirming",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-09-delivered",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-10-cloud",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-11-failed",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-12-batch",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-detail-sending",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-detail-paused",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-detail-confirming",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "10 / Mobile progress",
+      "name": "mobile-detail-unknown",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "11 / Progress contract",
+      "name": "Curve progress / details on demand",
+      "type": "specification",
+      "result": "reviewed; specification and component updates applied where needed"
+    },
+    {
+      "page": "11 / Progress contract",
+      "name": "Active / paused / reduced motion",
+      "type": "specification",
+      "result": "reviewed; specification and component updates applied where needed"
+    },
+    {
+      "page": "12 / History availability",
+      "name": "desktop-history",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "12 / History availability",
+      "name": "desktop-reusable",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "12 / History availability",
+      "name": "desktop-one-time",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "12 / History availability",
+      "name": "desktop-expired",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "12 / History availability",
+      "name": "desktop-keep",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "12 / History availability",
+      "name": "mobile-history",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "12 / History availability",
+      "name": "mobile-reusable",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "12 / History availability",
+      "name": "mobile-one-time",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "12 / History availability",
+      "name": "mobile-expired",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "12 / History availability",
+      "name": "mobile-keep",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "13 / Cloud restore",
+      "name": "desktop-restoring",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "13 / Cloud restore",
+      "name": "desktop-paused",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "13 / Cloud restore",
+      "name": "desktop-verifying",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "13 / Cloud restore",
+      "name": "desktop-restored",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "13 / Cloud restore",
+      "name": "mobile-restoring",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "13 / Cloud restore",
+      "name": "mobile-paused",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "13 / Cloud restore",
+      "name": "mobile-verifying",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "13 / Cloud restore",
+      "name": "mobile-restored",
+      "type": "product",
+      "result": "rebuilt with shared semantic layouts"
+    },
+    {
+      "page": "14 / Retention contract",
+      "name": "History, availability and cloud source",
+      "type": "specification",
+      "result": "reviewed; specification and component updates applied where needed"
+    }
+  ]
+}

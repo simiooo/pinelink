@@ -1,0 +1,114 @@
+[
+  {
+    "name": "desktop-01-discovery",
+    "file": "desktop-01-discovery.svg",
+    "width": 1200,
+    "height": 800,
+    "label": "Devices"
+  },
+  {
+    "name": "desktop-02-selected",
+    "file": "desktop-02-selected.svg",
+    "width": 1200,
+    "height": 800,
+    "label": "Selected device"
+  },
+  {
+    "name": "desktop-03-transfer",
+    "file": "desktop-03-transfer.svg",
+    "width": 1200,
+    "height": 800,
+    "label": "Transferring"
+  },
+  {
+    "name": "desktop-04-history",
+    "file": "desktop-04-history.svg",
+    "width": 1200,
+    "height": 800,
+    "label": "Transfer history"
+  },
+  {
+    "name": "desktop-05-receive",
+    "file": "desktop-05-receive.svg",
+    "width": 1200,
+    "height": 800,
+    "label": "Receive request"
+  },
+  {
+    "name": "desktop-06-paused",
+    "file": "desktop-06-paused.svg",
+    "width": 1200,
+    "height": 800,
+    "label": "Paused"
+  },
+  {
+    "name": "desktop-07-disconnected",
+    "file": "desktop-07-disconnected.svg",
+    "width": 1200,
+    "height": 800,
+    "label": "Connection lost"
+  },
+  {
+    "name": "desktop-08-empty",
+    "file": "desktop-08-empty.svg",
+    "width": 1200,
+    "height": 800,
+    "label": "Empty state"
+  },
+  {
+    "name": "mobile-01-discovery",
+    "file": "mobile-01-discovery.svg",
+    "width": 390,
+    "height": 844,
+    "label": "Devices"
+  },
+  {
+    "name": "mobile-02-selected",
+    "file": "mobile-02-selected.svg",
+    "width": 390,
+    "height": 844,
+    "label": "Selected device"
+  },
+  {
+    "name": "mobile-03-transfer",
+    "file": "mobile-03-transfer.svg",
+    "width": 390,
+    "height": 844,
+    "label": "Transferring"
+  },
+  {
+    "name": "mobile-04-history",
+    "file": "mobile-04-history.svg",
+    "width": 390,
+    "height": 844,
+    "label": "Transfer history"
+  },
+  {
+    "name": "mobile-05-receive",
+    "file": "mobile-05-receive.svg",
+    "width": 390,
+    "height": 844,
+    "label": "Receive request"
+  },
+  {
+    "name": "mobile-06-paused",
+    "file": "mobile-06-paused.svg",
+    "width": 390,
+    "height": 844,
+    "label": "Paused"
+  },
+  {
+    "name": "mobile-07-disconnected",
+    "file": "mobile-07-disconnected.svg",
+    "width": 390,
+    "height": 844,
+    "label": "Connection lost"
+  },
+  {
+    "name": "mobile-08-empty",
+    "file": "mobile-08-empty.svg",
+    "width": 390,
+    "height": 844,
+    "label": "Empty state"
+  }
+]

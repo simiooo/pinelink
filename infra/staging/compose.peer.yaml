@@ -1,0 +1,28 @@
+name: pinelink-local-staging
+services:
+  peer:
+    build:
+      context: .
+      dockerfile: Dockerfile.peer
+      args:
+        VERSION: ${PINELINK_VERSION:?set PINELINK_VERSION}
+    image: pinelink-staging-peer:${PINELINK_VERSION}
+    restart: unless-stopped
+    ports:
+      - "18691:19091/tcp"
+    command:
+      - "--json"
+      - "lan"
+      - "serve"
+      - "--advertise"
+      - "https://${PINELINK_PEER_HOST:-127.0.0.1}:18691"
+      - "--receive-dir"
+      - "/received"
+      - "--ready-file"
+      - "/state/ready.json"
+    volumes:
+      - peer-state:/state
+      - peer-received:/received
+volumes:
+  peer-state:
+  peer-received:

@@ -1,0 +1,248 @@
+[
+  {
+    "name": "Desktop / Official / no server configuration",
+    "file": "desktop-official-menu.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 0,
+    "y": 0,
+    "controls": []
+  },
+  {
+    "name": "Mobile / Official / no server configuration",
+    "file": "mobile-official-menu.svg",
+    "width": 390,
+    "height": 844,
+    "x": 1264,
+    "y": 0,
+    "controls": []
+  },
+  {
+    "name": "Desktop / Custom / connect",
+    "file": "desktop-custom-connect.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 1680,
+    "y": 0,
+    "controls": [
+      {
+        "label": "Advanced",
+        "x": 344,
+        "y": 420.0,
+        "width": 512,
+        "height": 48
+      },
+      {
+        "label": "Connect",
+        "x": 344,
+        "y": 500.0,
+        "width": 512,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "name": "Mobile / Custom / connect",
+    "file": "mobile-custom-connect.svg",
+    "width": 390,
+    "height": 844,
+    "x": 2944,
+    "y": 0,
+    "controls": [
+      {
+        "label": "Advanced",
+        "x": 20,
+        "y": 276,
+        "width": 350,
+        "height": 48
+      },
+      {
+        "label": "Connect",
+        "x": 20,
+        "y": 728,
+        "width": 350,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "name": "Desktop / Custom / advanced",
+    "file": "desktop-custom-advanced.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 3360,
+    "y": 0,
+    "controls": [
+      {
+        "label": "Advanced",
+        "x": 344,
+        "y": 304.0,
+        "width": 512,
+        "height": 48
+      },
+      {
+        "label": "Connect",
+        "x": 344,
+        "y": 616.0,
+        "width": 512,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "name": "Mobile / Custom / advanced",
+    "file": "mobile-custom-advanced.svg",
+    "width": 390,
+    "height": 844,
+    "x": 4624,
+    "y": 0,
+    "controls": [
+      {
+        "label": "Advanced",
+        "x": 20,
+        "y": 276,
+        "width": 350,
+        "height": 48
+      },
+      {
+        "label": "Connect",
+        "x": 20,
+        "y": 728,
+        "width": 350,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "name": "Desktop / Custom / confirm identity",
+    "file": "desktop-server-trust.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 0,
+    "y": 960,
+    "controls": []
+  },
+  {
+    "name": "Mobile / Custom / confirm identity",
+    "file": "mobile-server-trust.svg",
+    "width": 390,
+    "height": 844,
+    "x": 1264,
+    "y": 960,
+    "controls": []
+  },
+  {
+    "name": "Desktop / Custom / connection error",
+    "file": "desktop-connection-error.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 1680,
+    "y": 960,
+    "controls": [
+      {
+        "label": "Advanced",
+        "x": 344,
+        "y": 430.0,
+        "width": 512,
+        "height": 48
+      },
+      {
+        "label": "Connect",
+        "x": 344,
+        "y": 510.0,
+        "width": 512,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "name": "Mobile / Custom / connection error",
+    "file": "mobile-connection-error.svg",
+    "width": 390,
+    "height": 844,
+    "x": 2944,
+    "y": 960,
+    "controls": [
+      {
+        "label": "Advanced",
+        "x": 20,
+        "y": 296,
+        "width": 350,
+        "height": 48
+      },
+      {
+        "label": "Connect",
+        "x": 20,
+        "y": 728,
+        "width": 350,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "name": "Desktop / Custom / edit connected server",
+    "file": "desktop-custom-active.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 3360,
+    "y": 960,
+    "controls": [
+      {
+        "label": "Advanced",
+        "x": 344,
+        "y": 276.0,
+        "width": 512,
+        "height": 48
+      },
+      {
+        "label": "Connect",
+        "x": 344,
+        "y": 644.0,
+        "width": 512,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "name": "Mobile / Custom / edit connected server",
+    "file": "mobile-custom-active.svg",
+    "width": 390,
+    "height": 844,
+    "x": 4624,
+    "y": 960,
+    "controls": [
+      {
+        "label": "Advanced",
+        "x": 20,
+        "y": 276,
+        "width": 350,
+        "height": 48
+      },
+      {
+        "label": "Connect",
+        "x": 20,
+        "y": 728,
+        "width": 350,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "name": "Desktop / Switch / active transfers",
+    "file": "desktop-switch-active.svg",
+    "width": 1200,
+    "height": 800,
+    "x": 0,
+    "y": 1920,
+    "controls": []
+  },
+  {
+    "name": "Mobile / Switch / active transfers",
+    "file": "mobile-switch-active.svg",
+    "width": 390,
+    "height": 844,
+    "x": 1264,
+    "y": 1920,
+    "controls": []
+  }
+]

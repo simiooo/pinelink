@@ -1,0 +1,38 @@
+{
+  "textReplacements": [
+    {
+      "text": "Relay / consent is independent from upload",
+      "replacement": "Cloud preupload / consent is independent"
+    },
+    {
+      "text": "Product states and motion / additive proposal, not an implemented backend contract",
+      "replacement": "Cloud phase only. Live relay keeps peer nodes; see the direct / relay pages."
+    },
+    {
+      "text": "Accept and receive",
+      "replacement": "Accept and receive from cloud"
+    },
+    {
+      "text": "An accepted recipient may receive available chunks before full seal.",
+      "replacement": "Cloud is a storage source. Live relay uses the peer graph."
+    }
+  ],
+  "frameRenames": [
+    {
+      "old": "Desktop / Recipient / accepted, receiving",
+      "new": "Desktop / Cloud phase / recipient receiving"
+    },
+    {
+      "old": "Mobile / Recipient / accepted, receiving",
+      "new": "Mobile / Cloud phase / recipient receiving"
+    },
+    {
+      "old": "Desktop / Recipient / received",
+      "new": "Desktop / Cloud phase / recipient received"
+    },
+    {
+      "old": "Mobile / Recipient / received",
+      "new": "Mobile / Cloud phase / recipient received"
+    }
+  ]
+}

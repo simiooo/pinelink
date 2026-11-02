@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">
+  <rect width="1440" height="900" fill="#F5F6F7"/>
+  <text x="40" y="46" font-family="system-ui,sans-serif" font-size="18" font-weight="650" fill="#30363D">01 · 新建传输 / 主屏仅三个操作</text>
+  <rect x="40" y="70" width="1000" height="790" rx="18" fill="#FFFFFF" stroke="#E2E6EA"/>
+  <text x="76" y="126" font-family="system-ui,sans-serif" font-size="25" font-weight="700" fill="#30363D">Pinelink</text>
+  <rect x="874" y="98" width="56" height="34" rx="10" fill="#F5F6F7" stroke="#E2E6EA"/>
+  <text x="889" y="120" font-family="system-ui,sans-serif" font-size="13" fill="#626C76">通知</text>
+  <rect x="946" y="98" width="58" height="34" rx="10" fill="#F5F6F7" stroke="#E2E6EA"/>
+  <text x="960" y="120" font-family="system-ui,sans-serif" font-size="13" fill="#626C76">更多</text>
+  <line x1="76" y1="148" x2="1004" y2="148" stroke="#E2E6EA"/>
+  <text x="76" y="204" font-family="system-ui,sans-serif" font-size="28" font-weight="650" fill="#30363D">发送文件</text>
+  <text x="76" y="238" font-family="system-ui,sans-serif" font-size="15" fill="#626C76">选择文件后，再选择接收设备。对方同意前不会发送内容。</text>
+  <rect x="76" y="276" width="928" height="300" rx="16" fill="#F5F6F7" stroke="#C9D0D6" stroke-dasharray="6 6"/>
+  <rect x="108" y="312" width="56" height="56" rx="14" fill="#E9E2D9"/>
+  <path d="M136 326v27M124 340l12 13 12-13" fill="none" stroke="#6B4A34" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="188" y="334" font-family="system-ui,sans-serif" font-size="18" font-weight="650" fill="#30363D">把文件拖到这里</text>
+  <text x="188" y="364" font-family="system-ui,sans-serif" font-size="14" fill="#626C76">或点击选择文件</text>
+  <rect x="108" y="404" width="180" height="46" rx="12" fill="#6B4A34"/>
+  <text x="140" y="433" font-family="system-ui,sans-serif" font-size="15" font-weight="600" fill="#FFFFFF">选择文件</text>
+  <text x="108" y="490" font-family="system-ui,sans-serif" font-size="13" fill="#626C76">支持任意类型；发送前可核对文件大小与接收设备。</text>
+  <rect x="76" y="608" width="928" height="74" rx="12" fill="#F5F6F7"/>
+  <text x="96" y="638" font-family="system-ui,sans-serif" font-size="13" fill="#626C76">经过中转时，会保留一份 24 小时后删除的加密临时副本。</text>
+  <text x="96" y="662" font-family="system-ui,sans-serif" font-size="12" fill="#626C76">默认点对点；持久化保存需另行选择。</text>
+  <text x="76" y="736" font-family="system-ui,sans-serif" font-size="17" font-weight="650" fill="#30363D">最近任务</text>
+  <rect x="76" y="758" width="928" height="64" rx="12" fill="#F5F6F7"/>
+  <text x="96" y="796" font-family="system-ui,sans-serif" font-size="14" fill="#626C76">暂无任务。文件与接收设备确认后会出现在这里。</text>
+
+  <text x="1092" y="46" font-family="system-ui,sans-serif" font-size="18" font-weight="650" fill="#30363D">移动端 390 × 844</text>
+  <rect x="1092" y="70" width="308" height="790" rx="28" fill="#FFFFFF" stroke="#E2E6EA"/>
+  <text x="1114" y="122" font-family="system-ui,sans-serif" font-size="23" font-weight="700" fill="#30363D">Pinelink</text>
+  <rect x="1242" y="96" width="56" height="32" rx="10" fill="#F5F6F7" stroke="#E2E6EA"/>
+  <text x="1253" y="117" font-family="system-ui,sans-serif" font-size="11" fill="#626C76">通知</text>
+  <rect x="1310" y="96" width="56" height="32" rx="10" fill="#F5F6F7" stroke="#E2E6EA"/>
+  <text x="1321" y="117" font-family="system-ui,sans-serif" font-size="11" fill="#626C76">更多</text>
+  <line x1="1114" y1="146" x2="1378" y2="146" stroke="#E2E6EA"/>
+  <text x="1114" y="192" font-family="system-ui,sans-serif" font-size="23" font-weight="650" fill="#30363D">发送文件</text>
+  <text x="1114" y="221" font-family="system-ui,sans-serif" font-size="12" fill="#626C76">对方同意前不会发送内容。</text>
+  <rect x="1114" y="250" width="264" height="306" rx="16" fill="#F5F6F7" stroke="#C9D0D6" stroke-dasharray="6 6"/>
+  <rect x="1136" y="278" width="50" height="50" rx="13" fill="#E9E2D9"/>
+  <path d="M1161 289v25M1150 301l11 11 11-11" fill="none" stroke="#6B4A34" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="1136" y="356" font-family="system-ui,sans-serif" font-size="16" font-weight="650" fill="#30363D">把文件拖到这里</text>
+  <text x="1136" y="382" font-family="system-ui,sans-serif" font-size="12" fill="#626C76">或点击选择文件</text>
+  <rect x="1136" y="416" width="168" height="44" rx="12" fill="#6B4A34"/>
+  <text x="1170" y="444" font-family="system-ui,sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">选择文件</text>
+  <text x="1136" y="492" font-family="system-ui,sans-serif" font-size="11" fill="#626C76">发送前可核对大小与设备。</text>
+  <rect x="1114" y="578" width="264" height="112" rx="12" fill="#F5F6F7"/>
+  <text x="1128" y="604" font-family="system-ui,sans-serif" font-size="11" fill="#626C76">经过中转时，会保留一份</text>
+  <text x="1128" y="625" font-family="system-ui,sans-serif" font-size="11" fill="#626C76">24 小时后删除的加密临时副本。</text>
+  <text x="1128" y="657" font-family="system-ui,sans-serif" font-size="11" fill="#626C76">持久化保存需另行选择。</text>
+  <text x="1114" y="732" font-family="system-ui,sans-serif" font-size="16" font-weight="650" fill="#30363D">最近任务</text>
+  <rect x="1114" y="752" width="264" height="70" rx="12" fill="#F5F6F7"/>
+  <text x="1128" y="780" font-family="system-ui,sans-serif" font-size="11" fill="#626C76">暂无任务。确认后会显示在这里。</text>
+</svg>

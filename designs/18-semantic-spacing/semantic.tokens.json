@@ -1,0 +1,92 @@
+{
+  "space": {
+    "metadata": {
+      "$type": "number",
+      "$value": 4
+    },
+    "identity": {
+      "$type": "number",
+      "$value": 8
+    },
+    "inline": {
+      "$type": "number",
+      "$value": 12
+    },
+    "siblings": {
+      "$type": "number",
+      "$value": 16
+    },
+    "historyHeadingToTabs": {
+      "$type": "number",
+      "$value": 16
+    },
+    "section": {
+      "$type": "number",
+      "$value": 24
+    },
+    "actions": {
+      "$type": "number",
+      "$value": 32
+    },
+    "historyInline": {
+      "$type": "number",
+      "$value": 16
+    },
+    "dialogInline": {
+      "$type": "number",
+      "$value": 20
+    },
+    "blockInset": {
+      "$type": "number",
+      "$value": 24
+    },
+    "mobileInline": {
+      "$type": "number",
+      "$value": 16
+    },
+    "sheetTop": {
+      "$type": "number",
+      "$value": 40
+    },
+    "sheetBottom": {
+      "$type": "number",
+      "$value": 48
+    },
+    "gridRow": {
+      "$type": "number",
+      "$value": 32
+    }
+  },
+  "badge": {
+    "size": {
+      "$type": "number",
+      "$value": 16
+    },
+    "glyph": {
+      "$type": "number",
+      "$value": 12
+    }
+  },
+  "tab": {
+    "height": {
+      "$type": "number",
+      "$value": 48
+    },
+    "desktopPadding": {
+      "$type": "number",
+      "$value": 12
+    },
+    "mobilePadding": {
+      "$type": "number",
+      "$value": 8
+    },
+    "desktopGap": {
+      "$type": "number",
+      "$value": 8
+    },
+    "mobileGap": {
+      "$type": "number",
+      "$value": 0
+    }
+  }
+}

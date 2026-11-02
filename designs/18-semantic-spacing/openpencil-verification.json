@@ -1,0 +1,660 @@
+{
+  "version": 18,
+  "sha256": "CB2FEEA7255314DA128B7F7BEC4C2E40531E9594D663CEBC2029D0DECFEA88A3",
+  "reopened": true,
+  "pages": [
+    {
+      "page": "00 / Foundations",
+      "id": "0:3",
+      "frames": 1
+    },
+    {
+      "page": "01 / Desktop",
+      "id": "0:4",
+      "frames": 8
+    },
+    {
+      "page": "02 / Mobile",
+      "id": "0:5",
+      "frames": 8
+    },
+    {
+      "page": "03 / Components",
+      "id": "0:6",
+      "frames": 1
+    },
+    {
+      "page": "04 / Node states",
+      "id": "0:8",
+      "frames": 2
+    },
+    {
+      "page": "05 / Transfer states",
+      "id": "0:9",
+      "frames": 14
+    },
+    {
+      "page": "06 / Drag and drop",
+      "id": "0:10",
+      "frames": 9
+    },
+    {
+      "page": "07 / Mobile states",
+      "id": "0:11",
+      "frames": 9
+    },
+    {
+      "page": "08 / Motion",
+      "id": "0:12",
+      "frames": 2
+    },
+    {
+      "page": "09 / Desktop progress",
+      "id": "0:13",
+      "frames": 16
+    },
+    {
+      "page": "10 / Mobile progress",
+      "id": "0:14",
+      "frames": 16
+    },
+    {
+      "page": "11 / Progress contract",
+      "id": "0:15",
+      "frames": 2
+    },
+    {
+      "page": "12 / History availability",
+      "id": "0:16",
+      "frames": 10
+    },
+    {
+      "page": "13 / Cloud restore",
+      "id": "0:17",
+      "frames": 8
+    },
+    {
+      "page": "14 / Retention contract",
+      "id": "0:18",
+      "frames": 1
+    },
+    {
+      "page": "15 / Semantic rules",
+      "id": "0:19",
+      "frames": 2
+    }
+  ],
+  "top_frames": 109,
+  "components": 12,
+  "variables": 58,
+  "fonts": [
+    {
+      "page": "00 / Foundations",
+      "faithful": true
+    },
+    {
+      "page": "01 / Desktop",
+      "faithful": true
+    },
+    {
+      "page": "02 / Mobile",
+      "faithful": true
+    },
+    {
+      "page": "03 / Components",
+      "faithful": true
+    },
+    {
+      "page": "04 / Node states",
+      "faithful": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "faithful": true
+    },
+    {
+      "page": "06 / Drag and drop",
+      "faithful": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "faithful": true
+    },
+    {
+      "page": "08 / Motion",
+      "faithful": true
+    },
+    {
+      "page": "09 / Desktop progress",
+      "faithful": true
+    },
+    {
+      "page": "10 / Mobile progress",
+      "faithful": true
+    },
+    {
+      "page": "11 / Progress contract",
+      "faithful": true
+    },
+    {
+      "page": "12 / History availability",
+      "faithful": true
+    },
+    {
+      "page": "13 / Cloud restore",
+      "faithful": true
+    },
+    {
+      "page": "14 / Retention contract",
+      "faithful": true
+    },
+    {
+      "page": "15 / Semantic rules",
+      "faithful": true
+    }
+  ],
+  "accessibility": [
+    {
+      "page": "00 / Foundations",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "01 / Desktop",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "02 / Mobile",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "03 / Components",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "04 / Node states",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "05 / Transfer states",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "06 / Drag and drop",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "07 / Mobile states",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "08 / Motion",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "09 / Desktop progress",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "10 / Mobile progress",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "11 / Progress contract",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "12 / History availability",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "13 / Cloud restore",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "14 / Retention contract",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    },
+    {
+      "page": "15 / Semantic rules",
+      "errors": 0,
+      "warnings": 0,
+      "issues": []
+    }
+  ],
+  "controls": [
+    {
+      "page": "01 / Desktop",
+      "screen": "D05 / Receive request",
+      "action": "Decline",
+      "pass": true
+    },
+    {
+      "page": "01 / Desktop",
+      "screen": "D05 / Receive request",
+      "action": "Accept",
+      "pass": true
+    },
+    {
+      "page": "01 / Desktop",
+      "screen": "D08 / Empty state",
+      "action": "Add device",
+      "pass": true
+    },
+    {
+      "page": "02 / Mobile",
+      "screen": "M05 / Receive request",
+      "action": "Decline",
+      "pass": true
+    },
+    {
+      "page": "02 / Mobile",
+      "screen": "M05 / Receive request",
+      "action": "Accept",
+      "pass": true
+    },
+    {
+      "page": "02 / Mobile",
+      "screen": "M08 / Empty state",
+      "action": "Add device",
+      "pass": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "screen": "desktop-07-rejected",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "screen": "desktop-07-rejected",
+      "action": "Choose device",
+      "pass": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "screen": "desktop-08-expired",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "screen": "desktop-08-expired",
+      "action": "Send again",
+      "pass": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "screen": "desktop-09-failed",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "screen": "desktop-09-failed",
+      "action": "Try again",
+      "pass": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "screen": "desktop-11-unavailable",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "screen": "desktop-11-unavailable",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "screen": "desktop-13-cancel-confirm",
+      "action": "Keep transfer",
+      "pass": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "screen": "desktop-13-cancel-confirm",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "screen": "desktop-14-task-controls",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "page": "05 / Transfer states",
+      "screen": "desktop-14-task-controls",
+      "action": "Pause",
+      "pass": true
+    },
+    {
+      "page": "06 / Drag and drop",
+      "screen": "drag-07-prepared",
+      "action": "Cancel",
+      "pass": true
+    },
+    {
+      "page": "06 / Drag and drop",
+      "screen": "drag-07-prepared",
+      "action": "Send",
+      "pass": true
+    },
+    {
+      "page": "06 / Drag and drop",
+      "screen": "drag-08-async",
+      "action": "Cancel",
+      "pass": true
+    },
+    {
+      "page": "06 / Drag and drop",
+      "screen": "drag-08-async",
+      "action": "Store in cloud",
+      "pass": true
+    },
+    {
+      "page": "06 / Drag and drop",
+      "screen": "drag-09-unreadable",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "06 / Drag and drop",
+      "screen": "drag-09-unreadable",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "screen": "mobile-03-failed",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "screen": "mobile-03-failed",
+      "action": "Try again",
+      "pass": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "screen": "mobile-04-prepared",
+      "action": "Cancel",
+      "pass": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "screen": "mobile-04-prepared",
+      "action": "Send",
+      "pass": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "screen": "mobile-05-async",
+      "action": "Cancel",
+      "pass": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "screen": "mobile-05-async",
+      "action": "Store in cloud",
+      "pass": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "screen": "mobile-06-unavailable",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "screen": "mobile-06-unavailable",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "screen": "mobile-08-cancel-confirm",
+      "action": "Keep transfer",
+      "pass": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "screen": "mobile-08-cancel-confirm",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "screen": "mobile-09-task-controls",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "page": "07 / Mobile states",
+      "screen": "mobile-09-task-controls",
+      "action": "Pause",
+      "pass": true
+    },
+    {
+      "page": "09 / Desktop progress",
+      "screen": "desktop-detail-sending",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "page": "09 / Desktop progress",
+      "screen": "desktop-detail-sending",
+      "action": "Pause",
+      "pass": true
+    },
+    {
+      "page": "09 / Desktop progress",
+      "screen": "desktop-detail-paused",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "page": "09 / Desktop progress",
+      "screen": "desktop-detail-paused",
+      "action": "Resume",
+      "pass": true
+    },
+    {
+      "page": "09 / Desktop progress",
+      "screen": "desktop-detail-confirming",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "09 / Desktop progress",
+      "screen": "desktop-detail-unknown",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "page": "09 / Desktop progress",
+      "screen": "desktop-detail-unknown",
+      "action": "Pause",
+      "pass": true
+    },
+    {
+      "page": "10 / Mobile progress",
+      "screen": "mobile-detail-sending",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "page": "10 / Mobile progress",
+      "screen": "mobile-detail-sending",
+      "action": "Pause",
+      "pass": true
+    },
+    {
+      "page": "10 / Mobile progress",
+      "screen": "mobile-detail-paused",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "page": "10 / Mobile progress",
+      "screen": "mobile-detail-paused",
+      "action": "Resume",
+      "pass": true
+    },
+    {
+      "page": "10 / Mobile progress",
+      "screen": "mobile-detail-confirming",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "10 / Mobile progress",
+      "screen": "mobile-detail-unknown",
+      "action": "Cancel transfer",
+      "pass": true
+    },
+    {
+      "page": "10 / Mobile progress",
+      "screen": "mobile-detail-unknown",
+      "action": "Pause",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "desktop-reusable",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "desktop-reusable",
+      "action": "Restore",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "desktop-one-time",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "desktop-one-time",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "desktop-expired",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "desktop-expired",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "desktop-keep",
+      "action": "Cancel",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "desktop-keep",
+      "action": "Keep available",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "mobile-reusable",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "mobile-reusable",
+      "action": "Restore",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "mobile-one-time",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "mobile-one-time",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "mobile-expired",
+      "action": "Close",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "mobile-expired",
+      "action": "Choose files",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "mobile-keep",
+      "action": "Cancel",
+      "pass": true
+    },
+    {
+      "page": "12 / History availability",
+      "screen": "mobile-keep",
+      "action": "Keep available",
+      "pass": true
+    }
+  ],
+  "browser_checks": 15,
+  "responsive_widths": [
+    320,
+    390,
+    736,
+    1024
+  ],
+  "app_implementation": false
+}
