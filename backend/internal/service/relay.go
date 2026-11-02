@@ -274,6 +274,14 @@ func (m *RelayManager) watchConnection(ctx context.Context, cancel context.Cance
 }
 
 func (m *RelayManager) acceptUplink(ctx context.Context, uploadID string, frame []byte) error {
+	if err := m.storeUplink(ctx, uploadID, frame); err != nil {
+		return err
+	}
+	_, err := m.sealRelayIfComplete(ctx, uploadID)
+	return err
+}
+
+func (m *RelayManager) storeUplink(ctx context.Context, uploadID string, frame []byte) error {
 	index, data, err := decodeRelayFrame(frame)
 	if err != nil {
 		return err
@@ -304,21 +312,38 @@ func (m *RelayManager) acceptUplink(ctx context.Context, uploadID string, frame 
 				return err
 			}
 		}
-		var received int
-		if err = m.service.db.QueryRow(ctx, `SELECT count(*) FROM upload_chunks WHERE upload_id=$1 AND storage_generation=$2`, uploadID, o.Generation).Scan(&received); err != nil {
-			return err
-		}
-		if received == o.Count {
-			_, err = m.service.CompleteUpload(ctx, uploadID)
-			if isPaused(err) {
-				if err = relayWait(ctx, 200*time.Millisecond); err != nil {
-					return err
-				}
-				continue
-			}
-			return err
-		}
 		return nil
+	}
+}
+
+func (m *RelayManager) sealRelayIfComplete(ctx context.Context, uploadID string) (bool, error) {
+	for {
+		tx, o, err := m.service.beginUploadObject(ctx, uploadID, true)
+		if err != nil {
+			return false, err
+		}
+		var received int
+		if o.State != "SEALED" {
+			err = tx.QueryRow(ctx, `SELECT count(*) FROM upload_chunks WHERE upload_id=$1 AND storage_generation=$2`, uploadID, o.Generation).Scan(&received)
+		}
+		tx.Rollback(ctx)
+		if err != nil {
+			return false, err
+		}
+		if o.State == "SEALED" {
+			return true, nil
+		}
+		if received != o.Count {
+			return false, nil
+		}
+		_, err = m.service.CompleteUpload(ctx, uploadID)
+		if isPaused(err) {
+			if err = relayWait(ctx, 200*time.Millisecond); err != nil {
+				return false, err
+			}
+			continue
+		}
+		return err == nil, err
 	}
 }
 
@@ -369,27 +394,43 @@ func (m *RelayManager) pumpDownlink(ctx context.Context, channel relayChannel, s
 		next = spool.Count - 1
 	}
 	count := max(1, spool.Count)
-	for next < count {
-		if channel.BufferedAmount() > 256<<10 {
-			if err := relayWait(ctx, 10*time.Millisecond); err != nil {
+	err = orderedPipeline(ctx, next, count, relayPipelineWindow, func(read context.Context, index int) ([]byte, error) {
+		for {
+			data, err := m.service.readRelayChunk(read, spool.ID, index)
+			if !errors.Is(err, ErrIncomplete) && !isPaused(err) {
+				if err != nil {
+					return nil, fmt.Errorf("read relay chunk %d: %w", index, err)
+				}
+				return data, err
+			}
+			if err := relayWait(read, 100*time.Millisecond); err != nil {
+				return nil, err
+			}
+		}
+	}, func(index int, data []byte) error {
+		for {
+			if channel.BufferedAmount() > 256<<10 {
+				if err := relayWait(ctx, 10*time.Millisecond); err != nil {
+					return err
+				}
+				continue
+			}
+			// Prefetch is not an authorization cache. Check the current grant,
+			// generation and task again at the actual send boundary.
+			err := m.service.sendRelayFrame(ctx, spool, channel, encodeRelayFrame(index, data))
+			if !isPaused(err) {
+				if err != nil {
+					return fmt.Errorf("send relay chunk %d: %w", index, err)
+				}
 				return err
 			}
-			continue
-		}
-		data, err := m.service.readRelayChunk(ctx, spool.ID, next)
-		if errors.Is(err, ErrIncomplete) || isPaused(err) {
 			if err := relayWait(ctx, 100*time.Millisecond); err != nil {
 				return err
 			}
-			continue
 		}
-		if err != nil {
-			return err
-		}
-		if err = channel.Send(encodeRelayFrame(next, data)); err != nil {
-			return err
-		}
-		next++
+	})
+	if err != nil {
+		return err
 	}
 	// Keep the connection alive for the receiver's final fsync/ack.
 	<-ctx.Done()

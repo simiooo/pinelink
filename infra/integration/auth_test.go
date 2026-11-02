@@ -19,7 +19,7 @@ import (
 
 func TestDeviceAuthenticationAndCiphertext(t *testing.T) {
 	h := &harness{t: t, server: requiredEnv("PINELINK_TEST_AUTH_SERVER"), cli: requiredEnv("PINELINK_TEST_CLI"),
-		scope: "auth-" + uuid.NewString(), domain: "auth-domain", owner: "auth-owner", device: "auth-device", dedupSecret: "auth-secret"}
+		scope: "auth-" + uuid.NewString(), domain: "auth-domain", owner: "auth-owner-" + uuid.NewString(), device: "auth-device", dedupSecret: "auth-secret"}
 	if _, err := h.command("device", "register"); err != nil {
 		t.Fatal(err)
 	}

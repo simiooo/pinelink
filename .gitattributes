@@ -4,3 +4,4 @@
 *.jpg binary
 *.webp binary
 *.bat text eol=crlf
+*.sh text eol=lf

@@ -2,13 +2,9 @@ package service
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"errors"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"io"
-	"time"
 )
 
 func (s *Service) OpenPullRead(ctx context.Context, pullID string) (Content, string, error) {
@@ -70,8 +66,34 @@ func relayDownloadAccess(ctx context.Context, tx pgx.Tx, o uploadObject) error {
 	if tr.State != "ACCEPTED" {
 		return &StateConflictError{Resource: "transfer", Current: transferEvent(*tr)}
 	}
+	devices, err := tx.Query(ctx, `SELECT status FROM devices WHERE (owner_id=$1 AND device_id=$2) OR(owner_id=$3 AND device_id=$4) ORDER BY owner_id,device_id FOR SHARE`, tr.SenderOwnerID, tr.SenderDeviceID, tr.RecipientOwnerID, tr.RecipientDeviceID)
+	if err != nil {
+		return err
+	}
+	active := 0
+	for devices.Next() {
+		var state string
+		if err := devices.Scan(&state); err != nil {
+			devices.Close()
+			return err
+		}
+		if state == "ACTIVE" {
+			active++
+		}
+	}
+	devices.Close()
+	if err := devices.Err(); err != nil {
+		return err
+	}
+	expected := 2
+	if tr.SenderOwnerID == tr.RecipientOwnerID && tr.SenderDeviceID == tr.RecipientDeviceID {
+		expected = 1
+	}
+	if active != expected {
+		return ErrUnauthorized
+	}
 	var allowed bool
-	err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM file_access_grants g JOIN devices d ON d.owner_id=g.owner_id AND d.device_id=g.device_id
+	err = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM file_access_grants g JOIN devices d ON d.owner_id=g.owner_id AND d.device_id=g.device_id
         WHERE g.transfer_id=$1 AND g.purpose='DELIVERY' AND g.revoked_at IS NULL AND g.issued_epoch=$2 AND g.expires_at>clock_timestamp() AND d.status='ACTIVE')`, tr.ID, tr.RevocationEpoch).Scan(&allowed)
 	if err != nil {
 		return err
@@ -134,34 +156,41 @@ func (s *Service) readRelayChunk(ctx context.Context, uploadID string, index int
 		return nil, err
 	}
 	defer s.closeIO(ctx, lease, false)
-	read, cancel := context.WithTimeout(ctx, 30*time.Second)
-	defer cancel()
-	object, err := s.blobs.GetChunk(read, c.Key, 0, c.Size-1)
+	authorize := func(check context.Context) error {
+		final, current, err := s.beginUploadObject(check, uploadID, true)
+		if err != nil {
+			return err
+		}
+		defer final.Rollback(check)
+		if err = relayDownloadAccess(check, final, current); err != nil {
+			return err
+		}
+		return checkUploadIO(check, final, current, lease)
+	}
+	data, err := s.readSmallChunk(ctx, c, authorize)
 	if err != nil {
 		return nil, err
 	}
-	data, err := io.ReadAll(io.LimitReader(object, c.Size+1))
-	closeErr := object.Close()
-	if err != nil {
-		return nil, err
-	}
-	if closeErr != nil {
-		return nil, closeErr
-	}
-	digest := sha256.Sum256(data)
-	if int64(len(data)) != c.Size || hex.EncodeToString(digest[:]) != c.Hash {
-		return nil, ErrChecksum
-	}
-	final, current, err := s.beginUploadObject(ctx, uploadID, true)
-	if err != nil {
-		return nil, err
-	}
-	defer final.Rollback(ctx)
-	if err = relayDownloadAccess(ctx, final, current); err != nil {
-		return nil, err
-	}
-	if err = checkUploadIO(ctx, final, current, lease); err != nil {
+	if err = authorize(ctx); err != nil {
 		return nil, err
 	}
 	return data, nil
+}
+
+func (s *Service) sendRelayFrame(ctx context.Context, expected uploadObject, channel relayChannel, frame []byte) error {
+	tx, current, err := s.beginUploadObject(ctx, expected.ID, true)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+	if current.Generation != expected.Generation {
+		return ErrConflict
+	}
+	if err := relayDownloadAccess(ctx, tx, current); err != nil {
+		return err
+	}
+	// The short send holds the authority locks. A pause/revoke either precedes
+	// this frame and denies it, or follows a frame already admitted to the wire.
+	// WebSocket writes have a separate five-second deadline.
+	return channel.Send(frame)
 }

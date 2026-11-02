@@ -275,6 +275,21 @@ func (s *Service) sealUpload(ctx context.Context, uploadID string) (CompleteResp
 		if len(page) == 0 {
 			return CompleteResponse{}, ErrIncomplete
 		}
+		if o.ChunkSize <= 64<<10 {
+			base := next
+			err = orderedPipeline(ctx, 0, len(page), relayPipelineWindow, func(read context.Context, offset int) ([]byte, error) {
+				c := page[offset]
+				if c.Index != base+offset || c.Size != expectedChunkSize(o.Size, o.ChunkSize, c.Index, o.Count) {
+					return nil, ErrIncomplete
+				}
+				return s.readVerificationChunk(read, uploadID, operation, c)
+			}, func(_ int, data []byte) error { _, err := full.Write(data); return err })
+			if err != nil {
+				return CompleteResponse{}, err
+			}
+			next += len(page)
+			continue
+		}
 		for _, c := range page {
 			if c.Index != next || c.Size != expectedChunkSize(o.Size, o.ChunkSize, next, o.Count) {
 				return CompleteResponse{}, ErrIncomplete
@@ -362,4 +377,10 @@ func (s *Service) sealUpload(ctx context.Context, uploadID string) (CompleteResp
 		return CompleteResponse{}, err
 	}
 	return CompleteResponse{File: entry}, nil
+}
+
+func (s *Service) readVerificationChunk(ctx context.Context, uploadID, operation string, c Chunk) ([]byte, error) {
+	return s.readSmallChunk(ctx, c, func(check context.Context) error {
+		return s.renewUploadIO(check, operation, uploadID)
+	})
 }

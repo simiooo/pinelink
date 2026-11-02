@@ -52,7 +52,7 @@ jobs:
           cache-dependency-path: '**/go.sum'
       - run: |
           if [[ "$PINELINK_RELAY_TRANSPORT" == websocket ]]; then
-            export PINELINK_TEST_FILTER='^(TestP2PDirectRelayAndFallback|TestRelayPreuploadConsentAndRestore)$'
+            export PINELINK_TEST_FILTER='^(TestP2PDirectRelayAndFallback|TestRelayPreuploadConsentAndRestore|TestP2PRelaySocketPauseAndResume)$'
           fi
           bash infra/scripts/integration.sh
   web:
