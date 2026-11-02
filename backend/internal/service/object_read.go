@@ -70,8 +70,34 @@ func relayDownloadAccess(ctx context.Context, tx pgx.Tx, o uploadObject) error {
 	if tr.State != "ACCEPTED" {
 		return &StateConflictError{Resource: "transfer", Current: transferEvent(*tr)}
 	}
+	devices, err := tx.Query(ctx, `SELECT status FROM devices WHERE (owner_id=$1 AND device_id=$2) OR(owner_id=$3 AND device_id=$4) ORDER BY owner_id,device_id FOR SHARE`, tr.SenderOwnerID, tr.SenderDeviceID, tr.RecipientOwnerID, tr.RecipientDeviceID)
+	if err != nil {
+		return err
+	}
+	active := 0
+	for devices.Next() {
+		var state string
+		if err := devices.Scan(&state); err != nil {
+			devices.Close()
+			return err
+		}
+		if state == "ACTIVE" {
+			active++
+		}
+	}
+	devices.Close()
+	if err := devices.Err(); err != nil {
+		return err
+	}
+	expected := 2
+	if tr.SenderOwnerID == tr.RecipientOwnerID && tr.SenderDeviceID == tr.RecipientDeviceID {
+		expected = 1
+	}
+	if active != expected {
+		return ErrUnauthorized
+	}
 	var allowed bool
-	err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM file_access_grants g JOIN devices d ON d.owner_id=g.owner_id AND d.device_id=g.device_id
+	err = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM file_access_grants g JOIN devices d ON d.owner_id=g.owner_id AND d.device_id=g.device_id
         WHERE g.transfer_id=$1 AND g.purpose='DELIVERY' AND g.revoked_at IS NULL AND g.issued_epoch=$2 AND g.expires_at>clock_timestamp() AND d.status='ACTIVE')`, tr.ID, tr.RevocationEpoch).Scan(&allowed)
 	if err != nil {
 		return err
@@ -164,4 +190,22 @@ func (s *Service) readRelayChunk(ctx context.Context, uploadID string, index int
 		return nil, err
 	}
 	return data, nil
+}
+
+func (s *Service) sendRelayFrame(ctx context.Context, expected uploadObject, channel relayChannel, frame []byte) error {
+	tx, current, err := s.beginUploadObject(ctx, expected.ID, true)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+	if current.Generation != expected.Generation {
+		return ErrConflict
+	}
+	if err := relayDownloadAccess(ctx, tx, current); err != nil {
+		return err
+	}
+	// The short send holds the authority locks. A pause/revoke either precedes
+	// this frame and denies it, or follows a frame already admitted to the wire.
+	// WebSocket writes have a separate five-second deadline.
+	return channel.Send(frame)
 }

@@ -275,6 +275,21 @@ func (s *Service) sealUpload(ctx context.Context, uploadID string) (CompleteResp
 		if len(page) == 0 {
 			return CompleteResponse{}, ErrIncomplete
 		}
+		if o.ChunkSize <= 64<<10 {
+			base := next
+			err = orderedPipeline(ctx, 0, len(page), relayPipelineWindow, func(read context.Context, offset int) ([]byte, error) {
+				c := page[offset]
+				if c.Index != base+offset || c.Size != expectedChunkSize(o.Size, o.ChunkSize, c.Index, o.Count) {
+					return nil, ErrIncomplete
+				}
+				return s.readVerificationChunk(read, uploadID, operation, c)
+			}, func(_ int, data []byte) error { _, err := full.Write(data); return err })
+			if err != nil {
+				return CompleteResponse{}, err
+			}
+			next += len(page)
+			continue
+		}
 		for _, c := range page {
 			if c.Index != next || c.Size != expectedChunkSize(o.Size, o.ChunkSize, next, o.Count) {
 				return CompleteResponse{}, ErrIncomplete
@@ -362,4 +377,32 @@ func (s *Service) sealUpload(ctx context.Context, uploadID string) (CompleteResp
 		return CompleteResponse{}, err
 	}
 	return CompleteResponse{File: entry}, nil
+}
+
+func (s *Service) readVerificationChunk(ctx context.Context, uploadID, operation string, c Chunk) ([]byte, error) {
+	if c.Size < 0 || c.Size > 64<<10 {
+		return nil, ErrInvalid
+	}
+	if err := s.renewUploadIO(ctx, operation, uploadID); err != nil {
+		return nil, err
+	}
+	read, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	object, err := s.blobs.GetChunk(read, c.Key, 0, c.Size-1)
+	if err != nil {
+		return nil, err
+	}
+	data, err := io.ReadAll(io.LimitReader(object, c.Size+1))
+	closeErr := object.Close()
+	if err != nil {
+		return nil, err
+	}
+	if closeErr != nil {
+		return nil, closeErr
+	}
+	digest := sha256.Sum256(data)
+	if int64(len(data)) != c.Size || hex.EncodeToString(digest[:]) != c.Hash {
+		return nil, ErrChecksum
+	}
+	return data, nil
 }

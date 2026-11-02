@@ -238,7 +238,7 @@ func runReceiverPath(ctx context.Context, api *client.Client, transfer client.Tr
 		defer cancel()
 		_ = reporter.Flush(flush)
 	}()
-	configure := func(channel receiveChannel) {
+	configure := func(channel receiveChannel, frameCheck func() error) {
 		var frames sync.Mutex
 		finished := false
 		channel.OnMessage(func(message webrtc.DataChannelMessage) {
@@ -247,7 +247,7 @@ func runReceiverPath(ctx context.Context, api *client.Client, transfer client.Tr
 			if finished {
 				return
 			}
-			if err := receiveFrame(message.Data, partPath, transfer, check); err != nil {
+			if err := receiveFrame(message.Data, partPath, transfer, frameCheck); err != nil {
 				finished = true
 				// Include the final durable prefix when a path fails after a successful write.
 				if info, statErr := os.Stat(partPath); statErr == nil {
@@ -305,7 +305,10 @@ func runReceiverPath(ctx context.Context, api *client.Client, transfer client.Tr
 			return err
 		}
 		defer channel.close()
-		configure(channel)
+		// The authenticated WebSocket relay checks the current grant, task and
+		// generation at each send. Repeating two WAN HTTP reads per 64 KiB frame
+		// adds no authority; verified completion still needs a fresh server receipt.
+		configure(channel, nil)
 	} else {
 		pc, err := newPeer()
 		if err != nil {
@@ -317,12 +320,12 @@ func runReceiverPath(ctx context.Context, api *client.Client, transfer client.Tr
 			if err != nil {
 				return err
 			}
-			configure(channel)
+			configure(channel, check)
 			if err := offer(receiveCtx, api, transfer.ID, transfer.RecipientOwnerID, transfer.RecipientDeviceID, "RECEIVER", downlinkOffer, downlinkAnswer, pc); err != nil {
 				return err
 			}
 		} else {
-			pc.OnDataChannel(func(channel *webrtc.DataChannel) { configure(channel) })
+			pc.OnDataChannel(func(channel *webrtc.DataChannel) { configure(channel, check) })
 			if err := answer(receiveCtx, api, transfer.ID, transfer.RecipientOwnerID, transfer.RecipientDeviceID, "RECEIVER", directOffer, directAnswer, pc); err != nil {
 				return err
 			}

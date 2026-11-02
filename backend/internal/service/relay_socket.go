@@ -76,30 +76,105 @@ func (s *RelaySocket) Run(ctx context.Context, conn *websocket.Conn) error {
 			}
 		}
 	}()
-	if !s.uplink {
-		workers.Add(1)
-		go func() {
-			defer workers.Done()
-			_ = s.manager.pumpDownlink(ctx, socketChannel{ctx, conn}, s.spool)
-			cancel()
-		}()
+	if s.uplink {
+		return s.receiveUplink(ctx, conn)
 	}
+	workers.Add(1)
+	go func() {
+		defer workers.Done()
+		_ = s.manager.pumpDownlink(ctx, socketChannel{ctx, conn}, s.spool)
+		cancel()
+	}()
 	for {
 		kind, data, err := conn.Read(ctx)
 		if err != nil {
 			return err
 		}
-		if !s.uplink {
-			if kind == websocket.MessageText && string(data) == "DONE" {
-				return nil
+		if kind == websocket.MessageText && string(data) == "DONE" {
+			return nil
+		}
+		return ErrInvalid
+	}
+}
+
+func (s *RelaySocket) receiveUplink(ctx context.Context, conn *websocket.Conn) error {
+	ctx, cancel := context.WithCancel(ctx)
+	var workers sync.WaitGroup
+	defer func() { cancel(); workers.Wait() }()
+	jobs := make(chan []byte, relayPipelineWindow)
+	progress := make(chan struct{}, 1)
+	failed := make(chan error, 1)
+	fail := func(err error) {
+		select {
+		case failed <- err:
+		default:
+		}
+		cancel()
+	}
+	for range relayPipelineWindow {
+		workers.Add(1)
+		go func() {
+			defer workers.Done()
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case frame := <-jobs:
+					if err := s.manager.storeUplink(ctx, s.spool.ID, frame); err != nil {
+						fail(err)
+						return
+					}
+					select {
+					case progress <- struct{}{}:
+					default:
+					}
+				}
 			}
-			return ErrInvalid
+		}()
+	}
+	// One coordinator seals after all durable chunks arrive. Concurrent writes
+	// cannot accidentally start one full-file verification per finishing worker.
+	workers.Add(1)
+	go func() {
+		defer workers.Done()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-progress:
+				complete, err := s.manager.sealRelayIfComplete(ctx, s.spool.ID)
+				if err != nil {
+					fail(err)
+					return
+				}
+				if complete {
+					return
+				}
+			}
+		}
+	}()
+	for {
+		kind, data, err := conn.Read(ctx)
+		if err != nil {
+			select {
+			case cause := <-failed:
+				return cause
+			default:
+				return err
+			}
 		}
 		if kind != websocket.MessageBinary {
 			return ErrInvalid
 		}
-		if err := s.manager.acceptUplink(ctx, s.spool.ID, data); err != nil {
-			return err
+		select {
+		case <-ctx.Done():
+			select {
+			case cause := <-failed:
+				return cause
+			default:
+				return ctx.Err()
+			}
+		case jobs <- data:
 		}
 	}
 }
@@ -117,5 +192,7 @@ func (c socketChannel) ReadyState() webrtc.DataChannelState {
 }
 func (c socketChannel) BufferedAmount() uint64 { return 0 }
 func (c socketChannel) Send(data []byte) error {
-	return c.conn.Write(c.ctx, websocket.MessageBinary, data)
+	ctx, cancel := context.WithTimeout(c.ctx, 5*time.Second)
+	defer cancel()
+	return c.conn.Write(ctx, websocket.MessageBinary, data)
 }

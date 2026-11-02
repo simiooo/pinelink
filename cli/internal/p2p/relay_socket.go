@@ -2,7 +2,9 @@ package p2p
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net"
 	"time"
 
 	"github.com/coder/websocket"
@@ -52,13 +54,31 @@ func runSocketSender(ctx context.Context, api *client.Client, transfer client.Tr
 	if err = sendFile(ctx, socketSender{ctx, conn}, filePath, errors); err != nil {
 		return checkpoint(err)
 	}
+	lastControl := time.Now()
+	retryDelay := 250 * time.Millisecond
 	for {
 		poll, stop := context.WithTimeout(ctx, 6*time.Second)
 		p, err := api.GetP2PProgress(poll, transfer.ID, transfer.SenderOwnerID, transfer.SenderDeviceID)
 		stop()
 		if err != nil {
+			// A transient control-plane timeout must not cancel a valid, still
+			// connected upload while its cloud copy is being verified. Permission
+			// errors fail immediately; the live socket and total outage are bounded.
+			if transientRelayPoll(err) && time.Since(lastControl) < 30*time.Second {
+				select {
+				case cause := <-errors:
+					return checkpoint(cause)
+				case <-ctx.Done():
+					return ctx.Err()
+				case <-time.After(retryDelay):
+				}
+				retryDelay = min(2*time.Second, retryDelay*2)
+				continue
+			}
 			return err
 		}
+		lastControl = time.Now()
+		retryDelay = 250 * time.Millisecond
 		if p.Completion.Stored {
 			return nil
 		}
@@ -73,6 +93,15 @@ func runSocketSender(ctx context.Context, api *client.Client, transfer client.Tr
 		case <-time.After(100 * time.Millisecond):
 		}
 	}
+}
+
+func transientRelayPoll(err error) bool {
+	var response *client.ResponseError
+	if errors.As(err, &response) {
+		return response.StatusCode == 408 || response.StatusCode == 429 || response.StatusCode >= 500
+	}
+	var network net.Error
+	return errors.As(err, &network)
 }
 
 type receiveChannel interface {

@@ -141,6 +141,14 @@ func (c *Client) doJSON(ctx context.Context, method, path string, input, output 
 	return json.NewDecoder(response.Body).Decode(output)
 }
 
+type ResponseError struct {
+	StatusCode int
+	Code       string
+	message    string
+}
+
+func (e *ResponseError) Error() string { return e.message }
+
 func responseError(response *http.Response) error {
 	body, _ := io.ReadAll(io.LimitReader(response.Body, 1<<20))
 	var apiError struct {
@@ -152,9 +160,9 @@ func responseError(response *http.Response) error {
 	}
 	if json.Unmarshal(body, &apiError) == nil && apiError.Message != "" {
 		if apiError.Code == "STATE_CONFLICT" && apiError.Current.State != "" {
-			return fmt.Errorf("server returned %s (%s): %s (state=%s)", response.Status, apiError.Code, apiError.Message, apiError.Current.State)
+			return &ResponseError{response.StatusCode, apiError.Code, fmt.Sprintf("server returned %s (%s): %s (state=%s)", response.Status, apiError.Code, apiError.Message, apiError.Current.State)}
 		}
-		return fmt.Errorf("server returned %s (%s): %s", response.Status, apiError.Code, apiError.Message)
+		return &ResponseError{response.StatusCode, apiError.Code, fmt.Sprintf("server returned %s (%s): %s", response.Status, apiError.Code, apiError.Message)}
 	}
-	return fmt.Errorf("server returned %s", response.Status)
+	return &ResponseError{StatusCode: response.StatusCode, message: fmt.Sprintf("server returned %s", response.Status)}
 }
