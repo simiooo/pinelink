@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "browser": "156.0.8078.73",
+  "version": "30284d60787c6904a4b53e29d255588f1a9275b4",
+  "api_version": "1daeffad033f916eca27d7a7a947acae800ddfbb",
+  "checks": {
+    "compiled_flutter_web": true,
+    "real_api_empty_task_route": true,
+    "offline_browser_restart": true,
+    "offline_history": true,
+    "offline_chinese_menu_and_content": true,
+    "reconnect_api": true,
+    "bundled_font_sha256": true,
+    "external_assets": 0
+  },
+  "javascript_errors": []
+}

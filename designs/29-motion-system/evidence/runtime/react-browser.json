@@ -1,0 +1,76 @@
+{
+  "passed": true,
+  "browser": "156.0.8078.73",
+  "checks": [
+    {
+      "name": "StrictMode setup does not dispatch an action",
+      "passed": true
+    },
+    {
+      "name": "button press reverses from current pose",
+      "passed": true
+    },
+    {
+      "name": "two clicks while an explicit promise is pending dispatch once",
+      "passed": true
+    },
+    {
+      "name": "real running transfer has a clipped 1.8 second sheen",
+      "passed": true
+    },
+    {
+      "name": "pause and late acknowledgement retain a static confirmed boundary",
+      "passed": true
+    },
+    {
+      "name": "live reduced motion stops flow and full motion restores visible flow",
+      "passed": true
+    },
+    {
+      "name": "100 percent bytes wait for a separate receipt",
+      "passed": true
+    },
+    {
+      "name": "offscreen flow pauses and resumes on intersection",
+      "passed": true
+    },
+    {
+      "name": "Radix dialog traps focus, survives a reversal, and restores trigger focus",
+      "passed": true
+    },
+    {
+      "name": "Radix menu supports arrows and escape",
+      "passed": true
+    },
+    {
+      "name": "tooltip has keyboard and hover access",
+      "passed": true
+    },
+    {
+      "name": "keyed filter preserves the surviving editable DOM node",
+      "passed": true
+    },
+    {
+      "name": "large list remains bounded under four times CPU throttling",
+      "passed": true
+    },
+    {
+      "name": "nested dragleave does not dismiss a valid file target; escape clears it",
+      "passed": true
+    },
+    {
+      "name": "mobile sheet opens from below, cancels a short drag, and dismisses a long drag",
+      "passed": true
+    },
+    {
+      "name": "unmount cancels owned animation records and late asynchronous completion safely",
+      "passed": true
+    }
+  ],
+  "measurements": {
+    "list1000_render_ms_at_4x_cpu": 781
+  },
+  "javascript_errors": [],
+  "fixture_only": true,
+  "production_route": false
+}

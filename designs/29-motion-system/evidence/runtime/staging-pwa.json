@@ -1,0 +1,73 @@
+{
+  "verified_at": "2026-11-03T06:50:31.228Z",
+  "execution_host": "Fedora Docker",
+  "browser": "156.0.8078.73",
+  "version": "a2c8cdef34f4e0aba9ce1a31cf379826093c93f3",
+  "api_version": "1daeffad033f916eca27d7a7a947acae800ddfbb",
+  "actualTasks": {
+    "graphs": 0,
+    "numericOnMain": 0,
+    "emptyState": 1
+  },
+  "online": {
+    "faces": [
+      {
+        "family": "Nunito",
+        "weight": "200 1000",
+        "status": "loaded"
+      }
+    ],
+    "rendered": [
+      {
+        "family": "Nunito ExtraLight",
+        "custom": true,
+        "glyphs": 8
+      }
+    ]
+  },
+  "offline": {
+    "faces": [
+      {
+        "family": "Nunito",
+        "weight": "200 1000",
+        "status": "loaded"
+      }
+    ],
+    "rendered": [
+      {
+        "family": "Nunito ExtraLight",
+        "custom": true,
+        "glyphs": 8
+      }
+    ]
+  },
+  "cache": {
+    "path": "/assets/Nunito-Variable-63TK8RbS.ttf",
+    "hash": "bb55a5ca5c2042335b3991af27c4d0705d0ef41cac6164ac737fd8f2a1e85207",
+    "license": true
+  },
+  "views": [
+    {
+      "viewport": 1280,
+      "content": 1280
+    },
+    {
+      "viewport": 390,
+      "content": 390
+    },
+    {
+      "viewport": 320,
+      "content": 320
+    }
+  ],
+  "checks": {
+    "real_custom_font": true,
+    "variable_weights_400_600_700": true,
+    "local_font_and_license_cached": true,
+    "browser_closed_then_offline_cold_start": true,
+    "offline_history_route": true,
+    "reconnect_api": true,
+    "external_font_requests": 0
+  },
+  "page_errors": []
+}

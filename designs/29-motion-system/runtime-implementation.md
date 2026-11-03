@@ -38,6 +38,12 @@ The CLI's transitive `minimatch` is narrowly overridden to patched 11.0.1. The p
 
 Web-only staging releases can set `webVersion` to the exact source commit while preserving the API/tunnel revision. The chart defaults to the existing shared `version` when it is absent. Runtime deployment and PWA smoke evidence are recorded separately after the candidate is built and deployed.
 
+Subsequent releases that change the Web image must also advance `webVersion`, including releases that update both API and Web. Reusing a prior Web annotation would mislabel the new image.
+
 Flutter Web builds must prepare the pinned SQLite WASM and compile the Drift worker before the Flutter build, following [Drift's Web setup](https://drift.simonbinder.eu/platforms/web/). Release assembly rejects missing database assets. Browser validation caught an omission in the temporary packaging path before publication; the shared preparation script and CI build now cover it.
 
 Flutter also bundles its existing Noto Sans SC fallback under OFL 1.1 so CJK menu labels and filenames do not initiate Google font downloads. Nunito remains primary, with Microsoft YaHei preferred where available. The English OpenPencil addendum `29-pinelink-offline-fonts.fig` records the unchanged typography contract; the CJK trial triggered the known OpenPencil memory error and was replaced with English labels as authorized. Native font availability is verified separately from browser offline glyph coverage.
+
+Delivery evidence is in [runtime verification](evidence/runtime/verification.json), [actual React components](evidence/runtime/react-browser.json), [staging PWA](evidence/runtime/staging-pwa.json) and [compiled Flutter Web](evidence/runtime/flutter-web.json). Staging Helm13 deployed Web `a2c8cdef34f4e0aba9ce1a31cf379826093c93f3` at 2026-11-03 14:45:51 +08; API remains `1daeffad033f916eca27d7a7a947acae800ddfbb`. The Flutter package includes follow-up Web assets, viewport and CJK fixes from `30284d60787c6904a4b53e29d255588f1a9275b4`. Both clients verified real empty task routes; task control and progress interruptions were tested on the actual components with controlled states. No full file-data path is implied.
+
+The native addendum saved successfully with faithful Nunito faces; the reopen tool timed out after the memory error. It is a technical contract note, and is not used as evidence of a new accepted product flow. The accepted main v29 file and its earlier save/reopen verification are unchanged.

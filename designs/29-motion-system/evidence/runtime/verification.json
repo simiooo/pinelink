@@ -1,0 +1,113 @@
+{
+  "verified_at": "2026-11-03T07:04:15.449579+00:00",
+  "source_revision": "30284d60787c6904a4b53e29d255588f1a9275b4",
+  "web_revision": "a2c8cdef34f4e0aba9ce1a31cf379826093c93f3",
+  "flutter_revision": "30284d60787c6904a4b53e29d255588f1a9275b4",
+  "sdk": "Flutter 3.47.9 / Dart 3.13.7",
+  "fedora": {
+    "web_tests": 49,
+    "flutter_tests": 33,
+    "flutter_environment_skips": 2,
+    "flutter_analysis_issues": 0,
+    "release_builds": [
+      "react-web",
+      "flutter-web"
+    ],
+    "actual_react_browser_checks": 16,
+    "flutter_offline_cjk_browser_verified": true,
+    "offline_shell_checks": 3,
+    "production_audit_findings": 0,
+    "development_low_findings": 6
+  },
+  "staging": {
+    "environment": "staging",
+    "url": "https://staging-pinelink.sqmem.top",
+    "web_version": "a2c8cdef34f4e0aba9ce1a31cf379826093c93f3",
+    "api_version": "1daeffad033f916eca27d7a7a947acae800ddfbb",
+    "helm_revision": 13,
+    "started_at": "2026-11-03T06:45:27.882286+00:00",
+    "completed_at": "2026-11-03T06:45:51.467509+00:00",
+    "status": "deployed",
+    "production_unchanged": true,
+    "non_web_workloads_unchanged": true,
+    "nginx_configuration_valid": true,
+    "public_smoke_pending": false,
+    "verified_empty_task_route": true,
+    "actual_transfer_controls_exercised_on_staging": false
+  },
+  "privacy": {
+    "tracked_files": 1460,
+    "history_blobs": 1571,
+    "release_archive_members": 1267,
+    "live_value_matches": 0
+  },
+  "native_design": {
+    "main": "29-pinelink-motion-system.fig",
+    "main_sha256": "0345398f4b93019e2502c1f3b5413205411ca3cf281c3621a6563ac880437a5a",
+    "accepted": true,
+    "offline_note": "29-pinelink-offline-fonts.fig",
+    "offline_note_sha256": "46307160d0ffabfcf680046561769b369e16c5800062da6df70c41f72576db91",
+    "offline_note_saved": true,
+    "offline_note_fonts_faithful": true,
+    "offline_note_reopen_verified": false,
+    "offline_note_limitation": "OpenPencil render reported memory access out of bounds; English note saved with faithful Nunito faces. Reopen tool timed out. This note is not evidence of a new product flow."
+  },
+  "coverage": {
+    "bound_existing": 40,
+    "foundation_ready": 9,
+    "feature_dependent": 60,
+    "all_future_features_complete": false
+  },
+  "limits": [
+    "Two-node controls use actual components with controlled fixture state in browser checks; staging smoke exercised the real empty task route.",
+    "Device hardware frame rates, Windows-native and iOS release validation are not claimed.",
+    "Consumer accounts, peer/text flows, full device graph/history migration and full client file data paths remain their own feature units."
+  ],
+  "ci": {
+    "source_revision": "30284d60787c6904a4b53e29d255588f1a9275b4",
+    "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "integration (websocket)",
+        "conclusion": "success",
+        "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243515"
+      },
+      {
+        "name": "go (cli)",
+        "conclusion": "success",
+        "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243650"
+      },
+      {
+        "name": "flutter",
+        "conclusion": "success",
+        "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243757"
+      },
+      {
+        "name": "web",
+        "conclusion": "success",
+        "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243774"
+      },
+      {
+        "name": "integration (webrtc)",
+        "conclusion": "success",
+        "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243782"
+      },
+      {
+        "name": "go (backend)",
+        "conclusion": "success",
+        "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243810"
+      },
+      {
+        "name": "deployment",
+        "conclusion": "success",
+        "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243870"
+      },
+      {
+        "name": "go (protocol)",
+        "conclusion": "success",
+        "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243934"
+      }
+    ]
+  }
+}
