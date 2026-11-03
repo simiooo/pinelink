@@ -1,6 +1,6 @@
 # Pinelink v25 / Rounded English typography
 
-2026-11-03，基于已验收的 v20 原生文档更新英文字体。用户已明确采用这一版 Nunito，运行资源已接入 Web 与 Flutter；应用检查和 staging 验证仍须完成。
+2026-11-03，基于已验收的 v20 原生文档更新英文字体。用户已明确采用这一版 Nunito，运行资源已接入 Web 与 Flutter。Fedora Web 43 项、Flutter 25 项测试及零分析问题、两端构建通过；staging 已部署运行 `52ad25a`。
 
 ## 字体选择
 
@@ -34,3 +34,5 @@
 Web 与 Flutter 共享同一上游可变字体文件（SHA-256 见 font-source.json），按 400/600/700 使用。Web 源资源位于 `web/src/assets/fonts/`，构建后产生带内容哈希的字体 URL，并进入 PWA 预缓存；授权文件通过 `/fonts/OFL.txt` 提供并缓存。Flutter 通过 pubspec 注册本地字体，OFL 进入应用许可证包。两端均不通过 Google Fonts 下载 Nunito；中文保留原有平台回退。
 
 接入时还修正了旧运行主题残留的棕色，将 Web/Flutter 基础颜色对齐已验收的蓝白灰规范。本轮是字体和基础主题接入；节点图、完整文件数据面与账号功能仍按各自工程单元继续实施。
+
+实际 staging 浏览器检查使用 Chromium 156，确认了自定义 Nunito 字形、400/600/700 可变字重、本地字体与许可缓存、关闭浏览器后的离线冷启动、历史页离线路由及重新联网。320/390/1280px 无横向溢出，未请求外部字体服务。Flutter 两项跳过分别为 Windows 系统字体旧参考图及需单独 staging 环境的集成测试；不将它们记为已执行。

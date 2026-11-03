@@ -23,6 +23,13 @@ func TestPageProofCoversConsumerCursorAndCiphertext(t *testing.T){
 	p:=Page{Root:root,Epoch:e.StreamID,Through:1,Upper:1,Items:[]Delivery{{Sequence:1,Event:e}}};p.Signature=Sign(key,p.Proof())
 	if p.Validate(pin,root)!=nil{t.Fatal("valid page rejected")}
 	changed:=p;changed.Through=2;changed.Upper=2;if changed.Validate(pin,root)==nil{t.Fatal("cursor could be changed")}
-	changed=p;changed.Root="7"+root[1:];if changed.Validate(pin,changed.Root)==nil{t.Fatal("consumer could be changed")}
+	changed = p
+	changed.Root = "0" + root[1:]
+	if changed.Root == root {
+		changed.Root = "1" + root[1:]
+	}
+	if changed.Validate(pin, changed.Root) == nil {
+		t.Fatal("consumer could be changed")
+	}
 	changed=p;changed.Items=append([]Delivery(nil),p.Items...);changed.Items[0].Event.Ciphertext=[]byte("modified");if changed.Validate(pin,root)==nil{t.Fatal("ciphertext could be changed")}
 }
