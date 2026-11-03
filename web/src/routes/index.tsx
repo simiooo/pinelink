@@ -13,7 +13,9 @@ import { useI18n } from '../i18n'
 export function NewTransferPage() {
   useSyncExternalStore(subscribeAuth, authRevision)
   const account = authState()
-  return account.capabilities.guests && (!account.session || guestWorkPending()) ? <GuestHome /> : <AccountTransferPage />
+  const guestView = useRef(false)
+  if (account.capabilities.guests && (!account.session || guestWorkPending())) guestView.current = true
+  return account.capabilities.guests && guestView.current ? <GuestHome /> : <AccountTransferPage />
 }
 function AccountTransferPage() {
   const inputRef = useRef<HTMLInputElement>(null)

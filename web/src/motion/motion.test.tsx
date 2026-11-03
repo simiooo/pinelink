@@ -5,6 +5,23 @@ import { MotionOwner } from './owner'
 import { MotionButton, MotionList, MotionMeter } from './components'
 import { MotionProvider, useMotion } from './react'
 import { confirmedPercent } from './tokens'
+import { MotionSurface } from './surface'
+
+it('an exiting surface cannot restore focus over a newly opened surface', async () => {
+  vi.useFakeTimers()
+  function Fixture({ open, identity }: { open: boolean; identity: string }) { return <MotionProvider><button>Choose file</button><MotionSurface key={identity} open={open} onClose={() => undefined} title="File" closeLabel="Close"><button>Send file</button></MotionSurface></MotionProvider> }
+  const view = render(<Fixture open={false} identity="first" />)
+  try {
+    const trigger = screen.getByRole('button', { name: 'Choose file' }); trigger.focus()
+    view.rerender(<Fixture open identity="first" />)
+    const restore = vi.spyOn(trigger, 'focus')
+    view.rerender(<Fixture open={false} identity="first" />)
+    view.rerender(<Fixture open identity="second" />)
+    await act(async () => { vi.advanceTimersByTime(250) })
+    expect(screen.getByRole('button', { name: 'Send file' })).toBeInTheDocument()
+    expect(restore).not.toHaveBeenCalled()
+  } finally { view.unmount(); vi.useRealTimers() }
+})
 
 afterEach(() => { cleanup(); vi.restoreAllMocks() })
 
