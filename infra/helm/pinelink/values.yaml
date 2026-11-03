@@ -7,6 +7,9 @@ images:
   nats: nats:2.12-alpine@sha256:b270f5e2428354c0335612694d7dd2fb588148e567a5757fdff325ef9c9332e6
   cloudflared: cloudflare/cloudflared:2026.10.0@sha256:9b49eed8f62806d5d45ddf59ecefb5710429598ea6d3fcccd2af938f621b2b07
 imagePullPolicy: IfNotPresent
+designPreview:
+  enabled: false
+  configMap: ""
 existingSecrets:
   api: pinelink-api
   postgres: pinelink-postgres

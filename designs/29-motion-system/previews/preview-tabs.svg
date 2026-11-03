@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1120" height="640" viewBox="0 0 1120 640">
+  <g>
+    <rect width="1120" height="640" fill="#FFFFFF"/>
+    <g transform="translate(32, 32)">
+      <text x="0" y="22" font-family="Nunito" font-size="22" font-weight="700" fill="#101010">Tab selection</text>
+    </g>
+    <g transform="translate(32, 84)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Underline follows the selected target; content fade only, no lateral text sweep.</text>
+    </g>
+    <g transform="translate(32, 144)">
+      <g>
+        <g>
+          <g transform="translate(28, 84)">
+            <text x="0" y="15" font-family="Nunito" font-size="15" font-weight="700" fill="#101010">Files</text>
+          </g>
+          <g transform="translate(132, 84)">
+            <text x="0" y="15" font-family="Nunito" font-size="15" fill="#6E6E6E">Text</text>
+          </g>
+          <g transform="translate(28, 120)">
+            <rect width="32" height="2" fill="#0866FF"/>
+          </g>
+          <g transform="translate(28, 168)">
+            <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Project brief.pdf</text>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">Before</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Ready</text>
+        </g>
+      </g>
+      <g transform="translate(360, 0)">
+        <g>
+          <g transform="translate(28, 84)">
+            <text x="0" y="15" font-family="Nunito" font-size="15" fill="#6E6E6E">Files</text>
+          </g>
+          <g transform="translate(132, 84)">
+            <text x="0" y="15" font-family="Nunito" font-size="15" fill="#6E6E6E">Text</text>
+          </g>
+          <g transform="translate(76, 120)">
+            <rect width="68" height="2" fill="#0866FF"/>
+          </g>
+          <g transform="translate(28, 168)">
+            <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Meet at the north entrance.</text>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">During</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">160ms</text>
+        </g>
+      </g>
+      <g transform="translate(720, 0)">
+        <g>
+          <g transform="translate(28, 84)">
+            <text x="0" y="15" font-family="Nunito" font-size="15" fill="#6E6E6E">Files</text>
+          </g>
+          <g transform="translate(132, 84)">
+            <text x="0" y="15" font-family="Nunito" font-size="15" font-weight="700" fill="#101010">Text</text>
+          </g>
+          <g transform="translate(132, 120)">
+            <rect width="32" height="2" fill="#0866FF"/>
+          </g>
+          <g transform="translate(28, 168)">
+            <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Meet at the north entrance.</text>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">After</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Settled state</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(32, 560)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Reduced motion · Underline and selected state update immediately.</text>
+    </g>
+  </g>
+</svg>

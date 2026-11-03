@@ -1,0 +1,8 @@
+{
+  "node": "v24.22.2",
+  "platform": "linux",
+  "arch": "x64",
+  "network": "none",
+  "sourceCommit": "545ee8425aa6ad1af6258b722efeea1212e460d0",
+  "typescript": "5.8.3"
+}

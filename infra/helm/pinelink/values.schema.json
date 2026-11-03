@@ -121,6 +121,59 @@
           "pattern": "^[0-9]+Gi$"
         }
       }
+    },
+    "designPreview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "configMap"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "configMap": {
+          "type": "string",
+          "pattern": "^$|^[a-z0-9]([-a-z0-9.]*[a-z0-9])?$",
+          "maxLength": 253
+        }
+      }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "designPreview": {
+            "properties": {
+              "enabled": {
+                "const": true
+              }
+            },
+            "required": [
+              "enabled"
+            ]
+          }
+        },
+        "required": [
+          "designPreview"
+        ]
+      },
+      "then": {
+        "properties": {
+          "environment": {
+            "const": "staging"
+          },
+          "designPreview": {
+            "properties": {
+              "configMap": {
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

@@ -1,3 +1,7 @@
+{{- $designPreview := .Values.designPreview | default dict -}}
+{{- if and ($designPreview.enabled | default false) (ne .Values.environment "staging") -}}
+{{- fail "Design previews are only available in staging" -}}
+{{- end -}}
 {{ range $component := list "api" "web" "tunnel" }}
 ---
 apiVersion: apps/v1
@@ -61,6 +65,9 @@ spec:
             - {name: tls, mountPath: /etc/pinelink/tls, readOnly: true}
             - {name: auth, mountPath: /etc/pinelink/auth, readOnly: true}
             - {name: profile, mountPath: /etc/pinelink/service-profile, readOnly: true}
+{{- if $designPreview.enabled }}
+            - {name: design-preview, mountPath: /usr/share/nginx/html/designs, readOnly: true}
+{{- end }}
 {{- else }}
           args: [tunnel, --no-autoupdate, --protocol, http2, --metrics, "0.0.0.0:2000", run, --token-file, /etc/pinelink/token]
           ports: [{name: metrics, containerPort: 2000}]
@@ -86,6 +93,10 @@ spec:
           secret: {secretName: {{ $.Values.existingSecrets.edge }}, defaultMode: 288}
         - name: config
           configMap: {name: {{ $.Release.Name }}-config}
+{{- if $designPreview.enabled }}
+        - name: design-preview
+          configMap: {name: {{ required "designPreview.configMap is required when enabled" $designPreview.configMap }}}
+{{- end }}
 {{- else if eq $component "tunnel" }}
         - name: token
           secret: {secretName: {{ $.Values.existingSecrets.tunnel }}, defaultMode: 288}

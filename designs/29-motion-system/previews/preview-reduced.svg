@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1120" height="720" viewBox="0 0 1120 720">
+  <g>
+    <rect width="1120" height="720" fill="#FFFFFF"/>
+    <g transform="translate(32, 32)">
+      <text x="0" y="24" font-family="Nunito" font-size="24" font-weight="700" fill="#101010">Reduced motion keeps meaning</text>
+    </g>
+    <g transform="translate(32, 88)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Immediate</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Keep focus rings, codes, filenames, numbers and text stable. Geometry updates immediately without travel or scale.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 200)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Equivalent</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Retain running/paused semantics, selected outlines, errors, copy results and local/cloud availability.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 312)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Native</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">System keyboard, picker, camera permission and install prompt use platform motion and accessibility settings.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 424)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Live preference</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">A system preference change stops running motion immediately; it does not remount or resubmit the operation.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 536)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Input</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Keyboard focus has the same affordance as hover. Touch never needs hover, and composing text never triggers submit.</text>
+      </g>
+    </g>
+  </g>
+</svg>
