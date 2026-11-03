@@ -86,5 +86,8 @@
   .guest-badge { left: calc(50% + 16px); }.guest-dot { left: calc(50% + 16px); top: 43px; }.guest-local .guest-badge { left: calc(50% + 23px); }.guest-local .guest-dot { left: calc(50% + 24px); top: 61px; }.guest-local .guest-dot:has(svg) { top: 56px; }
   .pinelink-motion-surface:has(.guest-surface-body) { width: 100%; padding-inline: 20px; max-height: 92dvh; }
   .guest-code-view { padding-top: 24px; }.guest-history { gap: 32px 16px; }
+  .pinelink-motion-surface[data-slot]:has(.guest-history) { inset: 0; height: 100dvh; max-height: 100dvh; border: 0; border-radius: 0; padding-top: max(20px,env(safe-area-inset-top)); box-shadow: none; }
+  .pinelink-motion-surface:has(.guest-history) .sheet-drag-target { display: none; }
+  .pinelink-motion-surface:has(.guest-history) .surface-heading h2 { font-size: 24px; line-height: 32px; }
 }
 @media(prefers-reduced-motion:reduce) { .guest-node { transition: none!important; } }

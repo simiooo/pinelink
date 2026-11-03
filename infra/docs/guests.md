@@ -72,7 +72,8 @@ The decorative sheen stops while paused, hidden or under reduced motion.
 
 Sign-in during a transfer uses a separate window where supported. Account
 changes cannot replace or close the guest runtime, keys or in-flight owner.
-After sign-in, **On this device** opens the original local guest history. The
+After sign-in, **On this device** opens the original local guest history, using
+a full-screen secondary view on mobile and a floating panel on desktop. The
 PWA can reopen that history and save verified local files fully offline. It
 does not continue network work after the browser closes. A browser that cannot
 persist storage shows a retry state rather than claiming a durable save.

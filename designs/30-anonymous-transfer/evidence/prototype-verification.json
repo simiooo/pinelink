@@ -1,7 +1,7 @@
 {
   "passed": true,
-  "checked_at": "2026-11-03T12:37:32.643Z",
-  "artifact_sha256": "07aaad8818193b7fcddb3ba11596a5d5f95be5c0d52f1332bc51929d4a9c671a",
+  "checked_at": "2026-11-03T12:49:21.016Z",
+  "artifact_sha256": "978255e8f500f40f03f54b603fee15154e36d7b85a62dc5a6f2522b0c2da9e3c",
   "environment": "Fedora / isolated no-network Chromium",
   "checks": [
     {
@@ -678,7 +678,7 @@
       "detail": {
         "label": "Design source.fig",
         "x": 20,
-        "y": 424,
+        "y": 120,
         "w": 104,
         "h": 88,
         "to": "mobile-complete"
@@ -690,7 +690,7 @@
       "detail": {
         "label": "Saved on this device",
         "x": 40,
-        "y": 456,
+        "y": 148,
         "w": 48,
         "h": 48,
         "tip": "Saved on this device"
@@ -702,7 +702,7 @@
       "detail": {
         "label": "Close",
         "x": 330,
-        "y": 332,
+        "y": 32,
         "w": 48,
         "h": 48,
         "to": "mobile-start"

@@ -595,7 +595,7 @@
         {
           "label": "Design source.fig",
           "x": 20,
-          "y": 424,
+          "y": 120,
           "w": 104,
           "h": 88,
           "to": "mobile-complete"
@@ -603,7 +603,7 @@
         {
           "label": "Saved on this device",
           "x": 40,
-          "y": 456,
+          "y": 148,
           "w": 48,
           "h": 48,
           "tip": "Saved on this device"
@@ -611,7 +611,7 @@
         {
           "label": "Close",
           "x": 330,
-          "y": 332,
+          "y": 32,
           "w": 48,
           "h": 48,
           "to": "mobile-start"
