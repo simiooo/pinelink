@@ -11,7 +11,10 @@ import { I18nProvider } from './i18n'
 import type { LocalePreference } from './i18n'
 import { clientRuntime } from './data'
 import { observeCache } from './data/cache-observer'
+import './styles/ui.css'
 import './styles/app.css'
+import { MotionProvider } from './motion/react'
+import './motion/motion.css'
 
 const rootRoute = createRootRoute({ component: AppShell })
 const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: NewTransferPage })
@@ -41,10 +44,10 @@ export function App({ initialEntries, localePreference, router: suppliedRouter }
     } catch { /* Resource queries provide the existing local-storage error states. */ }
   }, [queryClient])
   return (
-    <I18nProvider initialPreference={localePreference}>
+    <MotionProvider><I18nProvider initialPreference={localePreference}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>
-    </I18nProvider>
+    </I18nProvider></MotionProvider>
   )
 }

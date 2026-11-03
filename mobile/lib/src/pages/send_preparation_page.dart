@@ -1,3 +1,5 @@
+import '../motion/motion.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -104,7 +106,7 @@ class _SendPreparationPageState extends State<SendPreparationPage> {
         const SizedBox(height: 24),
         TextField(
           controller: _owner,
-          onChanged: (_) => setState(() {}),
+          onChanged: (_) => setState(() => _notice = null),
           decoration: InputDecoration(
             labelText: tr(context, 'recipientOwner'),
             hintText: tr(context, 'recipientOwnerHint'),
@@ -114,7 +116,7 @@ class _SendPreparationPageState extends State<SendPreparationPage> {
         const SizedBox(height: 20),
         TextField(
           controller: _device,
-          onChanged: (_) => setState(() {}),
+          onChanged: (_) => setState(() => _notice = null),
           decoration: InputDecoration(
             labelText: tr(context, 'recipientDevice'),
             hintText: tr(context, 'recipientDeviceHint'),
@@ -124,7 +126,7 @@ class _SendPreparationPageState extends State<SendPreparationPage> {
         const SizedBox(height: 20),
         TextField(
           controller: _path,
-          onChanged: (_) => setState(() {}),
+          onChanged: (_) => setState(() => _notice = null),
           decoration: InputDecoration(
             labelText: tr(context, 'filePath'),
             border: const OutlineInputBorder(),
@@ -140,7 +142,7 @@ class _SendPreparationPageState extends State<SendPreparationPage> {
           ),
         ),
         const SizedBox(height: 24),
-        ElevatedButton(
+        MotionButton.primary(
           onPressed: _copy,
           child: Text(tr(context, 'copyCommand')),
         ),
@@ -178,14 +180,19 @@ class _SendPreparationPageState extends State<SendPreparationPage> {
       setState(() => _notice = tr(context, 'prepareInvalid'));
       return;
     }
+    final captured = sendCommand(_path.text, _owner.text, _device.text);
     try {
-      await Clipboard.setData(
-        ClipboardData(text: sendCommand(_path.text, _owner.text, _device.text)),
-      );
-      if (!mounted) return;
+      await Clipboard.setData(ClipboardData(text: captured));
+      if (!mounted ||
+          captured != sendCommand(_path.text, _owner.text, _device.text)) {
+        return;
+      }
       setState(() => _notice = tr(context, 'copySuccess'));
     } catch (_) {
-      if (!mounted) return;
+      if (!mounted ||
+          captured != sendCommand(_path.text, _owner.text, _device.text)) {
+        return;
+      }
       setState(() => _notice = tr(context, 'copyFailed'));
     }
   }

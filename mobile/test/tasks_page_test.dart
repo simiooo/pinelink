@@ -74,9 +74,12 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    expect(find.text('62%'), findsNothing);
+    await tester.tap(find.text('接收中'));
+    await tester.pumpAndSettle();
     expect(find.text('设计回顾.pdf'), findsOneWidget);
-    expect(find.text('63%'), findsOneWidget);
-    expect(find.text('来自 macbook-pro'), findsOneWidget);
+    expect(find.text('62%'), findsOneWidget);
+    expect(find.text('macbook-pro'), findsNWidgets(2));
     await tester.tap(find.text('暂停'));
     await tester.pumpAndSettle();
     expect(find.text('已暂停，进度已保留。'), findsOneWidget);
@@ -89,6 +92,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('已取消任务。'), findsOneWidget);
     expect(api.actions, ['pause/1', 'resume/2', 'cancel/3']);
-    expect(find.text('63%'), findsOneWidget);
+    expect(find.text('62%'), findsOneWidget);
   });
 }

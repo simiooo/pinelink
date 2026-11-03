@@ -4,6 +4,7 @@ import 'package:pinelink_mobile/src/api/pinelink_api.dart';
 import 'package:pinelink_mobile/src/components/app_shell.dart';
 import 'package:pinelink_mobile/src/i18n/controller.dart';
 import 'package:pinelink_mobile/src/theme/tokens.dart';
+import 'package:pinelink_mobile/src/motion/motion.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,18 +38,20 @@ class _PinelinkAppState extends State<PinelinkApp> {
     animation: _i18n,
     builder: (context, _) => PinelinkI18n(
       controller: _i18n,
-      child: MaterialApp(
-        title: 'Pinelink',
-        debugShowCheckedModeBanner: false,
-        theme: pinelinkTheme(),
-        locale: _i18n.locale,
-        supportedLocales: const [Locale('zh', 'CN'), Locale('en', 'US')],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        home: PinelinkShell(api: _api),
+      child: MotionScope(
+        child: MaterialApp(
+          title: 'Pinelink',
+          debugShowCheckedModeBanner: false,
+          theme: pinelinkTheme(),
+          locale: _i18n.locale,
+          supportedLocales: const [Locale('zh', 'CN'), Locale('en', 'US')],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          home: PinelinkShell(api: _api),
+        ),
       ),
     ),
   );

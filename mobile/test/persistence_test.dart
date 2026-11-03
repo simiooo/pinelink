@@ -21,6 +21,30 @@ class MemoryVault implements IdentityVault {
 }
 
 void main() {
+  test('cached running tasks never claim current network activity after fallback', () async {
+    final db = ClientDatabase.testing(NativeDatabase.memory());
+    var connected = true;
+    final runtime = await ClientRuntime.open(
+      server: 'https://test.invalid', owner: 'owner', database: db,
+      vault: MemoryVault(), autoStart: false,
+      client: MockClient((request) async {
+        if (!connected) throw http.ClientException('offline');
+        return http.Response(jsonEncode({'tasks': [{'id': 'task', 'version': 1, 'state': 'RUNNING'}]}), 200);
+      }),
+    );
+    addTearDown(runtime.close);
+    await db.patchTarget({'bound': 'API_ONLY'});
+    const path = '/v1/tasks?owner_id=legacy-owner&device_id=legacy-device&include_deleted=false';
+    await runtime.request('GET', path);
+    expect(runtime.isNetworkFresh(path), isTrue);
+    connected = false;
+    final cached = await runtime.request('GET', path);
+    expect((cached['tasks'] as List).first['state'], 'RUNNING');
+    expect(runtime.isNetworkFresh(path), isFalse);
+    connected = true;
+    await runtime.request('GET', path);
+    expect(runtime.isNetworkFresh(path), isTrue);
+  });
   TestWidgetsFlutterBinding.ensureInitialized();
   final binary = File(
     '../.artifacts/historyfixture${Platform.isWindows ? '.exe' : ''}',

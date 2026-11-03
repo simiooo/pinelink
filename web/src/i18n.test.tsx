@@ -34,8 +34,8 @@ describe('i18n', () => {
     const first = render(<App initialEntries={['/']} localePreference="en-US" />)
     expect(await screen.findByRole('heading', { name: 'Send files' })).toBeInTheDocument()
     expect(document.documentElement.lang).toBe('en-US')
-    fireEvent.click(screen.getByRole('button', { name: 'More' }))
-    fireEvent.change(screen.getByRole('combobox', { name: 'Language / 语言' }), { target: { value: 'zh-CN' } })
+    fireEvent.keyDown(screen.getByRole('button', { name: 'More' }), { key: 'ArrowDown' })
+    fireEvent.click(await screen.findByRole('menuitemradio', { name: en.languageZh }))
     expect(await screen.findByRole('heading', { name: '发送文件' })).toBeInTheDocument()
     expect(localStorage.getItem('pinelink.locale')).toBe('zh-CN')
     first.unmount()
@@ -53,7 +53,7 @@ describe('i18n', () => {
   test('task, notification, history and settings are localized beyond the home page', async () => {
     mockApi()
     const routes: [string, string, string[]][] = [
-      ['/tasks', 'Current task', ['Actual transfer progress', 'Pause', 'Cancel']],
+      ['/tasks', 'Current task', ['Pause', 'Cancel']],
       ['/notifications', 'Notifications', ['Sending device', 'Sending account', 'Accept', 'Reject']],
       ['/history', 'History & issues', ['The sender cancelled this transfer. The file is not marked as received.']],
       ['/settings', 'Devices & storage', ['Storage usage', 'Keep permanently', 'Storage is nearly full. Remove files you no longer need first.']],
@@ -61,6 +61,10 @@ describe('i18n', () => {
     for (const [route, title, labels] of routes) {
       const view = render(<App initialEntries={[route]} localePreference="en-US" />)
       expect(await screen.findByRole('heading', { name: title })).toBeInTheDocument()
+      if (route === '/tasks') {
+        expect(await screen.findByRole('progressbar', { name: 'Actual transfer progress' })).toHaveAttribute('aria-valuenow', '62')
+        fireEvent.click(screen.getByRole('button', { name: 'Transfer details' }))
+      }
       for (const label of labels) {
         if (label === 'Actual transfer progress' || label === 'Storage usage') expect(await screen.findByRole('progressbar', { name: label })).toBeInTheDocument()
         else expect(await screen.findByText(label)).toBeInTheDocument()

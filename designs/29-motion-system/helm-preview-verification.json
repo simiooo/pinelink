@@ -31,6 +31,16 @@
       "name": "template guard survives skipped schema",
       "passed": true,
       "exit": 1
+    },
+    {
+      "name": "web revision can advance independently",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "web revision rejects invalid source hash",
+      "passed": true,
+      "exit": 1
     }
   ],
   "passed": true,

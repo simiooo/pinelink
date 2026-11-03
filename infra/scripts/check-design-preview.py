@@ -24,5 +24,10 @@ run('enabled preview needs config map',['--set','designPreview.enabled=true'],Fa
 production=run('production without preview still renders',['--set','environment=production'])
 assert '/usr/share/nginx/html/designs' not in production
 run('template guard survives skipped schema',['--skip-schema-validation','--set','environment=production','--set','designPreview.enabled=true','--set','designPreview.configMap=design-fixture'],False)
+web_version='1234567890abcdef1234567890abcdef12345678'
+web_only=run('web revision can advance independently',['--set-string','webVersion='+web_version])
+assert web_only.count('pinelink.source-revision: "'+web_version+'"')==1
+assert web_only.count('pinelink.source-revision: "development"')==2
+run('web revision rejects invalid source hash',['--set-string','webVersion=latest'],False)
 version=subprocess.check_output([args.helm,'version','--short'],text=True).strip()
 Path(args.output).write_text(json.dumps({'helm':version,'lint_passed':True,'checks':checks,'passed':True,'render_only':True},indent=2)+'\n',encoding='utf-8')

@@ -40,6 +40,7 @@ class TransferRequest {
     this.senderDevice, {
     this.recipientDevice = '',
     this.entryId = '',
+    this.deliveryMode = '',
   });
   final String id;
   final String state;
@@ -50,6 +51,7 @@ class TransferRequest {
   final String senderDevice;
   final String recipientDevice;
   final String entryId;
+  final String deliveryMode;
 }
 
 class Device {
@@ -89,6 +91,7 @@ class ApiException implements Exception {
 }
 
 class PinelinkApi extends ChangeNotifier {
+  bool tasksNetworkFresh = false;
   static const owner = String.fromEnvironment(
     'PINELINK_OWNER',
     defaultValue: 'dev-owner',
@@ -175,9 +178,10 @@ class PinelinkApi extends ChangeNotifier {
     String device, {
     bool includeDeleted = false,
   }) async {
-    final data = await _get(
-      '/v1/tasks?owner_id=$owner&device_id=$device&include_deleted=$includeDeleted',
-    );
+    final path =
+        '/v1/tasks?owner_id=$owner&device_id=$device&include_deleted=$includeDeleted';
+    final data = await _get(path);
+    tasksNetworkFresh = (await runtime).isNetworkFresh(path);
     return (data['tasks'] as List? ?? [])
         .map(
           (item) => TransferTask(
@@ -221,6 +225,7 @@ class PinelinkApi extends ChangeNotifier {
     item['sender_device_id'],
     recipientDevice: item['recipient_device_id'] ?? '',
     entryId: item['entry_id'] ?? '',
+    deliveryMode: item['delivery_mode'] ?? '',
   );
 
   Future<String> getPull(String id, String owner, String device) async {

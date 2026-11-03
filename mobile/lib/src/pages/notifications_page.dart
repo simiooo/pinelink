@@ -1,3 +1,5 @@
+import '../motion/motion.dart';
+
 import 'package:flutter/material.dart';
 
 import '../api/pinelink_api.dart';
@@ -57,7 +59,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget build(BuildContext context) => FutureBuilder<List<TransferRequest>>(
     future: _pending,
     builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
+      if (snapshot.connectionState == ConnectionState.waiting &&
+          !snapshot.hasData) {
         return Center(child: Text(tr(context, 'loadingNotifications')));
       }
       if (snapshot.hasError) {
@@ -188,7 +191,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: MotionButton(
                     onPressed: _responding
                         ? null
                         : () => _respond(first, 'reject'),
@@ -197,7 +200,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: ElevatedButton(
+                  child: MotionButton.primary(
                     onPressed: _responding
                         ? null
                         : () => _respond(first, 'accept'),

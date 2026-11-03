@@ -1,3 +1,5 @@
+import { NativeSelect } from '../components/ui/native-select'
+import { MotionButton, MotionReveal } from '../motion/components'
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ApiError, controlTask } from '../api/client'
@@ -45,11 +47,11 @@ export function HistoryPage() {
     <section aria-labelledby="history-title">
       <div className="page-heading"><h1 id="history-title">{t('historyTitle')}</h1><p>{t('historySubtitle')}</p></div>
       <div className="history-filters">
-        <label>{t('stateFilter')}<select value={state} onChange={event => { setState(event.target.value); setSelected(undefined); setConfirm(false) }}><option value="">{t('allStates')}</option><option value="COMPLETED">{t('completedState')}</option><option value="PAUSED">{t('pausedState')}</option><option value="CANCELLED">{t('cancelledState')}</option><option value="FAILED">{t('failedState')}</option><option value="DELETED">{t('deletedState')}</option><option value="RUNNING">{t('runningState')}</option></select></label>
-        <label>{t('kindFilter')}<select value={kind} onChange={event => { setKind(event.target.value); setSelected(undefined); setConfirm(false) }}><option value="">{t('allKinds')}</option><option value="DOWNLOAD">{t('directionReceive')}</option><option value="UPLOAD">{t('directionSend')}</option></select></label>
-        {filtered.length > 1 && <label>{t('recordFilter')}<select value={task?.id ?? ''} onChange={event => { setSelected(event.target.value); setConfirm(false); setNotice('') }}>{filtered.map(item => <option key={item.id} value={item.id}>{fileName(item)} · {taskStatus(item, t)}</option>)}</select></label>}
+        <label>{t('stateFilter')}<NativeSelect value={state} onChange={event => { setState(event.target.value); setSelected(undefined); setConfirm(false) }}><option value="">{t('allStates')}</option><option value="COMPLETED">{t('completedState')}</option><option value="PAUSED">{t('pausedState')}</option><option value="CANCELLED">{t('cancelledState')}</option><option value="FAILED">{t('failedState')}</option><option value="DELETED">{t('deletedState')}</option><option value="RUNNING">{t('runningState')}</option></NativeSelect></label>
+        <label>{t('kindFilter')}<NativeSelect value={kind} onChange={event => { setKind(event.target.value); setSelected(undefined); setConfirm(false) }}><option value="">{t('allKinds')}</option><option value="DOWNLOAD">{t('directionReceive')}</option><option value="UPLOAD">{t('directionSend')}</option></NativeSelect></label>
+        {filtered.length > 1 && <label>{t('recordFilter')}<NativeSelect value={task?.id ?? ''} onChange={event => { setSelected(event.target.value); setConfirm(false); setNotice('') }}>{filtered.map(item => <option key={item.id} value={item.id}>{fileName(item)} · {taskStatus(item, t)}</option>)}</NativeSelect></label>}
       </div>
-      {notice && <p className="feedback" role="status">{notice}</p>}
+      {notice && <MotionReveal className="feedback" role="status" identity={notice}>{notice}</MotionReveal>}
       {records.isPending && <div className="state-panel">{t('historyLoading')}</div>}
       {records.isError && <div className="state-panel" role="alert">{t('historyError')}</div>}
       {!records.isPending && !records.isError && !task && <div className="state-panel empty-state"><strong>{t('noHistory')}</strong><p>{t('noHistoryHint')}</p></div>}
@@ -64,10 +66,10 @@ export function HistoryPage() {
           </dl>
           {taskError(task, t) && <p className="error-note" role="note">{taskError(task, t)}</p>}
         </article>
-        {task.state !== 'RUNNING' && task.state !== 'DELETED' && <button className="secondary-button history-delete" disabled={mutation.isPending} onClick={() => {
-          if (confirm) mutation.mutate(task)
+        {task.state !== 'RUNNING' && task.state !== 'DELETED' && <MotionButton className="secondary-button history-delete" disabled={mutation.isPending} onClick={() => {
+          if (confirm) return mutation.mutateAsync(task)
           else { setConfirm(true); setNotice(t('deleteWarning')) }
-        }}>{t(confirm ? 'confirmDelete' : 'deleteTask')}</button>}
+        }}>{t(confirm ? 'confirmDelete' : 'deleteTask')}</MotionButton>}
         <p className="detail-note">{t('deleteNote')}</p>
       </>}
     </section>

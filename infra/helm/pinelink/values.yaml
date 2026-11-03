@@ -1,5 +1,6 @@
 environment: staging
 version: development
+# Optional webVersion: full source commit for a Web-only deployment.
 images:
   api: pinelink.local/api:development
   web: pinelink.local/web:development

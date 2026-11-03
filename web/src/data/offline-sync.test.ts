@@ -29,6 +29,20 @@ async function runtime(store = new LocalStore('offline-' + crypto.randomUUID()))
   return r
 }
 
+it('cached running snapshots remain readable without pretending that network activity is fresh', async () => {
+  const r = await runtime(), path = '/v1/tasks?owner_id=owner&include_deleted=false'
+  const snapshot = { tasks: [{ id: 'running', state: 'RUNNING', version: 1, progress_bytes: 42, total_bytes: 100 }] }
+  vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify(snapshot))))
+  await r.request('GET', path)
+  expect(r.isNetworkFresh(path)).toBe(true)
+  vi.stubGlobal('fetch', vi.fn(async () => { throw new TypeError('offline') }))
+  expect(await r.request('GET', path)).toEqual(snapshot)
+  expect(r.isNetworkFresh(path)).toBe(false)
+  vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify(snapshot))))
+  await r.request('GET', path)
+  expect(r.isNetworkFresh(path)).toBe(true)
+})
+
 it('refreshes every resource despite a permanently failing first resource, including after reopening', async () => {
   const r = await runtime()
   const paths = Array.from({ length: 7 }, (_, i) => `/v1/files/${i}?owner_id=owner`)

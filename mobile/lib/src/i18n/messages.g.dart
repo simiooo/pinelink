@@ -182,6 +182,12 @@ const zhMessages = <String, String>{
   "timeUnknown": "时间未知",
   "receivedFile": "接收文件",
   "sentFile": "上传文件",
+  "transferDetails": "传输详情",
+  "close": "关闭",
+  "cloudNode": "云端",
+  "cloudStored": "已暂存到云端",
+  "transferState": "状态",
+  "awaitingConfirmation": "等待确认",
 };
 const enMessages = <String, String>{
   "brandHome": "Pinelink home",
@@ -213,26 +219,21 @@ const enMessages = <String, String>{
   "recentTasks": "Recent tasks",
   "loadingTasks": "Loading tasks…",
   "tasksError": "Could not load tasks. Retrying automatically.",
-  "noTasks":
-      "No tasks yet. They will appear after a file and recipient are confirmed.",
+  "noTasks": "No tasks yet. They will appear after a file and recipient are confirmed.",
   "taskCount": "Current tasks: {count}.",
   "prepareTitle": "Prepare to send",
-  "prepareSubtitle":
-      "Choose a recipient, then copy the command to your local terminal. Nothing is sent before approval.",
+  "prepareSubtitle": "Choose a recipient, then copy the command to your local terminal. Nothing is sent before approval.",
   "recipientOwner": "Recipient account",
   "recipientDevice": "Recipient device",
   "recipientOwnerHint": "e.g. team-design",
   "recipientDeviceHint": "e.g. macbook-pro",
   "filePath": "File path in the terminal",
-  "prepareNote":
-      "Your browser does not expose the full local path. Confirm it above. This page only prepares a command; the registered Pinelink CLI encrypts and sends the file.",
+  "prepareNote": "Your browser does not expose the full local path. Confirm it above. This page only prepares a command; the registered Pinelink CLI encrypts and sends the file.",
   "copyCommand": "Copy send command",
   "prepareInvalid":
       "Enter the recipient account, device, and file path in the terminal.",
-  "copySuccess":
-      "Copied. Run it in a terminal with a registered device; this page has not sent the file.",
-  "copyFailed":
-      "Could not copy automatically. Select the command below to copy it yourself.",
+  "copySuccess": "Copied. Run it in a terminal with a registered device; this page has not sent the file.",
+  "copyFailed": "Could not copy automatically. Select the command below to copy it yourself.",
   "commandLabel": "Send command",
   "loadingNotifications": "Checking pending notifications…",
   "notificationsError": "Could not load notifications. Retrying automatically.",
@@ -252,8 +253,7 @@ const enMessages = <String, String>{
   "encryptedNameHint": "The name will be visible after local decryption",
   "senderDevice": "Sending device",
   "senderAccount": "Sending account",
-  "consentNote":
-      "The file is fetched only after you accept. The sender cannot see your other files.",
+  "consentNote": "The file is fetched only after you accept. The sender cannot see your other files.",
   "persistentConsent":
       "Persistent storage is optional and is never enabled by default.",
   "reject": "Reject",
@@ -262,8 +262,7 @@ const enMessages = <String, String>{
   "emptyNotifications": "No pending file requests",
   "emptyNotificationsHint": "New requests will appear here.",
   "tasksTitle": "Current task",
-  "tasksSubtitle":
-      "The best path is chosen automatically. Status always reflects real progress.",
+  "tasksSubtitle": "The best path is chosen automatically. Status always reflects real progress.",
   "selectTask": "Select task",
   "statusRunning": "{direction}",
   "statusPaused": "Paused",
@@ -288,8 +287,7 @@ const enMessages = <String, String>{
   "queuedNote": "Waiting to start. No bytes have been sent.",
   "downloadCompleteNote": "The file has been verified and saved.",
   "uploadCompleteNote": "Stored and ready for the recipient to collect.",
-  "activeNote":
-      "Li Xiaodi is {direction}. Completion is not shown until full confirmation arrives.",
+  "activeNote": "Li Xiaodi is {direction}. Completion is not shown until full confirmation arrives.",
   "errorReason": "Reason: {reason}",
   "pause": "Pause",
   "resume": "Resume",
@@ -304,8 +302,7 @@ const enMessages = <String, String>{
       "The task changed. Its current state has been refreshed.",
   "courierStatus": "Li Xiaodi, {status}",
   "historyTitle": "History & issues",
-  "historySubtitle":
-      "Completed, paused, and failed tasks are retained. Deletion only affects the default list.",
+  "historySubtitle": "Completed, paused, and failed tasks are retained. Deletion only affects the default list.",
   "stateFilter": "Status",
   "kindFilter": "Type",
   "recordFilter": "Record",
@@ -350,8 +347,7 @@ const enMessages = <String, String>{
   "errUnknown":
       "The task did not complete. Check the other device and file state.",
   "settingsTitle": "Devices & storage",
-  "settingsSubtitle":
-      "Review this device, registered devices, and storage. Changing retention requires an explicit action.",
+  "settingsSubtitle": "Review this device, registered devices, and storage. Changing retention requires an explicit action.",
   "thisDevice": "This device",
   "currentDeviceRegistered": "Current device · Registered",
   "currentDeviceRevoked": "This device has been revoked",
@@ -363,8 +359,7 @@ const enMessages = <String, String>{
   "quotaLabel": "Storage usage",
   "quotaWarning":
       "Storage is nearly full. Remove files you no longer need first.",
-  "storageNote":
-      "Temporary copies expire automatically. Choose persistent storage for each file separately.",
+  "storageNote": "Temporary copies expire automatically. Choose persistent storage for each file separately.",
   "fileStorage": "File retention",
   "noOwnedFiles": "Files you own can be moved to persistent storage here.",
   "chooseFileLabel": "Choose file",
@@ -391,11 +386,16 @@ const enMessages = <String, String>{
   "revokeFailed": "Could not revoke the device. Try again later.",
   "permissionDenied": "This device cannot change the retention policy.",
   "fileConflict": "The file changed. Its current state has been refreshed.",
-  "fileIncompleteOrQuota":
-      "The file is not fully sealed or storage is full. Retention was not changed.",
+  "fileIncompleteOrQuota": "The file is not fully sealed or storage is full. Retention was not changed.",
   "storageFailed": "Could not change retention. Try again later.",
   "connectionFailed": "Connection failed. Try again later.",
   "timeUnknown": "Unknown time",
   "receivedFile": "Received file",
   "sentFile": "Uploaded file",
+  "transferDetails": "Transfer details",
+  "close": "Close",
+  "cloudNode": "Cloud",
+  "cloudStored": "Stored in cloud",
+  "transferState": "Status",
+  "awaitingConfirmation": "Awaiting confirmation",
 };

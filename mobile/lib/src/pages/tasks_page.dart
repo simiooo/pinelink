@@ -1,10 +1,14 @@
+import '../motion/surface.dart';
+import '../motion/transfer_graph.dart';
+import '../motion/motion.dart';
+
 import 'package:flutter/material.dart';
 
 import '../api/pinelink_api.dart';
 import '../i18n/controller.dart';
 import '../theme/tokens.dart';
-import '../widgets/courier.dart';
-import '../widgets/file_icon.dart';
+import '../widgets/file_icon.dart'
+    show displayFileName, formatBytes, formatTime;
 
 class TaskData {
   const TaskData(this.tasks, this.transfers, this.pullNames);
@@ -79,9 +83,12 @@ class TasksPage extends StatefulWidget {
 
 class _TasksPageState extends State<TasksPage> {
   late Future<TaskData> _data = _load();
-  String? _selected;
-  String? _notice;
-  bool _responding = false;
+  String? _selected, _notice;
+  bool _responding = false, _confirmCancel = false;
+  int _epoch = 0;
+  StateSetter? _detailsRefresh;
+  ModalRoute<dynamic>? _detailsRoute;
+  Object? _detailsToken;
   @override
   void initState() {
     super.initState();
@@ -94,78 +101,116 @@ class _TasksPageState extends State<TasksPage> {
     if (oldWidget.api != widget.api) {
       oldWidget.api.removeListener(_synced);
       widget.api.addListener(_synced);
+      _epoch++;
       _responding = false;
       _notice = null;
       _confirmCancel = false;
+      _selected = null;
+      _closeDetails();
       _data = _load();
     }
   }
 
+  void _update(VoidCallback update) {
+    if (!mounted) return;
+    setState(() {
+      update();
+    });
+    _detailsRefresh?.call(() {});
+  }
+
   void _synced() {
-    if (mounted && !_responding) {
-      setState(() {
-        _data = _load();
+    if (mounted && !_responding) _update(() => _data = _load());
+  }
+
+  Future<TaskData> _load() => loadTaskData(widget.api);
+  void _closeDetails() {
+    final route = _detailsRoute;
+    _detailsRoute = null;
+    _detailsRefresh = null;
+    _detailsToken = null;
+    if (route != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final navigator = route.navigator;
+        if (navigator != null && navigator.mounted && route.isActive) {
+          navigator.removeRoute(route);
+        }
       });
     }
   }
 
   @override
   void dispose() {
+    _epoch++;
     widget.api.removeListener(_synced);
+    _closeDetails();
     super.dispose();
   }
 
-  bool _confirmCancel = false;
-
-  Future<TaskData> _load() => loadTaskData(widget.api);
-
-  void _refresh() => setState(() {
-    _data = _load();
-  });
+  String _name(TransferTask task, TaskData data, Locale locale) =>
+      displayFileName(
+        data.transfers[task.referenceId]?.fileName ??
+            data.pullNames[task.referenceId],
+        locale,
+      ) ??
+      tr(context, task.kind == 'DOWNLOAD' ? 'receivedFile' : 'sentFile');
+  String _status(TransferTask task) =>
+      task.kind == 'UPLOAD' && task.state == 'COMPLETED'
+      ? tr(context, 'cloudStored')
+      : task.state == 'RUNNING' && task.total > 0 && task.progress >= task.total
+      ? tr(context, 'awaitingConfirmation')
+      : taskStatus(task, i18nLocale(context));
+  bool _cloud(TransferTask task, TaskData data) {
+    final transfer = data.transfers[task.referenceId];
+    return task.kind == 'UPLOAD' ||
+        transfer == null ||
+        (transfer.deliveryMode.isNotEmpty &&
+            !transfer.deliveryMode.startsWith('P2P'));
+  }
 
   @override
   Widget build(BuildContext context) => FutureBuilder<TaskData>(
     future: _data,
     builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return Center(child: Text(tr(context, 'loadingTasks')));
+      if (snapshot.connectionState == ConnectionState.waiting &&
+          !snapshot.hasData) {
+        return Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const MotionSpinner(),
+              const SizedBox(width: 8),
+              Text(tr(context, 'loadingTasks')),
+            ],
+          ),
+        );
       }
-      if (snapshot.hasError) {
-        return Center(child: Text(tr(context, 'actionFailed')));
+      if (snapshot.hasError || !snapshot.hasData) {
+        return Center(
+          child: MotionReveal(
+            identity: 'error',
+            child: Text(tr(context, 'actionFailed')),
+          ),
+        );
       }
-      final data = snapshot.data!;
-      final task =
-          data.tasks.where((item) => item.id == _selected).firstOrNull ??
-          data.tasks
-              .where(
-                (item) => ['RUNNING', 'PAUSED', 'QUEUED'].contains(item.state),
-              )
-              .firstOrNull ??
-          data.tasks.firstOrNull;
+      final data = snapshot.data!,
+          task =
+              data.tasks.where((item) => item.id == _selected).firstOrNull ??
+              data.tasks
+                  .where(
+                    (item) =>
+                        ['RUNNING', 'PAUSED', 'QUEUED'].contains(item.state),
+                  )
+                  .firstOrNull ??
+              data.tasks.firstOrNull;
       return ListView(
-        padding: const EdgeInsets.all(22),
+        padding: const EdgeInsets.all(20),
         children: [
           Text(
             tr(context, 'tasksTitle'),
-            style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w600),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
           ),
-          const SizedBox(height: 8),
-          Text(
-            tr(context, 'tasksSubtitle'),
-            style: const TextStyle(fontSize: 12, color: PinelinkColors.muted),
-          ),
-          const SizedBox(height: 28),
-          if (_notice != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Text(
-                _notice!,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: PinelinkColors.accent,
-                ),
-              ),
-            ),
+          const SizedBox(height: 24),
           if (data.tasks.length > 1) ...[
             DropdownButtonFormField<String>(
               initialValue: task?.id,
@@ -182,7 +227,7 @@ class _TasksPageState extends State<TasksPage> {
                     ),
                   ),
               ],
-              onChanged: (value) => setState(() {
+              onChanged: (value) => _update(() {
                 _selected = value;
                 _confirmCancel = false;
                 _notice = null;
@@ -193,248 +238,195 @@ class _TasksPageState extends State<TasksPage> {
           if (task == null)
             const EmptyTasks()
           else ...[
-            Builder(
-              builder: (context) {
-                final transfer = data.transfers[task.referenceId];
-                final locale = i18nLocale(context);
-                final fileName =
-                    displayFileName(
-                      transfer?.fileName ?? data.pullNames[task.referenceId],
-                      locale,
-                    ) ??
-                    tr(
-                      context,
-                      task.kind == 'DOWNLOAD' ? 'receivedFile' : 'sentFile',
-                    );
-                final percent = task.total > 0
-                    ? (task.progress * 100 / task.total).round().clamp(0, 100)
-                    : task.state == 'COMPLETED'
-                    ? 100
-                    : null;
-                final status = taskStatus(task, locale);
-                final note = task.state == 'PAUSED'
-                    ? tr(context, 'pausedNote')
-                    : task.state == 'QUEUED'
-                    ? tr(context, 'queuedNote')
-                    : task.state == 'COMPLETED'
-                    ? tr(
-                        context,
-                        task.kind == 'DOWNLOAD'
-                            ? 'downloadCompleteNote'
-                            : 'uploadCompleteNote',
-                      )
-                    : tr(context, 'activeNote', {
-                        'direction': tr(
-                          context,
-                          task.kind == 'DOWNLOAD'
-                              ? 'directionReceive'
-                              : 'directionSend',
-                        ),
-                      });
-                return Container(
-                  padding: const EdgeInsets.all(22),
-                  decoration: BoxDecoration(
-                    color: PinelinkColors.background,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: PinelinkColors.line),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              fileName,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: PinelinkColors.soft,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              status,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: PinelinkColors.accent,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          Courier(
-                            running: task.state == 'RUNNING',
-                            action: task.state == 'PAUSED'
-                                ? CourierAction.pause
-                                : task.state == 'COMPLETED'
-                                ? (task.kind == 'UPLOAD'
-                                      ? CourierAction.store
-                                      : CourierAction.complete)
-                                : null,
-                            label: tr(context, 'courierStatus', {
-                              'status': status,
-                            }),
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  percent == null
-                                      ? tr(context, 'waitingData')
-                                      : '$percent%',
-                                  style: const TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 14),
-                                if (percent != null)
-                                  LinearProgressIndicator(
-                                    value: percent / 100,
-                                    minHeight: 8,
-                                    borderRadius: BorderRadius.circular(4),
-                                    backgroundColor: PinelinkColors.line,
-                                    color: PinelinkColors.accent,
-                                  ),
-                                const SizedBox(height: 14),
-                                Text(
-                                  '${formatBytes(task.progress, locale)} / ${task.total > 0 ? formatBytes(task.total, locale) : tr(context, 'sizePending')}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: PinelinkColors.muted,
-                                  ),
-                                ),
-                                if (transfer != null) ...[
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    '${tr(context, task.kind == 'DOWNLOAD' ? 'from' : 'to')} ${task.kind == 'DOWNLOAD' ? transfer.senderDevice : transfer.recipientDevice}',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: PinelinkColors.muted,
-                                    ),
-                                  ),
-                                ],
-                                if (task.updatedAt != null) ...[
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    tr(context, 'updatedAt', {
-                                      'time': formatTime(
-                                        task.updatedAt,
-                                        locale,
-                                      ),
-                                    }),
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: PinelinkColors.muted,
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        note,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: PinelinkColors.muted,
-                          height: 1.7,
-                        ),
-                      ),
-                      if (task.errorMessage != null &&
-                          task.errorMessage!.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Text(
-                            tr(context, 'errorReason', {
-                              'reason': task.errorMessage!,
-                            }),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF85463F),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                );
-              },
+            TransferGraph(
+              key: ValueKey(task.id),
+              value: task.total > 0
+                  ? task.progress / task.total
+                  : task.state == 'COMPLETED'
+                  ? 1
+                  : 0,
+              running: task.state == 'RUNNING' && widget.api.tasksNetworkFresh,
+              completed: task.state == 'COMPLETED',
+              cloud: _cloud(task, data),
+              incoming: task.kind == 'DOWNLOAD',
+              localLabel: tr(context, 'thisDevice'),
+              peerLabel: _cloud(task, data)
+                  ? tr(context, 'cloudNode')
+                  : data.transfers[task.referenceId]!.senderDevice,
+              statusLabel: _status(task),
+              detailsLabel: tr(context, 'transferDetails'),
+              onDetails: () => _showDetails(task, data),
             ),
-            if (['RUNNING', 'PAUSED', 'QUEUED'].contains(task.state)) ...[
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _responding
-                          ? null
-                          : () => _control(
-                              task,
-                              task.state == 'PAUSED' ? 'resume' : 'pause',
-                            ),
-                      child: Text(
-                        tr(
-                          context,
-                          task.state == 'PAUSED' ? 'resume' : 'pause',
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: _responding
-                          ? null
-                          : () {
-                              if (_confirmCancel) {
-                                _control(task, 'cancel');
-                              } else {
-                                setState(() {
-                                  _confirmCancel = true;
-                                  _notice = tr(context, 'cancelWarning');
-                                });
-                              }
-                            },
-                      child: Text(
-                        tr(
-                          context,
-                          _confirmCancel ? 'confirmCancel' : 'cancel',
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            Center(
+              child: MotionButton(
+                onPressed: () {
+                  _showDetails(task, data);
+                },
+                child: Text(_status(task)),
               ),
-            ],
+            ),
           ],
         ],
       );
     },
   );
 
+  Future<void> _showDetails(TransferTask initial, TaskData data) async {
+    if (_detailsToken != null) return;
+    final token = Object(), api = widget.api;
+    _detailsToken = token;
+    _selected = initial.id;
+    try {
+      await showMotionSurface<void>(
+        context,
+        title: _name(initial, data, i18nLocale(context)),
+        builder: (sheetContext) {
+          _detailsRoute = ModalRoute.of(sheetContext);
+          return StatefulBuilder(
+            builder: (context, refresh) {
+              _detailsRefresh = refresh;
+              if (!mounted || widget.api != api) return const SizedBox.shrink();
+              return FutureBuilder<TaskData>(
+                future: _data,
+                initialData: data,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text(tr(context, 'actionFailed'));
+                  }
+                  final current = snapshot.data ?? data,
+                      task = current.tasks
+                          .where((item) => item.id == initial.id)
+                          .firstOrNull;
+                  if (task == null) return Text(tr(context, 'statusDeleted'));
+                  final locale = i18nLocale(context),
+                      peer = current.transfers[task.referenceId]?.senderDevice;
+                  final percent = task.total > 0
+                      ? (task.progress * 100 / task.total).floor().clamp(0, 100)
+                      : task.state == 'COMPLETED'
+                      ? 100
+                      : null;
+                  final active = [
+                    'RUNNING',
+                    'PAUSED',
+                    'QUEUED',
+                  ].contains(task.state);
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        percent == null
+                            ? tr(context, 'waitingData')
+                            : '$percent%',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(_status(task)),
+                      const SizedBox(height: 16),
+                      Text(
+                        '${formatBytes(task.progress, locale)} / ${task.total > 0 ? formatBytes(task.total, locale) : tr(context, 'sizePending')}',
+                      ),
+                      if (peer != null) ...[
+                        const SizedBox(height: 16),
+                        Text(peer),
+                      ],
+                      if (task.updatedAt != null) ...[
+                        const SizedBox(height: 16),
+                        Text(formatTime(task.updatedAt!, locale)),
+                      ],
+                      if (_notice != null) ...[
+                        const SizedBox(height: 24),
+                        MotionReveal(
+                          identity: _notice,
+                          child: Text(
+                            _notice!,
+                            style: const TextStyle(
+                              color: PinelinkColors.accent,
+                            ),
+                          ),
+                        ),
+                      ],
+                      if (task.errorMessage?.isNotEmpty == true) ...[
+                        const SizedBox(height: 16),
+                        Text(task.errorMessage!),
+                      ],
+                      if (_confirmCancel) ...[
+                        const SizedBox(height: 16),
+                        Text(tr(context, 'cancelWarning')),
+                      ],
+                      if (active) ...[
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: MotionButton.primary(
+                                onPressed: _responding
+                                    ? null
+                                    : () => _control(
+                                        task,
+                                        task.state == 'PAUSED'
+                                            ? 'resume'
+                                            : 'pause',
+                                      ),
+                                child: Text(
+                                  tr(
+                                    context,
+                                    task.state == 'PAUSED' ? 'resume' : 'pause',
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: MotionButton(
+                                onPressed: _responding
+                                    ? null
+                                    : () {
+                                        if (_confirmCancel) {
+                                          return _control(task, 'cancel');
+                                        }
+                                        _update(() => _confirmCancel = true);
+                                      },
+                                child: Text(
+                                  tr(
+                                    context,
+                                    _confirmCancel ? 'confirmCancel' : 'cancel',
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  );
+                },
+              );
+            },
+          );
+        },
+      );
+    } finally {
+      if (_detailsToken == token) {
+        _detailsRefresh = null;
+        _detailsRoute = null;
+        _detailsToken = null;
+      }
+    }
+  }
+
   Future<void> _control(TransferTask task, String action) async {
-    final api = widget.api;
-    setState(() {
+    if (_responding) return;
+    final api = widget.api, epoch = _epoch;
+    _update(() {
       _responding = true;
       _notice = null;
     });
+    bool current() => mounted && widget.api == api && epoch == _epoch;
+    var refreshed = false;
     try {
       await api.controlTask(
         task.id,
@@ -443,33 +435,50 @@ class _TasksPageState extends State<TasksPage> {
         PinelinkApi.device,
         task.version,
       );
-      if (!mounted || widget.api != api) return;
-      setState(() {
+      if (!current()) return;
+      final loading = _load();
+      _update(() => _data = loading);
+      final fresh = await loading;
+      refreshed = true;
+      if (!current() || _selected != task.id) return;
+      final result = fresh.tasks
+          .where((item) => item.id == task.id)
+          .firstOrNull;
+      final expected = action == 'pause'
+          ? 'PAUSED'
+          : action == 'resume'
+          ? 'RUNNING'
+          : 'CANCELLED';
+      _update(() {
         _confirmCancel = false;
         _notice = tr(
           context,
-          action == 'pause'
-              ? 'pauseSuccess'
-              : action == 'resume'
-              ? 'resumeSuccess'
-              : 'cancelSuccess',
+          result?.state == expected
+              ? action == 'pause'
+                    ? 'pauseSuccess'
+                    : action == 'resume'
+                    ? 'resumeSuccess'
+                    : 'cancelSuccess'
+              : 'stateChangedRefresh',
         );
       });
     } on ApiException catch (error) {
-      if (!mounted || widget.api != api) return;
-      setState(
-        () => _notice = tr(
-          context,
-          error.status == 409 ? 'stateChangedRefresh' : 'actionFailed',
-        ),
-      );
+      if (current()) {
+        _update(
+          () => _notice = tr(
+            context,
+            error.status == 409 ? 'stateChangedRefresh' : 'actionFailed',
+          ),
+        );
+      }
     } catch (_) {
-      if (!mounted || widget.api != api) return;
-      setState(() => _notice = tr(context, 'connectionFailed'));
+      if (current()) _update(() => _notice = tr(context, 'connectionFailed'));
     } finally {
-      if (mounted && widget.api == api) {
-        setState(() => _responding = false);
-        _refresh();
+      if (current()) {
+        _update(() {
+          _responding = false;
+          if (!refreshed) _data = _load();
+        });
       }
     }
   }
@@ -478,25 +487,11 @@ class _TasksPageState extends State<TasksPage> {
 class EmptyTasks extends StatelessWidget {
   const EmptyTasks({super.key});
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(24),
-    decoration: BoxDecoration(
-      color: PinelinkColors.background,
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          tr(context, 'noActiveTasks'),
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          tr(context, 'noActiveTasksHint'),
-          style: const TextStyle(fontSize: 12, color: PinelinkColors.muted),
-        ),
-      ],
+  Widget build(BuildContext context) => MotionReveal(
+    identity: 'empty',
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Text(tr(context, 'noActiveTasks')),
     ),
   );
 }

@@ -1,9 +1,12 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import tailwindcss from '@tailwindcss/vite'
+import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
-  plugins: [react(), VitePWA({
+  resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+  plugins: [react(), tailwindcss(), VitePWA({
     registerType: 'prompt',
     injectRegister: false,
     strategies: 'injectManifest', srcDir: 'src', filename: 'sw.ts',

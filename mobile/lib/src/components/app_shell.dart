@@ -1,4 +1,7 @@
+import '../motion/motion.dart';
+
 import 'package:flutter/material.dart';
+
 import '../api/pinelink_api.dart';
 import '../i18n/controller.dart';
 import '../pages/new_transfer_page.dart';
@@ -32,13 +35,16 @@ class _PinelinkShellState extends State<PinelinkShell> {
       onNavigate: (page) => setState(() => _page = page),
     ),
     body: SafeArea(
-      child: switch (_page) {
-        AppPage.home => NewTransferPage(api: widget.api),
-        AppPage.notifications => NotificationsPage(api: widget.api),
-        AppPage.tasks => TasksPage(api: widget.api),
-        AppPage.history => HistoryPage(api: widget.api),
-        AppPage.settings => SettingsPage(api: widget.api),
-      },
+      child: MotionPage(
+        identity: _page,
+        child: switch (_page) {
+          AppPage.home => NewTransferPage(api: widget.api),
+          AppPage.notifications => NotificationsPage(api: widget.api),
+          AppPage.tasks => TasksPage(api: widget.api),
+          AppPage.history => HistoryPage(api: widget.api),
+          AppPage.settings => SettingsPage(api: widget.api),
+        },
+      ),
     ),
   );
 }
@@ -72,7 +78,7 @@ class PinelinkAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Text(
                 'Pinelink',
                 style: const TextStyle(
-                  fontSize: 23,
+                  fontSize: 20,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -87,6 +93,7 @@ class PinelinkAppBar extends StatelessWidget implements PreferredSizeWidget {
             const SizedBox(width: 12),
           ],
           PopupMenuButton<String>(
+            popUpAnimationStyle: PinelinkMotion.menu(context),
             onSelected: (value) {
               if (value.startsWith('locale:')) {
                 PinelinkI18n.of(context)?.setPreference(value.substring(7));
@@ -185,12 +192,14 @@ class _NavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => InkWell(
     onTap: onTap,
-    borderRadius: BorderRadius.circular(12),
+    borderRadius: BorderRadius.circular(24),
     child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+      constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: PinelinkColors.background,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: PinelinkColors.line),
       ),
       child: Text(

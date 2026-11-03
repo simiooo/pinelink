@@ -21,6 +21,10 @@
       "type": "string",
       "pattern": "^(development|[a-f0-9]{40})$"
     },
+    "webVersion": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
     "imagePullPolicy": {
       "enum": [
         "IfNotPresent",

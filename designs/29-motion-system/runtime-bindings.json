@@ -1,0 +1,1103 @@
+{
+  "schema": 1,
+  "design_version": 29,
+  "adopted_on": "2026-11-03",
+  "scope": "Shared motion and existing client bindings; independent unbuilt features are not counted as delivered.",
+  "summary": {
+    "bound-existing": 40,
+    "feature-dependent": 60,
+    "foundation-ready": 9
+  },
+  "targets": [
+    {
+      "code": "M001",
+      "id": "primary-action",
+      "recipe": "press",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M002",
+      "id": "secondary-action",
+      "recipe": "press",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M003",
+      "id": "icon-action",
+      "recipe": "press",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M004",
+      "id": "nav-link",
+      "recipe": "navigation",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M005",
+      "id": "tooltip",
+      "recipe": "tooltip",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M006",
+      "id": "menu",
+      "recipe": "menu",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M007",
+      "id": "tab",
+      "recipe": "tabs",
+      "design_mode": "animated",
+      "status": "foundation-ready",
+      "web": "web/src/components/ui; web/src/motion/components.tsx",
+      "flutter": "mobile/lib/src/motion",
+      "limitation": "Primitives, keyed measurements and feedback are available and tested; the matching feature page is not yet bound. Native context-menu placement remains platform owned."
+    },
+    {
+      "code": "M008",
+      "id": "input-focus",
+      "recipe": "field",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M009",
+      "id": "input-validation",
+      "recipe": "validation",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M010",
+      "id": "secret-toggle",
+      "recipe": "icon",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M011",
+      "id": "checkbox",
+      "recipe": "check",
+      "design_mode": "animated",
+      "status": "foundation-ready",
+      "web": "web/src/components/ui; web/src/motion/components.tsx",
+      "flutter": "mobile/lib/src/motion",
+      "limitation": "Primitives, keyed measurements and feedback are available and tested; the matching feature page is not yet bound. Native context-menu placement remains platform owned."
+    },
+    {
+      "code": "M012",
+      "id": "language-option",
+      "recipe": "check",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M013",
+      "id": "select",
+      "recipe": "native",
+      "design_mode": "native",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M014",
+      "id": "chip",
+      "recipe": "press",
+      "design_mode": "animated",
+      "status": "foundation-ready",
+      "web": "web/src/components/ui; web/src/motion/components.tsx",
+      "flutter": "mobile/lib/src/motion",
+      "limitation": "Primitives, keyed measurements and feedback are available and tested; the matching feature page is not yet bound. Native context-menu placement remains platform owned."
+    },
+    {
+      "code": "M015",
+      "id": "toast",
+      "recipe": "feedback",
+      "design_mode": "animated",
+      "status": "foundation-ready",
+      "web": "web/src/components/ui; web/src/motion/components.tsx",
+      "flutter": "mobile/lib/src/motion",
+      "limitation": "Primitives, keyed measurements and feedback are available and tested; the matching feature page is not yet bound. Native context-menu placement remains platform owned."
+    },
+    {
+      "code": "M016",
+      "id": "loading",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M017",
+      "id": "error",
+      "recipe": "validation",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M018",
+      "id": "empty-state",
+      "recipe": "surface",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/components.tsx; web/src/components/AppShell.tsx; web/src/components/SendPreparation.tsx",
+      "flutter": "mobile/lib/src/motion/motion.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Existing controls and feedback only; this does not imply every future feature instance exists. Native menus/tooltips retain platform behavior."
+    },
+    {
+      "code": "M019",
+      "id": "device-arrival",
+      "recipe": "node",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M020",
+      "id": "device-departure",
+      "recipe": "node",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M021",
+      "id": "device-hover",
+      "recipe": "node",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M022",
+      "id": "device-press",
+      "recipe": "press",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M023",
+      "id": "device-select",
+      "recipe": "selection",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M024",
+      "id": "device-unselect",
+      "recipe": "selection",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M025",
+      "id": "device-online",
+      "recipe": "badge",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M026",
+      "id": "device-waiting",
+      "recipe": "badge",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M027",
+      "id": "device-offline",
+      "recipe": "badge",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M028",
+      "id": "device-key-change",
+      "recipe": "validation",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M029",
+      "id": "cloud-node",
+      "recipe": "cloud",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M030",
+      "id": "connection-line",
+      "recipe": "graph",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M031",
+      "id": "node-actions",
+      "recipe": "orbit",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M032",
+      "id": "discovery",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M033",
+      "id": "reconnect",
+      "recipe": "queue",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M034",
+      "id": "trust-confirm",
+      "recipe": "receipt",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M035",
+      "id": "drag-near",
+      "recipe": "drag",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M036",
+      "id": "drag-over",
+      "recipe": "drag",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/dropzone.tsx; web/src/routes/index.tsx",
+      "flutter": "Native file picker; node drop feature dependent",
+      "limitation": "Web preparation target only. No node-near arbitration or upload is claimed."
+    },
+    {
+      "code": "M037",
+      "id": "drag-leave",
+      "recipe": "drag",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/dropzone.tsx; web/src/routes/index.tsx",
+      "flutter": "Native file picker; node drop feature dependent",
+      "limitation": "Web preparation target only. No node-near arbitration or upload is claimed."
+    },
+    {
+      "code": "M038",
+      "id": "drag-switch",
+      "recipe": "drag",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M039",
+      "id": "drop-accept",
+      "recipe": "drop",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/dropzone.tsx; web/src/routes/index.tsx",
+      "flutter": "Native file picker; node drop feature dependent",
+      "limitation": "Web preparation target only. No node-near arbitration or upload is claimed."
+    },
+    {
+      "code": "M040",
+      "id": "drop-reject",
+      "recipe": "validation",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M041",
+      "id": "drop-empty",
+      "recipe": "validation",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M042",
+      "id": "drag-cancel",
+      "recipe": "drag",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/dropzone.tsx; web/src/routes/index.tsx",
+      "flutter": "Native file picker; node drop feature dependent",
+      "limitation": "Web preparation target only. No node-near arbitration or upload is claimed."
+    },
+    {
+      "code": "M043",
+      "id": "prepare-validating",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M044",
+      "id": "send-pending",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M045",
+      "id": "start-direct",
+      "recipe": "graph",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M046",
+      "id": "start-relay",
+      "recipe": "graph",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M047",
+      "id": "progress-ack",
+      "recipe": "progress",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M048",
+      "id": "flow-active",
+      "recipe": "flow",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M049",
+      "id": "pause-pending",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M050",
+      "id": "paused",
+      "recipe": "flow",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M051",
+      "id": "resume-pending",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M052",
+      "id": "resumed",
+      "recipe": "flow",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M053",
+      "id": "verify",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M054",
+      "id": "delivered",
+      "recipe": "receipt",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M055",
+      "id": "route-switch",
+      "recipe": "graph",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M056",
+      "id": "cloud-stored",
+      "recipe": "cloud",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M057",
+      "id": "retry",
+      "recipe": "queue",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M058",
+      "id": "declined",
+      "recipe": "feedback",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M059",
+      "id": "cancel-pending",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M060",
+      "id": "cancelled",
+      "recipe": "surface",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/graph.tsx; web/src/routes/tasks.tsx",
+      "flutter": "mobile/lib/src/motion/transfer_graph.dart; mobile/lib/src/pages/tasks_page.dart",
+      "limitation": "Driven by existing task snapshots and controls. Verification is awaiting receipt, never a timer-generated completion. Cloud stored and delivered remain separate."
+    },
+    {
+      "code": "M061",
+      "id": "desktop-panel",
+      "recipe": "surface",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/surface.tsx; web/src/components/AppShell.tsx",
+      "flutter": "mobile/lib/src/motion/surface.dart; mobile/lib/src/motion/motion.dart",
+      "limitation": "Actual task details and existing route changes; file-manager history panels remain feature dependent."
+    },
+    {
+      "code": "M062",
+      "id": "mobile-sheet",
+      "recipe": "sheet",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/surface.tsx; web/src/components/AppShell.tsx",
+      "flutter": "mobile/lib/src/motion/surface.dart; mobile/lib/src/motion/motion.dart",
+      "limitation": "Actual task details and existing route changes; file-manager history panels remain feature dependent."
+    },
+    {
+      "code": "M063",
+      "id": "fullpage",
+      "recipe": "navigation",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/surface.tsx; web/src/components/AppShell.tsx",
+      "flutter": "mobile/lib/src/motion/surface.dart; mobile/lib/src/motion/motion.dart",
+      "limitation": "Actual task details and existing route changes; file-manager history panels remain feature dependent."
+    },
+    {
+      "code": "M064",
+      "id": "backdrop",
+      "recipe": "selection",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/surface.tsx; web/src/components/AppShell.tsx",
+      "flutter": "mobile/lib/src/motion/surface.dart; mobile/lib/src/motion/motion.dart",
+      "limitation": "Actual task details and existing route changes; file-manager history panels remain feature dependent."
+    },
+    {
+      "code": "M065",
+      "id": "keyboard",
+      "recipe": "native",
+      "design_mode": "native",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M066",
+      "id": "dialog",
+      "recipe": "surface",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/surface.tsx; web/src/components/AppShell.tsx",
+      "flutter": "mobile/lib/src/motion/surface.dart; mobile/lib/src/motion/motion.dart",
+      "limitation": "Actual task details and existing route changes; file-manager history panels remain feature dependent."
+    },
+    {
+      "code": "M067",
+      "id": "context-menu",
+      "recipe": "menu",
+      "design_mode": "animated",
+      "status": "foundation-ready",
+      "web": "web/src/components/ui; web/src/motion/components.tsx",
+      "flutter": "mobile/lib/src/motion",
+      "limitation": "Primitives, keyed measurements and feedback are available and tested; the matching feature page is not yet bound. Native context-menu placement remains platform owned."
+    },
+    {
+      "code": "M068",
+      "id": "detail-expand",
+      "recipe": "surface",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/motion/surface.tsx; web/src/components/AppShell.tsx",
+      "flutter": "mobile/lib/src/motion/surface.dart; mobile/lib/src/motion/motion.dart",
+      "limitation": "Actual task details and existing route changes; file-manager history panels remain feature dependent."
+    },
+    {
+      "code": "M069",
+      "id": "grid-load",
+      "recipe": "list",
+      "design_mode": "animated",
+      "status": "foundation-ready",
+      "web": "web/src/components/ui; web/src/motion/components.tsx",
+      "flutter": "mobile/lib/src/motion",
+      "limitation": "Primitives, keyed measurements and feedback are available and tested; the matching feature page is not yet bound. Native context-menu placement remains platform owned."
+    },
+    {
+      "code": "M070",
+      "id": "filter-change",
+      "recipe": "list",
+      "design_mode": "animated",
+      "status": "foundation-ready",
+      "web": "web/src/components/ui; web/src/motion/components.tsx",
+      "flutter": "mobile/lib/src/motion",
+      "limitation": "Primitives, keyed measurements and feedback are available and tested; the matching feature page is not yet bound. Native context-menu placement remains platform owned."
+    },
+    {
+      "code": "M071",
+      "id": "item-select",
+      "recipe": "selection",
+      "design_mode": "animated",
+      "status": "foundation-ready",
+      "web": "web/src/components/ui; web/src/motion/components.tsx",
+      "flutter": "mobile/lib/src/motion",
+      "limitation": "Primitives, keyed measurements and feedback are available and tested; the matching feature page is not yet bound. Native context-menu placement remains platform owned."
+    },
+    {
+      "code": "M072",
+      "id": "item-open",
+      "recipe": "navigation",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M073",
+      "id": "availability-change",
+      "recipe": "badge",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M074",
+      "id": "item-remove",
+      "recipe": "list",
+      "design_mode": "animated",
+      "status": "foundation-ready",
+      "web": "web/src/components/ui; web/src/motion/components.tsx",
+      "flutter": "mobile/lib/src/motion",
+      "limitation": "Primitives, keyed measurements and feedback are available and tested; the matching feature page is not yet bound. Native context-menu placement remains platform owned."
+    },
+    {
+      "code": "M075",
+      "id": "cloud-restore",
+      "recipe": "cloud",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M076",
+      "id": "keep-copy",
+      "recipe": "receipt",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/routes/settings.tsx; web/src/components/AppShell.tsx",
+      "flutter": "mobile/lib/src/pages/settings_page.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Current persistence/revoke/language/quota controls, not the future peer-trust flow."
+    },
+    {
+      "code": "M077",
+      "id": "text-mode",
+      "recipe": "tabs",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M078",
+      "id": "text-compose",
+      "recipe": "static",
+      "design_mode": "static",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M079",
+      "id": "text-send",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M080",
+      "id": "text-receive",
+      "recipe": "receipt",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M081",
+      "id": "text-copy",
+      "recipe": "copy",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M082",
+      "id": "text-copy-fail",
+      "recipe": "validation",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M083",
+      "id": "login-switch",
+      "recipe": "navigation",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M084",
+      "id": "google-pending",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M085",
+      "id": "credential-focus",
+      "recipe": "field",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M086",
+      "id": "form-submit",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M087",
+      "id": "email-sent",
+      "recipe": "feedback",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M088",
+      "id": "code-verify",
+      "recipe": "receipt",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M089",
+      "id": "resend-timer",
+      "recipe": "static",
+      "design_mode": "static",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M090",
+      "id": "reset-password",
+      "recipe": "receipt",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M091",
+      "id": "account-switch",
+      "recipe": "navigation",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M092",
+      "id": "logout",
+      "recipe": "navigation",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M093",
+      "id": "invite-create",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M094",
+      "id": "invite-scan",
+      "recipe": "native",
+      "design_mode": "native",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M095",
+      "id": "invite-compare",
+      "recipe": "static",
+      "design_mode": "static",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M096",
+      "id": "invite-wait",
+      "recipe": "busy",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M097",
+      "id": "invite-expired",
+      "recipe": "feedback",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M098",
+      "id": "remember-trust",
+      "recipe": "check",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M099",
+      "id": "forget-device",
+      "recipe": "list",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/routes/settings.tsx; web/src/components/AppShell.tsx",
+      "flutter": "mobile/lib/src/pages/settings_page.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Current persistence/revoke/language/quota controls, not the future peer-trust flow."
+    },
+    {
+      "code": "M100",
+      "id": "offline-indicator",
+      "recipe": "badge",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M101",
+      "id": "offline-draft",
+      "recipe": "feedback",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M102",
+      "id": "offline-queue",
+      "recipe": "queue",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M103",
+      "id": "online-catchup",
+      "recipe": "queue",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M104",
+      "id": "conflict-reconcile",
+      "recipe": "validation",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M105",
+      "id": "service-switch",
+      "recipe": "navigation",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M106",
+      "id": "language-switch",
+      "recipe": "static",
+      "design_mode": "static",
+      "status": "bound-existing",
+      "web": "web/src/routes/settings.tsx; web/src/components/AppShell.tsx",
+      "flutter": "mobile/lib/src/pages/settings_page.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Current persistence/revoke/language/quota controls, not the future peer-trust flow."
+    },
+    {
+      "code": "M107",
+      "id": "pwa-install",
+      "recipe": "native",
+      "design_mode": "native",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M108",
+      "id": "pwa-update",
+      "recipe": "feedback",
+      "design_mode": "animated",
+      "status": "feature-dependent",
+      "web": "",
+      "flutter": "",
+      "limitation": "Requires the actual device/file/account/peer/text/offline-service feature in its owning engineering unit. The v29 prototype is design evidence only."
+    },
+    {
+      "code": "M109",
+      "id": "quota-change",
+      "recipe": "progress",
+      "design_mode": "animated",
+      "status": "bound-existing",
+      "web": "web/src/routes/settings.tsx; web/src/components/AppShell.tsx",
+      "flutter": "mobile/lib/src/pages/settings_page.dart; mobile/lib/src/components/app_shell.dart",
+      "limitation": "Current persistence/revoke/language/quota controls, not the future peer-trust flow."
+    }
+  ]
+}
