@@ -13,6 +13,14 @@ class PinelinkColors {
 ThemeData pinelinkTheme() => ThemeData(
   useMaterial3: true,
   fontFamily: 'Nunito',
+  fontFamilyFallback: const ['Microsoft YaHei', 'Noto Sans SC'],
+  popupMenuTheme: PopupMenuThemeData(
+    color: Colors.white,
+    surfaceTintColor: Colors.transparent,
+    elevation: 2,
+    shadowColor: const Color(0x10000000),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+  ),
   scaffoldBackgroundColor: PinelinkColors.background,
   colorScheme: const ColorScheme.light(
     primary: PinelinkColors.accent,
