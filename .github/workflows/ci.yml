@@ -19,6 +19,7 @@ jobs:
           tar -xzf "$RUNNER_TEMP/pinelink-helm/helm.tar.gz" -C "$RUNNER_TEMP/pinelink-helm"
           "$RUNNER_TEMP/pinelink-helm/linux-amd64/helm" lint infra/helm/pinelink
           "$RUNNER_TEMP/pinelink-helm/linux-amd64/helm" template pinelink infra/helm/pinelink --namespace pinelink-staging >/dev/null
+          python3 infra/scripts/check-preview-access.py --helm "$RUNNER_TEMP/pinelink-helm/linux-amd64/helm" --chart infra/helm/pinelink --output "$RUNNER_TEMP/pinelink-preview-access.json"
   go:
     runs-on: ubuntu-latest
     strategy:
