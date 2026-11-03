@@ -1,0 +1,72 @@
+{
+  "version": 31,
+  "issue": "SIM-946",
+  "primary": "#0866FF",
+  "font": "Nunito",
+  "frames": [
+    {
+      "key": "desktop-send",
+      "name": "Cloud upload / both devices",
+      "x": 0,
+      "y": 0,
+      "width": 1360,
+      "height": 900
+    },
+    {
+      "key": "desktop-receive",
+      "name": "Cloud delivery / sender offline",
+      "x": 1440,
+      "y": 0,
+      "width": 1360,
+      "height": 900
+    },
+    {
+      "key": "mobile-send",
+      "name": "Mobile / upload ledger",
+      "x": 0,
+      "y": 1000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-receive",
+      "name": "Mobile / download ledger",
+      "x": 1440,
+      "y": 1000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-paused",
+      "name": "Mobile / paused download",
+      "x": 0,
+      "y": 2000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "close-0",
+      "name": "Sheet close / 0ms",
+      "x": 1440,
+      "y": 2000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "close-80",
+      "name": "Sheet close / 80ms",
+      "x": 0,
+      "y": 3000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "close-160",
+      "name": "Sheet close / settled",
+      "x": 1440,
+      "y": 3000,
+      "width": 390,
+      "height": 844
+    }
+  ]
+}
