@@ -53,6 +53,11 @@ the React/Flutter cookie slots remain separate. A relay WebSocket uses a
 live cookie session; credentials never appear in the socket URL. Active I/O and
 durable transactions retain typed session and device-revocation fences.
 
+Guest HTTP permissions enumerate the supported methods and operations. WebRTC
+signalling, arbitrary uploads, task deletion and unknown future endpoints are
+not exposed through a broad URL-prefix permission. Unsupported operations are
+rejected before buffering their body; guest HTTP metadata is limited to 256 KiB.
+
 ## File lifecycle and local continuity
 
 The Web implementation uses the existing AGE/X25519 sealed manifest and DARE

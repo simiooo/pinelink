@@ -38,6 +38,7 @@ services:
     command:
       - server
       - -dir=/data
+      - -master.volumeSizeLimitMB=1024
       - -s3
       - -s3.port=9000
       - -s3.config=/etc/seaweedfs/s3-config.json

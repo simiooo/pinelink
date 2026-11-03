@@ -71,13 +71,25 @@ func (a *API) withDeviceAuth(next http.Handler) http.Handler {
 			}
 			sessionID = principal.SessionID
 		}
+		if guestSessionID != "" && !guestRouteAllowed(r) {
+			writeJSON(w, 403, map[string]string{"code": "GUEST_SCOPE_REQUIRED"})
+			return
+		}
 		registration := r.Method == http.MethodPost && r.URL.Path == "/v1/devices/register"
 		var body []byte
 		if r.Body != nil {
 			var err error
-			body, err = io.ReadAll(io.LimitReader(r.Body, 16<<20+1))
+			limit := 16 << 20
+			if guestSessionID != "" {
+				limit = 256 << 10
+			}
+			body, err = io.ReadAll(io.LimitReader(r.Body, int64(limit)+1))
 			if err != nil {
 				writeError(w, err)
+				return
+			}
+			if len(body) > limit {
+				writeError(w, service.ErrInvalid)
 				return
 			}
 			_ = r.Body.Close()
@@ -87,10 +99,6 @@ func (a *API) withDeviceAuth(next http.Handler) http.Handler {
 				writeError(w, err)
 				return
 			}
-		}
-		if guestSessionID != "" && !guestRouteAllowed(r) {
-			writeJSON(w, 403, map[string]string{"code": "GUEST_SCOPE_REQUIRED"})
-			return
 		}
 		if r.Method == http.MethodPost && r.URL.Path == "/v1/devices/revoke" && !revocationTargetsSelf(body, deviceID) {
 			writeJSON(w, http.StatusForbidden, map[string]string{"code": "DEVICE_REVOCATION_FORBIDDEN", "message": "device may revoke its own registration"})

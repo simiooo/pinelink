@@ -174,8 +174,43 @@ func (a *API) registerGuests(mux *http.ServeMux) {
 
 func guestRouteAllowed(r *http.Request) bool {
 	p := r.URL.Path
-	return strings.HasPrefix(p, "/v1/guest/") || p == "/v1/p2p" || strings.HasPrefix(p, "/v1/p2p/") ||
-		(p == "/v1/transfers" && r.Method == "GET") || strings.HasPrefix(p, "/v1/transfers/") || p == "/v1/tasks" || strings.HasPrefix(p, "/v1/tasks/")
+	switch p {
+	case "/v1/guest/challenge", "/v1/guest/enroll", "/v1/guest/invites", "/v1/guest/join", "/v1/p2p":
+		return r.Method == http.MethodPost
+	case "/v1/guest/session", "/v1/guest/connections", "/v1/transfers", "/v1/tasks":
+		return r.Method == http.MethodGet
+	}
+	parts := strings.Split(strings.Trim(p, "/"), "/")
+	if len(parts) < 3 || parts[0] != "v1" {
+		return false
+	}
+	if len(parts) == 5 && parts[1] == "guest" && parts[2] == "candidates" {
+		return r.Method == http.MethodPost && (parts[4] == "approve" || parts[4] == "decline")
+	}
+	if len(parts) == 3 && (parts[1] == "transfers" || parts[1] == "tasks") {
+		return r.Method == http.MethodGet
+	}
+	if len(parts) != 4 {
+		return false
+	}
+	switch parts[1] {
+	case "p2p":
+		switch parts[3] {
+		case "progress":
+			return r.Method == http.MethodGet || r.Method == http.MethodPost
+		case "relay", "relay-transport":
+			return r.Method == http.MethodGet
+		case "relay-ticket", "complete":
+			return r.Method == http.MethodPost
+		}
+	case "transfers":
+		return r.Method == http.MethodPost && (parts[3] == "accept" || parts[3] == "reject" || parts[3] == "cancel")
+	case "tasks":
+		return r.Method == http.MethodPost && (parts[3] == "pause" || parts[3] == "resume" || parts[3] == "cancel")
+	}
+	// Signalling and future endpoint families are not part of the bounded guest
+	// WebSocket transport; never expose them through a broad prefix permission.
+	return false
 }
 func (a *API) mintRelayTicket(w http.ResponseWriter, r *http.Request) {
 	authHeaders(w)
