@@ -1,0 +1,778 @@
+{
+  "revision": 27,
+  "status": "design_proposal_pending_product_acceptance",
+  "document": "designs/27-pinelink-account-password.fig",
+  "native_save_reopened": true,
+  "frames": [
+    {
+      "key": "desktop-sign-in",
+      "id": "0:846",
+      "page_id": "0:24",
+      "name": "Desktop / sign-in",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "key": "mobile-sign-in",
+      "id": "0:888",
+      "page_id": "0:24",
+      "name": "Mobile / sign-in",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 0
+    },
+    {
+      "key": "desktop-sign-in-error",
+      "id": "0:976",
+      "page_id": "0:24",
+      "name": "Desktop / sign-in-error",
+      "width": 1200,
+      "height": 800,
+      "x": 1740,
+      "y": 0
+    },
+    {
+      "key": "mobile-sign-in-error",
+      "id": "0:1022",
+      "page_id": "0:24",
+      "name": "Mobile / sign-in-error",
+      "width": 390,
+      "height": 844,
+      "x": 3004,
+      "y": 0
+    },
+    {
+      "key": "desktop-sign-in-busy",
+      "id": "0:1071",
+      "page_id": "0:24",
+      "name": "Desktop / sign-in-busy",
+      "width": 1200,
+      "height": 800,
+      "x": 3480,
+      "y": 0
+    },
+    {
+      "key": "mobile-sign-in-busy",
+      "id": "0:1115",
+      "page_id": "0:24",
+      "name": "Mobile / sign-in-busy",
+      "width": 390,
+      "height": 844,
+      "x": 4744,
+      "y": 0
+    },
+    {
+      "key": "desktop-sign-in-limited",
+      "id": "0:1162",
+      "page_id": "0:24",
+      "name": "Desktop / sign-in-limited",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 980
+    },
+    {
+      "key": "mobile-sign-in-limited",
+      "id": "0:1208",
+      "page_id": "0:24",
+      "name": "Mobile / sign-in-limited",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 980
+    },
+    {
+      "key": "desktop-sign-up",
+      "id": "0:1257",
+      "page_id": "0:24",
+      "name": "Desktop / sign-up",
+      "width": 1200,
+      "height": 800,
+      "x": 1740,
+      "y": 980
+    },
+    {
+      "key": "mobile-sign-up",
+      "id": "0:1297",
+      "page_id": "0:24",
+      "name": "Mobile / sign-up",
+      "width": 390,
+      "height": 844,
+      "x": 3004,
+      "y": 980
+    },
+    {
+      "key": "desktop-sign-up-weak",
+      "id": "0:1340",
+      "page_id": "0:24",
+      "name": "Desktop / sign-up-weak",
+      "width": 1200,
+      "height": 800,
+      "x": 3480,
+      "y": 980
+    },
+    {
+      "key": "mobile-sign-up-weak",
+      "id": "0:1383",
+      "page_id": "0:24",
+      "name": "Mobile / sign-up-weak",
+      "width": 390,
+      "height": 844,
+      "x": 4744,
+      "y": 980
+    },
+    {
+      "key": "desktop-sign-up-show",
+      "id": "0:1429",
+      "page_id": "0:24",
+      "name": "Desktop / sign-up-show",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 1960
+    },
+    {
+      "key": "mobile-sign-up-show",
+      "id": "0:1469",
+      "page_id": "0:24",
+      "name": "Mobile / sign-up-show",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 1960
+    },
+    {
+      "key": "desktop-sign-up-busy",
+      "id": "0:1512",
+      "page_id": "0:24",
+      "name": "Desktop / sign-up-busy",
+      "width": 1200,
+      "height": 800,
+      "x": 1740,
+      "y": 1960
+    },
+    {
+      "key": "mobile-sign-up-busy",
+      "id": "0:1554",
+      "page_id": "0:24",
+      "name": "Mobile / sign-up-busy",
+      "width": 390,
+      "height": 844,
+      "x": 3004,
+      "y": 1960
+    },
+    {
+      "key": "desktop-verify",
+      "id": "0:1599",
+      "page_id": "0:24",
+      "name": "Desktop / verify",
+      "width": 1200,
+      "height": 800,
+      "x": 3480,
+      "y": 1960
+    },
+    {
+      "key": "mobile-verify",
+      "id": "0:1622",
+      "page_id": "0:24",
+      "name": "Mobile / verify",
+      "width": 390,
+      "height": 844,
+      "x": 4744,
+      "y": 1960
+    },
+    {
+      "key": "desktop-verify-wrong",
+      "id": "0:1648",
+      "page_id": "0:24",
+      "name": "Desktop / verify-wrong",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 2940
+    },
+    {
+      "key": "mobile-verify-wrong",
+      "id": "0:1675",
+      "page_id": "0:24",
+      "name": "Mobile / verify-wrong",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 2940
+    },
+    {
+      "key": "desktop-verify-expired",
+      "id": "0:1705",
+      "page_id": "0:24",
+      "name": "Desktop / verify-expired",
+      "width": 1200,
+      "height": 800,
+      "x": 1740,
+      "y": 2940
+    },
+    {
+      "key": "mobile-verify-expired",
+      "id": "0:1720",
+      "page_id": "0:24",
+      "name": "Mobile / verify-expired",
+      "width": 390,
+      "height": 844,
+      "x": 3004,
+      "y": 2940
+    },
+    {
+      "key": "desktop-verify-limited",
+      "id": "0:1738",
+      "page_id": "0:24",
+      "name": "Desktop / verify-limited",
+      "width": 1200,
+      "height": 800,
+      "x": 3480,
+      "y": 2940
+    },
+    {
+      "key": "mobile-verify-limited",
+      "id": "0:1765",
+      "page_id": "0:24",
+      "name": "Mobile / verify-limited",
+      "width": 390,
+      "height": 844,
+      "x": 4744,
+      "y": 2940
+    },
+    {
+      "key": "desktop-verify-checking",
+      "id": "0:1795",
+      "page_id": "0:24",
+      "name": "Desktop / verify-checking",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 3920
+    },
+    {
+      "key": "mobile-verify-checking",
+      "id": "0:1814",
+      "page_id": "0:24",
+      "name": "Mobile / verify-checking",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 3920
+    },
+    {
+      "key": "desktop-sending",
+      "id": "0:1836",
+      "page_id": "0:24",
+      "name": "Desktop / sending",
+      "width": 1200,
+      "height": 800,
+      "x": 1740,
+      "y": 3920
+    },
+    {
+      "key": "mobile-sending",
+      "id": "0:1853",
+      "page_id": "0:24",
+      "name": "Mobile / sending",
+      "width": 390,
+      "height": 844,
+      "x": 3004,
+      "y": 3920
+    },
+    {
+      "key": "desktop-send-failed",
+      "id": "0:1873",
+      "page_id": "0:24",
+      "name": "Desktop / send-failed",
+      "width": 1200,
+      "height": 800,
+      "x": 3480,
+      "y": 3920
+    },
+    {
+      "key": "mobile-send-failed",
+      "id": "0:1888",
+      "page_id": "0:24",
+      "name": "Mobile / send-failed",
+      "width": 390,
+      "height": 844,
+      "x": 4744,
+      "y": 3920
+    },
+    {
+      "key": "desktop-google-wait",
+      "id": "0:112",
+      "page_id": "0:25",
+      "name": "Desktop / google-wait",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "key": "mobile-google-wait",
+      "id": "0:127",
+      "page_id": "0:25",
+      "name": "Mobile / google-wait",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 0
+    },
+    {
+      "key": "desktop-google-cancelled",
+      "id": "0:145",
+      "page_id": "0:25",
+      "name": "Desktop / google-cancelled",
+      "width": 1200,
+      "height": 800,
+      "x": 1740,
+      "y": 0
+    },
+    {
+      "key": "mobile-google-cancelled",
+      "id": "0:161",
+      "page_id": "0:25",
+      "name": "Mobile / google-cancelled",
+      "width": 390,
+      "height": 844,
+      "x": 3004,
+      "y": 0
+    },
+    {
+      "key": "desktop-google-failed",
+      "id": "0:180",
+      "page_id": "0:25",
+      "name": "Desktop / google-failed",
+      "width": 1200,
+      "height": 800,
+      "x": 3480,
+      "y": 0
+    },
+    {
+      "key": "mobile-google-failed",
+      "id": "0:197",
+      "page_id": "0:25",
+      "name": "Mobile / google-failed",
+      "width": 390,
+      "height": 844,
+      "x": 4744,
+      "y": 0
+    },
+    {
+      "key": "desktop-forgot",
+      "id": "0:217",
+      "page_id": "0:25",
+      "name": "Desktop / forgot",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 980
+    },
+    {
+      "key": "mobile-forgot",
+      "id": "0:235",
+      "page_id": "0:25",
+      "name": "Mobile / forgot",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 980
+    },
+    {
+      "key": "desktop-reset-code",
+      "id": "0:256",
+      "page_id": "0:25",
+      "name": "Desktop / reset-code",
+      "width": 1200,
+      "height": 800,
+      "x": 1740,
+      "y": 980
+    },
+    {
+      "key": "mobile-reset-code",
+      "id": "0:279",
+      "page_id": "0:25",
+      "name": "Mobile / reset-code",
+      "width": 390,
+      "height": 844,
+      "x": 3004,
+      "y": 980
+    },
+    {
+      "key": "desktop-reset-password",
+      "id": "0:305",
+      "page_id": "0:25",
+      "name": "Desktop / reset-password",
+      "width": 1200,
+      "height": 800,
+      "x": 3480,
+      "y": 980
+    },
+    {
+      "key": "mobile-reset-password",
+      "id": "0:325",
+      "page_id": "0:25",
+      "name": "Mobile / reset-password",
+      "width": 390,
+      "height": 844,
+      "x": 4744,
+      "y": 980
+    },
+    {
+      "key": "desktop-reset-complete",
+      "id": "0:348",
+      "page_id": "0:25",
+      "name": "Desktop / reset-complete",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 1960
+    },
+    {
+      "key": "mobile-reset-complete",
+      "id": "0:391",
+      "page_id": "0:25",
+      "name": "Mobile / reset-complete",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 1960
+    },
+    {
+      "key": "desktop-link-confirm",
+      "id": "0:437",
+      "page_id": "0:25",
+      "name": "Desktop / link-confirm",
+      "width": 1200,
+      "height": 800,
+      "x": 1740,
+      "y": 1960
+    },
+    {
+      "key": "mobile-link-confirm",
+      "id": "0:452",
+      "page_id": "0:25",
+      "name": "Mobile / link-confirm",
+      "width": 390,
+      "height": 844,
+      "x": 3004,
+      "y": 1960
+    },
+    {
+      "key": "desktop-link-other-device",
+      "id": "0:470",
+      "page_id": "0:25",
+      "name": "Desktop / link-other-device",
+      "width": 1200,
+      "height": 800,
+      "x": 3480,
+      "y": 1960
+    },
+    {
+      "key": "mobile-link-other-device",
+      "id": "0:492",
+      "page_id": "0:25",
+      "name": "Mobile / link-other-device",
+      "width": 390,
+      "height": 844,
+      "x": 4744,
+      "y": 1960
+    },
+    {
+      "key": "desktop-link-expired",
+      "id": "0:517",
+      "page_id": "0:25",
+      "name": "Desktop / link-expired",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 2940
+    },
+    {
+      "key": "mobile-link-expired",
+      "id": "0:530",
+      "page_id": "0:25",
+      "name": "Mobile / link-expired",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 2940
+    },
+    {
+      "key": "desktop-link-used",
+      "id": "0:546",
+      "page_id": "0:25",
+      "name": "Desktop / link-used",
+      "width": 1200,
+      "height": 800,
+      "x": 1740,
+      "y": 2940
+    },
+    {
+      "key": "mobile-link-used",
+      "id": "0:558",
+      "page_id": "0:25",
+      "name": "Mobile / link-used",
+      "width": 390,
+      "height": 844,
+      "x": 3004,
+      "y": 2940
+    },
+    {
+      "key": "desktop-already-account",
+      "id": "0:573",
+      "page_id": "0:25",
+      "name": "Desktop / already-account",
+      "width": 1200,
+      "height": 800,
+      "x": 3480,
+      "y": 2940
+    },
+    {
+      "key": "mobile-already-account",
+      "id": "0:588",
+      "page_id": "0:25",
+      "name": "Mobile / already-account",
+      "width": 390,
+      "height": 844,
+      "x": 4744,
+      "y": 2940
+    },
+    {
+      "key": "desktop-google-link-password",
+      "id": "0:606",
+      "page_id": "0:25",
+      "name": "Desktop / google-link-password",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 3920
+    },
+    {
+      "key": "mobile-google-link-password",
+      "id": "0:628",
+      "page_id": "0:25",
+      "name": "Mobile / google-link-password",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 3920
+    },
+    {
+      "key": "desktop-account",
+      "id": "0:653",
+      "page_id": "0:25",
+      "name": "Desktop / account",
+      "width": 1200,
+      "height": 800,
+      "x": 1740,
+      "y": 3920
+    },
+    {
+      "key": "mobile-account",
+      "id": "0:675",
+      "page_id": "0:25",
+      "name": "Mobile / account",
+      "width": 390,
+      "height": 844,
+      "x": 3004,
+      "y": 3920
+    },
+    {
+      "key": "desktop-add-password",
+      "id": "0:700",
+      "page_id": "0:25",
+      "name": "Desktop / add-password",
+      "width": 1200,
+      "height": 800,
+      "x": 3480,
+      "y": 3920
+    },
+    {
+      "key": "mobile-add-password",
+      "id": "0:721",
+      "page_id": "0:25",
+      "name": "Mobile / add-password",
+      "width": 390,
+      "height": 844,
+      "x": 4744,
+      "y": 3920
+    },
+    {
+      "key": "desktop-sign-out",
+      "id": "0:745",
+      "page_id": "0:25",
+      "name": "Desktop / sign-out",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 4900
+    },
+    {
+      "key": "mobile-sign-out",
+      "id": "0:760",
+      "page_id": "0:25",
+      "name": "Mobile / sign-out",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 4900
+    },
+    {
+      "key": "desktop-offline",
+      "id": "0:778",
+      "page_id": "0:25",
+      "name": "Desktop / offline",
+      "width": 1200,
+      "height": 800,
+      "x": 1740,
+      "y": 4900
+    },
+    {
+      "key": "mobile-offline",
+      "id": "0:792",
+      "page_id": "0:25",
+      "name": "Mobile / offline",
+      "width": 390,
+      "height": 844,
+      "x": 3004,
+      "y": 4900
+    },
+    {
+      "key": "desktop-session-expired",
+      "id": "0:809",
+      "page_id": "0:25",
+      "name": "Desktop / session-expired",
+      "width": 1200,
+      "height": 800,
+      "x": 3480,
+      "y": 4900
+    },
+    {
+      "key": "mobile-session-expired",
+      "id": "0:826",
+      "page_id": "0:25",
+      "name": "Mobile / session-expired",
+      "width": 390,
+      "height": 844,
+      "x": 4744,
+      "y": 4900
+    },
+    {
+      "key": "mobile-sign-in-320",
+      "id": "0:1906",
+      "page_id": "0:24",
+      "name": "Mobile / sign-in / 320px",
+      "width": 320,
+      "height": 768,
+      "x": 0,
+      "y": 4900
+    },
+    {
+      "key": "mobile-sign-up-320",
+      "id": "0:933",
+      "page_id": "0:24",
+      "name": "Mobile / sign-up / 320px",
+      "width": 320,
+      "height": 768,
+      "x": 420,
+      "y": 4900
+    },
+    {
+      "key": "mobile-verify-keyboard",
+      "id": "0:1951",
+      "page_id": "0:24",
+      "name": "Mobile / verify / keyboard",
+      "width": 390,
+      "height": 844,
+      "x": 840,
+      "y": 4900
+    },
+    {
+      "key": "email-signup",
+      "id": "0:2138",
+      "page_id": "0:26",
+      "name": "Email / signup",
+      "width": 480,
+      "height": 640,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "key": "email-reset",
+      "id": "0:2149",
+      "page_id": "0:26",
+      "name": "Email / reset",
+      "width": 480,
+      "height": 640,
+      "x": 560,
+      "y": 0
+    },
+    {
+      "key": "flow-contract",
+      "id": "0:2160",
+      "page_id": "0:26",
+      "name": "Contract / independent Google and password flows",
+      "width": 780,
+      "height": 920,
+      "x": 1120,
+      "y": 0
+    },
+    {
+      "key": "motion-contract",
+      "id": "0:2174",
+      "page_id": "0:26",
+      "name": "Contract / interaction and motion",
+      "width": 780,
+      "height": 600,
+      "x": 1120,
+      "y": 1040
+    },
+    {
+      "key": "desktop-graph-entry",
+      "id": "0:1998",
+      "page_id": "0:24",
+      "name": "Desktop / Account entry on device graph",
+      "width": 1200,
+      "height": 800,
+      "x": 1740,
+      "y": 4900
+    },
+    {
+      "key": "mobile-graph-entry",
+      "id": "0:2066",
+      "page_id": "0:24",
+      "name": "Mobile / Account entry on device graph",
+      "width": 390,
+      "height": 844,
+      "x": 3004,
+      "y": 4900
+    }
+  ],
+  "previews": [
+    "desktop-sign-in.png",
+    "mobile-sign-in.png",
+    "mobile-sign-in-320.png",
+    "mobile-sign-up.png",
+    "mobile-sign-up-320.png",
+    "mobile-verify-keyboard.png",
+    "mobile-sign-in-error.png",
+    "mobile-sign-up-weak.png",
+    "mobile-forgot.png",
+    "mobile-reset-password.png",
+    "mobile-link-other-device.png",
+    "mobile-google-wait.png",
+    "mobile-account.png",
+    "mobile-graph-entry.png",
+    "email-signup.png",
+    "email-reset.png",
+    "flow-contract.png",
+    "motion-contract.png"
+  ]
+}

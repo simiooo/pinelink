@@ -1,5 +1,7 @@
 # Account entry and activation contract
 
+Superseded, not adopted. The user requires Google AND password login, with no extra email entry in the standard Google flow. Use the [v27 contract](../27-account-password/account-contract.md); the passwordless-only proposal below is historical.
+
 Status: design proposal, pending product acceptance and implementation. This document does not assert that account authentication or email delivery is deployed.
 
 ## Product flow
