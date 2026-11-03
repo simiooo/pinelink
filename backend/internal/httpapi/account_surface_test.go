@@ -22,3 +22,21 @@ func TestBrowserSurfacesAndNativeTokenRemainIndependent(t *testing.T) {
 		t.Fatal("native credential was replaced by a cookie")
 	}
 }
+
+func TestGuestAndAccountCookiesNeverSelectEachOther(t *testing.T) {
+	r := httptest.NewRequest("GET", "https://pinelink.example/v1/transfers", nil)
+	r.AddCookie(&http.Cookie{Name: sessionCookie, Value: "account"})
+	r.AddCookie(&http.Cookie{Name: "__Host-pinelink_guest", Value: "guest"})
+	r.AddCookie(&http.Cookie{Name: "__Host-pinelink_flutter_guest", Value: "flutter-guest"})
+	if accountToken(r) != "account" || guestToken(r) != "guest" {
+		t.Fatal("guest replaced the account credential")
+	}
+	r.Header.Set("X-Pinelink-Surface", "app")
+	if guestToken(r) != "flutter-guest" || accountToken(r) != "" {
+		t.Fatal("surface cookie isolation failed")
+	}
+	r.Header.Set("X-Pinelink-Guest-Session", "native-guest")
+	if guestToken(r) != "native-guest" || accountToken(r) != "" {
+		t.Fatal("native guest token entered the account slot")
+	}
+}

@@ -266,14 +266,17 @@ type accountInput struct {
 }
 
 func (a *API) authRate(r *http.Request, kind string, limit int, window time.Duration) error {
+	return a.service.Accounts().Rate(r.Context(), "ip/"+kind+"/"+a.trustedClientIP(r), limit, window)
+}
+func (a *API) trustedClientIP(r *http.Request) string {
 	ip, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
 		ip = r.RemoteAddr
 	}
-	if peer, e := netip.ParseAddr(ip); e == nil {
+	if peer, e := netip.ParseAddr(ip); e == nil && a.service.Accounts() != nil {
 		ip = a.service.Accounts().ClientIP(peer, r.Header.Get("X-Pinelink-Client-IP"))
 	}
-	return a.service.Accounts().Rate(r.Context(), "ip/"+kind+"/"+ip, limit, window)
+	return ip
 }
 func (a *API) accountCSRF(r *http.Request, token string) bool {
 	s := a.service.Accounts()

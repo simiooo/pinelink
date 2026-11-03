@@ -9,14 +9,15 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/simiooo/pinelink/backend/internal/auth"
 )
 
 func (s *Service) RegisterDevice(ctx context.Context, req DeviceRequest) (Device, error) {
 	if !validIdentity(req.OwnerID) || !validIdentity(req.DeviceID) {
 		return Device{}, fmt.Errorf("%w: owner and device are required", ErrInvalid)
 	}
-	if strings.HasPrefix(req.OwnerID, "acct-") || (s.accounts != nil && s.accounts.Required()) {
-		tx, err := s.beginAccountTx(ctx)
+	if strings.HasPrefix(req.OwnerID, "acct-") || strings.HasPrefix(req.OwnerID, "guest-") || (s.accounts != nil && s.accounts.Required()) {
+		tx, err := s.beginAccountTx(ctx, "UPDATE")
 		if err != nil {
 			return Device{}, err
 		}
@@ -88,6 +89,22 @@ func (s *Service) GetRecipientPublicKey(ctx context.Context, ownerID, deviceID s
 	if !validIdentity(ownerID) || !validIdentity(deviceID) {
 		return RecipientPublicKey{}, ErrInvalid
 	}
+	i, ok := auth.FromContext(ctx)
+	if strings.HasPrefix(ownerID, "guest-") || strings.HasPrefix(i.OwnerID, "guest-") {
+		if !ok || !i.HasSession() {
+			return RecipientPublicKey{}, ErrUnauthorized
+		}
+		if i.OwnerID != ownerID || i.DeviceID != deviceID {
+			var allowed bool
+			e := s.db.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM guest_pair_grants WHERE revoked_at IS NULL AND expires_at>clock_timestamp() AND(((owner_a,device_a,owner_b,device_b)=($1,$2,$3,$4)) OR((owner_b,device_b,owner_a,device_a)=($1,$2,$3,$4))))`, i.OwnerID, i.DeviceID, ownerID, deviceID).Scan(&allowed)
+			if e != nil {
+				return RecipientPublicKey{}, e
+			}
+			if !allowed {
+				return RecipientPublicKey{}, ErrNotFound
+			}
+		}
+	}
 	result := RecipientPublicKey{OwnerID: ownerID, DeviceID: deviceID}
 	err := s.db.QueryRow(ctx, `SELECT public_key FROM devices WHERE owner_id=$1 AND device_id=$2 AND status='ACTIVE' AND public_key IS NOT NULL AND public_key<>''`, ownerID, deviceID).Scan(&result.PublicKey)
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -97,7 +114,7 @@ func (s *Service) GetRecipientPublicKey(ctx context.Context, ownerID, deviceID s
 }
 
 func (s *Service) RevokeDevice(ctx context.Context, req DeviceRequest) (Device, error) {
-	tx, err := s.beginAccountTx(ctx)
+	tx, err := s.beginAccountTx(ctx, "UPDATE")
 	if err != nil {
 		return Device{}, err
 	}

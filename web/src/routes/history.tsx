@@ -10,6 +10,8 @@ import { formatBytes, formatTime } from '../format'
 import { useI18n } from '../i18n'
 import type { Translate } from '../i18n'
 import { taskStatus } from '../i18n/status'
+import { useVisitorMode } from '../guest/useMode'
+import { GuestHome } from '../guest/Home'
 
 export function taskError(task: TaskRecord, t: Translate) {
   const messages: Record<string, Parameters<Translate>[0]> = {
@@ -26,6 +28,9 @@ export function taskError(task: TaskRecord, t: Translate) {
 }
 
 export function HistoryPage() {
+  return useVisitorMode() ? <GuestHome /> : <AccountHistoryPage />
+}
+function AccountHistoryPage() {
   const client = useQueryClient()
   const { t, locale } = useI18n()
   const records = useTaskRecords(true)

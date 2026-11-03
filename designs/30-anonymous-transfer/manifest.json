@@ -262,7 +262,7 @@
           "y": 536,
           "w": 350,
           "h": 48,
-          "to": "mobile-incoming"
+          "to": "mobile-pair-waiting"
         },
         {
           "label": "Close",
@@ -276,7 +276,7 @@
     },
     {
       "key": "mobile-incoming",
-      "name": "对方确认 · 连接及本次接收",
+      "name": "文件请求 · 独立确认接收",
       "width": 390,
       "height": 844,
       "x": 2528,
@@ -309,12 +309,98 @@
       ]
     },
     {
+      "key": "mobile-pair-request",
+      "name": "设备请求 · 仅确认连接",
+      "width": 390,
+      "height": 844,
+      "x": 3792,
+      "y": 944,
+      "hotspots": [
+        {
+          "label": "Connect",
+          "x": 20,
+          "y": 708,
+          "w": 350,
+          "h": 48,
+          "to": "mobile-start"
+        },
+        {
+          "label": "Decline",
+          "x": 20,
+          "y": 772,
+          "w": 350,
+          "h": 48,
+          "to": "mobile-start"
+        },
+        {
+          "label": "Close",
+          "x": 330,
+          "y": 396,
+          "w": 48,
+          "h": 48,
+          "to": "mobile-start"
+        }
+      ]
+    },
+    {
+      "key": "mobile-pair-waiting",
+      "name": "等待对方确认连接",
+      "width": 390,
+      "height": 844,
+      "x": 0,
+      "y": 1888,
+      "hotspots": [
+        {
+          "label": "Done",
+          "x": 20,
+          "y": 708,
+          "w": 350,
+          "h": 48,
+          "to": "mobile-start"
+        },
+        {
+          "label": "Close",
+          "x": 330,
+          "y": 460,
+          "w": 48,
+          "h": 48,
+          "to": "mobile-start"
+        }
+      ]
+    },
+    {
+      "key": "mobile-storage-unavailable",
+      "name": "本地保存不可用 · 不承诺持久回执",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 1888,
+      "hotspots": [
+        {
+          "label": "Try again",
+          "x": 20,
+          "y": 668,
+          "w": 350,
+          "h": 48,
+          "to": "mobile-start"
+        },
+        {
+          "label": "Close",
+          "x": 330,
+          "y": 460,
+          "w": 48,
+          "h": 48,
+          "to": "mobile-start"
+        }
+      ]
+    },
+    {
       "key": "desktop-active",
       "name": "匿名 · 实际接收进度",
       "width": 1200,
       "height": 800,
-      "x": 3792,
-      "y": 944,
+      "x": 2528,
+      "y": 1888,
       "hotspots": [
         {
           "label": "Transfer details",
@@ -331,7 +417,7 @@
       "name": "匿名 · 实际接收进度",
       "width": 390,
       "height": 844,
-      "x": 0,
+      "x": 3792,
       "y": 1888,
       "hotspots": [
         {
@@ -349,8 +435,8 @@
       "name": "暂停 · 蓝灰边界保持",
       "width": 390,
       "height": 844,
-      "x": 1264,
-      "y": 1888,
+      "x": 0,
+      "y": 2832,
       "hotspots": [
         {
           "label": "Resume",
@@ -375,8 +461,8 @@
       "name": "首个文件已收到 · 不强制注册",
       "width": 390,
       "height": 844,
-      "x": 2528,
-      "y": 1888,
+      "x": 1264,
+      "y": 2832,
       "hotspots": [
         {
           "label": "Send another",
@@ -417,8 +503,8 @@
       "name": "需要账号的能力 · 可退出",
       "width": 390,
       "height": 844,
-      "x": 3792,
-      "y": 1888,
+      "x": 2528,
+      "y": 2832,
       "hotspots": [
         {
           "label": "Sign in",
@@ -451,7 +537,7 @@
       "name": "连接码到期 · 保留文件",
       "width": 390,
       "height": 844,
-      "x": 0,
+      "x": 3792,
       "y": 2832,
       "hotspots": [
         {
@@ -477,8 +563,8 @@
       "name": "浏览器不能保存 · 仍可临时使用",
       "width": 390,
       "height": 844,
-      "x": 1264,
-      "y": 2832,
+      "x": 0,
+      "y": 3776,
       "hotspots": [
         {
           "label": "Continue",
@@ -495,6 +581,58 @@
           "w": 48,
           "h": 48,
           "to": "mobile-start"
+        }
+      ]
+    },
+    {
+      "key": "mobile-local-files",
+      "name": "登录后 · 本机访客文件",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 3776,
+      "hotspots": [
+        {
+          "label": "Design source.fig",
+          "x": 20,
+          "y": 424,
+          "w": 104,
+          "h": 88,
+          "to": "mobile-complete"
+        },
+        {
+          "label": "Saved on this device",
+          "x": 40,
+          "y": 456,
+          "w": 48,
+          "h": 48,
+          "tip": "Saved on this device"
+        },
+        {
+          "label": "Close",
+          "x": 330,
+          "y": 332,
+          "w": 48,
+          "h": 48,
+          "to": "mobile-start"
+        }
+      ]
+    },
+    {
+      "key": "mobile-account-menu",
+      "name": "账号菜单 · 保留本机文件入口",
+      "width": 390,
+      "height": 844,
+      "x": 2528,
+      "y": 3776,
+      "hotspots": [
+        {
+          "label": "On this device",
+          "x": 174,
+          "y": 172,
+          "w": 188,
+          "h": 48,
+          "to": "mobile-local-files"
         }
       ]
     }

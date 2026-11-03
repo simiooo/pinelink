@@ -1,6 +1,9 @@
 import { MotionButton } from '../motion/components'
 import { MotionDropzone } from '../motion/dropzone'
-import { useRef, useState } from 'react'
+import { useRef, useState, useSyncExternalStore } from 'react'
+import { authRevision, authState, subscribeAuth } from '../auth/client'
+import { guestWorkPending } from '../guest/continuity'
+import { GuestHome } from '../guest/Home'
 import { useQuery } from '@tanstack/react-query'
 import { getTasks, IDENTITY } from '../api/client'
 import { formatBytes } from '../format'
@@ -8,6 +11,11 @@ import { SendPreparation } from '../components/SendPreparation'
 import { useI18n } from '../i18n'
 
 export function NewTransferPage() {
+  useSyncExternalStore(subscribeAuth, authRevision)
+  const account = authState()
+  return account.capabilities.guests && (!account.session || guestWorkPending()) ? <GuestHome /> : <AccountTransferPage />
+}
+function AccountTransferPage() {
   const inputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File | null>(null)
   const [preparing, setPreparing] = useState(false)

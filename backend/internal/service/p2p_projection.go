@@ -37,6 +37,7 @@ type P2PProgressSnapshot struct {
 	State            string           `json:"state"`
 	StateVersion     int64            `json:"state_version"`
 	ProgressRevision int64            `json:"progress_revision"`
+	ControlRevision  int64            `json:"control_revision"`
 	Direction        string           `json:"direction"`
 	DisplayMetricID  string           `json:"display_metric_id"`
 	ExpiresAt        time.Time        `json:"expires_at"`
@@ -84,6 +85,7 @@ func (s *Service) GetP2PProgress(ctx context.Context, id, ownerID, deviceID stri
 		return P2PProgressSnapshot{}, err
 	}
 	snap := P2PProgressSnapshot{TransferID: tr.ID, AttemptID: tr.ID, State: tr.State, StateVersion: tr.Version, RevocationEpoch: tr.RevocationEpoch,
+		ControlRevision:  task.Version,
 		ProgressRevision: tr.ProgressRevision, Direction: "SEND", DisplayMetricID: "delivery:" + tr.ID + ":" + tr.RecipientDeviceID,
 		ExpiresAt: tr.ExpiresAt, Route: RouteObservation{Kind: tr.ActiveRoute, Epoch: tr.RouteEpoch}}
 	if ownerID == tr.RecipientOwnerID && deviceID == tr.RecipientDeviceID {

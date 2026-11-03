@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -12,6 +13,8 @@ import (
 )
 
 type P2PCreateRequest struct {
+	GuestPairID             string `json:"guest_pair_id,omitempty"`
+	ClientRequestID         string `json:"client_request_id,omitempty"`
 	SenderOwnerID           string `json:"sender_owner_id"`
 	SenderDeviceID          string `json:"sender_device_id"`
 	RecipientOwnerID        string `json:"recipient_owner_id"`
@@ -55,6 +58,9 @@ type P2PProgressRequest struct {
 }
 
 func (s *Service) CreateP2P(ctx context.Context, req P2PCreateRequest) (Transfer, error) {
+	if i, ok := auth.FromContext(ctx); ok && i.HasSession() && (i.OwnerID != req.SenderOwnerID || i.DeviceID != req.SenderDeviceID) {
+		return Transfer{}, ErrUnauthorized
+	}
 	if !validIdentity(req.SenderOwnerID) || !validIdentity(req.SenderDeviceID) ||
 		!validIdentity(req.RecipientOwnerID) || !validIdentity(req.RecipientDeviceID) ||
 		!validIdentity(req.FileName) || req.SizeBytes < 0 || !validSHA256(req.ContentRoot) || len(req.EncryptedManifest) == 0 || len(req.SenderEncryptedManifest) == 0 {
@@ -65,16 +71,37 @@ func (s *Service) CreateP2P(ctx context.Context, req P2PCreateRequest) (Transfer
 		return Transfer{}, err
 	}
 	defer tx.Rollback(ctx)
+	if req.ClientRequestID != "" {
+		if _, err = uuid.Parse(req.ClientRequestID); err != nil {
+			return Transfer{}, ErrInvalid
+		}
+		if _, err = tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtextextended($1,917))`, req.SenderOwnerID+"/"+req.SenderDeviceID+"/"+req.ClientRequestID); err != nil {
+			return Transfer{}, err
+		}
+		old, e := scanTransfer(tx.QueryRow(ctx, `SELECT `+transferColumns+` FROM transfer_requests WHERE sender_owner_id=$1 AND sender_device_id=$2 AND client_request_id=$3`, req.SenderOwnerID, req.SenderDeviceID, req.ClientRequestID))
+		if e == nil {
+			if old.RecipientOwnerID != req.RecipientOwnerID || old.RecipientDeviceID != req.RecipientDeviceID || old.ContentRoot == nil || *old.ContentRoot != req.ContentRoot || old.SizeBytes == nil || *old.SizeBytes != req.SizeBytes || !bytes.Equal(old.EncryptedManifest, req.EncryptedManifest) || !bytes.Equal(old.SenderEncryptedManifest, req.SenderEncryptedManifest) {
+				return Transfer{}, ErrConflict
+			}
+			return presentTransfer(old, req.SenderOwnerID, req.SenderDeviceID), tx.Commit(ctx)
+		}
+		if e != pgx.ErrNoRows {
+			return Transfer{}, e
+		}
+	}
+	if err = s.authorizeGuestTransfer(ctx, tx, req); err != nil {
+		return Transfer{}, err
+	}
 	transfer := Transfer{ID: uuid.NewString(), DeliveryMode: "ONLINE", SenderOwnerID: req.SenderOwnerID,
 		SenderDeviceID: req.SenderDeviceID, RecipientOwnerID: req.RecipientOwnerID, RecipientDeviceID: req.RecipientDeviceID,
 		State: "PENDING", Version: 1, FileName: &req.FileName, SizeBytes: &req.SizeBytes, ContentRoot: &req.ContentRoot,
 		EncryptionSuite: &req.EncryptionSuite, EncryptedManifest: req.EncryptedManifest, SenderEncryptedManifest: req.SenderEncryptedManifest, ExpiresAt: s.now().Add(10 * time.Minute)}
 	if _, err := tx.Exec(ctx, `
 		INSERT INTO transfer_requests (id, delivery_mode, sender_owner_id, sender_device_id,
-			recipient_owner_id, recipient_device_id, expires_at, file_name, size_bytes, content_root, encryption_suite, encrypted_manifest, sender_encrypted_manifest)
-		VALUES ($1,'ONLINE',$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+			recipient_owner_id, recipient_device_id, expires_at, file_name, size_bytes, content_root, encryption_suite, encrypted_manifest, sender_encrypted_manifest,guest_pair_id,client_request_id)
+		VALUES ($1,'ONLINE',$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NULLIF($13,'')::uuid,NULLIF($14,'')::uuid)
 	`, transfer.ID, req.SenderOwnerID, req.SenderDeviceID, req.RecipientOwnerID, req.RecipientDeviceID,
-		transfer.ExpiresAt, req.FileName, req.SizeBytes, req.ContentRoot, req.EncryptionSuite, req.EncryptedManifest, req.SenderEncryptedManifest); err != nil {
+		transfer.ExpiresAt, req.FileName, req.SizeBytes, req.ContentRoot, req.EncryptionSuite, req.EncryptedManifest, req.SenderEncryptedManifest, req.GuestPairID, req.ClientRequestID); err != nil {
 		return Transfer{}, err
 	}
 	if err := addEvent(ctx, tx, "TRANSFER_REQUESTED", transfer.ID, 1, transfer); err != nil {
@@ -129,7 +156,7 @@ func (s *Service) AddSignal(ctx context.Context, transferID string, req P2PSigna
 	}
 	var signal P2PSignal
 	identity, _ := auth.FromContext(ctx)
-	err = tx.QueryRow(ctx, `INSERT INTO peer_signals(transfer_id,sender_role,channel,payload,reply_to,auth_session_id) VALUES($1,$2,$3,$4,$5,NULLIF($6,'')::uuid) RETURNING sequence,created_at`, transferID, role, req.Channel, req.Payload, req.ReplyTo, identity.SessionID).Scan(&signal.Sequence, &signal.CreatedAt)
+	err = tx.QueryRow(ctx, `INSERT INTO peer_signals(transfer_id,sender_role,channel,payload,reply_to,auth_session_id,guest_session_id) VALUES($1,$2,$3,$4,$5,NULLIF($6,'')::uuid,NULLIF($7,'')::uuid) RETURNING sequence,created_at`, transferID, role, req.Channel, req.Payload, req.ReplyTo, identity.SessionID, identity.GuestSessionID).Scan(&signal.Sequence, &signal.CreatedAt)
 	if err != nil {
 		return P2PSignal{}, err
 	}

@@ -7,11 +7,13 @@ import { MotionButton, MotionReveal, MotionSpinner, MotionTooltip } from '../mot
 import { authFetch, authReturnError, authRevision, authState, confirmLink, continueOffline, currentPending, googleLogin, inspectLink, login, resetPassword, signOut, startEmail, subscribeAuth, updateChallenge, verifyCode } from '../auth/client'
 import type { Pending } from '../auth/client'
 import { authErrorText, useAuthCopy } from '../auth/copy'
+import { useGuestCopy } from '../guest/copy'
 import '../styles/auth.css'
 
 const errorCode = (error: unknown) => error instanceof Error ? error.message : 'AUTH_UNAVAILABLE'
 export function AuthPage() {
-  const path = useRouterState({ select: state => state.location.pathname }), navigate = useNavigate(), c = useAuthCopy()
+  const path = useRouterState({ select: state => state.location.pathname }), navigate = useNavigate(), base = useAuthCopy(), guestCopy = useGuestCopy()
+  const c = { ...base, offline: authState().capabilities.guests ? guestCopy.continueGuest : base.offline }
   useSyncExternalStore(subscribeAuth, authRevision)
   const [email, setEmail] = useState(''), [password, setPassword] = useState(''), [code, setCode] = useState(''), [visible, setVisible] = useState(false)
   const [busy, setBusy] = useState(false), [error, setError] = useState<string>(), [pending, setPending] = useState<Pending>(), [ready, setReady] = useState(false), [done, setDone] = useState('')

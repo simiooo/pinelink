@@ -10,7 +10,7 @@ const check=(name,ok,detail)=>{checks.push({name,passed:!!ok,detail});if(!ok)thr
 const diagnostics=()=>page.evaluate(()=>window.PinelinkGuestPreview.diagnostics())
 try{
  await page.goto(file.href);await page.waitForFunction(()=>window.PinelinkGuestPreview);await page.evaluate(()=>document.fonts.ready)
- check('14 native-corresponding scenes',manifest.frames.length===14)
+ check('19 native-corresponding scenes',manifest.frames.length===19)
  check('bundled Nunito loaded',await page.evaluate(()=>[...document.fonts].some(f=>f.family==='Nunito'&&f.status==='loaded')))
  for(const f of manifest.frames){
   await page.evaluate(k=>window.PinelinkGuestPreview.show(k),f.key)
@@ -20,7 +20,10 @@ try{
  await page.evaluate(()=>window.PinelinkGuestPreview.show('mobile-start'))
  await page.getByRole('button',{name:'Connect a device',exact:true}).click();check('guest entry leads to pairing',(await diagnostics()).scene==='mobile-connect')
  await page.getByRole('button',{name:'Enter code',exact:true}).click();check('manual pairing available',(await diagnostics()).scene==='mobile-enter')
- await page.getByRole('button',{name:'Connect',exact:true}).click();check('explicit incoming confirmation',(await diagnostics()).scene==='mobile-incoming')
+ await page.getByRole('button',{name:'Connect',exact:true}).click();check('joining waits for peer confirmation',(await diagnostics()).scene==='mobile-pair-waiting')
+ await page.evaluate(()=>window.PinelinkGuestPreview.show('mobile-pair-request'))
+ await page.getByRole('button',{name:'Connect',exact:true}).click();check('pair confirmation does not start file transfer',(await diagnostics()).scene==='mobile-start')
+ await page.getByRole('button',{name:'模拟收到请求',exact:true}).click();check('explicit file confirmation',(await diagnostics()).scene==='mobile-incoming')
  await page.getByRole('button',{name:'Receive',exact:true}).click();check('receive starts the transfer state',(await diagnostics()).scene==='mobile-active')
  const d=await page.locator('[id="Real-receiver-ledger"] path[stroke="#0866ff"]').getAttribute('d')
  await page.getByRole('button',{name:'Transfer details',exact:true}).click()
@@ -39,7 +42,7 @@ try{
   check('viewport '+width+'/'+key,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth))
   await page.screenshot({path:new URL(key+'-'+width+'.png',out).pathname,fullPage:true})
  }
- check('design preview identified',await page.getByText('交互设计预览，尚未启用匿名服务',{exact:true}).count()===1)
+ check('design preview identified',await page.getByText('交互设计预览，不会发送真实文件',{exact:true}).count()===1)
  check('no backend or external requests',external.length===0,external);check('no browser errors',errors.length===0,errors)
  await writeFile(new URL('prototype-verification.json',out),JSON.stringify({passed:true,checked_at:new Date().toISOString(),artifact_sha256:createHash('sha256').update(await readFile(file)).digest('hex'),environment:'Fedora / isolated no-network Chromium',checks,errors,external},null,2)+'\n')
  console.log(JSON.stringify({passed:true,checks:checks.length}))

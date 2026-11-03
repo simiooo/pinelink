@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -19,6 +20,9 @@ const transferColumns = `id, entry_id, delivery_mode, sender_owner_id, sender_de
 	progress_revision, progress_sampled_at, active_route, route_epoch, revocation_epoch`
 
 func (s *Service) CreateTransfer(ctx context.Context, req TransferCreateRequest) (Transfer, error) {
+	if strings.HasPrefix(req.SenderOwnerID, "guest-") || strings.HasPrefix(req.RecipientOwnerID, "guest-") {
+		return Transfer{}, ErrUnauthorized
+	}
 	if req.DeliveryMode == "" {
 		req.DeliveryMode = "ASYNC"
 	}

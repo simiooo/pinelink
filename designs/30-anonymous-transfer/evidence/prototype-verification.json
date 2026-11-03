@@ -1,11 +1,11 @@
 {
   "passed": true,
-  "checked_at": "2026-11-03T10:58:15.599Z",
-  "artifact_sha256": "3810936006d8d040ede1e890cd4d8ed0e5e6064fceac221af93eb16a99ac1350",
+  "checked_at": "2026-11-03T12:37:32.643Z",
+  "artifact_sha256": "07aaad8818193b7fcddb3ba11596a5d5f95be5c0d52f1332bc51929d4a9c671a",
   "environment": "Fedora / isolated no-network Chromium",
   "checks": [
     {
-      "name": "14 native-corresponding scenes",
+      "name": "19 native-corresponding scenes",
       "passed": true
     },
     {
@@ -309,7 +309,7 @@
         "y": 536,
         "w": 350,
         "h": 48,
-        "to": "mobile-incoming"
+        "to": "mobile-pair-waiting"
       }
     },
     {
@@ -359,6 +359,102 @@
         "label": "Close",
         "x": 330,
         "y": 332,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "scene mobile-pair-request",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-pair-request/Connect",
+      "passed": true,
+      "detail": {
+        "label": "Connect",
+        "x": 20,
+        "y": 708,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "48px target mobile-pair-request/Decline",
+      "passed": true,
+      "detail": {
+        "label": "Decline",
+        "x": 20,
+        "y": 772,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "48px target mobile-pair-request/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 396,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "scene mobile-pair-waiting",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-pair-waiting/Done",
+      "passed": true,
+      "detail": {
+        "label": "Done",
+        "x": 20,
+        "y": 708,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "48px target mobile-pair-waiting/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 460,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "scene mobile-storage-unavailable",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-storage-unavailable/Try again",
+      "passed": true,
+      "detail": {
+        "label": "Try again",
+        "x": 20,
+        "y": 668,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "48px target mobile-storage-unavailable/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 460,
         "w": 48,
         "h": 48,
         "to": "mobile-start"
@@ -573,6 +669,62 @@
       }
     },
     {
+      "name": "scene mobile-local-files",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-local-files/Design source.fig",
+      "passed": true,
+      "detail": {
+        "label": "Design source.fig",
+        "x": 20,
+        "y": 424,
+        "w": 104,
+        "h": 88,
+        "to": "mobile-complete"
+      }
+    },
+    {
+      "name": "48px target mobile-local-files/Saved on this device",
+      "passed": true,
+      "detail": {
+        "label": "Saved on this device",
+        "x": 40,
+        "y": 456,
+        "w": 48,
+        "h": 48,
+        "tip": "Saved on this device"
+      }
+    },
+    {
+      "name": "48px target mobile-local-files/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 332,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "scene mobile-account-menu",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-account-menu/On this device",
+      "passed": true,
+      "detail": {
+        "label": "On this device",
+        "x": 174,
+        "y": 172,
+        "w": 188,
+        "h": 48,
+        "to": "mobile-local-files"
+      }
+    },
+    {
       "name": "guest entry leads to pairing",
       "passed": true
     },
@@ -581,7 +733,15 @@
       "passed": true
     },
     {
-      "name": "explicit incoming confirmation",
+      "name": "joining waits for peer confirmation",
+      "passed": true
+    },
+    {
+      "name": "pair confirmation does not start file transfer",
+      "passed": true
+    },
+    {
+      "name": "explicit file confirmation",
       "passed": true
     },
     {

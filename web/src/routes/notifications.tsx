@@ -6,8 +6,13 @@ import { ApiError, getPendingNotifications, IDENTITY, respondTransfer } from '..
 import { FileIcon } from '../components/FileIcon'
 import { displayFileName, fileMetadataLabel } from '../format'
 import { useI18n } from '../i18n'
+import { useVisitorMode } from '../guest/useMode'
+import { GuestHome } from '../guest/Home'
 
 export function NotificationsPage() {
+  return useVisitorMode() ? <GuestHome /> : <AccountNotificationsPage />
+}
+function AccountNotificationsPage() {
   const client = useQueryClient()
   const { t, locale } = useI18n()
   const [selected, setSelected] = useState<string>()

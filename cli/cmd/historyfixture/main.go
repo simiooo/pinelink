@@ -1,19 +1,24 @@
 // historyfixture generates ephemeral interoperability vectors for client tests.
-// It accepts public keys only and never exports or persists a private key.
+// It accepts public keys and optional test ciphertext, and never exports or persists a private key.
 package main
 
 import (
+	"bytes"
 	"crypto/ed25519"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"slices"
 	"time"
 
 	"filippo.io/age"
 	"github.com/google/uuid"
+	"github.com/minio/sio"
 	"github.com/simiooo/pinelink/cli/internal/lan"
 	"github.com/simiooo/pinelink/cli/internal/secure"
 	rp "github.com/simiooo/pinelink/protocol/replication"
@@ -21,7 +26,8 @@ import (
 
 func main() {
 	var input rp.Peer
-	check(json.NewDecoder(os.Stdin).Decode(&input))
+	decoder := json.NewDecoder(os.Stdin)
+	check(decoder.Decode(&input))
 	check(input.Validate())
 	sourcePublic, source, err := ed25519.GenerateKey(rand.Reader)
 	check(err)
@@ -73,7 +79,68 @@ func main() {
 	validCompletion := completion(receipt)
 	receipt.Signature = base64.StdEncoding.EncodeToString(make([]byte, 64))
 	invalidCompletion := completion(receipt)
-	check(json.NewEncoder(os.Stdout).Encode(map[string]any{"pin": serverKey, "peer": rp.Peer{Root: sourceRoot, SigningKey: sourceKey, EncryptionKey: ageKey.Recipient().String()}, "page": page, "older_snapshot": staleSnapshot, "unsafe_page": unsafePage, "completion_page": validCompletion, "bad_receipt_page": invalidCompletion}))
+	key := make([]byte, 32)
+	_, err = rand.Read(key)
+	check(err)
+	filePlain := []byte("Pinelink browser / Go interoperability\n")
+	var fileCipher bytes.Buffer
+	_, err = sio.Encrypt(&fileCipher, bytes.NewReader(filePlain), sio.Config{Key: key, MinVersion: sio.Version20, MaxVersion: sio.Version20, CipherSuites: []byte{sio.AES_GCM}})
+	check(err)
+	envelope, err := secure.SealManifest(secure.Manifest{Suite: secure.Suite, DataKey: key, PlaintextRoot: rp.Hash(filePlain), PlaintextSize: int64(len(filePlain)), FileName: "browser-go.txt"}, []string{input.EncryptionKey})
+	check(err)
+	check(json.NewEncoder(os.Stdout).Encode(map[string]any{"pin": serverKey, "peer": rp.Peer{Root: sourceRoot, SigningKey: sourceKey, EncryptionKey: ageKey.Recipient().String()}, "page": page, "older_snapshot": staleSnapshot, "unsafe_page": unsafePage, "completion_page": validCompletion, "bad_receipt_page": invalidCompletion, "file_vectors": fileVectors(), "file_cipher": fileCipher.Bytes(), "file_manifest": envelope}))
+	// An optional second message tests the other direction without exporting the
+	// ephemeral Go age private key. Existing one-shot history callers send EOF.
+	var incoming struct {
+		Manifest []byte `json:"manifest"`
+		Cipher   []byte `json:"cipher"`
+	}
+	if err = decoder.Decode(&incoming); err == io.EOF {
+		return
+	}
+	check(err)
+	reader, err := age.Decrypt(bytes.NewReader(incoming.Manifest), ageKey)
+	check(err)
+	plainManifest, err := io.ReadAll(io.LimitReader(reader, 65537))
+	check(err)
+	var manifest secure.Manifest
+	check(json.Unmarshal(plainManifest, &manifest))
+	if manifest.Suite != secure.Suite {
+		panic("invalid fixture suite")
+	}
+	var plain bytes.Buffer
+	_, err = sio.Decrypt(&plain, bytes.NewReader(incoming.Cipher), sio.Config{Key: manifest.DataKey, MinVersion: sio.Version20, MaxVersion: sio.Version20})
+	check(err)
+	if int64(plain.Len()) != manifest.PlaintextSize || rp.Hash(plain.Bytes()) != manifest.PlaintextRoot {
+		panic("invalid fixture receipt")
+	}
+	check(json.NewEncoder(os.Stdout).Encode(map[string]any{"verified": true, "root": rp.Hash(plain.Bytes()), "size": plain.Len()}))
+}
+
+func fileVectors() []map[string]any {
+	key := make([]byte, 32)
+	var nonce [12]byte
+	for i := range key {
+		key[i] = byte(i)
+	}
+	for i := range nonce {
+		nonce[i] = byte(i)
+	}
+	var result []map[string]any
+	for _, size := range []int{0, 1, 32, 65535, 65536, 65537, 131072} {
+		for _, cipher := range []byte{sio.AES_GCM, sio.CHACHA20_POLY1305} {
+			plain := make([]byte, size)
+			for i := range plain {
+				plain[i] = byte(i*29 + 7)
+			}
+			var out bytes.Buffer
+			_, err := sio.Encrypt(&out, bytes.NewReader(plain), sio.Config{Key: key, Nonce: &nonce, MinVersion: sio.Version20, MaxVersion: sio.Version20, CipherSuites: []byte{cipher}})
+			check(err)
+			hash := sha256.Sum256(out.Bytes())
+			result = append(result, map[string]any{"size": size, "cipher": cipher, "root": hex.EncodeToString(hash[:])})
+		}
+	}
+	return result
 }
 func check(err error) {
 	if err != nil {

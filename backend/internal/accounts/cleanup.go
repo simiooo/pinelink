@@ -3,6 +3,10 @@ package accounts
 import "context"
 
 func (s *Service) cleanAuth(ctx context.Context) {
+	_, _ = s.db.Exec(ctx, `DELETE FROM guest_challenges WHERE expires_at<now()-interval '2 minutes'`)
+	_, _ = s.db.Exec(ctx, `DELETE FROM relay_browser_tickets WHERE expires_at<now()`)
+	_, _ = s.db.Exec(ctx, `DELETE FROM guest_resource_budgets WHERE expires_at<now()`)
+	_, _ = s.db.Exec(ctx, `DELETE FROM guest_invites v WHERE v.expires_at<now()-interval '1 day' AND NOT EXISTS(SELECT 1 FROM guest_pair_grants p WHERE p.invite_id=v.id)`)
 	_, _ = s.db.Exec(ctx, `DELETE FROM account_rate_limits WHERE expires_at<now()`)
 	// Outbox rows belong to a generation; cleaning an older row cannot change
 	// delivery state for a later resend. Keep provider ids for delivery diagnosis.

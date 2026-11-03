@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"syscall"
@@ -95,11 +96,15 @@ func run() error {
 	}
 	defer pool.Close()
 	mail := &mailTransport{}
-	svc := service.New(pool, nil)
+	blobs := &fixtureBlobs{data: map[string][]byte{}}
+	svc := service.New(pool, blobs)
+	if err = svc.ConfigureRelayTransport("websocket"); err != nil {
+		return err
+	}
 	if err = svc.SetReplicationKey(ed25519.NewKeyFromSeed(make([]byte, 32))); err != nil {
 		return err
 	}
-	if err = svc.ConfigureAccounts(accounts.Config{Required: true, Origin: "http://localhost:5184", EncryptionKey: base64.StdEncoding.EncodeToString(make([]byte, 32)), ResendKey: "fixture-only", MailFrom: "Pinelink <no-reply@example.com>", MailClient: &http.Client{Transport: mail}, GoogleClientID: "fixture-client", GoogleClientSecret: "fixture-secret", GoogleRedirectURI: "http://localhost:5184"}); err != nil {
+	if err = svc.ConfigureAccounts(accounts.Config{Required: true, GuestsEnabled: true, Origin: "http://localhost:5184", EncryptionKey: base64.StdEncoding.EncodeToString(make([]byte, 32)), ResendKey: "fixture-only", MailFrom: "Pinelink <no-reply@example.com>", MailClient: &http.Client{Transport: mail}, GoogleClientID: "fixture-client", GoogleClientSecret: "fixture-secret", GoogleRedirectURI: "http://localhost:5184"}); err != nil {
 		return err
 	}
 	api := httpapi.NewServer("127.0.0.1:8084", svc, log.NewStdLogger(io.Discard), true, []string{"http://localhost:5184"})
@@ -109,6 +114,39 @@ func run() error {
 		mail.mu.Lock()
 		defer mail.mu.Unlock()
 		_ = json.NewEncoder(w).Encode(mail.mail)
+	})
+	probeMux.HandleFunc("GET /state", func(w http.ResponseWriter, r *http.Request) {
+		v := map[string]int64{}
+		for _, table := range []string{"accounts", "guest_identities", "guest_sessions", "guest_pair_grants", "transfer_requests", "delivery_receipts"} {
+			var n int64
+			if e := pool.QueryRow(r.Context(), `SELECT count(*) FROM `+table).Scan(&n); e != nil {
+				http.Error(w, "fixture query failed", 500)
+				return
+			}
+			v[table] = n
+		}
+		_ = json.NewEncoder(w).Encode(v)
+	})
+	probeMux.HandleFunc("POST /delay", func(w http.ResponseWriter, r *http.Request) {
+		n, _ := strconv.ParseInt(r.URL.Query().Get("ms"), 10, 64)
+		if n < 0 || n > 250 {
+			http.Error(w, "invalid test delay", 400)
+			return
+		}
+		blobs.delay.Store(n)
+		w.WriteHeader(204)
+	})
+	probeMux.HandleFunc("POST /expire-invite", func(w http.ResponseWriter, r *http.Request) {
+		if _, e := uuid.Parse(r.URL.Query().Get("id")); e != nil {
+			http.Error(w, "invalid test id", 400)
+			return
+		}
+		_, e := pool.Exec(r.Context(), `UPDATE guest_invites SET expires_at=clock_timestamp()-interval '1 second' WHERE id=$1`, r.URL.Query().Get("id"))
+		if e != nil {
+			http.Error(w, "fixture query failed", 500)
+			return
+		}
+		w.WriteHeader(204)
 	})
 	probe := &http.Server{Addr: "127.0.0.1:8085", Handler: probeMux, ReadHeaderTimeout: 3 * time.Second}
 	go probe.ListenAndServe()
