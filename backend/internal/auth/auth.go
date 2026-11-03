@@ -3,8 +3,9 @@ package auth
 import "context"
 
 type Identity struct {
-	OwnerID  string
-	DeviceID string
+	OwnerID   string
+	DeviceID  string
+	SessionID string
 }
 
 type contextKey struct{}

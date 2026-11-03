@@ -7,6 +7,7 @@ import { NotificationsPage } from './routes/notifications'
 import { TasksPage } from './routes/tasks'
 import { HistoryPage } from './routes/history'
 import { SettingsPage } from './routes/settings'
+import { AuthPage } from './routes/auth'
 import { I18nProvider } from './i18n'
 import type { LocalePreference } from './i18n'
 import { clientRuntime } from './data'
@@ -22,7 +23,8 @@ const notificationsRoute = createRoute({ getParentRoute: () => rootRoute, path: 
 const tasksRoute = createRoute({ getParentRoute: () => rootRoute, path: '/tasks', component: TasksPage })
 const settingsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/settings', component: SettingsPage })
 const historyRoute = createRoute({ getParentRoute: () => rootRoute, path: '/history', component: HistoryPage })
-const routeTree = rootRoute.addChildren([indexRoute, notificationsRoute, tasksRoute, settingsRoute, historyRoute])
+const authRoutes = ['/login', '/register', '/forgot', '/verify', '/verify-link', '/reset', '/account', '/auth/return', '/auth/complete', '/auth/device', '/terms', '/privacy'].map(path => createRoute({ getParentRoute: () => rootRoute, path, component: AuthPage }))
+const routeTree = rootRoute.addChildren([indexRoute, notificationsRoute, tasksRoute, settingsRoute, historyRoute, ...authRoutes])
 
 // Browser history installs global listeners at construction. Create it at the
 // entry point, outside React render/state initializers that StrictMode replays.

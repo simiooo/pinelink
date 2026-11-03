@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/simiooo/pinelink/backend/internal/auth"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -145,6 +146,9 @@ func (s *Service) DeleteFile(ctx context.Context, entryID string, req FileAction
 }
 
 func (s *Service) GetQuota(ctx context.Context, scopeID string) (Quota, error) {
+	if identity, ok := auth.FromContext(ctx); ok && identity.SessionID != "" && scopeID != identity.OwnerID {
+		return Quota{}, ErrUnauthorized
+	}
 	var quota Quota
 	err := s.db.QueryRow(ctx, `SELECT scope_id, quota_bytes, used_bytes, version, updated_at FROM scope_quotas WHERE scope_id=$1`, scopeID).
 		Scan(&quota.ScopeID, &quota.QuotaBytes, &quota.UsedBytes, &quota.Version, &quota.UpdatedAt)

@@ -2,26 +2,46 @@ package httpapi
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/simiooo/pinelink/backend/internal/auth"
 	"github.com/simiooo/pinelink/backend/internal/service"
 )
 
 func (a *API) withDeviceAuth(next http.Handler) http.Handler {
-	if !a.deviceAuthRequired {
+	if !a.deviceAuthRequired && a.service.Accounts() == nil {
 		return next
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/healthz" || (r.Method == http.MethodGet && r.URL.Path == "/v1/replication/info") {
+		if !a.deviceAuthRequired && !a.service.Accounts().Required() && !strings.HasPrefix(r.Header.Get("X-Pinelink-Owner"), "acct-") {
+			next.ServeHTTP(w, r)
+			return
+		}
+		if r.URL.Path == "/healthz" || strings.HasPrefix(r.URL.Path, "/v1/auth/") || (r.Method == http.MethodGet && r.URL.Path == "/v1/replication/info") {
 			next.ServeHTTP(w, r)
 			return
 		}
 		ownerID := r.Header.Get("X-Pinelink-Owner")
 		deviceID := r.Header.Get("X-Pinelink-Device")
+		sessionID := ""
+		if accountService := a.service.Accounts(); accountService != nil && (accountService.Required() || strings.HasPrefix(ownerID, "acct-")) {
+			token := accountToken(r)
+			principal, err := accountService.Session(r.Context(), token)
+			if err != nil || principal.AccountID != ownerID || principal.DeviceID != deviceID {
+				writeJSON(w, 401, map[string]string{"code": "ACCOUNT_SIGN_IN_REQUIRED"})
+				return
+			}
+			if r.Method != "GET" && r.Method != "HEAD" && !a.accountCSRF(r, token) {
+				writeJSON(w, 403, map[string]string{"code": "AUTH_CSRF"})
+				return
+			}
+			sessionID = principal.SessionID
+		}
 		registration := r.Method == http.MethodPost && r.URL.Path == "/v1/devices/register"
 		var body []byte
 		if r.Body != nil {
@@ -55,8 +75,35 @@ func (a *API) withDeviceAuth(next http.Handler) http.Handler {
 		// The authenticated principal is authoritative even when query identity is omitted.
 		query.Set("owner_id", ownerID)
 		query.Set("device_id", deviceID)
+		if sessionID != "" {
+			query.Set("scope_id", ownerID)
+		}
 		r.URL.RawQuery = query.Encode()
-		r = r.WithContext(auth.WithIdentity(r.Context(), auth.Identity{OwnerID: ownerID, DeviceID: deviceID}))
+		r = r.WithContext(auth.WithIdentity(r.Context(), auth.Identity{OwnerID: ownerID, DeviceID: deviceID, SessionID: sessionID}))
+		if sessionID != "" {
+			ctx, cancel := context.WithCancel(r.Context())
+			defer cancel()
+			done := make(chan struct{})
+			defer close(done)
+			go func() {
+				tick := time.NewTicker(time.Second)
+				defer tick.Stop()
+				for {
+					select {
+					case <-done:
+						return
+					case <-ctx.Done():
+						return
+					case <-tick.C:
+						if a.service.Accounts().SessionAlive(ctx, sessionID) != nil {
+							cancel()
+							return
+						}
+					}
+				}
+			}()
+			r = r.WithContext(ctx)
+		}
 		if err := a.authorizeResource(r); err != nil {
 			writeError(w, err)
 			return

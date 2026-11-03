@@ -63,15 +63,15 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<SettingsData> _load() async {
     final api = widget.api;
-    final devices = await api.getDevices(PinelinkApi.owner);
-    final quota = await api.getQuota(PinelinkApi.scope);
+    final devices = await api.getDevices(api.currentOwner);
+    final quota = await api.getQuota(api.currentScope);
     final transfers = await api.getTransfers(
-      PinelinkApi.owner,
-      PinelinkApi.device,
+      widget.api.currentOwner,
+      widget.api.currentDevice,
     );
     final owned = <String, TransferRequest>{};
     for (final item in transfers) {
-      if (item.senderOwner == PinelinkApi.owner && item.entryId.isNotEmpty) {
+      if (item.senderOwner == api.currentOwner && item.entryId.isNotEmpty) {
         owned[item.entryId] = item;
       }
     }
@@ -79,7 +79,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final entry = _entry ?? owned.keys.firstOrNull;
     if (entry != null) {
       try {
-        file = await api.getFile(entry, PinelinkApi.owner);
+        file = await api.getFile(entry, api.currentOwner);
       } catch (_) {}
     }
     return SettingsData(devices, quota, owned.values.toList(), file);
@@ -151,7 +151,13 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               Text(
-                tr(context, 'account', {'owner': PinelinkApi.owner}),
+                tr(context, 'account', {
+                  'owner':
+                      widget.api.account?.account['email'] as String? ??
+                      (widget.api.account?.managed == true
+                          ? tr(context, 'auth_local')
+                          : widget.api.currentOwner),
+                }),
                 style: const TextStyle(
                   fontSize: 12,
                   color: PinelinkColors.muted,
@@ -367,8 +373,8 @@ class _SettingsPageState extends State<SettingsPage> {
     try {
       await api.promoteFile(
         file.id,
-        PinelinkApi.owner,
-        PinelinkApi.device,
+        widget.api.currentOwner,
+        widget.api.currentDevice,
         file.version,
       );
       if (!mounted || widget.api != api) return;
@@ -416,7 +422,7 @@ class _SettingsPageState extends State<SettingsPage> {
     }
     setState(() => _responding = true);
     try {
-      await api.revokeDevice(PinelinkApi.owner, device);
+      await api.revokeDevice(widget.api.currentOwner, device);
       if (!mounted || widget.api != api) return;
       setState(() {
         _notice = tr(context, 'revokedSuccess');

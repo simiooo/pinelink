@@ -36,8 +36,14 @@ class ClientRuntime with WidgetsBindingObserver {
     this.database,
     this.identity,
     this._client,
+    this.localOnly,
+    this.accountHeaders,
+    this.onUnauthorized,
   );
   final String server, owner, pin;
+  final bool localOnly;
+  final Map<String, String> accountHeaders;
+  final VoidCallback? onUnauthorized;
   final ClientDatabase database;
   final LocalIdentity identity;
   final http.Client _client;
@@ -59,13 +65,16 @@ class ClientRuntime with WidgetsBindingObserver {
     IdentityVault? vault,
     http.Client? client,
     bool autoStart = true,
+    bool localOnly = false,
+    Map<String, String> accountHeaders = const {},
+    VoidCallback? onUnauthorized,
   }) async {
     final address = Uri.base
         .resolve(server)
         .toString()
         .replaceAll(RegExp(r'/$'), '');
     final namespace =
-        'pinelink-${await digest(utf8.encode('$address\n$owner\n$device'))}';
+        '${owner.startsWith('acct-') ? 'pinelink-flutter-account' : 'pinelink'}-${await digest(utf8.encode('$address\n$owner\n$device'))}';
     final db = database ?? ClientDatabase(namespace);
     late LocalIdentity identity;
     try {
@@ -86,6 +95,9 @@ class ClientRuntime with WidgetsBindingObserver {
       db,
       identity,
       client ?? http.Client(),
+      localOnly,
+      Map.unmodifiable(accountHeaders),
+      onUnauthorized,
     );
     if (autoStart) runtime.start();
     return runtime;
@@ -147,6 +159,7 @@ class ClientRuntime with WidgetsBindingObserver {
       abortTrigger: abort,
     );
     request.headers['Content-Type'] = 'application/json';
+    request.headers.addAll(accountHeaders);
     if (signed) {
       final target = await database.target();
       final timestamp =
@@ -186,6 +199,10 @@ class ClientRuntime with WidgetsBindingObserver {
       throw DataException(response.statusCode, 'INVALID_SERVER_RESPONSE');
     }
     if (response.statusCode < 200 || response.statusCode >= 300) {
+      if (response.statusCode == 401 &&
+          value['code'] == 'ACCOUNT_SIGN_IN_REQUIRED') {
+        onUnauthorized?.call();
+      }
       throw DataException(
         response.statusCode,
         value['code']?.toString() ?? 'REQUEST_FAILED',
@@ -212,6 +229,21 @@ class ClientRuntime with WidgetsBindingObserver {
   ) async {
     _checkOpen();
     path = _canonicalPath(path);
+    if (localOnly) {
+      if (method != 'GET') throw const DataException(401, 'SIGNIN_REQUIRED');
+      final saved = await database.cached(path);
+      if (saved != null) return saved;
+      if (path.startsWith('/v1/tasks?')) return {'tasks': []};
+      if (path.startsWith('/v1/transfers?') ||
+          path.startsWith('/v1/notifications?')) {
+        return {'transfers': []};
+      }
+      if (path.startsWith('/v1/devices?')) return {'devices': []};
+      if (path.startsWith('/v1/quota?')) {
+        return {'scope_id': owner, 'quota_bytes': 0, 'used_bytes': 0};
+      }
+      throw const DataException(0, 'OFFLINE_CACHE_MISS');
+    }
     if (input != null) {
       if (path == '/v1/devices/revoke' &&
           input['device_id'] != identity.device) {
@@ -440,6 +472,7 @@ class ClientRuntime with WidgetsBindingObserver {
   }
 
   Future<void> sync({bool force = false}) {
+    if (localOnly) return Future.value();
     if (_closed) return Future.error(const DataException(0, 'CLIENT_CLOSED'));
     if (_active != null) return _active!;
     Future<Null> work() async {
@@ -478,6 +511,7 @@ class ClientRuntime with WidgetsBindingObserver {
   }
 
   void start({bool observeLifecycle = true}) {
+    if (localOnly) return;
     _checkOpen();
     if (_started) return;
     _started = true;

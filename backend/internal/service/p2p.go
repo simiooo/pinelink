@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/simiooo/pinelink/backend/internal/auth"
 )
 
 type P2PCreateRequest struct {
@@ -59,7 +60,7 @@ func (s *Service) CreateP2P(ctx context.Context, req P2PCreateRequest) (Transfer
 		!validIdentity(req.FileName) || req.SizeBytes < 0 || !validSHA256(req.ContentRoot) || len(req.EncryptedManifest) == 0 || len(req.SenderEncryptedManifest) == 0 {
 		return Transfer{}, fmt.Errorf("%w: invalid P2P metadata", ErrInvalid)
 	}
-	tx, err := s.db.Begin(ctx)
+	tx, err := s.beginAccountTx(ctx)
 	if err != nil {
 		return Transfer{}, err
 	}
@@ -127,7 +128,8 @@ func (s *Service) AddSignal(ctx context.Context, transferID string, req P2PSigna
 		return P2PSignal{}, ErrInvalid
 	}
 	var signal P2PSignal
-	err = tx.QueryRow(ctx, `INSERT INTO peer_signals(transfer_id,sender_role,channel,payload,reply_to) VALUES($1,$2,$3,$4,$5) RETURNING sequence,created_at`, transferID, role, req.Channel, req.Payload, req.ReplyTo).Scan(&signal.Sequence, &signal.CreatedAt)
+	identity, _ := auth.FromContext(ctx)
+	err = tx.QueryRow(ctx, `INSERT INTO peer_signals(transfer_id,sender_role,channel,payload,reply_to,auth_session_id) VALUES($1,$2,$3,$4,$5,NULLIF($6,'')::uuid) RETURNING sequence,created_at`, transferID, role, req.Channel, req.Payload, req.ReplyTo, identity.SessionID).Scan(&signal.Sequence, &signal.CreatedAt)
 	if err != nil {
 		return P2PSignal{}, err
 	}
@@ -167,7 +169,7 @@ func (s *Service) UpdateP2PProgress(ctx context.Context, transferID string, req 
 	if req.RouteEpoch < 0 || (req.Route != "" && req.Route != "DIRECT" && req.Route != "RELAY") || (req.Route != "" && req.RouteEpoch == 0) || (req.Route == "" && req.RouteEpoch != 0) {
 		return fmt.Errorf("%w: invalid route observation", ErrInvalid)
 	}
-	tx, err := s.db.Begin(ctx)
+	tx, err := s.beginAccountTx(ctx)
 	if err != nil {
 		return err
 	}

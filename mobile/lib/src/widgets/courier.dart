@@ -129,9 +129,8 @@ class CourierPainter extends CustomPainter {
         const Offset(185, 100),
         40 + progress * 12,
         Paint()
-          ..color = const Color(
-            0xFFB86F3C,
-          ).withAlpha(((1 - progress) * 100).round())
+          ..color = const Color(0xFFB86F3C)
+              .withAlpha(((1 - progress) * 100).round())
           ..style = PaintingStyle.stroke
           ..strokeWidth = 3,
       );

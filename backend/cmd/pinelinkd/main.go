@@ -86,6 +86,9 @@ func run(logger log.Logger) error {
 	defer connection.Close()
 
 	svc := service.New(pool, objects)
+	if err := svc.ConfigureAccounts(cfg.Accounts); err != nil {
+		return err
+	}
 	if err := svc.ConfigureRelayTransport(cfg.RelayTransport); err != nil {
 		return err
 	}
@@ -113,6 +116,7 @@ func run(logger log.Logger) error {
 	app := kratos.New(
 		kratos.Name("pinelinkd"),
 		kratos.Server(httpServer,
+			lifecycle.NewWorker(svc.RunAccountMail),
 			lifecycle.NewWorker(outbox.Start),
 			lifecycle.NewWorker(maintenance.Start),
 			lifecycle.NewWorker(relay.Start),

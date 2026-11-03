@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 
@@ -48,6 +47,7 @@ func NewServerWithTLS(addr string, svc *service.Service, logger log.Logger, devi
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", api.health)
+	api.registerAccounts(mux)
 	mux.HandleFunc("POST /v1/uploads/prepare", api.prepare)
 	mux.HandleFunc("PUT /v1/uploads/{uploadID}/chunks/{index}", api.uploadChunk)
 	mux.HandleFunc("POST /v1/uploads/{uploadID}/complete", api.completeUpload)
@@ -64,7 +64,9 @@ func NewServerWithTLS(addr string, svc *service.Service, logger log.Logger, devi
 		// default cancels a valid seal/stream once it spans several chunks.
 		khttp.Timeout(0),
 		khttp.TLSConfig(tlsConfig),
-		khttp.Middleware(recovery.Recovery(), logging.Server(logger)),
+		// Generic RPC argument logging can serialize authentication payloads.
+		// Auth paths and mail links are deliberately absent from request logs.
+		khttp.Middleware(recovery.Recovery()),
 	)
 	server.HandlePrefix("/", withCORS(api.withDeviceAuth(mux), origins))
 	return wrapServer(server, api)

@@ -3,6 +3,8 @@ import '../motion/motion.dart';
 import 'package:flutter/material.dart';
 
 import '../api/pinelink_api.dart';
+import '../auth/controller.dart';
+import '../pages/account_page.dart';
 import '../i18n/controller.dart';
 import '../pages/new_transfer_page.dart';
 import '../pages/notifications_page.dart';
@@ -85,6 +87,24 @@ class PinelinkAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           const Spacer(),
+          if (AccountScope.maybeOf(context) != null) ...[
+            IconButton(
+              tooltip: tr(context, 'auth_account'),
+              icon: const Icon(Icons.person_outline),
+              onPressed: () {
+                final account = AccountScope.maybeOf(context)!;
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => AccountScope(
+                      controller: account,
+                      child: AccountPage(controller: account),
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(width: 8),
+          ],
           if (page == AppPage.home) ...[
             _NavButton(
               label: tr(context, 'notifications'),

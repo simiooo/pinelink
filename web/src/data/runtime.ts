@@ -13,6 +13,7 @@ type ServerInfo = { version: number; epoch: string; public_key: string; unix_tim
 const cacheable = (path: string) => /^\/v1\/(tasks|transfers|notifications|devices|quota|files|pulls)(\/|\?|$)/.test(path) && !/\/(content|manifest|envelope|chunks)(\/|\?|$)/.test(path)
 const invalidatesCache = (error: unknown): error is DataError => error instanceof DataError && [401, 403, 404, 410].includes(error.status)
 
+export type RuntimeAccess = { localOnly?: boolean; csrf?: string; onUnauthorized?: () => void }
 export class ClientRuntime {
   private networkSnapshots = new Set<string>()
   isNetworkFresh(path: string) { return !this.closed && this.networkSnapshots.has(path) }
@@ -28,13 +29,13 @@ export class ClientRuntime {
   private operations = new Set<Promise<unknown>>()
   private controllers = new Set<AbortController>()
   private wake = () => { void this.sync(true).catch(() => undefined) }
-  private constructor(readonly server: string, readonly owner: string, readonly pin: string, readonly store: LocalStore, readonly profile: DeviceProfile) {}
-  static async open(server: string, owner: string, device = '', pin = '', store?: LocalStore) {
+  private constructor(readonly server: string, readonly owner: string, readonly pin: string, readonly store: LocalStore, readonly profile: DeviceProfile, readonly access: RuntimeAccess = {}) {}
+  static async open(server: string, owner: string, device = '', pin = '', store?: LocalStore, access: RuntimeAccess = {}) {
     const absolute = new URL(server, location.href).href.replace(/\/$/, '')
     const database = store ?? new LocalStore(await storeName(absolute, owner, device))
     try {
       const profile = await database.profile(device)
-      return new ClientRuntime(absolute, owner, pin, database, profile)
+      return new ClientRuntime(absolute, owner, pin, database, profile, access)
     } catch (error) { database.close(); throw error }
   }
   private assertOpen() {
@@ -66,7 +67,7 @@ export class ClientRuntime {
     const timeout = setTimeout(() => controller.abort(), 6000)
     try {
       const body = input === undefined ? '' : JSON.stringify(input)
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+      const headers: Record<string, string> = { 'Content-Type': 'application/json', ...(this.access.csrf ? { 'X-Pinelink-CSRF': this.access.csrf } : {}) }
       if (signed) {
         const target = await this.store.target()
         const timestamp = Math.floor((Date.now() + target.offset) / 1000).toString()
@@ -78,7 +79,7 @@ export class ClientRuntime {
       }
       this.assertOpen()
       controller.signal.throwIfAborted()
-      const response = await fetch(this.server + path, { method, headers, body: method === 'GET' ? undefined : body, signal: controller.signal, redirect: 'error', credentials: 'same-origin', cache: 'no-store' })
+      const response = await fetch(this.server + path, { method, headers, body: method === 'GET' ? undefined : body, signal: controller.signal, redirect: 'error', credentials: 'include', cache: 'no-store' })
       const reader = response.body?.getReader()
       let text = ''
       if (reader) {
@@ -97,7 +98,10 @@ export class ClientRuntime {
       controller.signal.throwIfAborted()
       let value: unknown
       try { value = text ? JSON.parse(text) : {} } catch { throw new DataError(response.status, 'INVALID_SERVER_RESPONSE') }
-      if (!response.ok) throw new DataError(response.status, (value as { code?: string })?.code ?? 'REQUEST_FAILED')
+      if (!response.ok) {
+        if (response.status === 401 && (value as { code?: string })?.code === 'ACCOUNT_SIGN_IN_REQUIRED') this.access.onUnauthorized?.()
+        throw new DataError(response.status, (value as { code?: string })?.code ?? 'REQUEST_FAILED')
+      }
       return value as T
     } finally { clearTimeout(timeout); this.controllers.delete(controller) }
   }
@@ -107,6 +111,17 @@ export class ClientRuntime {
   private async performRequest<T>(method: string, path: string, input?: unknown): Promise<T> {
     this.assertOpen()
     if (path === '/v1/devices/revoke' && (input as { device_id?: string })?.device_id !== this.profile.device) throw new DataError(403, 'DEVICE_REVOCATION_FORBIDDEN')
+    if (this.access.localOnly) {
+      if (method !== 'GET') throw new DataError(401, 'SIGNIN_REQUIRED')
+      const saved = await this.store.responses.get(path)
+      if (saved?.invalid) throw new DataError(saved.invalid.status, saved.invalid.code)
+      if (saved && !saved.pending) return saved.value as T
+      if (path.startsWith('/v1/tasks?')) return { tasks: [] } as T
+      if (path.startsWith('/v1/transfers?') || path.startsWith('/v1/notifications?')) return { transfers: [] } as T
+      if (path.startsWith('/v1/devices?')) return { devices: [] } as T
+      if (path.startsWith('/v1/quota?')) return { scope_id: this.owner, quota_bytes: 0, used_bytes: 0 } as T
+      throw new DataError(0, 'OFFLINE_CACHE_MISS')
+    }
     let started = 0
     try {
       if (navigator.onLine === false && method === 'GET' && cacheable(path)) {
@@ -237,6 +252,7 @@ export class ClientRuntime {
     if (retry) throw retry
   }
   sync(force = false): Promise<void> {
+    if (this.access.localOnly) return Promise.resolve()
     if (this.closed) return Promise.reject(new DataError(0, 'CLIENT_CLOSED'))
     if (this.active) {
       const active = this.active, attempt = this.attempt
@@ -274,6 +290,7 @@ export class ClientRuntime {
   }
   start() {
     this.assertOpen()
+    if (this.access.localOnly) return
     if (this.started) return
     this.started = true
     const generation = ++this.generation

@@ -17,6 +17,7 @@
 **/*.test
 **/*.log
 **/*.tsbuildinfo
+web/e2e-output/
 **/__pycache__/
 **/.DS_Store
 designs/.render/
