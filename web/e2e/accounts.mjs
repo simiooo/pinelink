@@ -28,7 +28,7 @@ const server = createServer(async (req, res) => {
 })
 await new Promise(r => server.listen(5184, '0.0.0.0', r))
 for (let i = 0; i < 100; i++) { try { if ((await fetch(base + '/healthz')).ok) break } catch {} if (i === 99) throw Error('fixture unavailable'); await new Promise(r => setTimeout(r, 200)) }
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH ?? '/usr/bin/chromium', headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
+const browser = await chromium.launch({ ...(process.env.PINELINK_BUNDLED_BROWSER ? {} : { executablePath: process.env.CHROMIUM_PATH ?? '/usr/bin/chromium' }), headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
 const failures = [], results = []
 const context = await browser.newContext({ locale: 'en-US', viewport: { width: 1280, height: 900 } }), page = await context.newPage()
 page.on('pageerror', e => failures.push(e.message))
@@ -82,11 +82,11 @@ try {
   await second.goto(origin + '/login'); await second.getByRole('heading', { name: 'Sign in', exact: true }).waitFor(); await second.getByLabel('Password', { exact: true }).waitFor(); await second.screenshot({ path: out + '/login-mobile.png' }); assert.equal(await second.evaluate(() => document.documentElement.scrollWidth > innerWidth), false)
   await second.setViewportSize({ width: 320, height: 740 }); await second.getByRole('button', { name: 'Continue with Google', exact: true }).waitFor(); assert.equal(await second.evaluate(() => document.documentElement.scrollWidth > innerWidth), false); results.push('390px and 320px mobile layout')
   await other.close(); await landing.close()
-  await page.goto(origin + '/tasks'); await page.getByRole('heading', { name: 'Current task', exact: true }).waitFor(); await until(() => page.locator('.empty-state, .state-panel').count())
+  await page.goto(origin + '/tasks'); await page.getByRole('heading', { name: 'Files', exact: true }).waitFor(); await page.getByRole('tab', { name: 'Active', exact: true }).waitFor()
   await until(() => page.evaluate(async () => !!navigator.serviceWorker.controller || !!(await navigator.serviceWorker.getRegistration())?.active))
   const cachedUrls = await page.evaluate(async () => (await Promise.all((await caches.keys()).map(async key => (await (await caches.open(key)).keys()).map(r => r.url)))).flat())
   assert.ok(!cachedUrls.some(url => /\/api\/|\/a\/|\/auth\//.test(new URL(url).pathname)))
-  await context.setOffline(true); await page.reload(); await page.getByRole('heading', { name: 'Current task', exact: true }).waitFor(); await context.setOffline(false)
+  await context.setOffline(true); await page.reload(); await page.getByRole('heading', { name: 'Files', exact: true }).waitFor(); await context.setOffline(false)
   results.push('offline local route and auth responses excluded from navigation caches')
   assert.deepEqual(failures, [])
   console.log(JSON.stringify({ passed: results.length, checks: results, pageErrors: failures.length }))

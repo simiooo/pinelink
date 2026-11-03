@@ -22,14 +22,15 @@ func (s *Service) authorizeGuestTransfer(ctx context.Context, tx pgx.Tx, req P2P
 	if _, e := uuid.Parse(req.GuestPairID); e != nil {
 		return ErrInvalid
 	}
-	var valid bool
-	e := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM guest_pair_grants p JOIN devices a ON a.owner_id=p.owner_a AND a.device_id=p.device_a JOIN devices b ON b.owner_id=p.owner_b AND b.device_id=p.device_b WHERE p.id=$1 AND p.revoked_at IS NULL AND p.expires_at>clock_timestamp() AND a.status='ACTIVE' AND b.status='ACTIVE' AND(((p.owner_a,p.device_a,p.owner_b,p.device_b)=($2,$3,$4,$5)) OR((p.owner_b,p.device_b,p.owner_a,p.device_a)=($2,$3,$4,$5))))`, req.GuestPairID, req.SenderOwnerID, req.SenderDeviceID, req.RecipientOwnerID, req.RecipientDeviceID).Scan(&valid)
+	var pair string
+	e := tx.QueryRow(ctx, `SELECT p.id::text FROM guest_pair_grants p JOIN devices a ON a.owner_id=p.owner_a AND a.device_id=p.device_a JOIN devices b ON b.owner_id=p.owner_b AND b.device_id=p.device_b WHERE p.id=$1 AND p.revoked_at IS NULL AND p.expires_at>clock_timestamp() AND a.status='ACTIVE' AND b.status='ACTIVE' AND(((p.owner_a,p.device_a,p.owner_b,p.device_b)=($2,$3,$4,$5)) OR((p.owner_b,p.device_b,p.owner_a,p.device_a)=($2,$3,$4,$5))) FOR SHARE OF p`, req.GuestPairID, req.SenderOwnerID, req.SenderDeviceID, req.RecipientOwnerID, req.RecipientDeviceID).Scan(&pair)
+	if e == pgx.ErrNoRows {
+		return ErrUnauthorized
+	}
 	if e != nil {
 		return e
 	}
-	if !valid {
-		return ErrUnauthorized
-	}
+	var valid bool
 	fileLimit := s.accounts.GuestMaxFileBytes()
 	maxCipher := fileLimit + ((fileLimit+65535)/65536)*32
 	if req.SizeBytes > maxCipher || req.EncryptionSuite != "DARE20-AGE-X25519-v1" || len(req.EncryptedManifest) > 65536 || len(req.SenderEncryptedManifest) > 65536 {

@@ -2,5 +2,5 @@ apiVersion: v2
 name: pinelink
 description: Isolated deployment with optional preview access and external runtime Secrets
 type: application
-version: 0.1.1
+version: 0.1.2
 appVersion: "development"

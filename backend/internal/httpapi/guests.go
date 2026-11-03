@@ -151,6 +151,11 @@ func (a *API) registerGuests(mux *http.ServeMux) {
 		v, e := a.service.GuestConnections(r.Context())
 		respond(w, v, e)
 	})
+	mux.HandleFunc("DELETE /v1/guest/connections/{pair}", func(w http.ResponseWriter, r *http.Request) {
+		authHeaders(w)
+		v, e := a.service.RemoveGuestConnection(r.Context(), r.PathValue("pair"))
+		respond(w, v, e)
+	})
 	mux.HandleFunc("POST /v1/guest/candidates/{candidate}/approve", func(w http.ResponseWriter, r *http.Request) {
 		authHeaders(w)
 		v, e := a.service.RespondGuestCandidate(r.Context(), r.PathValue("candidate"), true)
@@ -186,6 +191,9 @@ func guestRouteAllowed(r *http.Request) bool {
 	}
 	if len(parts) == 5 && parts[1] == "guest" && parts[2] == "candidates" {
 		return r.Method == http.MethodPost && (parts[4] == "approve" || parts[4] == "decline")
+	}
+	if len(parts) == 4 && parts[1] == "guest" && parts[2] == "connections" {
+		return r.Method == http.MethodDelete
 	}
 	if len(parts) == 3 && (parts[1] == "transfers" || parts[1] == "tasks") {
 		return r.Method == http.MethodGet

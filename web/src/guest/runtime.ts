@@ -60,10 +60,11 @@ export class GuestRuntime {
   private visibility = () => { if (!document.hidden) this.wake() }
   private async refreshLocal() {
     const jobs = (await this.store.jobs.toArray()).sort((a, b) => b.created - a.created)
+    const peers = (await this.store.guestPeers.toArray()).filter(peer => Date.parse(peer.expires_at) > this.now())
     this.lifetime.signal.throwIfAborted()
     setGuestHistoryAvailable(jobs.length > 0)
     setGuestWorkPending(jobs.filter(activeJob).length)
-    this.emit({ jobs })
+    this.emit({ jobs, connections: { ...this.snapshot.connections, peers } })
   }
   private async changed() { await this.refreshLocal(); this.channel?.postMessage('changed') }
   private async exclusive<T>(name: string, task: () => Promise<T>, signal = this.lifetime.signal): Promise<T> {
@@ -135,6 +136,29 @@ export class GuestRuntime {
   }
   async respondCandidate(candidate: string, approve: boolean) {
     return this.command('candidate:' + candidate, async () => { await this.request('POST', `/v1/guest/candidates/${encodeURIComponent(candidate)}/${approve ? 'approve' : 'decline'}`, {}); await this.poll() })
+  }
+  async renamePeer(pair: string, name: string) {
+    const value = name.trim()
+    if (!value || Array.from(value).length > 64 || /[\u0000-\u001f\u007f]/.test(value)) throw new GuestError('DEVICE_NAME_INVALID')
+    return this.exclusive('peer:' + pair, async () => {
+      await this.store.transaction('rw', this.store.guestPeers, async () => {
+        if (!await this.store.guestPeers.get(pair)) throw new GuestError('CONNECTION_GONE')
+        await this.store.guestPeers.update(pair, { local_name: value })
+      }); await this.changed()
+    })
+  }
+  async removePeer(pair: string) {
+    return this.command('remove:' + pair, () => this.exclusive('peer:' + pair, async () => {
+      if (navigator.onLine === false) throw new GuestError('CONNECTION_OFFLINE')
+      await this.ensureSession()
+      try { await this.request('DELETE', '/v1/guest/connections/' + encodeURIComponent(pair)) }
+      catch (error) { if (error instanceof GuestError && error.status === 409) { await this.poll(); throw new GuestError('CONNECTION_BUSY', 409) }; throw error }
+      await this.store.transaction('rw', this.store.guestPeers, this.store.peerRemovals, async () => {
+        const peer = await this.store.guestPeers.get(pair)
+        await this.store.peerRemovals.put({ pair, expires: Math.max(this.now() + 86400000, Date.parse(peer?.expires_at ?? '') || 0) + 86400000 })
+        await this.store.guestPeers.delete(pair)
+      }); await this.changed(); await this.poll()
+    }))
   }
   async send(file: File, peer: GuestPeer, maxBytes: number) {
     return this.command('send', async () => {
@@ -321,6 +345,14 @@ export class GuestRuntime {
     clearTimeout(this.timer)
     this.polling = (async () => {
       const [connections, transfers] = await Promise.all([this.request<GuestConnections>('GET', '/v1/guest/connections'), this.request<{ transfers: GuestTransfer[] | null }>('GET', '/v1/transfers')])
+      await this.exclusive('roster', () => this.store.transaction('rw', this.store.guestPeers, this.store.peerRemovals, async () => {
+        const local = new Map((await this.store.guestPeers.toArray()).map(peer => [peer.pair_id, peer.local_name]))
+        await this.store.peerRemovals.where('expires').below(this.now()).delete()
+        const removed = new Set(await this.store.peerRemovals.toCollection().primaryKeys())
+        await this.store.guestPeers.clear()
+        await this.store.guestPeers.bulkPut(connections.peers.filter(peer => !removed.has(peer.pair_id)).map(peer => ({ ...peer, local_name: local.get(peer.pair_id) })))
+      }))
+      connections.peers = await this.store.guestPeers.toArray()
       this.emit({ connections, offline: false, error: undefined, checkedAt: this.now(), invite: this.snapshot.invite ? { ...this.snapshot.invite, consumed: connections.invites.find(i => i.id === this.snapshot.invite!.id)?.consumed ?? true } : undefined })
       for (const transfer of transfers.transfers ?? []) {
         const own = await this.store.jobs.where('transfer.id').equals(transfer.id).first()

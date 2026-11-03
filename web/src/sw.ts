@@ -8,7 +8,7 @@ declare const self: ServiceWorkerGlobalScope & { __WB_MANIFEST: { url: string; r
 cleanupOutdatedCaches()
 precacheAndRoute(self.__WB_MANIFEST)
 registerRoute(new NavigationRoute(createHandlerBoundToURL('/index.html'), {
-  allowlist: [/^\/(?:notifications|tasks|history|local-files|settings|connect|login|register|forgot|verify|reset|account|terms|privacy)?\/?(?:\?.*)?$/],
+  allowlist: [/^\/(?:files|notifications|tasks|history|local-files|settings|connect|login|register|forgot|verify|reset|account|terms|privacy)?\/?(?:\?.*)?$/],
   denylist: [/^\/(?:api|v1|a|auth)(?:\/|$)/, /^\/version\.json$/, /[?&](?:state|code|error)=/],
 }))
 // No skipWaiting/clientsClaim or forced reload: installed updates wait for the

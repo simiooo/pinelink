@@ -2,13 +2,8 @@ import { useEffect, useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createMemoryHistory, createRootRoute, createRoute, createRouter, RouterProvider } from '@tanstack/react-router'
 import { AppShell } from './components/AppShell'
-import { NewTransferPage } from './routes/index'
-import { NotificationsPage } from './routes/notifications'
-import { TasksPage } from './routes/tasks'
-import { HistoryPage } from './routes/history'
 import { SettingsPage } from './routes/settings'
 import { AuthPage } from './routes/auth'
-import { GuestHome } from './guest/Home'
 import { I18nProvider } from './i18n'
 import type { LocalePreference } from './i18n'
 import { clientRuntime } from './data'
@@ -19,15 +14,16 @@ import { MotionProvider } from './motion/react'
 import './motion/motion.css'
 
 const rootRoute = createRootRoute({ component: AppShell })
-const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: NewTransferPage })
-const notificationsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/notifications', component: NotificationsPage })
-const tasksRoute = createRoute({ getParentRoute: () => rootRoute, path: '/tasks', component: TasksPage })
+const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: () => null })
+const notificationsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/notifications', component: () => null })
+const tasksRoute = createRoute({ getParentRoute: () => rootRoute, path: '/tasks', component: () => null })
 const settingsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/settings', component: SettingsPage })
-const historyRoute = createRoute({ getParentRoute: () => rootRoute, path: '/history', component: HistoryPage })
-const connectRoute = createRoute({ getParentRoute: () => rootRoute, path: '/connect', component: GuestHome })
-const localFilesRoute = createRoute({ getParentRoute: () => rootRoute, path: '/local-files', component: GuestHome })
+const historyRoute = createRoute({ getParentRoute: () => rootRoute, path: '/history', component: () => null })
+const connectRoute = createRoute({ getParentRoute: () => rootRoute, path: '/connect', component: () => null })
+const localFilesRoute = createRoute({ getParentRoute: () => rootRoute, path: '/local-files', component: () => null })
+const filesRoute = createRoute({ getParentRoute: () => rootRoute, path: '/files', component: () => null })
 const authRoutes = ['/login', '/register', '/forgot', '/verify', '/verify-link', '/reset', '/account', '/auth/return', '/auth/complete', '/auth/device', '/terms', '/privacy'].map(path => createRoute({ getParentRoute: () => rootRoute, path, component: AuthPage }))
-const routeTree = rootRoute.addChildren([indexRoute, notificationsRoute, tasksRoute, settingsRoute, historyRoute, connectRoute, localFilesRoute, ...authRoutes])
+const routeTree = rootRoute.addChildren([indexRoute, notificationsRoute, tasksRoute, settingsRoute, historyRoute, connectRoute, localFilesRoute, filesRoute, ...authRoutes])
 
 // Browser history installs global listeners at construction. Create it at the
 // entry point, outside React render/state initializers that StrictMode replays.

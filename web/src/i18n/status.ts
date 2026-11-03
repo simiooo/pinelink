@@ -8,3 +8,8 @@ export function taskStatus(task: Task, t: Translate) {
   const key = statusKeys[task.state as keyof typeof statusKeys]
   return key ? t(key, { direction }) : t('statusUnknown')
 }
+export function taskError(task: Task, t: Translate) {
+  const messages = { TRANSFER_CANCELLED: 'errTransferCancelled', TRANSFER_REJECTED: 'errTransferRejected', DEVICE_REVOKED: 'errDeviceRevoked', FILE_EXPIRED: 'errFileExpired', TASK_CANCELLED: 'errTaskCancelled', TASK_DELETED: 'errTaskDeleted', TASK_FAILED: 'errTaskFailed' } as const
+  if (task.error_code) return t(messages[task.error_code as keyof typeof messages] ?? 'errUnknown')
+  return task.error_message ?? ''
+}

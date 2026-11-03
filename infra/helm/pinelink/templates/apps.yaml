@@ -25,7 +25,7 @@ spec:
     metadata:
       labels: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}, pinelink.environment: {{ $.Values.environment }}}
       annotations:
-        pinelink.source-revision: {{ if eq $component "web" }}{{ $.Values.webVersion | default $.Values.version | quote }}{{ else }}{{ $.Values.version | quote }}{{ end }}
+        pinelink.source-revision: {{ if eq $component "web" }}{{ $.Values.webVersion | default $.Values.version | quote }}{{ else if eq $component "api" }}{{ $.Values.apiVersion | default $.Values.version | quote }}{{ else }}{{ $.Values.version | quote }}{{ end }}
 {{- if eq $component "web" }}
         pinelink.web-config-sha256: {{ include (print $.Template.BasePath "/web-config.yaml") $ | sha256sum | quote }}
 {{- end }}

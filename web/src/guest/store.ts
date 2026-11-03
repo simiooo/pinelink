@@ -13,9 +13,12 @@ export class GuestStore extends LocalStore {
   leases!: Table<GuestLease, string>
   jobs!: Table<GuestJob, string>
   chunks!: Table<{ job: string; index: number; bytes: Blob; hash: string }, [string, number]>
+  guestPeers!: Table<GuestPeer, string>
+  peerRemovals!: Table<{ pair: string; expires: number }, string>
   constructor(name: string) {
     super(name)
     this.version(3).stores({ leases: 'id', jobs: 'id,created,transfer.id,direction', chunks: '[job+index],job' })
+    this.version(4).stores({ guestPeers: 'pair_id', peerRemovals: 'pair,expires' })
   }
   async storeFrame(id: string, index: number, bytes: Uint8Array) {
     const hash = await digest(bytes)
