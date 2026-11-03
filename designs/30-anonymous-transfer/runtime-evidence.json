@@ -1,0 +1,178 @@
+{
+  "unit": "SIM-915",
+  "status": "engineering-delivered-product-review-pending",
+  "source_version": "8e9a6ad1b7afa92a87a1a5e749acbf4cc72e6660",
+  "recorded_at": "2026-11-03T14:31:22.336865+00:00",
+  "scope": "Web anonymous encrypted cloud-relay file transfers and shared backend. Flutter guest file UI is the next independent unit SIM-936.",
+  "staging": {
+    "environment": "staging",
+    "url": "https://staging-pinelink.sqmem.top",
+    "web_version": "8e9a6ad1b7afa92a87a1a5e749acbf4cc72e6660",
+    "api_version": "8e9a6ad1b7afa92a87a1a5e749acbf4cc72e6660",
+    "schema_revision": 20,
+    "helm_revision": 19,
+    "started_at": "2026-11-03T14:18:21.758613+00:00",
+    "completed_at": "2026-11-03T14:19:51.146834+00:00",
+    "status": "deployed",
+    "production_unchanged": true,
+    "data_workloads_unchanged": true,
+    "nginx_configuration_valid": true,
+    "design_preview_sha256": "965d75c7c6f4e7993bed08d7aa5af5616aa35df3c4ba7f7cfd99b6578a935314",
+    "prior_design_previews_preserved": true,
+    "anonymous_service_enabled": true,
+    "public_smoke_pending": false,
+    "public_smoke_passed_at": "2026-11-03T14:22:22.693Z"
+  },
+  "staging_browser": {
+    "passed": true,
+    "environment": "staging",
+    "source_version": "8e9a6ad1b7afa92a87a1a5e749acbf4cc72e6660",
+    "checked_at": "2026-11-03T14:22:22.693Z",
+    "execution_host": "Fedora",
+    "transfer_bytes": 8388608,
+    "plaintext_sha256": "01056b28035448db90943e427adce865d4c824443ce395d200e92591bf32ec4e",
+    "verified_receipt": true,
+    "checks": [
+      "actual staging Web/API version, guest capability and two independent signed-out browsers",
+      "one-use manual pairing requires explicit confirmation and preserves two guest identities",
+      "real password login in a separate window leaves the in-flight guest upload and local history intact",
+      "actual R2 cloud upload completes before consent; sender and sign-in window fully exit",
+      "durable cloud reception shows a cloud node and retains the separate download ledger",
+      "paired visitor cannot use unbudgeted signalling outside the supported guest transport",
+      "recipient signs into its account while paused without replacing the guest identity",
+      "actual cloud receiver pauses, freezes blue progress and sheen, reloads, resumes and verifies the original 8 MiB with the sender closed",
+      "explicit account navigation initializes its own profile after guest delivery",
+      "unpaired guest cannot access a known transfer, arbitrary storage or consumed code; 320px layout fits",
+      "fully offline PWA reopen retains the same guest keys, history and verified downloadable file"
+    ],
+    "page_errors": [],
+    "account_created": false
+  },
+  "database_effects": {
+    "account_count_unchanged": true,
+    "new_guest_identities": 3,
+    "new_pair_grants": 1,
+    "account_creation_interval_verified": {
+      "start": "2026-11-03T14:19:51.146834+00:00",
+      "end": "2026-11-03T14:22:22.693Z",
+      "accounts_created": 0
+    },
+    "statistics_recovered_after_ssh_transport_failure": true
+  },
+  "verification": {
+    "execution_host": "Fedora",
+    "backend_postgresql_full_race_vet": true,
+    "protocol_cli_race_vet": true,
+    "web_tests": 62,
+    "anonymous_browser_checks": 22,
+    "account_browser_checks": 8,
+    "flutter_regression_passed": 37,
+    "flutter_existing_environment_skips": 2,
+    "flutter_analysis_issues": 0,
+    "design_checks": 105,
+    "ci": [
+      {
+        "url": "https://github.com/simiooo/pinelink/actions/runs/41651597393",
+        "event": "push",
+        "source_version": "8e9a6ad1b7afa92a87a1a5e749acbf4cc72e6660",
+        "passed_jobs": 8,
+        "completed_at": "2026-11-03T14:16:29Z"
+      },
+      {
+        "url": "https://github.com/simiooo/pinelink/actions/runs/41651605286",
+        "event": "pull_request",
+        "source_version": "8e9a6ad1b7afa92a87a1a5e749acbf4cc72e6660",
+        "passed_jobs": 8,
+        "completed_at": "2026-11-03T14:16:31Z"
+      }
+    ]
+  },
+  "design": {
+    "path": "designs/30-pinelink-anonymous.fig",
+    "sha256": "203160c6edb8353aa2ecef4485c20d4d2b4d478c7498a53329f03a07576f6536",
+    "frames": 22,
+    "editable_text_nodes": 150,
+    "core_save_readback_and_png": true,
+    "gui_reopen": false,
+    "gui_limit": "Existing shared application CanvasKit memory access out of bounds; other documents were preserved."
+  },
+  "privacy": {
+    "verified_at": "2026-11-03T14:20:50.218689+00:00",
+    "tracked_files": 1607,
+    "history_blobs": 1873,
+    "image_archive_blobs": 30,
+    "release_archive_members": 3975,
+    "runtime_spec_and_log_scans": 2,
+    "live_value_matches": []
+  },
+  "release": {
+    "verified_at": "2026-11-03T14:31:01.247291+00:00",
+    "execution_host": "Fedora",
+    "url": "https://github.com/simiooo/pinelink/releases/tag/v0.1.0-preview.8",
+    "source": "8e9a6ad1b7afa92a87a1a5e749acbf4cc72e6660",
+    "assets": [
+      {
+        "name": "manifest.json",
+        "bytes": 1827,
+        "sha256": "c0c1ba2a01a190c0e49702abe0874976bad4d52728e3f2733d63767df89582fd",
+        "anonymous_download": true
+      },
+      {
+        "name": "pinelink-server-v0.1.0-preview.8-linux-amd64.tar.gz",
+        "bytes": 8556742,
+        "sha256": "7037e50e054c06ee034f81a948b4355d65814b4f223c5ce8b85a839f1972e0f0",
+        "anonymous_download": true
+      },
+      {
+        "name": "pinelink-server-v0.1.0-preview.8-linux-arm64.tar.gz",
+        "bytes": 7683523,
+        "sha256": "1fc1e697963a28c22a05c9c93a60ecc196e4234fcb25b634f34b043afd2936bc",
+        "anonymous_download": true
+      },
+      {
+        "name": "pinelink-third-party-notices-v0.1.0-preview.8.zip",
+        "bytes": 568369,
+        "sha256": "587f076f4cac3824c7ad077856e2317e45888124c79a15aed32c7b2fd4470219",
+        "anonymous_download": true
+      },
+      {
+        "name": "pinelink-v0.1.0-preview.8-flutter-web.zip",
+        "bytes": 26848494,
+        "sha256": "f4979f03964e6dc2a405c6b2e3c4949b86dbfbd41d46b36a0ecb206a7ff9395d",
+        "anonymous_download": true
+      },
+      {
+        "name": "pinelink-v0.1.0-preview.8-react-web.zip",
+        "bytes": 1158033,
+        "sha256": "e33589567585d3cdd067b07caa67caf8abaf1b5d3ed540c3316c75978d06a017",
+        "anonymous_download": true
+      },
+      {
+        "name": "pinelink-v0.1.0-preview.8-source.zip",
+        "bytes": 43441460,
+        "sha256": "099977e23141e7fee471cb1b46ea22be6e1f9cdc6da347107c93efbfa20f0e8a",
+        "anonymous_download": true
+      },
+      {
+        "name": "SHA256SUMS",
+        "bytes": 675,
+        "sha256": "e06f2895fc3653823c2211653626223d8ae63d462e950869c57b74fc9be59846",
+        "anonymous_download": true
+      }
+    ]
+  },
+  "license_components": 363,
+  "license_missing": [],
+  "npm_audit": {
+    "production_findings": 0,
+    "complete_dependency_graph_low_findings": 6,
+    "note": "Six propagated findings from the same unpatched deepmerge advisory; no production dependency finding."
+  },
+  "limits": [
+    "Staging retains its existing operator access authentication; the app guest flow does not require an account.",
+    "No production or iOS deployment. Linux arm64 is cross-compiled.",
+    "Flutter guest UI and Web/Flutter account-mode file UI are separate unfinished units.",
+    "Browser WebRTC direct transfer, new offline send/outbox, longer guest retention and automatic account ownership migration are not included.",
+    "Real human Google provider consent remains a separate product check; synthetic account tests are not provider authorization."
+  ]
+}

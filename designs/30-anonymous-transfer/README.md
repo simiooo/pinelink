@@ -1,6 +1,6 @@
 # v30 · 先使用，再注册
 
-SIM-915 设计与交互契约；实际运行部署见工程交付记录。继承 v20 节点图、v27 账号和 v29 动效。共享 OpenPencil 应用仍在最小英文文档上报告 CanvasKit 内存错误；本稿由独立 OpenPencil core 保存、回读并导出 PNG，不能将它写成 GUI 重开验收通过。
+SIM-915 的 Web 与共享后端已部署 staging，实际版本、真实 R2 收发和公开包校验见[运行证据](runtime-evidence.json)；产品验收待进行，Flutter 访客由 SIM-936 承接。继承 v20 节点图、v27 账号和 v29 动效。共享 OpenPencil 应用仍在最小英文文档上报告 CanvasKit 内存错误；本稿由独立 OpenPencil core 保存、回读并导出 PNG，不能将它写成 GUI 重开验收通过。
 
 ## 使用流程
 
