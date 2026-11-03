@@ -1,0 +1,668 @@
+{
+  "passed": true,
+  "checked_at": "2026-11-03T10:58:15.599Z",
+  "artifact_sha256": "3810936006d8d040ede1e890cd4d8ed0e5e6064fceac221af93eb16a99ac1350",
+  "environment": "Fedora / isolated no-network Chromium",
+  "checks": [
+    {
+      "name": "14 native-corresponding scenes",
+      "passed": true
+    },
+    {
+      "name": "bundled Nunito loaded",
+      "passed": true
+    },
+    {
+      "name": "scene desktop-start",
+      "passed": true
+    },
+    {
+      "name": "48px target desktop-start/Connect a device",
+      "passed": true,
+      "detail": {
+        "label": "Connect a device",
+        "x": 560,
+        "y": 200,
+        "w": 80,
+        "h": 116,
+        "to": "desktop-connect"
+      }
+    },
+    {
+      "name": "48px target desktop-start/Sign in",
+      "passed": true,
+      "detail": {
+        "label": "Sign in",
+        "x": 1100,
+        "y": 12,
+        "w": 80,
+        "h": 48,
+        "tip": "Existing Google / password sign-in. Guest mode stays available."
+      }
+    },
+    {
+      "name": "48px target desktop-start/Using without an account",
+      "passed": true,
+      "detail": {
+        "label": "Using without an account",
+        "x": 610,
+        "y": 498,
+        "w": 48,
+        "h": 48,
+        "tip": "Using without an account"
+      }
+    },
+    {
+      "name": "48px target desktop-start/History",
+      "passed": true,
+      "detail": {
+        "label": "History",
+        "x": 20,
+        "y": 728,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-complete"
+      }
+    },
+    {
+      "name": "48px target desktop-start/Choose a file",
+      "passed": true,
+      "detail": {
+        "label": "Choose a file",
+        "x": 1132,
+        "y": 728,
+        "w": 48,
+        "h": 48,
+        "to": "desktop-connect"
+      }
+    },
+    {
+      "name": "scene mobile-start",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-start/Connect a device",
+      "passed": true,
+      "detail": {
+        "label": "Connect a device",
+        "x": 155,
+        "y": 200,
+        "w": 80,
+        "h": 116,
+        "to": "mobile-connect"
+      }
+    },
+    {
+      "name": "48px target mobile-start/Sign in",
+      "passed": true,
+      "detail": {
+        "label": "Sign in",
+        "x": 290,
+        "y": 12,
+        "w": 80,
+        "h": 48,
+        "tip": "Existing Google / password sign-in. Guest mode stays available."
+      }
+    },
+    {
+      "name": "48px target mobile-start/Using without an account",
+      "passed": true,
+      "detail": {
+        "label": "Using without an account",
+        "x": 205,
+        "y": 542,
+        "w": 48,
+        "h": 48,
+        "tip": "Using without an account"
+      }
+    },
+    {
+      "name": "48px target mobile-start/History",
+      "passed": true,
+      "detail": {
+        "label": "History",
+        "x": 20,
+        "y": 772,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-complete"
+      }
+    },
+    {
+      "name": "48px target mobile-start/Choose a file",
+      "passed": true,
+      "detail": {
+        "label": "Choose a file",
+        "x": 322,
+        "y": 772,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-connect"
+      }
+    },
+    {
+      "name": "scene mobile-start-320",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-start-320/Connect a device",
+      "passed": true,
+      "detail": {
+        "label": "Connect a device",
+        "x": 120,
+        "y": 200,
+        "w": 80,
+        "h": 116,
+        "to": "mobile-connect"
+      }
+    },
+    {
+      "name": "48px target mobile-start-320/Sign in",
+      "passed": true,
+      "detail": {
+        "label": "Sign in",
+        "x": 220,
+        "y": 12,
+        "w": 80,
+        "h": 48,
+        "tip": "Existing Google / password sign-in. Guest mode stays available."
+      }
+    },
+    {
+      "name": "48px target mobile-start-320/Using without an account",
+      "passed": true,
+      "detail": {
+        "label": "Using without an account",
+        "x": 170,
+        "y": 542,
+        "w": 48,
+        "h": 48,
+        "tip": "Using without an account"
+      }
+    },
+    {
+      "name": "48px target mobile-start-320/History",
+      "passed": true,
+      "detail": {
+        "label": "History",
+        "x": 20,
+        "y": 772,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-complete"
+      }
+    },
+    {
+      "name": "48px target mobile-start-320/Choose a file",
+      "passed": true,
+      "detail": {
+        "label": "Choose a file",
+        "x": 252,
+        "y": 772,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-connect"
+      }
+    },
+    {
+      "name": "scene desktop-connect",
+      "passed": true
+    },
+    {
+      "name": "48px target desktop-connect/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 760,
+        "y": 144,
+        "w": 48,
+        "h": 48,
+        "to": "desktop-start"
+      }
+    },
+    {
+      "name": "48px target desktop-connect/Enter code",
+      "passed": true,
+      "detail": {
+        "label": "Enter code",
+        "x": 600,
+        "y": 204,
+        "w": 200,
+        "h": 48,
+        "to": "mobile-enter"
+      }
+    },
+    {
+      "name": "48px target desktop-connect/Copy link",
+      "passed": true,
+      "detail": {
+        "label": "Copy link",
+        "x": 400,
+        "y": 576,
+        "w": 400,
+        "h": 48,
+        "tip": "Copied"
+      }
+    },
+    {
+      "name": "scene mobile-connect",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-connect/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 260,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "48px target mobile-connect/Enter code",
+      "passed": true,
+      "detail": {
+        "label": "Enter code",
+        "x": 195,
+        "y": 320,
+        "w": 175,
+        "h": 48,
+        "to": "mobile-enter"
+      }
+    },
+    {
+      "name": "48px target mobile-connect/Copy link",
+      "passed": true,
+      "detail": {
+        "label": "Copy link",
+        "x": 20,
+        "y": 692,
+        "w": 350,
+        "h": 48,
+        "tip": "Copied"
+      }
+    },
+    {
+      "name": "scene mobile-enter",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-enter/Show code",
+      "passed": true,
+      "detail": {
+        "label": "Show code",
+        "x": 20,
+        "y": 320,
+        "w": 175,
+        "h": 48,
+        "to": "mobile-connect"
+      }
+    },
+    {
+      "name": "48px target mobile-enter/Connect",
+      "passed": true,
+      "detail": {
+        "label": "Connect",
+        "x": 20,
+        "y": 536,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-incoming"
+      }
+    },
+    {
+      "name": "48px target mobile-enter/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 260,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "scene mobile-incoming",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-incoming/Receive",
+      "passed": true,
+      "detail": {
+        "label": "Receive",
+        "x": 20,
+        "y": 716,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-active"
+      }
+    },
+    {
+      "name": "48px target mobile-incoming/Decline",
+      "passed": true,
+      "detail": {
+        "label": "Decline",
+        "x": 20,
+        "y": 772,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "48px target mobile-incoming/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 332,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "scene desktop-active",
+      "passed": true
+    },
+    {
+      "name": "48px target desktop-active/Transfer details",
+      "passed": true,
+      "detail": {
+        "label": "Transfer details",
+        "x": 550,
+        "y": 320,
+        "w": 260,
+        "h": 176,
+        "to": "mobile-paused"
+      }
+    },
+    {
+      "name": "scene mobile-active",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-active/Transfer details",
+      "passed": true,
+      "detail": {
+        "label": "Transfer details",
+        "x": 120,
+        "y": 348,
+        "w": 240,
+        "h": 164,
+        "to": "mobile-paused"
+      }
+    },
+    {
+      "name": "scene mobile-paused",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-paused/Resume",
+      "passed": true,
+      "detail": {
+        "label": "Resume",
+        "x": 20,
+        "y": 764,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-active"
+      }
+    },
+    {
+      "name": "48px target mobile-paused/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 584,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "scene mobile-complete",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-complete/Send another",
+      "passed": true,
+      "detail": {
+        "label": "Send another",
+        "x": 20,
+        "y": 708,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "48px target mobile-complete/Keep in cloud",
+      "passed": true,
+      "detail": {
+        "label": "Keep in cloud",
+        "x": 16,
+        "y": 560,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-keep"
+      }
+    },
+    {
+      "name": "48px target mobile-complete/Saved on this device",
+      "passed": true,
+      "detail": {
+        "label": "Saved on this device",
+        "x": 38,
+        "y": 456,
+        "w": 48,
+        "h": 48,
+        "tip": "Saved on this device"
+      }
+    },
+    {
+      "name": "48px target mobile-complete/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 356,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "scene mobile-keep",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-keep/Sign in",
+      "passed": true,
+      "detail": {
+        "label": "Sign in",
+        "x": 20,
+        "y": 664,
+        "w": 350,
+        "h": 48,
+        "tip": "Continue to existing Google / password sign-in"
+      }
+    },
+    {
+      "name": "48px target mobile-keep/Continue without an account",
+      "passed": true,
+      "detail": {
+        "label": "Continue without an account",
+        "x": 20,
+        "y": 720,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-complete"
+      }
+    },
+    {
+      "name": "48px target mobile-keep/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 428,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "scene mobile-expired",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-expired/New code",
+      "passed": true,
+      "detail": {
+        "label": "New code",
+        "x": 20,
+        "y": 708,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-connect"
+      }
+    },
+    {
+      "name": "48px target mobile-expired/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 460,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "scene mobile-volatile",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-volatile/Continue",
+      "passed": true,
+      "detail": {
+        "label": "Continue",
+        "x": 20,
+        "y": 668,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "48px target mobile-volatile/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 460,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "guest entry leads to pairing",
+      "passed": true
+    },
+    {
+      "name": "manual pairing available",
+      "passed": true
+    },
+    {
+      "name": "explicit incoming confirmation",
+      "passed": true
+    },
+    {
+      "name": "receive starts the transfer state",
+      "passed": true
+    },
+    {
+      "name": "pause has no sheen",
+      "passed": true
+    },
+    {
+      "name": "pause preserves blue boundary",
+      "passed": true
+    },
+    {
+      "name": "resume restarts only sheen",
+      "passed": true
+    },
+    {
+      "name": "reduced motion stops activity",
+      "passed": true
+    },
+    {
+      "name": "completion never forces registration",
+      "passed": true
+    },
+    {
+      "name": "account value is opt-in",
+      "passed": true
+    },
+    {
+      "name": "can decline account prompt",
+      "passed": true
+    },
+    {
+      "name": "expired invite recovers without login",
+      "passed": true
+    },
+    {
+      "name": "escape closes the sheet",
+      "passed": true
+    },
+    {
+      "name": "viewport 1360/desktop-start",
+      "passed": true
+    },
+    {
+      "name": "viewport 390/mobile-start",
+      "passed": true
+    },
+    {
+      "name": "viewport 320/mobile-start-320",
+      "passed": true
+    },
+    {
+      "name": "viewport 390/mobile-connect",
+      "passed": true
+    },
+    {
+      "name": "viewport 390/mobile-active",
+      "passed": true
+    },
+    {
+      "name": "viewport 390/mobile-complete",
+      "passed": true
+    },
+    {
+      "name": "design preview identified",
+      "passed": true
+    },
+    {
+      "name": "no backend or external requests",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no browser errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": [],
+  "external": []
+}

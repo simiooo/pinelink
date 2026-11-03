@@ -1,0 +1,11 @@
+{
+  "engine": "OpenPencil core / independent CanvasKit renderer",
+  "native_readback": true,
+  "editable_text_nodes": 99,
+  "frames": 14,
+  "fonts": [
+    "Nunito"
+  ],
+  "gui_reopen": false,
+  "gui_issue": "Existing shared application CanvasKit memory access out of bounds; other documents were preserved."
+}
