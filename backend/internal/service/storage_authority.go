@@ -15,7 +15,7 @@ import (
 // parents before the transfer. If a previously unbound spool appeared, retry.
 func (s *Service) beginTransferObjects(ctx context.Context, id string) (pgx.Tx, Transfer, error) {
 	for attempt := 0; attempt < 8; attempt++ {
-		tx, err := s.db.Begin(ctx)
+		tx, err := s.beginAccountTx(ctx)
 		if err != nil {
 			return nil, Transfer{}, err
 		}
@@ -65,7 +65,7 @@ func transferParents(ctx context.Context, tx pgx.Tx, id string) ([]string, error
 }
 
 func (s *Service) beginFileObject(ctx context.Context, entryID string) (pgx.Tx, error) {
-	tx, err := s.db.Begin(ctx)
+	tx, err := s.beginAccountTx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func (s *Service) beginUploadObject(ctx context.Context, id string, authorize bo
 		tx, tr, err = s.beginTransferObjects(ctx, *o.TransferID)
 		o.Transfer = &tr
 	} else {
-		tx, err = s.db.Begin(ctx)
+		tx, err = s.beginAccountTx(ctx)
 		if err == nil {
 			_, err = tx.Exec(ctx, `SELECT id FROM file_versions WHERE id=$1 FOR UPDATE`, o.VersionID)
 		}

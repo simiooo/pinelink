@@ -21,8 +21,8 @@ class _NewTransferPageState extends State<NewTransferPage> {
   PlatformFile? _file;
   bool _preparing = false;
   late Future<List<TransferTask>> _tasks = widget.api.getTasks(
-    PinelinkApi.owner,
-    PinelinkApi.device,
+    widget.api.currentOwner,
+    widget.api.currentDevice,
   );
 
   @override
@@ -31,7 +31,10 @@ class _NewTransferPageState extends State<NewTransferPage> {
     if (oldWidget.api != widget.api) {
       _file = null;
       _preparing = false;
-      _tasks = widget.api.getTasks(PinelinkApi.owner, PinelinkApi.device);
+      _tasks = widget.api.getTasks(
+        widget.api.currentOwner,
+        widget.api.currentDevice,
+      );
     }
   }
 

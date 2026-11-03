@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,6 +14,26 @@ import (
 func (s *Service) RegisterDevice(ctx context.Context, req DeviceRequest) (Device, error) {
 	if !validIdentity(req.OwnerID) || !validIdentity(req.DeviceID) {
 		return Device{}, fmt.Errorf("%w: owner and device are required", ErrInvalid)
+	}
+	if strings.HasPrefix(req.OwnerID, "acct-") || (s.accounts != nil && s.accounts.Required()) {
+		tx, err := s.beginAccountTx(ctx)
+		if err != nil {
+			return Device{}, err
+		}
+		defer tx.Rollback(ctx)
+		var key, enc *string
+		var status string
+		err = tx.QueryRow(ctx, `SELECT signing_public_key,public_key,status FROM devices WHERE owner_id=$1 AND device_id=$2 FOR UPDATE`, req.OwnerID, req.DeviceID).Scan(&key, &enc, &status)
+		if err != nil || status != "ACTIVE" || key == nil || enc == nil || *key != req.SigningPublicKey || *enc != req.PublicKey {
+			return Device{}, ErrUnauthorized
+		}
+		if _, err = tx.Exec(ctx, `UPDATE devices SET last_seen_at=now() WHERE owner_id=$1 AND device_id=$2`, req.OwnerID, req.DeviceID); err != nil {
+			return Device{}, err
+		}
+		if err = tx.Commit(ctx); err != nil {
+			return Device{}, err
+		}
+		return s.GetDevice(ctx, req.OwnerID, req.DeviceID)
 	}
 	_, err := s.db.Exec(ctx, `
 		INSERT INTO devices (owner_id, device_id, public_key, signing_public_key, last_seen_at)
@@ -76,7 +97,7 @@ func (s *Service) GetRecipientPublicKey(ctx context.Context, ownerID, deviceID s
 }
 
 func (s *Service) RevokeDevice(ctx context.Context, req DeviceRequest) (Device, error) {
-	tx, err := s.db.Begin(ctx)
+	tx, err := s.beginAccountTx(ctx)
 	if err != nil {
 		return Device{}, err
 	}

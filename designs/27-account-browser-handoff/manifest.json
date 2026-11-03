@@ -1,0 +1,46 @@
+{
+  "scope": "v27 browser/native handoff companion",
+  "status": "implementation-review",
+  "frames": [
+    {
+      "key": "desktop-approval",
+      "name": "desktop approval",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "key": "mobile-approval",
+      "name": "mobile approval",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 0
+    },
+    {
+      "key": "mobile-app-wait",
+      "name": "mobile app wait",
+      "width": 390,
+      "height": 844,
+      "x": 1718,
+      "y": 0
+    },
+    {
+      "key": "mobile-browser-return",
+      "name": "mobile browser return",
+      "width": 390,
+      "height": 844,
+      "x": 2172,
+      "y": 0
+    },
+    {
+      "key": "mobile-browser-cancelled",
+      "name": "mobile browser cancelled",
+      "width": 390,
+      "height": 844,
+      "x": 2626,
+      "y": 0
+    }
+  ]
+}

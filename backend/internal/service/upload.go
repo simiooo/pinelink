@@ -9,9 +9,13 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/simiooo/pinelink/backend/internal/auth"
 )
 
 func (s *Service) PrepareUpload(ctx context.Context, req PrepareRequest) (PrepareResponse, error) {
+	if identity, ok := auth.FromContext(ctx); ok && identity.SessionID != "" && req.ScopeID != identity.OwnerID {
+		return PrepareResponse{}, ErrUnauthorized
+	}
 	if strings.HasPrefix(req.ScopeID, "p2p-") || strings.HasPrefix(req.ScopeID, "relay-owner:") {
 		return PrepareResponse{}, ErrInvalid
 	}
@@ -39,7 +43,7 @@ func (s *Service) PrepareUpload(ctx context.Context, req PrepareRequest) (Prepar
 	}
 	count := chunkCount(req.SizeBytes, req.ChunkSize)
 
-	tx, err := s.db.Begin(ctx)
+	tx, err := s.beginAccountTx(ctx)
 	if err != nil {
 		return PrepareResponse{}, err
 	}
@@ -183,7 +187,7 @@ func (s *Service) CompleteUpload(ctx context.Context, uploadID string) (Complete
 }
 
 func (s *Service) CommitReuse(ctx context.Context, token string) (CompleteResponse, error) {
-	tx, err := s.db.Begin(ctx)
+	tx, err := s.beginAccountTx(ctx)
 	if err != nil {
 		return CompleteResponse{}, err
 	}

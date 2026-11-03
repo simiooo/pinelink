@@ -1,0 +1,50 @@
+{
+  "runtime_revision": "fe530d8e11b514d910628907c5751841f5bfe37e",
+  "environment": "staging",
+  "url": "https://staging-pinelink.sqmem.top/login",
+  "deployed_at": "2026-11-03T10:17:41Z",
+  "helm_revision": 14,
+  "schema_revision": 19,
+  "build_host": "Fedora",
+  "checks": {
+    "go_postgres_accounts_and_revocation": true,
+    "go_race_and_vet": true,
+    "web_tests_passed": 53,
+    "flutter_tests_passed": 37,
+    "flutter_environment_skips": 2,
+    "flutter_analysis_issues": 0,
+    "react_browser_flows": 8,
+    "flutter_web_browser_flows": 4,
+    "helm_lint_and_template": true,
+    "github_ci_jobs_passed": 8,
+    "production_dependency_findings": 0,
+    "development_dependency_low_findings": 6,
+    "private_value_scan_matches": 0
+  },
+  "deployed_mail_check": {
+    "provider": "Resend",
+    "registration": "delivered",
+    "recovery": "delivered",
+    "staging_link_characters": 59,
+    "opaque_token_characters": 22,
+    "get_does_not_consume": true,
+    "password_reset_revokes_previous_session": true,
+    "password_login_preserves_device_keys": true,
+    "javascript_errors": 0
+  },
+  "google": {
+    "independent_entry": true,
+    "verified_token_positive_and_negative_cases": true,
+    "real_user_consent": "pending manual verification"
+  },
+  "design": {
+    "main_v27_native_reopen": true,
+    "matching_code_companion_core_readback": true,
+    "matching_code_companion_gui_reopen": false
+  },
+  "limits": [
+    "Production and iOS were not deployed.",
+    "Account linking, password changes from settings, full node graph, client file data planes, cross-user/text and service-switching UI remain separate work.",
+    "The native browser handoff companion still encounters the shared OpenPencil application CanvasKit memory error."
+  ]
+}

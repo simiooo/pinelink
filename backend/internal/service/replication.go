@@ -50,7 +50,7 @@ func (s *Service) replicationTx(ctx context.Context) (pgx.Tx, string, error) {
 	if len(s.replicationKey) == 0 {
 		return nil, "", ErrInvalid
 	}
-	tx, err := s.db.Begin(ctx)
+	tx, err := s.beginAccountTx(ctx)
 	if err != nil {
 		return nil, "", err
 	}

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../data/runtime.dart' as local;
+import '../auth/controller.dart';
 
 class TransferTask {
   const TransferTask(
@@ -105,14 +106,18 @@ class PinelinkApi extends ChangeNotifier {
     defaultValue: 'dev-scope',
   );
 
-  PinelinkApi({String? baseUrl, this.openRuntime})
+  PinelinkApi({String? baseUrl, this.openRuntime, this.account})
     : baseUrl =
           baseUrl ??
           const String.fromEnvironment(
             'PINELINK_API_URL',
-            defaultValue: 'http://127.0.0.1:8080',
+            defaultValue: 'https://pinelink.sqmem.top/api',
           );
   final String baseUrl;
+  final AccountController? account;
+  String get currentOwner => account?.owner ?? owner;
+  String get currentScope =>
+      account?.account.isNotEmpty == true ? account!.owner : scope;
   final Future<local.ClientRuntime> Function()? openRuntime;
   Future<local.ClientRuntime>? _runtime;
   StreamSubscription<String>? _changes;
@@ -272,7 +277,9 @@ class PinelinkApi extends ChangeNotifier {
   }
 
   Future<Quota> getQuota(String owner) async {
-    final data = await _get('/v1/quota?scope_id=$owner');
+    final data = await _get(
+      '/v1/quota?scope_id=${Uri.encodeQueryComponent(currentScope)}',
+    );
     return Quota(data['quota_bytes'], data['used_bytes']);
   }
 

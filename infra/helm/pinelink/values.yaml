@@ -13,6 +13,8 @@ designPreview:
   configMap: ""
 existingSecrets:
   api: pinelink-api
+  # Optional account/OIDC/mail configuration, supplied outside the repository.
+  accounts: ""
   postgres: pinelink-postgres
   nats: pinelink-nats
   tunnel: pinelink-tunnel

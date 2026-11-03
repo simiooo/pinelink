@@ -369,8 +369,8 @@ class _HistoryPageState extends State<HistoryPage> {
       await api.controlTask(
         task.id,
         'delete',
-        PinelinkApi.owner,
-        PinelinkApi.device,
+        widget.api.currentOwner,
+        widget.api.currentDevice,
         task.version,
       );
       if (!mounted || widget.api != api) return;

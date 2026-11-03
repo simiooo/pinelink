@@ -1,9 +1,11 @@
 import { clientRuntime } from '../data'
 import { DataError } from '../data/runtime'
+import { dataAccess } from '../data/access'
 
 export const API_URL = import.meta.env.VITE_PINELINK_API_URL ?? 'http://127.0.0.1:8080'
 export const IDENTITY = {
   owner: import.meta.env.VITE_PINELINK_OWNER ?? 'dev-owner',
+  scope: import.meta.env.VITE_PINELINK_SCOPE ?? 'dev-scope',
   device: import.meta.env.VITE_PINELINK_DEVICE ?? 'dev-device',
 }
 
@@ -49,6 +51,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     try { return await runtime.request<T>(init?.method ?? 'GET', path, init?.body ? JSON.parse(String(init.body)) : undefined) }
     catch (error) { if (error instanceof DataError) throw new ApiError(error.status, error.code); throw error }
   }
+  if (dataAccess.managed) throw new ApiError(503, 'LOCAL_STORAGE_UNAVAILABLE')
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
     headers: { 'Content-Type': 'application/json', ...init?.headers },
@@ -98,7 +101,7 @@ export async function getDevices() {
 }
 
 export function getQuota() {
-  const scope = import.meta.env.VITE_PINELINK_SCOPE ?? 'dev-scope'
+  const scope = IDENTITY.scope
   return request<Quota>(`/v1/quota?scope_id=${encodeURIComponent(scope)}`)
 }
 
@@ -114,7 +117,7 @@ export function revokeDevice(id: string) {
   return request<Device>('/v1/devices/revoke', { method: 'POST', body: JSON.stringify({ owner_id: IDENTITY.owner, device_id: id }) })
 }
 
-export function respondTransfer(id: string, action: 'accept' | 'reject', owner = 'dev-owner', device = 'dev-device', version = 1) {
+export function respondTransfer(id: string, action: 'accept' | 'reject', owner = IDENTITY.owner, device = IDENTITY.device, version = 1) {
   return request<Transfer>(`/v1/transfers/${id}/${action}`, {
     method: 'POST',
     body: JSON.stringify({ owner_id: owner, device_id: device, expected_version: version }),

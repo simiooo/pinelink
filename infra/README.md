@@ -101,7 +101,9 @@ flutter run -d chrome --web-port=5001
 
 可通过 `VITE_PINELINK_API_URL`、`VITE_PINELINK_OWNER`、`VITE_PINELINK_DEVICE`、`VITE_PINELINK_SCOPE` 配置 Web；Flutter 使用对应的 `--dart-define=PINELINK_API_URL=...`、`PINELINK_OWNER`、`PINELINK_DEVICE`、`PINELINK_SCOPE`。容量作用域必须与 CLI 的 `--scope` 一致，默认均为 `dev-scope`。移动端原生包需要 HTTP 网络权限，Android 已在主清单中声明。
 
-双端界面覆盖通知、接受/拒绝、任务控制、历史、设备、容量与保管提升。原生加密数据面和设备签名身份引导未接入本轮 UI；发送准备只生成真实 CLI 命令，不能视为已在 Web/Flutter 内发送。OpenPencil 静态流程稿见 `designs/`，当前工具不持久化点击原型，真实交互由双端测试验收。UI 跟踪见 `SIM-840`。
+启用[账号服务](docs/accounts.md)后，Web/Flutter 在 Google 或密码验证成功后登记隔离的设备身份，owner/scope 由服务端账号决定，不再采用上述开发身份参数。Google 不需要另外填写邮箱。注册与找回使用邮件验证码或短链；原生 Google 登录通过外部浏览器和匹配码确认。
+
+双端界面覆盖通知、接受/拒绝、任务控制、历史、设备、容量与保管提升。完整加密文件数据面仍未接入本轮 UI；发送准备只生成真实 CLI 命令，不能视为已在 Web/Flutter 内发送。OpenPencil 静态流程稿见 `designs/`，当前工具不持久化点击原型，真实交互由双端测试验收。UI 跟踪见 `SIM-840`。
 
 界面支持 `zh-CN` 与 `en-US`，默认跟随系统语言。“更多”中的语言选择使用 `pinelink.locale` 持久化：Web 使用 `localStorage`，Flutter 使用 `shared_preferences`。唯一文案源为 `i18n/zh-CN.json` 和 `i18n/en-US.json`；修改文案后在 `mobile/` 执行 `dart run tool/sync_i18n.dart` 生成 Flutter 字典，再运行双端测试。
 

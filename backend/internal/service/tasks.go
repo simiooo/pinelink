@@ -93,7 +93,7 @@ func (s *Service) ControlTask(ctx context.Context, id, action string, req TaskAc
 	if observed.Kind == "UPLOAD" {
 		tx, upload, err = s.beginUploadObject(ctx, observed.ReferenceID, false)
 	} else {
-		tx, err = s.db.Begin(ctx)
+		tx, err = s.beginAccountTx(ctx)
 	}
 	if err != nil {
 		return Task{}, err

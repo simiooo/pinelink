@@ -43,14 +43,11 @@ Future<TaskData> loadTaskData(
   bool includeDeleted = false,
 }) async {
   final tasks = await api.getTasks(
-    PinelinkApi.owner,
-    PinelinkApi.device,
+    api.currentOwner,
+    api.currentDevice,
     includeDeleted: includeDeleted,
   );
-  final transfers = await api.getTransfers(
-    PinelinkApi.owner,
-    PinelinkApi.device,
-  );
+  final transfers = await api.getTransfers(api.currentOwner, api.currentDevice);
   final byId = {for (final item in transfers) item.id: item};
   final names = <String, String>{};
   for (final task in tasks) {
@@ -58,15 +55,15 @@ Future<TaskData> loadTaskData(
       try {
         names[task.referenceId] = await api.getPull(
           task.referenceId,
-          PinelinkApi.owner,
-          PinelinkApi.device,
+          api.currentOwner,
+          api.currentDevice,
         );
       } catch (_) {}
     } else if (task.kind == 'UPLOAD') {
       try {
         names[task.referenceId] = (await api.getFile(
           task.referenceId,
-          PinelinkApi.owner,
+          api.currentOwner,
         )).fileName;
       } catch (_) {}
     }
@@ -431,8 +428,8 @@ class _TasksPageState extends State<TasksPage> {
       await api.controlTask(
         task.id,
         action,
-        PinelinkApi.owner,
-        PinelinkApi.device,
+        widget.api.currentOwner,
+        widget.api.currentDevice,
         task.version,
       );
       if (!current()) return;

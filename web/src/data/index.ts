@@ -1,4 +1,5 @@
 import { ClientRuntime } from './runtime'
+import type { RuntimeAccess } from './runtime'
 
 let active: ClientRuntime | undefined
 let failure: unknown
@@ -9,15 +10,15 @@ export const clientRuntime = () => {
   if (failure) throw failure
   return active
 }
-export async function initializeClient(server: string, owner: string, device: string, pin: string, scope = import.meta.env.VITE_PINELINK_SCOPE ?? 'dev-scope') {
+export async function initializeClient(server: string, owner: string, device: string, pin: string, scope = import.meta.env.VITE_PINELINK_SCOPE ?? 'dev-scope', access: RuntimeAccess = {}) {
   if (closing) throw new Error('CLIENT_CLOSING')
-  const key = JSON.stringify([new URL(server, location.href).href.replace(/\/$/, ''), owner, device, pin, scope])
+  const key = JSON.stringify([new URL(server, location.href).href.replace(/\/$/, ''), owner, device, pin, scope, access.localOnly, access.csrf])
   if (configuration && configuration !== key) throw new Error('CLIENT_CONFIGURATION_CHANGED')
   if (active) return active
   if (pending) return pending
   configuration = key
   failure = undefined
-  pending = ClientRuntime.open(server, owner, device, pin).then(async runtime => {
+  pending = ClientRuntime.open(server, owner, device, pin, undefined, access).then(async runtime => {
     try { await runtime.prime(scope) } catch (error) { await runtime.close(); throw error }
     active = runtime
     return runtime

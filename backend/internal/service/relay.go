@@ -16,13 +16,15 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/pion/webrtc/v4"
+	"github.com/simiooo/pinelink/backend/internal/auth"
 )
 
 type RelayOffer struct {
-	TransferID string
-	Channel    string
-	Payload    string
-	Sequence   int64
+	TransferID    string
+	Channel       string
+	Payload       string
+	Sequence      int64
+	AuthSessionID string
 }
 
 func (s *Service) LatestRelaySignalSequence(ctx context.Context) (int64, error) {
@@ -32,14 +34,16 @@ func (s *Service) LatestRelaySignalSequence(ctx context.Context) (int64, error) 
 }
 
 func (s *Service) RelayOffers(ctx context.Context, after int64) ([]RelayOffer, error) {
+	required := s.accounts != nil && s.accounts.Required()
 	rows, err := s.db.Query(ctx, `
-        SELECT p.transfer_id,p.channel,p.payload,p.sequence FROM peer_signals p JOIN transfer_requests tr ON tr.id=p.transfer_id
+        SELECT p.transfer_id,p.channel,p.payload,p.sequence,COALESCE(p.auth_session_id::text,'') FROM peer_signals p JOIN transfer_requests tr ON tr.id=p.transfer_id
         LEFT JOIN relay_offer_claims c ON c.sequence=p.sequence
         WHERE p.sequence>$1 AND p.channel IN ('relay-uplink-offer','relay-downlink-offer')
         AND tr.state IN ('PENDING','ACCEPTED','COMPLETED') AND tr.expires_at>clock_timestamp()
+        AND (NOT $2 OR EXISTS(SELECT 1 FROM account_sessions s JOIN accounts a ON a.id=s.account_id WHERE s.id=p.auth_session_id AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND s.credential_epoch=a.credential_epoch))
         AND (c.sequence IS NULL OR(c.completed_at IS NULL AND c.claimed_at<clock_timestamp()-interval '1 minute'))
         AND NOT EXISTS(SELECT 1 FROM peer_signals newer WHERE newer.transfer_id=p.transfer_id AND newer.channel=p.channel AND newer.sequence>p.sequence)
-        ORDER BY p.sequence LIMIT 100`, after)
+        ORDER BY p.sequence LIMIT 100`, after, required)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +51,7 @@ func (s *Service) RelayOffers(ctx context.Context, after int64) ([]RelayOffer, e
 	var offers []RelayOffer
 	for rows.Next() {
 		var offer RelayOffer
-		if err := rows.Scan(&offer.TransferID, &offer.Channel, &offer.Payload, &offer.Sequence); err != nil {
+		if err := rows.Scan(&offer.TransferID, &offer.Channel, &offer.Payload, &offer.Sequence, &offer.AuthSessionID); err != nil {
 			return nil, err
 		}
 		offers = append(offers, offer)
@@ -136,6 +140,12 @@ func relayICEConfig() webrtc.Configuration {
 }
 
 func (m *RelayManager) handleOffer(ctx context.Context, offer RelayOffer) error {
+	if offer.AuthSessionID != "" {
+		ctx = auth.WithIdentity(ctx, auth.Identity{SessionID: offer.AuthSessionID})
+		if m.service.accounts == nil || m.service.accounts.SessionAlive(ctx, offer.AuthSessionID) != nil {
+			return ErrUnauthorized
+		}
+	}
 	claimed, err := m.service.ClaimRelayOffer(ctx, offer.Sequence, m.instanceID)
 	if err != nil || !claimed {
 		return err
@@ -159,6 +169,24 @@ func (m *RelayManager) handleOffer(ctx context.Context, offer RelayOffer) error 
 		return err
 	}
 	call, cancel := context.WithCancel(ctx)
+	if offer.AuthSessionID != "" {
+		go func() {
+			tick := time.NewTicker(time.Second)
+			defer tick.Stop()
+			for {
+				select {
+				case <-call.Done():
+					return
+				case <-tick.C:
+					if m.service.accounts.SessionAlive(call, offer.AuthSessionID) != nil {
+						cancel()
+						_ = pc.Close()
+						return
+					}
+				}
+			}
+		}()
+	}
 	key := offer.TransferID + ":" + offer.Channel
 	m.mu.Lock()
 	prior := m.active[key]

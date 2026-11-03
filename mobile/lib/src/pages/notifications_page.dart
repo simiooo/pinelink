@@ -17,8 +17,8 @@ class NotificationsPage extends StatefulWidget {
 
 class _NotificationsPageState extends State<NotificationsPage> {
   late Future<List<TransferRequest>> _pending = widget.api.getPending(
-    PinelinkApi.owner,
-    PinelinkApi.device,
+    widget.api.currentOwner,
+    widget.api.currentDevice,
   );
   String? _selected;
   String? _notice;
@@ -37,14 +37,20 @@ class _NotificationsPageState extends State<NotificationsPage> {
       widget.api.addListener(_synced);
       _responding = false;
       _notice = null;
-      _pending = widget.api.getPending(PinelinkApi.owner, PinelinkApi.device);
+      _pending = widget.api.getPending(
+        widget.api.currentOwner,
+        widget.api.currentDevice,
+      );
     }
   }
 
   void _synced() {
     if (mounted && !_responding) {
       setState(() {
-        _pending = widget.api.getPending(PinelinkApi.owner, PinelinkApi.device);
+        _pending = widget.api.getPending(
+          widget.api.currentOwner,
+          widget.api.currentDevice,
+        );
       });
     }
   }
@@ -229,8 +235,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
       await api.respond(
         request.id,
         action,
-        PinelinkApi.owner,
-        PinelinkApi.device,
+        widget.api.currentOwner,
+        widget.api.currentDevice,
         request.version,
       );
       if (!mounted || widget.api != api) return;
@@ -258,8 +264,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
         setState(() {
           _responding = false;
           _pending = widget.api.getPending(
-            PinelinkApi.owner,
-            PinelinkApi.device,
+            widget.api.currentOwner,
+            widget.api.currentDevice,
           );
         });
       }

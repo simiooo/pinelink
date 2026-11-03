@@ -40,7 +40,11 @@ spec:
             requests: {cpu: 50m, memory: 64Mi}
             limits: {cpu: "500m", memory: {{ if eq $component "api" }}384Mi{{ else }}128Mi{{ end }}}
 {{- if eq $component "api" }}
-          envFrom: [{secretRef: {name: {{ $.Values.existingSecrets.api }}}}]
+          envFrom:
+            - secretRef: {name: {{ $.Values.existingSecrets.api }}}
+{{- if $.Values.existingSecrets.accounts }}
+            - secretRef: {name: {{ $.Values.existingSecrets.accounts }}}
+{{- end }}
           env:
             - {name: PINELINK_HTTP_ADDR, value: "0.0.0.0:8080"}
             - {name: PINELINK_DEVICE_AUTH_REQUIRED, value: "true"}

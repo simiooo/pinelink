@@ -14,6 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/simiooo/pinelink/backend/internal/accounts"
 )
 
 type BlobStore interface {
@@ -28,6 +29,7 @@ type Service struct {
 	now            func() time.Time
 	replicationKey ed25519.PrivateKey
 	relayTransport string
+	accounts       *accounts.Service
 }
 
 func New(db *pgxpool.Pool, blobs BlobStore) *Service {

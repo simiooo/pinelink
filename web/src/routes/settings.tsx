@@ -6,6 +6,7 @@ import { ApiError, getDevices, getFile, getQuota, getTransfers, IDENTITY, promot
 import { Check, CloudOff } from 'lucide-react'
 import { displayFileName, formatBytes, formatTime } from '../format'
 import { useI18n } from '../i18n'
+import { authState } from '../auth/client'
 
 export function SettingsPage() {
   const client = useQueryClient()
@@ -47,7 +48,7 @@ export function SettingsPage() {
       <article className="settings-card current-device">
         <strong>{IDENTITY.device}</strong>
         <span>{current ? t(current.status === 'ACTIVE' ? 'currentDeviceRegistered' : 'currentDeviceRevoked') : t('currentDeviceUnknown')}</span>
-        <span>{t('account', { owner: IDENTITY.owner })}</span>
+        <span>{t('account', { owner: authState().session?.account.email || authState().offlineAccount?.email || (authState().capabilities.enabled ? t('auth_local') : IDENTITY.owner) })}</span>
       </article>
       <h2 className="section-title">{t('storageSpace')}</h2>
       <article className="settings-card">
