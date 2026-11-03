@@ -86,6 +86,15 @@ test('encrypted notification metadata never becomes a claimed plaintext name', a
   render(<App initialEntries={['/notifications']} />); fireEvent.click(await screen.findByRole('button', { name: /phone-a/ })); expect(await screen.findByText('加密文件')).toBeInTheDocument(); expect(screen.queryByText('encrypted')).not.toBeInTheDocument()
 })
 
+test('a completed upload in merged files means cloud storage, not recipient delivery', async () => {
+  const task = { id: 'stored-task', kind: 'UPLOAD', reference_id: 'stored-entry', state: 'COMPLETED', progress_bytes: 100, total_bytes: 100, version: 2, updated_at: '2026-11-03T16:00:00Z' }
+  vi.stubGlobal('fetch', vi.fn(async (url: RequestInfo | URL) => ({ ok: true, json: async () => url.toString().includes('/v1/transfers') ? { transfers: [{ id: 'stored-transfer', entry_id: 'stored-entry', file_name: 'Cloud.pdf' }] } : { tasks: [task] } })))
+  render(<App initialEntries={['/files']} />)
+  fireEvent.click(await screen.findByRole('button', { name: /Cloud.pdf.*已暂存到云端/ }))
+  expect(await screen.findByText('已暂存到云端')).toBeInTheDocument()
+  expect(screen.queryByText('已送达')).not.toBeInTheDocument()
+})
+
 test('persistent storage uses the current file version and real quota', async () => {
   let file = { id: 'entry-1', file_name: '设计回顾.pdf', state: 'AVAILABLE', version: 4, retention_class: 'TEMP_24H' }
   const fetchMock = vi.fn(async (url: RequestInfo | URL, init?: RequestInit) => {
