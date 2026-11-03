@@ -19,6 +19,9 @@ spec:
       labels: {app.kubernetes.io/instance: {{ $.Release.Name }}, app.kubernetes.io/component: {{ $component }}, pinelink.environment: {{ $.Values.environment }}}
       annotations:
         pinelink.source-revision: {{ $.Values.version | quote }}
+{{- if eq $component "web" }}
+        pinelink.web-config-sha256: {{ include (print $.Template.BasePath "/web-config.yaml") $ | sha256sum | quote }}
+{{- end }}
     spec:
       serviceAccountName: {{ $.Release.Name }}
       automountServiceAccountToken: false

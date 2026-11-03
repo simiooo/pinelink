@@ -1,6 +1,6 @@
 {
-  "tested_at": "2026-11-03T05:08:08.769Z",
-  "artifact_sha256": "d5b76fab95ce7c4f105cc27d1bab5a4e4c03a1cb294e973fce24c94bfc4bce06",
+  "tested_at": "2026-11-03T05:14:44.772Z",
+  "artifact_sha256": "d0ba06ff24a742749b956dab3c416887245be238e496461a2e060493468f7ccb",
   "browser": "156.0.8078.73",
   "network": "disabled at container boundary",
   "checks": [
@@ -780,7 +780,7 @@
         "mounted": true,
         "target": "connection-line",
         "recipe": "graph",
-        "phase": 0,
+        "phase": 1,
         "fixtureCount": 0,
         "announcements": 0,
         "domainCalls": 0,
@@ -1194,7 +1194,7 @@
         "mounted": true,
         "target": "start-direct",
         "recipe": "graph",
-        "phase": 0,
+        "phase": 1,
         "fixtureCount": 0,
         "announcements": 0,
         "domainCalls": 0,
@@ -1224,7 +1224,7 @@
         "mounted": true,
         "target": "start-relay",
         "recipe": "graph",
-        "phase": 0,
+        "phase": 1,
         "fixtureCount": 0,
         "announcements": 0,
         "domainCalls": 0,
@@ -1254,7 +1254,7 @@
         "mounted": true,
         "target": "progress-ack",
         "recipe": "progress",
-        "phase": 0,
+        "phase": 1,
         "fixtureCount": 0,
         "announcements": 0,
         "domainCalls": 0,
@@ -1284,7 +1284,7 @@
         "mounted": true,
         "target": "flow-active",
         "recipe": "flow",
-        "phase": 0,
+        "phase": 1,
         "fixtureCount": 0,
         "announcements": 0,
         "domainCalls": 0,
@@ -1325,9 +1325,9 @@
       "name": "target paused",
       "passed": true,
       "details": {
-        "activeAnimations": 2,
-        "loopDefinitions": 1,
-        "runningLoops": 1,
+        "activeAnimations": 0,
+        "loopDefinitions": 0,
+        "runningLoops": 0,
         "reduced": false,
         "paused": false,
         "visible": true,
@@ -1338,14 +1338,14 @@
         "mounted": true,
         "target": "paused",
         "recipe": "flow",
-        "phase": 0,
+        "phase": 2,
         "fixtureCount": 0,
         "announcements": 0,
         "domainCalls": 0,
         "scene": {
           "kind": "flow",
           "ack": 0.42,
-          "running": true,
+          "running": false,
           "pending": false,
           "selected": false
         }
@@ -1392,7 +1392,7 @@
         "mounted": true,
         "target": "resumed",
         "recipe": "flow",
-        "phase": 0,
+        "phase": 1,
         "fixtureCount": 0,
         "announcements": 0,
         "domainCalls": 0,
@@ -1476,7 +1476,7 @@
         "mounted": true,
         "target": "route-switch",
         "recipe": "graph",
-        "phase": 0,
+        "phase": 1,
         "fixtureCount": 0,
         "announcements": 0,
         "domainCalls": 0,
@@ -2832,7 +2832,7 @@
         "mounted": true,
         "target": "quota-change",
         "recipe": "progress",
-        "phase": 0,
+        "phase": 1,
         "fixtureCount": 0,
         "announcements": 0,
         "domainCalls": 0,
@@ -2862,7 +2862,7 @@
         "mounted": true,
         "target": "flow-active",
         "recipe": "flow",
-        "phase": 0,
+        "phase": 1,
         "fixtureCount": 0,
         "announcements": 0,
         "domainCalls": 0,
@@ -3000,6 +3000,10 @@
       }
     },
     {
+      "name": "full motion restores visible sheen",
+      "passed": true
+    },
+    {
       "name": "hidden stops loop",
       "passed": true
     },
@@ -3016,8 +3020,8 @@
       "name": "spring reversal starts at visible pose",
       "passed": true,
       "details": {
-        "beforeReverse": 1.28253,
-        "afterReverse": 1.31286
+        "beforeReverse": 1.28239,
+        "afterReverse": 1.28275
       }
     },
     {
@@ -3181,7 +3185,7 @@
         "mounted": true,
         "target": "flow-active",
         "recipe": "flow",
-        "phase": 0,
+        "phase": 1,
         "fixtureCount": 3,
         "announcements": 3,
         "domainCalls": 0,

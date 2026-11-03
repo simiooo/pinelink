@@ -12,11 +12,13 @@ def run(name,extra,ok=True):
 lint=subprocess.run([args.helm,'lint',args.chart],capture_output=True,text=True);assert lint.returncode==0,lint.stderr
 default=run('default preview disabled',[])
 assert '/usr/share/nginx/html/designs' not in default
+assert default.count('pinelink.web-config-sha256:')==1
 enabled=run('staging preview enabled',['--set','designPreview.enabled=true','--set','designPreview.configMap=design-fixture'])
 assert enabled.count('mountPath: /usr/share/nginx/html/designs')==1
 assert 'configMap: {name: design-fixture}' in enabled
 assert "sandbox allow-scripts; default-src 'none'" in enabled
 assert 'try_files $uri =404' in enabled
+assert 'private, no-store, no-transform' in enabled
 run('production rejects enabled preview',['--set','environment=production','--set','designPreview.enabled=true','--set','designPreview.configMap=design-fixture'],False)
 run('enabled preview needs config map',['--set','designPreview.enabled=true'],False)
 production=run('production without preview still renders',['--set','environment=production'])

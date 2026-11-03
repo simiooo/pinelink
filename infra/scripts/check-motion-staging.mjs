@@ -17,7 +17,7 @@ try{
  const digest=createHash('sha256').update(await response.body()).digest('hex');check('public artifact matches reviewed bytes',digest===config.artifact_sha256,{sha256:digest});
  const headers=await response.allHeaders(),csp=headers['content-security-policy']??'';
  check('preview has opaque sandbox and no API access',csp.includes('sandbox allow-scripts;')&&!csp.includes('allow-same-origin')&&csp.includes("connect-src 'none'"));
- check('preview is not shared-cacheable',/private/.test(headers['cache-control'])&&/no-store/.test(headers['cache-control']));
+ check('preview cannot be cached or transformed',/private/.test(headers['cache-control'])&&/no-store/.test(headers['cache-control'])&&/no-transform/.test(headers['cache-control']));
  check('preview served through Cloudflare',Boolean(headers['cf-ray']));
  await page.waitForFunction(()=>window.PinelinkMotionPreview?.diagnostics().mounted);
  check('109 targets available',await page.evaluate(()=>window.PinelinkMotionPreview.catalog.targets.length)===109);

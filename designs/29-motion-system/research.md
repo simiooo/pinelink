@@ -1,5 +1,7 @@
 # 动效调研与 Pinelink 的取舍
 
+部署补充：[Cloudflare Web Analytics FAQ](https://developers.cloudflare.com/web-analytics/faq/) 与[响应体检查规则](https://developers.cloudflare.com/rules/configuration-rules/response-body-inspection/)说明 `Cache-Control: no-transform` 可阻止支持该指令的边缘内容改写。评审路径增加此指令并以返回 HTML 的完整 SHA-256 验证；仅检查 Pod 内原文件不足以证明用户收到同一份原型。
+
 调研日期：2026-11-03。范围为官方设计指南、框架文档和项目实际源码。下面的具体时长、幅度和覆盖方案是 Pinelink 提案，不冒称 Instagram／Threads 的内部参数，也不照搬组件库外观。
 
 | 一手来源 | 借鉴点 | 在 Pinelink 中的应用 |

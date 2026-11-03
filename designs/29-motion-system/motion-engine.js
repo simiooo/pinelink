@@ -31,7 +31,8 @@
     }
     loop(el,keyframes,{duration=1800,staticStyle={}}={}){
       const previous=this.loops.get(el);if(previous){previous.wanted=true;this.syncLoops();return;}
-      this.loops.set(el,{el,keyframes,duration,staticStyle,wanted:true,animation:null});this.syncLoops();
+      const activeStyle=Object.fromEntries(Object.keys(staticStyle).map(key=>[key,el.style[key]]));
+      this.loops.set(el,{el,keyframes,duration,staticStyle,activeStyle,wanted:true,animation:null});this.syncLoops();
     }
     style(el,property,value,duration=120){
       let properties=this.styleRecords.get(el);if(!properties){properties=new Map();this.styleRecords.set(el,properties);}
@@ -45,6 +46,7 @@
     stopLoop(el){const r=this.loops.get(el);if(!r)return;r.wanted=false;r.animation?.cancel();Object.assign(el.style,r.staticStyle);this.loops.delete(el);}
     syncLoops(){for(const r of this.loops.values()){
       if(this.reduced){r.animation?.cancel();r.animation=null;Object.assign(r.el.style,r.staticStyle);continue;}
+      Object.assign(r.el.style,r.activeStyle);
       if(!r.animation){r.animation=r.el.animate(r.keyframes,{duration:r.duration,iterations:Infinity,easing:'linear'});r.animation.playbackRate=this.speed;}
       if(this.paused||!this.visible||!r.wanted)r.animation.pause();else r.animation.play();
     }}
