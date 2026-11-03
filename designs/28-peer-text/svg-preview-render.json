@@ -1,0 +1,297 @@
+{
+  "browser": "156.0.8078.73",
+  "network": "disabled at container boundary",
+  "source": "OpenPencil native SVG exports",
+  "fontSha256": "bb55a5ca5c2042335b3991af27c4d0705d0ef41cac6164ac737fd8f2a1e85207",
+  "frames": [
+    {
+      "key": "desktop-incoming",
+      "width": 1200,
+      "height": 800,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "desktop-compare",
+      "width": 1200,
+      "height": 800,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "desktop-first-offer",
+      "width": 1200,
+      "height": 800,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "desktop-connected-graph",
+      "width": 1200,
+      "height": 800,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "desktop-compose",
+      "width": 1200,
+      "height": 800,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "desktop-read",
+      "width": 1200,
+      "height": 800,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "desktop-history",
+      "width": 1200,
+      "height": 800,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-invite",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-incoming",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-compare",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-key-changed",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-invite-expired",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-compose",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-receive",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-read",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-copy-failed",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-queued",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-compose-keyboard",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-compose-320",
+      "width": 320,
+      "height": 768,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-history",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-connected-graph",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-unsupported",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "mobile-expired",
+      "width": 390,
+      "height": 844,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "key": "motion-contract",
+      "width": 800,
+      "height": 880,
+      "fontFaces": [
+        {
+          "family": "Nunito",
+          "weight": "200 1000",
+          "status": "loaded"
+        }
+      ]
+    }
+  ],
+  "pageErrors": []
+}

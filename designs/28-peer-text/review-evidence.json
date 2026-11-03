@@ -1,0 +1,302 @@
+{
+  "schema": 1,
+  "checked_at_utc": "2026-11-03 04:15:16 UTC",
+  "native_sha256": "688f13f82bd81bd523c594ad84a8799e16252028acd84f643620ce24e523e997",
+  "scope": "Four new pages; inherited content unchanged except the foundations revision label",
+  "native_save_close_reopen": true,
+  "native_frame_count": 50,
+  "total_nonempty_pages": 27,
+  "new_pages": [
+    {
+      "key": "connect",
+      "page": "0:27",
+      "fontFaithful": true,
+      "fontIssues": [],
+      "faces": [
+        {
+          "family": "Nunito",
+          "style": "Bold",
+          "status": "available"
+        },
+        {
+          "family": "Nunito",
+          "style": "Regular",
+          "status": "available"
+        },
+        {
+          "family": "Nunito",
+          "style": "SemiBold",
+          "status": "available"
+        }
+      ],
+      "parent": {
+        "totalNodes": 759,
+        "analyzedNodes": 610,
+        "overlapCount": 0,
+        "byCategory": {
+          "sibling-overlap": 0,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0,
+          "info": 0
+        }
+      },
+      "sibling": {
+        "totalNodes": 759,
+        "analyzedNodes": 610,
+        "overlapCount": 65,
+        "byCategory": {
+          "sibling-overlap": 65,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 49,
+          "minor": 0,
+          "info": 16
+        }
+      },
+      "reviewedIntentionalPairs": {
+        "Device graph / current peer | Modal placement": 7,
+        "Active surface / 16-20h 24v insets | Device graph / current peer": 7,
+        "App header / behind active surface | Device graph / current peer": 14,
+        "Device graph / current peer | Frame": 14,
+        "Active surface / 16-20h 24v insets | Frame": 7,
+        "Frame | Other person / tooltip": 16
+      },
+      "unclassifiedOverlaps": [],
+      "intrinsicCount": 61,
+      "intrinsicZeroOrOver24": []
+    },
+    {
+      "key": "recovery",
+      "page": "0:28",
+      "fontFaithful": true,
+      "fontIssues": [],
+      "faces": [
+        {
+          "family": "Nunito",
+          "style": "Bold",
+          "status": "available"
+        },
+        {
+          "family": "Nunito",
+          "style": "Regular",
+          "status": "available"
+        },
+        {
+          "family": "Nunito",
+          "style": "SemiBold",
+          "status": "available"
+        }
+      ],
+      "parent": {
+        "totalNodes": 332,
+        "analyzedNodes": 278,
+        "overlapCount": 0,
+        "byCategory": {
+          "sibling-overlap": 0,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0,
+          "info": 0
+        }
+      },
+      "sibling": {
+        "totalNodes": 332,
+        "analyzedNodes": 278,
+        "overlapCount": 42,
+        "byCategory": {
+          "sibling-overlap": 42,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 34,
+          "minor": 0,
+          "info": 8
+        }
+      },
+      "reviewedIntentionalPairs": {
+        "Device graph / current peer | Modal placement": 2,
+        "Active surface / 16-20h 24v insets | Device graph / current peer": 6,
+        "App header / behind active surface | Device graph / current peer": 8,
+        "Device graph / current peer | Frame": 12,
+        "Active surface / 16-20h 24v insets | Frame": 6,
+        "Frame | Other person / tooltip": 8
+      },
+      "unclassifiedOverlaps": [],
+      "intrinsicCount": 37,
+      "intrinsicZeroOrOver24": []
+    },
+    {
+      "key": "text",
+      "page": "0:29",
+      "fontFaithful": true,
+      "fontIssues": [],
+      "faces": [
+        {
+          "family": "Nunito",
+          "style": "Bold",
+          "status": "available"
+        },
+        {
+          "family": "Nunito",
+          "style": "Regular",
+          "status": "available"
+        },
+        {
+          "family": "Nunito",
+          "style": "SemiBold",
+          "status": "available"
+        }
+      ],
+      "parent": {
+        "totalNodes": 1135,
+        "analyzedNodes": 967,
+        "overlapCount": 0,
+        "byCategory": {
+          "sibling-overlap": 0,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0,
+          "info": 0
+        }
+      },
+      "sibling": {
+        "totalNodes": 1135,
+        "analyzedNodes": 967,
+        "overlapCount": 113,
+        "byCategory": {
+          "sibling-overlap": 113,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 80,
+          "minor": 12,
+          "info": 21
+        }
+      },
+      "reviewedIntentionalPairs": {
+        "Device graph / current peer | Modal placement": 8,
+        "Active surface / 16-20h 24v insets | Device graph / current peer": 12,
+        "Device graph / current peer | History panel / local left axes": 1,
+        "Device graph / current peer | System keyboard / viewport only": 1,
+        "App header / behind active surface | Device graph / current peer": 21,
+        "Device graph / current peer | Frame": 24,
+        "Active surface / 16-20h 24v insets | Frame": 12,
+        "Frame | System keyboard / viewport only": 1,
+        "Availability badge / tooltip / clock | custom": 4,
+        "Availability badge / tooltip / repeat | custom": 4,
+        "Availability badge / tooltip / check | custom": 4,
+        "Frame | Other person / tooltip": 21
+      },
+      "unclassifiedOverlaps": [],
+      "intrinsicCount": 86,
+      "intrinsicZeroOrOver24": []
+    },
+    {
+      "key": "contract",
+      "page": "0:30",
+      "fontFaithful": true,
+      "fontIssues": [],
+      "faces": [
+        {
+          "family": "Nunito",
+          "style": "Bold",
+          "status": "available"
+        },
+        {
+          "family": "Nunito",
+          "style": "Regular",
+          "status": "available"
+        }
+      ],
+      "parent": {
+        "totalNodes": 51,
+        "analyzedNodes": 51,
+        "overlapCount": 0,
+        "byCategory": {
+          "sibling-overlap": 0,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0,
+          "info": 0
+        }
+      },
+      "sibling": {
+        "totalNodes": 51,
+        "analyzedNodes": 51,
+        "overlapCount": 0,
+        "byCategory": {
+          "sibling-overlap": 0,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0,
+          "info": 0
+        }
+      },
+      "reviewedIntentionalPairs": {},
+      "unclassifiedOverlaps": [],
+      "intrinsicCount": 0,
+      "intrinsicZeroOrOver24": []
+    }
+  ],
+  "measured_intrinsic_labels": 184,
+  "intrinsic_review": "181 labels use at most 20px; three system-keyboard rows use their specified 24px line height. No zero-height or wrapped intrinsic labels.",
+  "intentional_overlaps": "Modal/sheet/history over dimmed graph; OS safety indicators over sheets/keyboards; peer/availability badges over device/item icons. Raw counts are retained, reviewed as intentional, not described as zero.",
+  "curve_label_clearance_px": 8,
+  "svg_export_count": 24,
+  "png_preview_count": 24,
+  "png_renderer_report": "svg-preview-render.json",
+  "preview_method": "OpenPencil native SVGs rendered on the isolated Fedora Chromium container with the adopted local Nunito font, network disabled; design-only verification.",
+  "manually_reviewed": [
+    "desktop-incoming",
+    "desktop-compose",
+    "desktop-connected-graph",
+    "desktop-history",
+    "mobile-invite",
+    "mobile-incoming",
+    "mobile-compare",
+    "mobile-connected-graph",
+    "mobile-receive",
+    "mobile-read",
+    "mobile-copy-failed",
+    "mobile-queued",
+    "mobile-compose-keyboard",
+    "mobile-compose-320",
+    "mobile-history",
+    "mobile-key-changed",
+    "mobile-invite-expired",
+    "motion-contract"
+  ],
+  "qr_fixture": "pinelink-design-preview:peer-invitation-not-valid",
+  "runtime_implemented": false,
+  "playable_motion": false,
+  "application_deployed": false,
+  "account_v27_adopted": false
+}

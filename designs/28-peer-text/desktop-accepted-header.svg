@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1130.53" height="48" viewBox="0 0 1130.53 48">
+  <g transform="translate(1.2, 0)">
+    <g transform="translate(0, 16)">
+      <path d="M0 12C0 5.33 4 0 9.33 0C14.67 0 18.67 4 18.67 9.33C18.67 14.67 14.67 18.67 9.33 18.67C6.67 18.67 4 17.33 4 14.67C4 12 6.67 9.33 9.33 9.33L13.33 9.33" fill="none" stroke="#101010" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g transform="translate(37.33, 7.44)">
+      <text x="0" y="24" font-family="Nunito" font-size="24" font-weight="700" fill="#101010">pinelink</text>
+    </g>
+    <g transform="translate(1025.33, 0)">
+      <g opacity="0">
+        <path d="M0 0L48 0L48 48L0 48L0 0Z" fill="#FFFFFF"/>
+      </g>
+      <g transform="translate(17, 17)">
+        <path d="M7 0L7 14M0 7L14 7" fill="none" stroke="#101010" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>
+    <g transform="translate(1081.33, 0)">
+      <g opacity="0">
+        <path d="M0 0L48 0L48 48L0 48L0 0Z" fill="#FFFFFF"/>
+      </g>
+      <g transform="translate(17, 24)">
+        <path d="M0 0L0.01 0M7 0L7.01 0M14 0L14.01 0" fill="none" stroke="#101010" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>
+    <g transform="translate(532.83, 12.96)">
+      <text x="28.5" y="16" font-family="Nunito" font-size="16" font-weight="600" fill="#101010" text-anchor="middle">Devices</text>
+    </g>
+  </g>
+</svg>
