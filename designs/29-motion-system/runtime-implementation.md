@@ -28,9 +28,14 @@ cd ../mobile
 dart run tool/sync_i18n.dart
 flutter analyze
 flutter test --concurrency=2
+cd ..
+python3 infra/scripts/prepare-flutter-web.py
+cd mobile
 flutter build web --release --no-web-resources-cdn --no-wasm-dry-run
 ```
 
 The CLI's transitive `minimatch` is narrowly overridden to patched 11.0.1. The production audit is clean; six low-severity, unpatched development-tool findings remain in the deepmerge chain. Do not downgrade the CLI with an unreviewed forced audit fix.
 
 Web-only staging releases can set `webVersion` to the exact source commit while preserving the API/tunnel revision. The chart defaults to the existing shared `version` when it is absent. Runtime deployment and PWA smoke evidence are recorded separately after the candidate is built and deployed.
+
+Flutter Web builds must prepare the pinned SQLite WASM and compile the Drift worker before the Flutter build, following [Drift's Web setup](https://drift.simonbinder.eu/platforms/web/). Release assembly rejects missing database assets. Browser validation caught an omission in the temporary packaging path before publication; the shared preparation script and CI build now cover it.

@@ -194,6 +194,7 @@ class _NavButton extends StatelessWidget {
     onTap: onTap,
     borderRadius: BorderRadius.circular(24),
     child: Container(
+      height: 48,
       constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
