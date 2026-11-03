@@ -19,7 +19,7 @@ export default defineConfig({
     },
     injectManifest: {
       rollupFormat: 'iife',
-      globPatterns: ['**/*.{js,css,html,png,ico,svg,woff2,wasm,webmanifest}'],
+      globPatterns: ['**/*.{js,css,html,png,ico,svg,woff2,ttf,wasm,webmanifest}', 'fonts/OFL.txt'],
       maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
     },
   })],

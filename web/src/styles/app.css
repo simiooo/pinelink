@@ -1,13 +1,22 @@
+@font-face {
+  font-family: 'Nunito';
+  src: url('../assets/fonts/Nunito-Variable.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 200 1000;
+  font-display: swap;
+}
+
 :root {
-  --bg: #f5f6f7;
+  --bg: #ffffff;
   --paper: #ffffff;
-  --text: #30363d;
-  --muted: #626c76;
-  --line: #e2e6ea;
-  --accent: #6b4a34;
-  --soft: #e9e2d9;
-  --danger: #9b4b46;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --text: #101010;
+  --muted: #6e6e6e;
+  --line: #dbdbdb;
+  --accent: #0866ff;
+  --soft: #eef5ff;
+  --danger: #101010;
+  font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  font-weight: 400;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -20,7 +29,7 @@ a { color: inherit; text-decoration: none; }
 button { font: inherit; }
 button, summary, .chip { cursor: pointer; }
 button:focus-visible, a:focus-visible, summary:focus-visible, .dropzone:focus-visible {
-  outline: 3px solid #bca893;
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
@@ -49,7 +58,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible, .dropzone:focus-vi
   color: var(--muted);
   font-size: 13px;
 }
-.chip:hover { border-color: #bca893; color: var(--text); }
+.chip:hover { border-color: var(--accent); color: var(--text); }
 .more-menu { position: relative; }
 .more-menu summary { list-style: none; }
 .more-menu summary::-webkit-details-marker { display: none; }
@@ -76,18 +85,18 @@ button:focus-visible, a:focus-visible, summary:focus-visible, .dropzone:focus-vi
 .language-note { margin: 4px 12px 8px; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .page-content { padding: 32px 36px; }
 .page-heading { margin-bottom: 32px; }
-.page-heading h1 { margin: 0 0 12px; font-size: 28px; font-weight: 650; line-height: 1.35; }
+.page-heading h1 { margin: 0 0 12px; font-size: 28px; font-weight: 700; line-height: 1.35; }
 .page-heading p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
 
 .dropzone {
   position: relative;
   min-height: 300px;
   padding: 36px 32px 28px;
-  border: 1px dashed #c9d0d6;
+  border: 1px dashed var(--line);
   border-radius: 16px;
   background: var(--bg);
 }
-.dropzone.dragging { border-color: var(--accent); background: #f1ebe4; }
+.dropzone.dragging { border-color: var(--accent); background: var(--soft); }
 .upload-icon {
   display: grid;
   place-items: center;
@@ -100,7 +109,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible, .dropzone:focus-vi
   font-size: 30px;
 }
 .drop-copy { display: grid; gap: 8px; margin-bottom: 28px; }
-.drop-copy strong { font-size: 18px; font-weight: 650; overflow-wrap: anywhere; }
+.drop-copy strong { font-size: 18px; font-weight: 600; overflow-wrap: anywhere; }
 .drop-copy span, .dropzone small { color: var(--muted); font-size: 14px; }
 .dropzone small { display: block; margin-top: 28px; line-height: 1.6; }
 .primary-button, .secondary-button {
@@ -112,7 +121,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible, .dropzone:focus-vi
   font-weight: 600;
 }
 .primary-button { background: var(--accent); color: #fff; }
-.primary-button:hover { background: #593b2a; }
+.primary-button:hover { background: #005ce6; }
 .secondary-button { background: var(--paper); border-color: var(--line); color: var(--text); }
 .secondary-button:hover { background: var(--bg); }
 .privacy-note {
@@ -127,7 +136,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible, .dropzone:focus-vi
 .privacy-note p { margin: 0; }
 .privacy-note p + p { margin-top: 4px; }
 .recent-section { margin-top: 48px; }
-.recent-section h2 { margin: 0 0 16px; font-size: 17px; font-weight: 650; }
+.recent-section h2 { margin: 0 0 16px; font-size: 17px; font-weight: 600; }
 .recent-empty {
   padding: 22px 20px;
   border-radius: 12px;
@@ -191,7 +200,7 @@ button:disabled { cursor: wait; opacity: .6; }
 .history-card .error-note { margin: 20px 0 0; }
 .history-delete { margin-top: 24px; }
 .detail-note { color: var(--muted); font-size: 12px; line-height: 1.7; }
-.section-title { margin: 32px 0 16px; font-size: 17px; font-weight: 650; }
+.section-title { margin: 32px 0 16px; font-size: 17px; font-weight: 600; }
 .settings-card { display: grid; gap: 16px; padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); }
 .settings-card span { color: var(--muted); font-size: 13px; line-height: 1.7; }
 .current-device strong { font-size: 15px; }
@@ -208,7 +217,7 @@ button:disabled { cursor: wait; opacity: .6; }
 .task-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .task-heading > strong { min-width: 0; font-size: 18px; overflow-wrap: anywhere; }
 .status-badge { flex: 0 0 auto; padding: 6px 10px; border-radius: 8px; background: var(--soft); color: var(--accent); font-size: 12px; }
-.status-cancelled, .status-failed { background: #f1e5e2; color: #85463f; }
+.status-cancelled, .status-failed { background: #f5f5f5; color: var(--text); }
 .task-progress-layout { display: flex; align-items: center; gap: 36px; margin: 20px 0 8px; }
 .courier { flex: 0 0 auto; width: 140px; height: 150px; overflow: visible; }
 .courier-body { transform-origin: 150px 170px; }
@@ -225,12 +234,12 @@ button:disabled { cursor: wait; opacity: .6; }
 .courier-permission .courier-cap { animation: courier-nod .4s ease-in-out 1; }
 .courier-deny .courier-body { animation: courier-deny .2s ease-in-out 1; }
 .task-progress { display: grid; flex: 1; gap: 14px; min-width: 0; color: var(--muted); font-size: 14px; }
-.task-percent { color: var(--text); font-size: 32px; line-height: 1.2; }
+.task-percent { color: var(--text); font-size: 32px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; }
 .progress-track { height: 8px; overflow: hidden; border-radius: 4px; background: var(--line); }
 .progress-track span { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width .2s ease-out; }
 .task-progress small { font-size: 12px; }
 .task-note { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
-.error-note { color: #85463f; font-size: 13px; line-height: 1.6; }
+.error-note { color: var(--danger); font-size: 13px; line-height: 1.6; }
 @keyframes courier-step { 50% { transform: translateY(-3px); } }
 @keyframes courier-tail { 50% { transform: rotate(-3deg); } }
 @keyframes courier-listen { 50% { transform: translateY(-3px); } }
