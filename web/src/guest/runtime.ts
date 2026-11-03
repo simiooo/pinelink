@@ -9,8 +9,10 @@ import { setGuestHistoryAvailable, setGuestWorkPending } from './continuity'
 
 export class GuestError extends Error { constructor(public code: string, public status = 0) { super(code) } }
 type Snapshot = { ready: boolean; connected: boolean; busy: boolean; offline: boolean; error?: string; checkedAt?: number; connections: GuestConnections; jobs: GuestJob[]; invite?: GuestInvite }
+type ControlledTask = { version: number; state: string; progress_bytes: number; total_bytes: number; progress_revision: number }
 const emptyConnections = (): GuestConnections => ({ invites: [], candidates: [], peers: [] })
 const activeJob = (job: GuestJob) => !['complete', 'stopped'].includes(job.phase)
+const progressPhase = (snapshot: ProgressSnapshot): GuestJob['phase'] => snapshot.completion.delivered ? 'complete' : [snapshot.state, snapshot.delivery.state].some(state => ['CANCELLED', 'REJECTED', 'EXPIRED', 'FAILED', 'DELETED'].includes(state)) ? 'stopped' : snapshot.delivery.state === 'PAUSED' ? 'paused' : snapshot.delivery.state === 'VERIFYING' ? 'verifying' : snapshot.state === 'PENDING' ? 'waiting' : 'running'
 const deviceName = () => /iPhone/.test(navigator.userAgent) ? 'iPhone' : /iPad/.test(navigator.userAgent) ? 'iPad' : /Android/.test(navigator.userAgent) ? 'Android' : /Macintosh/.test(navigator.userAgent) ? 'Mac' : /Windows/.test(navigator.userAgent) ? 'Windows PC' : 'Web browser'
 const wait = (ms: number, signal?: AbortSignal) => new Promise<void>((resolve, reject) => {
   if (signal?.aborted) { reject(signal.reason); return }
@@ -271,7 +273,7 @@ export class GuestRuntime {
       const job = await this.store.jobs.get(id); if (!job) return
       if (snapshot.state_version < (job.transfer?.version ?? 0) || snapshot.control_revision < (job.controlRevision ?? 0)) return
       if (job.snapshot && (snapshot.state_version < job.snapshot.state_version || snapshot.progress_revision < job.snapshot.progress_revision)) return
-      const phase = snapshot.completion.delivered ? 'complete' : [snapshot.state, snapshot.delivery.state].some(state => ['CANCELLED', 'REJECTED', 'EXPIRED', 'FAILED', 'DELETED'].includes(state)) ? 'stopped' : snapshot.delivery.state === 'PAUSED' ? 'paused' : snapshot.delivery.state === 'VERIFYING' ? 'verifying' : snapshot.state === 'PENDING' ? 'waiting' : 'running'
+      const phase = progressPhase(snapshot)
       await this.store.jobs.update(id, { snapshot, phase, controlRevision: snapshot.control_revision, ...(snapshot.completion.delivered ? { error: undefined, ...(job.direction === 'send' ? { prepared: undefined } : {}) } : {}) })
     })
     await this.refreshLocal()
@@ -281,13 +283,30 @@ export class GuestRuntime {
       const job = await this.store.jobs.get(id); if (!job?.transfer) return
       let controlRevision = job.controlRevision ?? 0
       let updatedTransfer = job.transfer
+      let changedTask: ControlledTask | undefined
       if (action === 'cancel' && job.direction === 'send') updatedTransfer = await this.respondTransfer(job, 'cancel')
       else {
         const tasks = await this.request<{ tasks: { id: string; reference_id: string; kind: string; version: number }[] }>('GET', '/v1/tasks')
         const task = tasks.tasks?.find(t => t.kind === 'DOWNLOAD' && t.reference_id === job.transfer!.id); if (!task) throw new Error('TRANSFER_INTERRUPTED')
-        const changed = await this.request<{ version: number }>('POST', `/v1/tasks/${task.id}/${action}`, { owner_id: this.lease!.owner_id, device_id: this.profile.device, expected_version: task.version }); controlRevision = changed.version
+        changedTask = await this.request<ControlledTask>('POST', `/v1/tasks/${task.id}/${action}`, { owner_id: this.lease!.owner_id, device_id: this.profile.device, expected_version: task.version }); controlRevision = changedTask.version
       }
-      this.workers.get(id)?.abort(); await this.store.jobs.update(id, { transfer: updatedTransfer, controlRevision, phase: action === 'pause' ? 'paused' : action === 'cancel' ? 'stopped' : 'running', error: undefined }); await this.changed(); await this.poll()
+      this.workers.get(id)?.abort()
+      const checkpoint = job.snapshot ?? (changedTask ? await this.request<ProgressSnapshot>('GET', `/v1/p2p/${job.transfer.id}/progress`) : undefined)
+      await this.store.transaction('rw', this.store.jobs, async () => {
+        const current = await this.store.jobs.get(id); if (!current || controlRevision < (current.controlRevision ?? 0)) return
+        if (current.phase === 'complete' || current.transfer && ['COMPLETED', 'CANCELLED', 'REJECTED', 'EXPIRED', 'FAILED'].includes(current.transfer.state)) return
+        const previous = current.snapshot ?? checkpoint
+        if (previous && previous.control_revision > controlRevision) return
+        // Task control and recipient ACKs serialize on the same server row. Publish
+        // its committed byte boundary together with PAUSED, never a stale poll's
+        // boundary that would appear to keep moving after pause is confirmed.
+        const snapshot = previous && changedTask && !(previous.control_revision === changedTask.version && previous.progress_revision > changedTask.progress_revision) ? { ...previous, control_revision: changedTask.version, progress_revision: changedTask.progress_revision,
+          delivery: { ...previous.delivery, state: changedTask.state === 'RUNNING' && changedTask.progress_bytes === changedTask.total_bytes ? 'VERIFYING' : changedTask.state, acknowledged_bytes: changedTask.progress_bytes, total_bytes: changedTask.total_bytes, revision: changedTask.progress_revision },
+          capabilities: { ...previous.capabilities, pause: changedTask.state === 'RUNNING' && changedTask.progress_bytes < changedTask.total_bytes, resume: changedTask.state === 'PAUSED' },
+        } : previous
+        await this.store.jobs.update(id, { transfer: updatedTransfer.version >= (current.transfer?.version ?? 0) ? updatedTransfer : current.transfer, controlRevision, snapshot, phase: action === 'cancel' ? 'stopped' : snapshot ? progressPhase(snapshot) : current.phase, error: undefined })
+      })
+      await this.changed(); await this.poll()
     })
   }
   async retry(id: string) { await this.ensureSession(); const job = await this.store.jobs.get(id); if (!job) return; await this.store.jobs.update(id, { error: undefined, retryAt: 0, failures: 0 }); this.startJob({ ...job, retryAt: 0 }); await this.poll() }
