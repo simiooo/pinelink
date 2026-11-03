@@ -15,6 +15,37 @@ const runtime = async () => { const r = await GuestRuntime.open('https://unit.in
 const enrollment = (r: GuestRuntime) => ({ guest: { owner_id: 'guest-fixture', device_id: r.profile.device, device_name: 'Test device', expires_at: new Date(Date.now() + 86400000).toISOString() }, csrf: 'test-csrf' })
 const challenge = () => response({ challenge: 'test-challenge', unix_time: Math.floor(Date.now() / 1000) })
 
+it('distinguishes an expired file from an expired connection code', async () => {
+  const r = await runtime()
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => url.endsWith('/challenge') ? challenge() : url.endsWith('/enroll') ? response(enrollment(r)) : new Response(JSON.stringify({ code: 'EXPIRED' }), { status: 410 })))
+  await r.ensureSession()
+  await expect(r.request('POST', '/v1/transfers/file/accept', {})).rejects.toThrow('FILE_EXPIRED')
+  await expect(r.request('POST', '/v1/guest/join', { code: 'ABCDEFGH' })).rejects.toThrow(/^EXPIRED$/)
+})
+
+it('does not drop a resume clicked while the earlier pause is finishing its poll', async () => {
+  const r = await runtime(), entered = deferred<void>(), read = deferred<Response>(), actions: string[] = []
+  const transfer: GuestTransfer = { id: crypto.randomUUID(), state: 'ACCEPTED', version: 2, file_name: 'file.bin', size_bytes: 100, content_root: '0'.repeat(64), encryption_suite: 'DARE20-AGE-X25519-v1', sender_owner_id: 'guest-peer', sender_device_id: 'peer-device', recipient_owner_id: 'guest-fixture', recipient_device_id: r.profile.device, expires_at: new Date(Date.now() + 600000).toISOString(), received_bytes: 0 }
+  const job: GuestJob = { id: transfer.id, created: Date.now(), direction: 'receive', name: 'file.bin', plainSize: 68, received: 0, phase: 'running', transfer, retryAt: Date.now() + 3600000, peer: { pair_id: 'pair', owner_id: 'guest-peer', device_id: 'peer-device', device_name: 'Peer', encryption_key: r.profile.encryptionKey, signing_key: r.profile.signingKey, expires_at: transfer.expires_at } }
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+    if (url.endsWith('/challenge')) return challenge()
+    if (url.endsWith('/enroll')) return response(enrollment(r))
+    if (url.endsWith('/connections')) { entered.resolve(); return read.promise }
+    if (url.endsWith('/transfers')) return response({ transfers: [] })
+    if (url.endsWith('/tasks')) return response({ tasks: [{ id: 'task', kind: 'DOWNLOAD', reference_id: transfer.id, version: actions.length + 1 }] })
+    if (url.endsWith('/pause') || url.endsWith('/resume')) { actions.push(url.split('/').at(-1)!); return response({ version: actions.length + 1 }) }
+    throw Error('unexpected request')
+  }))
+  await r.ensureSession(); await r.store.jobs.add(job)
+  const paused = r.control(job.id, 'pause'); await entered.promise
+  const resumed = r.control(job.id, 'resume')
+  try { await vi.waitFor(() => expect(actions).toEqual(['pause', 'resume'])) }
+  finally { read.resolve(response({ invites: [], candidates: [], peers: [] })) }
+  await Promise.all([paused, resumed])
+  expect((await r.store.jobs.get(job.id))?.phase).toBe('running')
+  expect((await r.store.jobs.get(job.id))?.controlRevision).toBe(3)
+})
+
 it('keeps a committed pause and accepted transfer when an earlier poll finishes late', async () => {
   const r = await runtime(), entered = deferred<void>(), stale = deferred<Response>()
   const transfer: GuestTransfer = { id: crypto.randomUUID(), state: 'ACCEPTED', version: 2, file_name: 'file.bin', size_bytes: 100, content_root: '0'.repeat(64), encryption_suite: 'DARE20-AGE-X25519-v1', sender_owner_id: 'guest-peer', sender_device_id: 'peer-device', recipient_owner_id: 'guest-fixture', recipient_device_id: r.profile.device, expires_at: new Date(Date.now() + 600000).toISOString(), received_bytes: 0 }

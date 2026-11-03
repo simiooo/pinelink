@@ -1,11 +1,11 @@
 {
   "passed": true,
-  "checked_at": "2026-11-03T12:49:21.016Z",
-  "artifact_sha256": "978255e8f500f40f03f54b603fee15154e36d7b85a62dc5a6f2522b0c2da9e3c",
+  "checked_at": "2026-11-03T13:06:47.952Z",
+  "artifact_sha256": "965d75c7c6f4e7993bed08d7aa5af5616aa35df3c4ba7f7cfd99b6578a935314",
   "environment": "Fedora / isolated no-network Chromium",
   "checks": [
     {
-      "name": "19 native-corresponding scenes",
+      "name": "22 native-corresponding scenes",
       "passed": true
     },
     {
@@ -493,6 +493,38 @@
       }
     },
     {
+      "name": "scene mobile-cloud-upload-active",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-cloud-upload-active/Transfer details",
+      "passed": true,
+      "detail": {
+        "label": "Transfer details",
+        "x": 120,
+        "y": 348,
+        "w": 240,
+        "h": 164,
+        "to": "mobile-paused"
+      }
+    },
+    {
+      "name": "scene mobile-cloud-receive-active",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-cloud-receive-active/Transfer details",
+      "passed": true,
+      "detail": {
+        "label": "Transfer details",
+        "x": 120,
+        "y": 348,
+        "w": 240,
+        "h": 164,
+        "to": "mobile-paused"
+      }
+    },
+    {
       "name": "scene mobile-paused",
       "passed": true
     },
@@ -635,6 +667,34 @@
         "label": "Close",
         "x": 330,
         "y": 460,
+        "w": 48,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "scene mobile-transfer-expired",
+      "passed": true
+    },
+    {
+      "name": "48px target mobile-transfer-expired/Send another",
+      "passed": true,
+      "detail": {
+        "label": "Send another",
+        "x": 20,
+        "y": 756,
+        "w": 350,
+        "h": 48,
+        "to": "mobile-start"
+      }
+    },
+    {
+      "name": "48px target mobile-transfer-expired/Close",
+      "passed": true,
+      "detail": {
+        "label": "Close",
+        "x": 330,
+        "y": 524,
         "w": 48,
         "h": 48,
         "to": "mobile-start"

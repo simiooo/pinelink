@@ -136,18 +136,20 @@ func run() error {
 		blobs.delay.Store(n)
 		w.WriteHeader(204)
 	})
-	probeMux.HandleFunc("POST /expire-invite", func(w http.ResponseWriter, r *http.Request) {
-		if _, e := uuid.Parse(r.URL.Query().Get("id")); e != nil {
-			http.Error(w, "invalid test id", 400)
-			return
-		}
-		_, e := pool.Exec(r.Context(), `UPDATE guest_invites SET expires_at=clock_timestamp()-interval '1 second' WHERE id=$1`, r.URL.Query().Get("id"))
-		if e != nil {
-			http.Error(w, "fixture query failed", 500)
-			return
-		}
-		w.WriteHeader(204)
-	})
+	for path, table := range map[string]string{"POST /expire-invite": "guest_invites", "POST /expire-transfer": "transfer_requests"} {
+		probeMux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+			if _, e := uuid.Parse(r.URL.Query().Get("id")); e != nil {
+				http.Error(w, "invalid test id", 400)
+				return
+			}
+			_, e := pool.Exec(r.Context(), `UPDATE `+table+` SET expires_at=clock_timestamp()-interval '1 second' WHERE id=$1`, r.URL.Query().Get("id"))
+			if e != nil {
+				http.Error(w, "fixture query failed", 500)
+				return
+			}
+			w.WriteHeader(204)
+		})
+	}
 	probe := &http.Server{Addr: "127.0.0.1:8085", Handler: probeMux, ReadHeaderTimeout: 3 * time.Second}
 	go probe.ListenAndServe()
 	go svc.RunAccountMail(ctx)

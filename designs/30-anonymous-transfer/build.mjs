@@ -14,8 +14,8 @@ const guest=(cx,cy)=>`<g id="Guest-identity">${circle(cx,cy,10,'#fff','#d4d4d4')
 const node=(cx,cy,d=96,label='This device',kind='laptop',anon=true)=>`<g>${circle(cx,cy,d/2)}${icon(kind,cx-d/4,cy-d/4,d/2)}${circle(cx+d*.35,cy+d*.35,5,C.ink,'#fff')}${anon?guest(cx+d*.35,cy-d*.35):''}${text(label,cx,cy+d/2+24,d===96?14:13,600,'#404040','middle')}</g>`
 const mix=(a,b,t)=>a.map((n,i)=>n+(b[i]-n)*t)
 const bezier=(points,t)=>{const[a,b,c,d]=points;return mix(mix(mix(a,b,t),mix(b,c,t),t),mix(mix(b,c,t),mix(c,d,t),t),t)}
-function curve(w,h,progress=.42,active=true){
- const p=[[w/2,h-292],[w/2+136,h-420],[w/2+132,320],[w/2+32,240]];if(w<=500)p.reverse();const samples=[0],n=200;let length=0
+function curve(w,h,progress=.42,active=true,outgoing=false){
+ const p=[[w/2,h-292],[w/2+136,h-420],[w/2+132,320],[w/2+32,240]];if(w<=500&&!outgoing)p.reverse();const samples=[0],n=200;let length=0
  for(let i=1;i<=n;i++){const a=bezier(p,(i-1)/n),b=bezier(p,i/n);length+=Math.hypot(a[0]-b[0],a[1]-b[1]);samples.push(length)}
  let j=samples.findIndex(v=>v>=length*progress);j=j<0?n:j;const t=j/n,a=mix(p[0],p[1],t),b=mix(p[1],p[2],t),c=mix(p[2],p[3],t),d=mix(a,b,t),e=mix(b,c,t),f=mix(d,e,t)
  const path=q=>`M${q[0].join(' ')} C${q.slice(1).map(a=>a.map(v=>Math.round(v*100)/100).join(' ')).join(' ')}`
@@ -23,8 +23,8 @@ function curve(w,h,progress=.42,active=true){
 }
 const header=(w,signIn=true)=>text('Pinelink',w>500?32:20,46,20,800)+(signIn?text('Sign in',w-(w>500?32:20),46,14,700,C.ink,'end'):'')
 function graph(w,h,state='empty'){
- const active=['active','paused','complete'].includes(state),isDone=state==='complete'
- return `<rect width="${w}" height="${h}" fill="#fff"/>${header(w)}${active?curve(w,h,isDone?1:.42,state==='active'):''}${active?node(w/2,240,64,w>500?'iPhone':'MacBook Pro',w>500?'phone':'laptop',true):`<g>${circle(w/2,240,32,C.blue,C.blue)}${icon('plus',w/2-16,224,32,'#fff')}${text('Connect a device',w/2,296,14,700,C.ink,'middle')}</g>`}${node(w/2,h-244,96,'This device',w>500?'laptop':'phone')}${action('history',20,h-72,'History')}${action('download',w-68,h-72,'Choose a file')}`
+ const active=['active','paused','complete','cloud-upload','cloud-receive'].includes(state),isDone=state==='complete',cloud=state.startsWith('cloud-')
+ return `<rect width="${w}" height="${h}" fill="#fff"/>${header(w)}${active?curve(w,h,isDone?1:.42,state==='active'||cloud,state==='cloud-upload'):''}${active?node(w/2,240,64,cloud?'Cloud':w>500?'iPhone':'MacBook Pro',cloud?'cloud':w>500?'phone':'laptop',!cloud):`<g>${circle(w/2,240,32,C.blue,C.blue)}${icon('plus',w/2-16,224,32,'#fff')}${text('Connect a device',w/2,296,14,700,C.ink,'middle')}</g>`}${node(w/2,h-244,96,'This device',w>500?'laptop':'phone')}${action('history',20,h-72,'History')}${action('download',w-68,h-72,'Choose a file')}`
 }
 const qr=JSON.parse(await readFile(new URL('qr-fixture.json',dir),'utf8'))
 function qrSvg(x,y,size){const m=qr.matrix.length,unit=size/(m+8),f=n=>Math.round(n*1000)/1000;let d='';for(let row=0;row<m;row++)for(let col=0;col<m;col++)if(qr.matrix[row][col])d+=`M${f(x+(col+4)*unit)} ${f(y+(row+4)*unit)}h${f(unit)}v${f(unit)}h-${f(unit)}z`;return `<path fill="${C.ink}" d="${d}"/>`}
@@ -53,10 +53,13 @@ add('mobile-pair-waiting','等待对方确认连接',390,844,graph(390,844)+shee
 add('mobile-storage-unavailable','本地保存不可用 · 不承诺持久回执',390,844,graph(390,844)+sheet(390,844,{title:'Storage unavailable',top:436,body:text('Allow browser storage, then try again.',20,552,14,400,C.muted)+pill('Try again',20,668,350)}),[{label:'Try again',x:20,y:668,w:350,h:48,to:'mobile-start'}])
 add('desktop-active','匿名 · 实际接收进度',1200,800,graph(1200,800,'active'),[{label:'Transfer details',x:550,y:320,w:260,h:176,to:'mobile-paused'}])
 add('mobile-active','匿名 · 实际接收进度',390,844,graph(390,844,'active'),[{label:'Transfer details',x:120,y:348,w:240,h:164,to:'mobile-paused'}])
+add('mobile-cloud-upload-active','云暂存上行 · 独立上传账本',390,844,graph(390,844,'cloud-upload'),[{label:'Transfer details',x:120,y:348,w:240,h:164,to:'mobile-paused'}])
+add('mobile-cloud-receive-active','云端接收 · 独立下载账本',390,844,graph(390,844,'cloud-receive'),[{label:'Transfer details',x:120,y:348,w:240,h:164,to:'mobile-paused'}])
 add('mobile-paused','暂停 · 蓝灰边界保持',390,844,graph(390,844,'paused')+sheet(390,844,{title:'MacBook Pro',top:560,body:icon('file',20,652,40)+text('Design source.fig',84,678,15,600)+text('Paused',20,734,14,400,C.muted)+pill('Resume',20,764,350)}),[{label:'Resume',x:20,y:764,w:350,h:48,to:'mobile-active'}])
 add('mobile-complete','首个文件已收到 · 不强制注册',390,844,graph(390,844,'complete')+sheet(390,844,{title:'MacBook Pro',top:332,body:icon('file',20,436,48)+circle(62,480,10,'#fff',C.line)+icon('check',56,474,12)+text('Design source.fig',20,512,14,600)+action('cloud',16,560,'Keep in cloud')+pill('Send another',20,708,350)}),[{label:'Send another',x:20,y:708,w:350,h:48,to:'mobile-start'},{label:'Keep in cloud',x:16,y:560,w:48,h:48,to:'mobile-keep'},{label:'Saved on this device',x:38,y:456,w:48,h:48,tip:'Saved on this device'}])
 add('mobile-keep','需要账号的能力 · 可退出',390,844,graph(390,844,'complete')+sheet(390,844,{title:'Keep your files',top:404,body:icon('cloud',20,512,24)+text('Longer cloud storage',60,530,15,600)+icon('laptop',20,568,24)+text('Your devices, connected',60,586,15,600)+pill('Sign in',20,664,350)+text('Continue without an account',195,752,14,600,C.muted,'middle')}),[{label:'Sign in',x:20,y:664,w:350,h:48,tip:'Continue to existing Google / password sign-in'},{label:'Continue without an account',x:20,y:720,w:350,h:48,to:'mobile-complete'}])
 add('mobile-expired','连接码到期 · 保留文件',390,844,graph(390,844)+sheet(390,844,{title:'Code expired',top:436,body:icon('clock',20,544,28)+text('Design source.fig',20,632,14,600)+pill('New code',20,708,350)}),[{label:'New code',x:20,y:708,w:350,h:48,to:'mobile-connect'}])
+add('mobile-transfer-expired','文件过期 · 重新发送',390,844,graph(390,844)+sheet(390,844,{title:'MacBook Pro',top:500,body:icon('file',20,604,40)+text('Design source.fig',76,630,15,600)+text('Transfer expired',20,694,13,400,C.muted)+pill('Send another',20,756,350,false)}),[{label:'Send another',x:20,y:756,w:350,h:48,to:'mobile-start'}])
 add('mobile-volatile','浏览器不能保存 · 仍可临时使用',390,844,graph(390,844)+sheet(390,844,{title:'Use this tab',top:436,body:text('This browser cannot save your connection.',20,552,14,400,C.muted)+text('Keep this tab open while sending.',20,580,14,400,C.muted)+pill('Continue',20,668,350)}),[{label:'Continue',x:20,y:668,w:350,h:48,to:'mobile-start'}])
 let localFiles='';for(const [i,name]of ['Design source.fig','Photos.zip','Product demo.mp4','Fonts.zip','Project files.zip','Contract.pdf'].entries()){const x=20+i%3*120,y=128+Math.floor(i/3)*108;localFiles+=icon('file',x,y,48)+circle(x+44,y+44,9,'#fff',C.line)+icon('check',x+38,y+38,12)+text(name,x,y+72,12,600)}
 add('mobile-local-files','登录后 · 本机访客文件',390,844,`<rect width="390" height="844" fill="#fff"/>`+text('On this device',20,64,24,800)+action('close',330,32,'Close')+localFiles,[{label:'Design source.fig',x:20,y:120,w:104,h:88,to:'mobile-complete'},{label:'Saved on this device',x:40,y:148,w:48,h:48,tip:'Saved on this device'}])

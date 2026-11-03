@@ -13,7 +13,7 @@ SIM-915 设计与交互契约；实际运行部署见工程交付记录。继承
 
 ## 稿件
 
-- [OpenPencil 原生文件](../30-pinelink-anonymous.fig)：19 个可编辑画板。
+- [OpenPencil 原生文件](../30-pinelink-anonymous.fig)：22 个可编辑画板。
 - [交互预览](anonymous-v30.html)：控件与状态切换，工具栏明确标识模拟事件；无实际 API、上传或注册。
 - [手机首页](mobile-start.png)、[桌面首页](desktop-start.png)、[320px](mobile-start-320.png)。
 - [扫码与连接码](mobile-connect.png)、[输入码](mobile-enter.png)、[接收确认](mobile-incoming.png)。

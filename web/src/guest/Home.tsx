@@ -59,7 +59,7 @@ function VisitorHome({ runtime }: { runtime: GuestRuntime }) {
   useEffect(() => {
     const incoming = state.connections.candidates.find(item => item.incoming && item.status === 'WAITING' && !seen.current.has(item.id))
     if (incoming) { seen.current.add(incoming.id); setCandidateId(incoming.id); setPanel('pair'); return }
-    const pending = state.jobs.find(job => job.direction === 'receive' && job.transfer?.state === 'PENDING' && !seen.current.has(job.id))
+    const pending = state.jobs.find(job => job.direction === 'receive' && job.phase === 'waiting' && job.transfer?.state === 'PENDING' && Date.parse(job.transfer.expires_at) > now && !seen.current.has(job.id))
     if (pending) { seen.current.add(pending.id); setJobId(pending.id); setPanel('job'); return }
     const completed = state.jobs.find(job => job.phase === 'complete' && !seen.current.has('done:' + job.id))
     if (completed) { seen.current.add('done:' + completed.id); setJobId(completed.id); setPanel('job') }
@@ -78,7 +78,7 @@ function VisitorHome({ runtime }: { runtime: GuestRuntime }) {
     if (!state.connections.peers.length) connect(); else setPanel('send')
   }
   const title = visualPanel === 'connect' ? c.connect : visualPanel === 'pair' ? c.confirmPair : visualPanel === 'waiting' ? c.waiting : visualPanel === 'history' ? (location.pathname === '/local-files' ? c.localFiles : c.history) : visualPanel === 'send' ? selectedPeer?.device_name ?? c.selectDevice : selectedJob?.peer.device_name ?? c.details
-  const jobStatus = (job: GuestJob) => job.phase === 'complete' ? job.direction === 'receive' && job.plain ? c.saved : c.complete : job.phase === 'paused' ? c.paused : job.phase === 'verifying' ? c.verifying : job.phase === 'stopped' ? c.stopped : job.phase === 'preparing' ? c.preparing : job.transfer?.state === 'PENDING' ? c.waitingFile : job.error ? c.unavailable : c.running
+  const jobStatus = (job: GuestJob) => job.phase === 'complete' ? job.direction === 'receive' && job.plain ? c.saved : c.complete : job.phase === 'paused' ? c.paused : job.phase === 'verifying' ? c.verifying : job.phase === 'stopped' ? (job.error === 'FILE_EXPIRED' || job.snapshot?.state === 'EXPIRED' ? c.fileExpired : c.stopped) : job.phase === 'preparing' ? c.preparing : job.transfer?.state === 'PENDING' ? c.waitingFile : job.error ? c.unavailable : c.running
   return <section className="guest-page" data-guest-job={active?.transfer?.id} data-phase={active?.phase}
     onDragEnter={event => { if (event.dataTransfer.types.includes('Files')) { event.preventDefault(); dragDepth.current++; setDragging(true) } }}
     onDragOver={event => { if (event.dataTransfer.types.includes('Files')) { event.preventDefault(); event.dataTransfer.dropEffect = 'copy' } }}
@@ -128,12 +128,12 @@ function VisitorHome({ runtime }: { runtime: GuestRuntime }) {
               {selectedJob.snapshot?.capabilities.pause && <MotionTooltip label={c.pause}><MotionButton icon className="guest-icon-button" aria-label={c.pause} onClick={() => perform(() => runtime.control(selectedJob.id, 'pause'))}><Pause size={21} /></MotionButton></MotionTooltip>}
               {selectedJob.snapshot?.capabilities.resume && <MotionTooltip label={c.resume}><MotionButton icon className="guest-icon-button" aria-label={c.resume} onClick={() => perform(() => runtime.control(selectedJob.id, 'resume'))}><Play size={21} /></MotionButton></MotionTooltip>}
               {selectedJob.snapshot?.capabilities.cancel && <MotionTooltip label={c.cancel}><MotionButton icon className="guest-icon-button" aria-label={c.cancel} onClick={() => perform(() => runtime.control(selectedJob.id, 'cancel'))}><X size={21} /></MotionButton></MotionTooltip>}
-              {selectedJob.error && <MotionTooltip label={c.retry}><MotionButton icon className="guest-icon-button" aria-label={c.retry} onClick={() => perform(() => runtime.retry(selectedJob.id))}><RefreshCw size={21} /></MotionButton></MotionTooltip>}
+              {selectedJob.error && selectedJob.phase !== 'stopped' && <MotionTooltip label={c.retry}><MotionButton icon className="guest-icon-button" aria-label={c.retry} onClick={() => perform(() => runtime.retry(selectedJob.id))}><RefreshCw size={21} /></MotionButton></MotionTooltip>}
             </div>
             {['complete', 'stopped'].includes(selectedJob.phase) && <MotionButton className="secondary-button guest-wide" onClick={() => perform(async () => { await runtime.dismiss(selectedJob.id); setPanel(null) })}>{c.another}</MotionButton>}
           </>}
         </div>}
-        {visualPanel === 'history' && <div className="guest-history">{state.jobs.length ? state.jobs.map(job => <button key={job.id} className="guest-history-file" onClick={() => openJob(job)}><span className="guest-history-icon"><FileText size={42} strokeWidth={1.2} /><MotionTooltip label={job.phase === 'complete' && job.plain ? c.saved : job.phase === 'stopped' ? c.stopped : c.once}><span className="guest-file-badge" aria-label={jobStatus(job)}>{job.phase === 'complete' && job.plain ? <Check size={11} /> : job.phase === 'stopped' ? <Clock3 size={11} /> : '1'}</span></MotionTooltip></span><span title={job.name}>{job.name}</span></button>) : <p className="guest-muted">{c.empty}</p>}</div>}
+        {visualPanel === 'history' && <div className="guest-history">{state.jobs.length ? state.jobs.map(job => <button key={job.id} className="guest-history-file" onClick={() => openJob(job)}><span className="guest-history-icon"><FileText size={42} strokeWidth={1.2} /><MotionTooltip label={job.phase === 'complete' && job.plain ? c.saved : job.phase === 'stopped' ? (job.error === 'FILE_EXPIRED' || job.snapshot?.state === 'EXPIRED' ? c.fileExpired : c.stopped) : c.once}><span className="guest-file-badge" aria-label={jobStatus(job)}>{job.phase === 'complete' && job.plain ? <Check size={11} /> : job.phase === 'stopped' ? <Clock3 size={11} /> : '1'}</span></MotionTooltip></span><span title={job.name}>{job.name}</span></button>) : <p className="guest-muted">{c.empty}</p>}</div>}
         {errorText && <p className="guest-inline-error" role="alert">{errorText}</p>}
       </div>
     </MotionSurface>

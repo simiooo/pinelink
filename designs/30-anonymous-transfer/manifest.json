@@ -431,11 +431,47 @@
       ]
     },
     {
+      "key": "mobile-cloud-upload-active",
+      "name": "云暂存上行 · 独立上传账本",
+      "width": 390,
+      "height": 844,
+      "x": 0,
+      "y": 2832,
+      "hotspots": [
+        {
+          "label": "Transfer details",
+          "x": 120,
+          "y": 348,
+          "w": 240,
+          "h": 164,
+          "to": "mobile-paused"
+        }
+      ]
+    },
+    {
+      "key": "mobile-cloud-receive-active",
+      "name": "云端接收 · 独立下载账本",
+      "width": 390,
+      "height": 844,
+      "x": 1264,
+      "y": 2832,
+      "hotspots": [
+        {
+          "label": "Transfer details",
+          "x": 120,
+          "y": 348,
+          "w": 240,
+          "h": 164,
+          "to": "mobile-paused"
+        }
+      ]
+    },
+    {
       "key": "mobile-paused",
       "name": "暂停 · 蓝灰边界保持",
       "width": 390,
       "height": 844,
-      "x": 0,
+      "x": 2528,
       "y": 2832,
       "hotspots": [
         {
@@ -461,7 +497,7 @@
       "name": "首个文件已收到 · 不强制注册",
       "width": 390,
       "height": 844,
-      "x": 1264,
+      "x": 3792,
       "y": 2832,
       "hotspots": [
         {
@@ -503,8 +539,8 @@
       "name": "需要账号的能力 · 可退出",
       "width": 390,
       "height": 844,
-      "x": 2528,
-      "y": 2832,
+      "x": 0,
+      "y": 3776,
       "hotspots": [
         {
           "label": "Sign in",
@@ -537,8 +573,8 @@
       "name": "连接码到期 · 保留文件",
       "width": 390,
       "height": 844,
-      "x": 3792,
-      "y": 2832,
+      "x": 1264,
+      "y": 3776,
       "hotspots": [
         {
           "label": "New code",
@@ -559,11 +595,37 @@
       ]
     },
     {
+      "key": "mobile-transfer-expired",
+      "name": "文件过期 · 重新发送",
+      "width": 390,
+      "height": 844,
+      "x": 2528,
+      "y": 3776,
+      "hotspots": [
+        {
+          "label": "Send another",
+          "x": 20,
+          "y": 756,
+          "w": 350,
+          "h": 48,
+          "to": "mobile-start"
+        },
+        {
+          "label": "Close",
+          "x": 330,
+          "y": 524,
+          "w": 48,
+          "h": 48,
+          "to": "mobile-start"
+        }
+      ]
+    },
+    {
       "key": "mobile-volatile",
       "name": "浏览器不能保存 · 仍可临时使用",
       "width": 390,
       "height": 844,
-      "x": 0,
+      "x": 3792,
       "y": 3776,
       "hotspots": [
         {
@@ -589,8 +651,8 @@
       "name": "登录后 · 本机访客文件",
       "width": 390,
       "height": 844,
-      "x": 1264,
-      "y": 3776,
+      "x": 0,
+      "y": 4720,
       "hotspots": [
         {
           "label": "Design source.fig",
@@ -623,8 +685,8 @@
       "name": "账号菜单 · 保留本机文件入口",
       "width": 390,
       "height": 844,
-      "x": 2528,
-      "y": 3776,
+      "x": 1264,
+      "y": 4720,
       "hotspots": [
         {
           "label": "On this device",

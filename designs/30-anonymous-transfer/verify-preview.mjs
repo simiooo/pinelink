@@ -10,7 +10,7 @@ const check=(name,ok,detail)=>{checks.push({name,passed:!!ok,detail});if(!ok)thr
 const diagnostics=()=>page.evaluate(()=>window.PinelinkGuestPreview.diagnostics())
 try{
  await page.goto(file.href);await page.waitForFunction(()=>window.PinelinkGuestPreview);await page.evaluate(()=>document.fonts.ready)
- check('19 native-corresponding scenes',manifest.frames.length===19)
+ check('22 native-corresponding scenes',manifest.frames.length===22)
  check('bundled Nunito loaded',await page.evaluate(()=>[...document.fonts].some(f=>f.family==='Nunito'&&f.status==='loaded')))
  for(const f of manifest.frames){
   await page.evaluate(k=>window.PinelinkGuestPreview.show(k),f.key)

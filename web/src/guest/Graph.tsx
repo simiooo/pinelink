@@ -29,12 +29,13 @@ function Curve({ value, incoming, running, onDetails }: { value: number; incomin
 export function GuestGraph({ peers, job, onConnect, onPeer, onDetails, dragging, onFileDrop, localDevice }: { peers: GuestPeer[]; job?: GuestJob; onConnect: () => void; onPeer: (peer: GuestPeer) => void; onDetails: () => void; dragging: boolean; onFileDrop: (file: File, peer: GuestPeer) => void; localDevice: string }) {
   const c = useGuestCopy(), mobile = /Android|iPhone|iPad/.test(navigator.userAgent)
   const [dropTarget, setDropTarget] = useState<string>()
-  const cloud = job?.direction === 'send' && !!job.transfer && !job.snapshot?.completion.stored && job.phase !== 'complete' && job.phase !== 'stopped'
-  const value = cloud ? (job?.snapshot?.spool.acknowledged_bytes ?? 0) / (job?.snapshot?.spool.total_bytes || job?.transfer?.size_bytes || 1) : (job?.snapshot?.delivery.acknowledged_bytes ?? 0) / (job?.snapshot?.delivery.total_bytes || job?.transfer?.size_bytes || 1)
+  const uploading = job?.direction === 'send' && !!job.transfer && !job.snapshot?.completion.stored && job.phase !== 'complete' && job.phase !== 'stopped'
+  const cloud = uploading || (job?.direction === 'receive' && !!job.snapshot?.completion.stored)
+  const value = uploading ? (job?.snapshot?.spool.acknowledged_bytes ?? 0) / (job?.snapshot?.spool.total_bytes || job?.transfer?.size_bytes || 1) : (job?.snapshot?.delivery.acknowledged_bytes ?? 0) / (job?.snapshot?.delivery.total_bytes || job?.transfer?.size_bytes || 1)
   const shown = job ? [{ ...job.peer, online: peers.find(peer => peer.pair_id === job.peer.pair_id)?.online ?? false }] : peers.slice(0, 2)
   return <div className="guest-stage" data-dragging={dragging || undefined}>
     <div className="guest-network">
-      {job && <Curve value={job.phase === 'complete' ? 1 : value} incoming={job.direction === 'receive'} running={!job.error && (job.phase === 'running' || cloud)} onDetails={onDetails} />}
+      {job && <Curve value={job.phase === 'complete' ? 1 : value} incoming={job.direction === 'receive'} running={!job.error && (job.phase === 'running' || uploading)} onDetails={onDetails} />}
       {shown.length ? <div className="guest-peers" data-count={shown.length}>{shown.map(peer => <div className="guest-peer" key={peer.pair_id} data-online={cloud || peer.online} data-drop-target={dragging && dropTarget === peer.pair_id || undefined}
         onDragOver={event => { if (event.dataTransfer.types.includes('Files')) { event.preventDefault(); setDropTarget(peer.pair_id) } }}
         onDragLeave={event => { if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) setDropTarget(undefined) }}

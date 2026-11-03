@@ -1,8 +1,8 @@
 {
   "engine": "OpenPencil core / independent CanvasKit renderer",
   "native_readback": true,
-  "editable_text_nodes": 134,
-  "frames": 19,
+  "editable_text_nodes": 150,
+  "frames": 22,
   "fonts": [
     "Nunito"
   ],

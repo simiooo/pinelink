@@ -105,7 +105,7 @@ export class GuestRuntime {
     const response = await fetch(this.server + path, { method, body: method === 'GET' ? undefined : body, credentials: 'include', cache: 'no-store', redirect: 'error', signal: AbortSignal.any([this.lifetime.signal, AbortSignal.timeout(15000), ...(signal ? [signal] : [])]), headers: { 'Content-Type': 'application/json', 'X-Pinelink-Owner': lease.owner_id, 'X-Pinelink-Device': this.profile.device, 'X-Pinelink-Timestamp': timestamp, 'X-Pinelink-Signature': signature, 'X-Pinelink-CSRF': lease.csrf } })
     const value = await response.json().catch(() => ({})) as T & { code?: string }
     this.lifetime.signal.throwIfAborted(); signal?.throwIfAborted()
-    if (!response.ok) throw new GuestError(value.code ?? 'GUEST_UNAVAILABLE', response.status)
+    if (!response.ok) throw new GuestError(response.status === 410 && /^\/v1\/(?:transfers|p2p|tasks)\//.test(path) ? 'FILE_EXPIRED' : value.code ?? 'GUEST_UNAVAILABLE', response.status)
     return value
   }
   async connect() {
@@ -277,7 +277,7 @@ export class GuestRuntime {
     await this.refreshLocal()
   }
   async control(id: string, action: 'pause' | 'resume' | 'cancel') {
-    return this.command('control:' + id, async () => {
+    return this.command('control:' + action + ':' + id, async () => {
       const job = await this.store.jobs.get(id); if (!job?.transfer) return
       let controlRevision = job.controlRevision ?? 0
       let updatedTransfer = job.transfer
