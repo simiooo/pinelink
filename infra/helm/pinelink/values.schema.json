@@ -25,6 +25,10 @@
       "type": "string",
       "pattern": "^[a-f0-9]{40}$"
     },
+    "apiVersion": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
     "previewAccess": {
       "type": "object",
       "additionalProperties": false,

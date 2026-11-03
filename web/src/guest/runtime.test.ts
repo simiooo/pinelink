@@ -1,8 +1,11 @@
 import 'fake-indexeddb/auto'
 import { webcrypto } from 'node:crypto'
+import { Blob as NodeBlob } from 'node:buffer'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { GuestRuntime } from './runtime'
 import { GuestStore } from './store'
+import { LocalStore } from '../data/store'
+import { digest, utf8 } from '../data/crypto'
 import type { GuestJob } from './store'
 import type { GuestTransfer, ProgressSnapshot } from './types'
 
@@ -14,6 +17,51 @@ afterEach(async () => { for (const runtime of resources.splice(0)) { await runti
 const runtime = async () => { const r = await GuestRuntime.open('https://unit.invalid/' + crypto.randomUUID()); resources.push(r); return r }
 const enrollment = (r: GuestRuntime) => ({ guest: { owner_id: 'guest-fixture', device_id: r.profile.device, device_name: 'Test device', expires_at: new Date(Date.now() + 86400000).toISOString() }, csrf: 'test-csrf' })
 const challenge = () => response({ challenge: 'test-challenge', unix_time: Math.floor(Date.now() / 1000) })
+
+it('upgrades a v3 visitor database without replacing keys, saved files, partial chunks or replication peers', async () => {
+  const server = 'https://unit.invalid/upgrade-' + crypto.randomUUID(), name = 'pinelink-visitor:' + await digest(utf8.encode(server)), legacy = new LocalStore(name)
+  legacy.version(3).stores({ leases: 'id', jobs: 'id,created,transfer.id,direction', chunks: '[job+index],job' })
+  const profile = await legacy.profile()
+  await legacy.table('jobs').put({ id: 'saved', created: 1, direction: 'receive', phase: 'complete', name: 'Saved.pdf', plain: new NodeBlob(['saved']), plainSize: 5, received: 5, peer: { pair_id: 'old-pair', owner_id: 'guest-peer', device_id: 'peer-device', device_name: 'Peer', encryption_key: profile.encryptionKey, signing_key: profile.signingKey, expires_at: '2099-01-01T00:00:00Z' } })
+  await legacy.table('chunks').put({ job: 'partial', index: 0, bytes: new NodeBlob(['partial']), hash: 'retained' })
+  await legacy.peers.put({ root: 'authority', signing_key: 'sign', encryption_key: 'encrypt', revoked: false }); legacy.close()
+  const upgraded = await GuestRuntime.open(server); resources.push(upgraded)
+  expect(upgraded.profile.root).toBe(profile.root); expect(upgraded.profile.device).toBe(profile.device)
+  expect((await upgraded.store.jobs.get('saved'))?.plain?.size).toBe(5)
+  expect((await upgraded.store.chunks.get(['partial', 0]))?.bytes.size).toBe(7)
+  expect(await upgraded.store.peers.get('authority')).toMatchObject({ revoked: false })
+  expect(await upgraded.store.guestPeers.count()).toBe(0)
+})
+
+it('keeps peer aliases and the device roster across an offline restart without changing remote names', async () => {
+  const r = await runtime(), peer = { pair_id: 'pair-local', owner_id: 'guest-peer', device_id: 'remote', device_name: 'Remote device', encryption_key: r.profile.encryptionKey, signing_key: r.profile.signingKey, expires_at: new Date(Date.now() + 86400000).toISOString() }
+  await r.store.guestPeers.put(peer); await r.renamePeer(peer.pair_id, '  Design Mac  ')
+  await expect(r.renamePeer(peer.pair_id, ' '.repeat(5))).rejects.toThrow('DEVICE_NAME_INVALID')
+  const server = r.server; await r.close(); resources.splice(resources.indexOf(r), 1)
+  Object.defineProperty(navigator, 'onLine', { configurable: true, value: false })
+  const reopened = await GuestRuntime.open(server); resources.push(reopened)
+  expect(reopened.getSnapshot().connections.peers[0]).toMatchObject({ device_name: 'Remote device', local_name: 'Design Mac' })
+  await expect(reopened.removePeer(peer.pair_id)).rejects.toThrow('CONNECTION_OFFLINE')
+  expect(await reopened.store.guestPeers.get(peer.pair_id)).toBeDefined()
+})
+
+it('a roster response started before removal cannot resurrect the removed connection', async () => {
+  const r = await runtime(), entered = deferred<void>(), roster = deferred<Response>()
+  const peer = { pair_id: 'pair-removed', owner_id: 'guest-peer', device_id: 'remote', device_name: 'Remote', encryption_key: r.profile.encryptionKey, signing_key: r.profile.signingKey, expires_at: new Date(Date.now() + 86400000).toISOString() }
+  vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+    if (url.endsWith('/challenge')) return challenge()
+    if (url.endsWith('/enroll')) return response(enrollment(r))
+    if (init?.method === 'DELETE') return response({ removed: true })
+    if (url.endsWith('/connections')) { entered.resolve(); return roster.promise }
+    if (url.endsWith('/transfers')) return response({ transfers: [] })
+    throw Error('unexpected request')
+  }))
+  await r.ensureSession(); await r.store.guestPeers.put(peer); const polling = r.poll(); await entered.promise
+  const removal = r.removePeer(peer.pair_id)
+  await vi.waitFor(async () => expect(await r.store.peerRemovals.get(peer.pair_id)).toBeDefined())
+  roster.resolve(response({ invites: [], candidates: [], peers: [peer] })); await Promise.all([polling, removal])
+  expect(await r.store.guestPeers.get(peer.pair_id)).toBeUndefined(); expect(r.getSnapshot().connections.peers).toHaveLength(0)
+})
 
 it('distinguishes an expired file from an expired connection code', async () => {
   const r = await runtime()

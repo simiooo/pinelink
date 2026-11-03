@@ -85,7 +85,7 @@ export function MotionTooltip({ label, children }: { label: string; children: Re
 }
 
 // Stable keys belong to data identity. Polling or a locale render must not replay entrances.
-export function MotionList({ children, identity }: { children: ReactNode; identity: string }) {
+export function MotionList({ children, identity, className = '', count }: { children: ReactNode; identity: string; className?: string; count?: number }) {
   const [ref, owner] = useMotionRef<HTMLDivElement>(), before = useRef(new Map<string, DOMRect>())
   const tracked = useRef(new Map<string, HTMLElement>())
   useLayoutEffect(() => () => { for (const element of tracked.current.values()) owner.forget(element); tracked.current.clear(); before.current.clear() }, [owner])
@@ -110,7 +110,7 @@ export function MotionList({ children, identity }: { children: ReactNode; identi
     }
     before.current = next
   }, [identity, owner, ref])
-  return <div ref={ref} className="motion-list">{children}</div>
+  return <div ref={ref} className={'motion-list ' + className} data-count={count}>{children}</div>
 }
 
 export function MotionMeter({ value, label }: { value: number; label: string }) {

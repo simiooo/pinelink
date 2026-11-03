@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { ArrowDownToLine, Check, Clock3, FilePlus2, FileText, History, Pause, Play, Plus, RefreshCw, X } from 'lucide-react'
+import { ArrowDownToLine, ArrowLeft, Clock3, FilePlus2, FileText, FolderOpen, Pause, Play, Plus, RefreshCw, X } from 'lucide-react'
 import { authState } from '../auth/client'
+import { useNavigate, useRouterState } from '@tanstack/react-router'
 import QRCode from 'qrcode'
 import { MotionButton, MotionReveal, MotionTooltip } from '../motion/components'
 import { MotionSurface } from '../motion/surface'
@@ -14,6 +15,9 @@ import type { GuestJob } from './store'
 import type { GuestPeer } from './types'
 import { useI18n } from '../i18n'
 import { formatBytes } from '../format'
+import { routeFilter, routePanel } from './navigation'
+import type { FileFilter } from './navigation'
+import { AccountRequest, AccountTaskDetails, FilesCollection, guestJobStatus, useAccountWorkspace } from './Files'
 import './guest.css'
 
 const linkKey = 'pinelink:guest-link'
@@ -25,15 +29,20 @@ export function captureGuestLink() {
 }
 const pendingLink = () => { try { const v = JSON.parse(sessionStorage.getItem(linkKey) ?? 'null') as { token: string; expires: number } | null; return v && v.expires > Date.now() ? v.token : '' } catch { return '' } }
 
-export function GuestHome() {
+export function GuestHome({ onNotifications }: { onNotifications?: (count: number) => void } = {}) {
   const c = useGuestCopy(), [runtime, setRuntime] = useState<GuestRuntime>(), [error, setError] = useState(false), [retry, setRetry] = useState(0)
   useEffect(() => { let live = true; void getGuestRuntime().then(value => { if (live) setRuntime(value) }).catch(() => { if (live) setError(true) }); return () => { live = false } }, [retry])
   if (!runtime) return error ? <section className="guest-storage"><h1>{c.storage}</h1><p>{c.storageHint}</p><MotionButton className="primary-button" onClick={() => { setError(false); setRetry(value => value + 1) }}>{c.retry}</MotionButton></section> : <div className="guest-loading" aria-busy="true" />
-  return <VisitorHome runtime={runtime} />
+  return <VisitorHome runtime={runtime} onNotifications={onNotifications} />
 }
-function VisitorHome({ runtime }: { runtime: GuestRuntime }) {
-  const c = useGuestCopy(), { locale } = useI18n(), state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot)
-  const [panel, setPanel] = useState<'connect' | 'pair' | 'waiting' | 'send' | 'job' | 'history' | null>(location.pathname === '/connect' ? 'connect' : ['/history', '/local-files'].includes(location.pathname) ? 'history' : null)
+type Panel = 'connect' | 'pair' | 'waiting' | 'send' | 'job' | 'files' | 'notifications' | 'rename' | 'remove' | 'account-job' | 'account-request' | null
+function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNotifications?: (count: number) => void }) {
+  const c = useGuestCopy(), { t, locale } = useI18n(), state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot)
+  const pathname = useRouterState({ select: state => state.location.pathname }), navigate = useNavigate()
+  const [panel, setPanel] = useState<Panel>(routePanel(pathname)), [filter, setFilter] = useState<FileFilter>(routeFilter(pathname)), [filePeer, setFilePeer] = useState<GuestPeer>()
+  const [name, setName] = useState(''), [savingPeer, setSavingPeer] = useState(false), [recordId, setRecordId] = useState<string>(), [requestId, setRequestId] = useState<string>(), [fromFiles, setFromFiles] = useState(false)
+  const account = useAccountWorkspace(), accountRecords = account.records.data ?? [], requests = account.notifications.data?.transfers ?? []
+  const selectedRecord = accountRecords.find(record => record.id === recordId), selectedRequest = requests.find(request => request.id === requestId)
   const lastPanel = useRef(panel)
   if (panel) lastPanel.current = panel
   const visualPanel = panel ?? lastPanel.current
@@ -41,7 +50,7 @@ function VisitorHome({ runtime }: { runtime: GuestRuntime }) {
   const [error, setError] = useState<string>(), [copied, setCopied] = useState(false), [qr, setQr] = useState(''), [dragging, setDragging] = useState(false), [now, setNow] = useState(Date.now())
   const [file, setFile] = useState<File>(), [selectedPeer, setSelectedPeer] = useState<GuestPeer>(), [jobId, setJobId] = useState<string>()
   const [candidateId, setCandidateId] = useState<string>(), [joining, setJoining] = useState<{ id: string; invite: string; expires: number }>(), seen = useRef(new Set<string>(state.jobs.filter(job => job.phase === 'complete').map(job => 'done:' + job.id))), input = useRef<HTMLInputElement>(null), dragDepth = useRef(0)
-  const active = state.jobs.find(job => !job.dismissed && !['complete', 'stopped'].includes(job.phase)) ?? (state.jobs[0] && !state.jobs[0].dismissed ? state.jobs[0] : undefined)
+  const active = state.jobs.find(job => !job.dismissed && !['complete', 'stopped'].includes(job.phase))
   const selectedJob = state.jobs.find(job => job.id === jobId) ?? active
   const candidate = state.connections.candidates.find(item => item.id === candidateId)
   const maxBytes = authState().capabilities.guest_max_file_bytes ?? (64 << 20)
@@ -49,6 +58,14 @@ function VisitorHome({ runtime }: { runtime: GuestRuntime }) {
   const errorText = guestErrorText(error ?? state.error, c), invite = state.invite
   const expired = !!invite && (Date.parse(invite.expires_at) <= now || invite.consumed)
   const inviteURL = invite?.token ? new URL('/connect#' + invite.token, location.origin).href : ''
+  const pairRequests = state.connections.candidates.filter(item => item.incoming && item.status === 'WAITING' && Date.parse(item.expires_at) > now)
+  const fileRequests = state.jobs.filter(job => job.direction === 'receive' && job.phase === 'waiting' && job.transfer?.state === 'PENDING' && Date.parse(job.transfer.expires_at) > now)
+  const notificationCount = pairRequests.length + fileRequests.length + requests.length
+  const peerBusy = state.jobs.find(job => job.peer.pair_id === selectedPeer?.pair_id && !['complete', 'stopped'].includes(job.phase) && (!job.transfer || Date.parse(job.transfer.expires_at) > now))
+  const close = () => { setPanel(null); setError(undefined); if (pathname !== '/') void navigate({ to: '/', replace: true }) }
+  const openFiles = (peer?: GuestPeer, value: FileFilter = 'all') => { setError(undefined); setFilePeer(peer); setFilter(value); setPanel('files'); void navigate({ to: '/files' }) }
+  useEffect(() => { setPanel(routePanel(pathname)); setError(undefined); if (['/tasks', '/history', '/local-files'].includes(pathname)) { setFilter(routeFilter(pathname)); setFilePeer(undefined) } }, [pathname])
+  useEffect(() => { onNotifications?.(notificationCount) }, [onNotifications, notificationCount])
   const perform = async (task: () => Promise<unknown>) => { setError(undefined); try { await task() } catch (e) { setError(e instanceof Error ? e.message : 'GUEST_UNAVAILABLE') } }
   useEffect(() => { const timer = setInterval(() => setNow(runtime.now()), 1000); return () => clearInterval(timer) }, [runtime])
   useEffect(() => {
@@ -58,42 +75,40 @@ function VisitorHome({ runtime }: { runtime: GuestRuntime }) {
   }, [inviteURL, expired])
   useEffect(() => {
     const incoming = state.connections.candidates.find(item => item.incoming && item.status === 'WAITING' && !seen.current.has(item.id))
-    if (incoming) { seen.current.add(incoming.id); setCandidateId(incoming.id); setPanel('pair'); return }
+    if (incoming && (!panel || panel === 'connect')) { seen.current.add(incoming.id); setCandidateId(incoming.id); setPanel('pair'); return }
     const pending = state.jobs.find(job => job.direction === 'receive' && job.phase === 'waiting' && job.transfer?.state === 'PENDING' && Date.parse(job.transfer.expires_at) > now && !seen.current.has(job.id))
-    if (pending) { seen.current.add(pending.id); setJobId(pending.id); setPanel('job'); return }
+    if (pending && !panel) { seen.current.add(pending.id); setJobId(pending.id); setFromFiles(false); setPanel('job'); return }
     const completed = state.jobs.find(job => job.phase === 'complete' && !seen.current.has('done:' + job.id))
-    if (completed) { seen.current.add('done:' + completed.id); setJobId(completed.id); setPanel('job') }
+    if (completed && (!panel || panel === 'job' && completed.id === jobId)) { seen.current.add('done:' + completed.id); setJobId(completed.id); setPanel('job') }
     if (panel === 'waiting' && joining) {
       if (state.connections.peers.some(peer => peer.invite_id === joining.invite)) setPanel(null)
       else if (state.connections.candidates.find(item => item.id === joining.id)?.status === 'DECLINED') { setError('CONNECTION_DECLINED'); setTab('enter'); setPanel('connect') }
       else if (joining.expires <= now) { setError('EXPIRED'); setTab('enter'); setPanel('connect') }
     }
-    if (panel === 'connect' && invite?.consumed && state.connections.peers.length) setPanel(null)
-  }, [state.connections, state.jobs, panel, invite?.consumed, joining, now])
+  }, [state.connections, state.jobs, panel, joining, now, jobId])
   const connect = () => { setPanel('connect'); setTab('show'); void perform(() => runtime.connect()) }
-  const openJob = (job?: GuestJob) => { if (job) { setJobId(job.id); setPanel('job') } }
+  const openJob = (job?: GuestJob) => { if (job) { setFromFiles(panel === 'files'); setJobId(job.id); setPanel('job') } }
   const choose = (chosen?: File, peer?: GuestPeer) => {
     if (!chosen) { if (peer) setSelectedPeer(peer); input.current?.click(); return }
-    setFile(chosen); setSelectedPeer(peer ?? selectedPeer ?? state.connections.peers[0])
+    setFile(chosen); setSelectedPeer(peer ?? state.connections.peers.find(peer => peer.pair_id === selectedPeer?.pair_id) ?? state.connections.peers[0])
     if (!state.connections.peers.length) connect(); else setPanel('send')
   }
-  const title = visualPanel === 'connect' ? c.connect : visualPanel === 'pair' ? c.confirmPair : visualPanel === 'waiting' ? c.waiting : visualPanel === 'history' ? (location.pathname === '/local-files' ? c.localFiles : c.history) : visualPanel === 'send' ? selectedPeer?.device_name ?? c.selectDevice : selectedJob?.peer.device_name ?? c.details
-  const jobStatus = (job: GuestJob) => job.phase === 'complete' ? job.direction === 'receive' && job.plain ? c.saved : c.complete : job.phase === 'paused' ? c.paused : job.phase === 'verifying' ? c.verifying : job.phase === 'stopped' ? (job.error === 'FILE_EXPIRED' || job.snapshot?.state === 'EXPIRED' ? c.fileExpired : c.stopped) : job.phase === 'preparing' ? c.preparing : job.transfer?.state === 'PENDING' ? c.waitingFile : job.error ? c.unavailable : c.running
+  const title = visualPanel === 'connect' ? c.connect : visualPanel === 'pair' ? c.confirmPair : visualPanel === 'waiting' ? c.waiting : visualPanel === 'files' ? filePeer?.local_name || filePeer?.device_name || c.files : visualPanel === 'notifications' ? c.notifications : visualPanel === 'remove' ? c.removeTitle : visualPanel === 'rename' || visualPanel === 'send' ? selectedPeer?.local_name || selectedPeer?.device_name || c.selectDevice : visualPanel === 'account-job' || visualPanel === 'account-request' ? c.details : selectedJob?.peer.local_name || selectedJob?.peer.device_name || c.details
   return <section className="guest-page" data-guest-job={active?.transfer?.id} data-phase={active?.phase}
     onDragEnter={event => { if (event.dataTransfer.types.includes('Files')) { event.preventDefault(); dragDepth.current++; setDragging(true) } }}
     onDragOver={event => { if (event.dataTransfer.types.includes('Files')) { event.preventDefault(); event.dataTransfer.dropEffect = 'copy' } }}
     onDragLeave={() => { if (--dragDepth.current <= 0) { dragDepth.current = 0; setDragging(false) } }}
     onDrop={event => { event.preventDefault(); dragDepth.current = 0; setDragging(false); if (event.dataTransfer.files.length === 1) choose(event.dataTransfer.files[0]); else setError('ONE_FILE_ONLY') }}>
     <input ref={input} type="file" hidden aria-label={c.file} onChange={event => { choose(event.target.files?.[0]); event.target.value = '' }} />
-    <GuestGraph peers={peers} job={active} onConnect={connect} onPeer={peer => { setSelectedPeer(peer); if (file) setPanel('send'); else choose(undefined, peer) }} onDetails={() => openJob(active)} dragging={dragging} localDevice={runtime.profile.device} onFileDrop={(file, peer) => { dragDepth.current = 0; setDragging(false); choose(file, peer) }} />
+    <GuestGraph peers={peers} job={active} onConnect={connect} onPeer={peer => { setSelectedPeer(peer); if (file) setPanel('send'); else choose(undefined, peer) }} onDetails={() => openJob(active)} dragging={dragging} localDevice={runtime.profile.device} onFiles={peer => openFiles(peer, peer ? 'all' : 'saved')} onRename={peer => { setSelectedPeer(peer); setName(peer.local_name || peer.device_name); setError(undefined); setPanel('rename') }} onRemove={peer => { setSelectedPeer(peer); setError(undefined); setPanel('remove') }} onFileDrop={(file, peer) => { dragDepth.current = 0; setDragging(false); choose(file, peer) }} />
     {dragging && <div className="guest-drop-label" role="status">{c.file}</div>}
-    <footer className="guest-footer"><MotionTooltip label={c.history}><MotionButton icon className="guest-icon-button" aria-label={c.history} onClick={() => setPanel('history')}><History size={23} /></MotionButton></MotionTooltip>
+    <footer className="guest-footer"><MotionTooltip label={c.files}><MotionButton icon className="guest-icon-button" aria-label={c.files} onClick={() => openFiles()}><FolderOpen size={23} /></MotionButton></MotionTooltip>
       {state.offline && <span className="guest-offline" role="status">{c.offline}</span>}
-      {state.connections.peers.length > 0 && !active && <MotionTooltip label={c.connect}><MotionButton icon className="guest-icon-button" aria-label={c.connect} onClick={connect}><Plus size={24} /></MotionButton></MotionTooltip>}
+      <MotionTooltip label={c.connect}><MotionButton icon className="guest-icon-button workspace-add-device" aria-label={c.connect} onClick={connect}><Plus size={24} /></MotionButton></MotionTooltip>
       <MotionTooltip label={c.file}><MotionButton icon className="guest-icon-button" aria-label={c.file} onClick={() => choose()} disabled={state.busy}><FilePlus2 size={23} /></MotionButton></MotionTooltip>
     </footer>
     {errorText && !panel && <MotionReveal role="alert" className="guest-error"><span>{errorText}</span><MotionButton icon className="guest-icon-button" aria-label={c.retry} onClick={() => active ? perform(() => runtime.retry(active.id)) : perform(() => runtime.ensureSession().then(() => runtime.poll()))}><RefreshCw size={18} /></MotionButton></MotionReveal>}
-    <MotionSurface open={!!panel} onClose={() => { setPanel(null); setError(undefined) }} title={title} closeLabel={c.close}>
+    <MotionSurface open={!!panel} onClose={close} title={title} closeLabel={c.close}>
       <div className="guest-surface-body">
         {visualPanel === 'connect' && <div className="guest-connect">
           <Tabs value={tab} onValueChange={value => { setTab(value); setError(undefined); if (value === 'show') void perform(() => runtime.connect()) }}>
@@ -115,12 +130,13 @@ function VisitorHome({ runtime }: { runtime: GuestRuntime }) {
         {visualPanel === 'waiting' && <div className="guest-waiting"><Clock3 size={30} /><p>{c.keepOpen}</p><MotionButton className="secondary-button guest-wide" onClick={() => setPanel(null)}>{c.done}</MotionButton></div>}
         {visualPanel === 'send' && file && <div className="guest-send">
           <div className="guest-file-row"><FileText size={40} strokeWidth={1.3} /><span>{file.name}</span></div>
-          {state.connections.peers.length > 1 && <div className="guest-peer-picker" role="group" aria-label={c.selectDevice}>{state.connections.peers.map(peer => <MotionButton className="secondary-button" aria-pressed={selectedPeer?.pair_id === peer.pair_id} key={peer.pair_id} onClick={() => setSelectedPeer(peer)}>{peer.device_name}</MotionButton>)}</div>}
+          {state.connections.peers.length > 1 && <div className="guest-peer-picker" role="group" aria-label={c.selectDevice}>{state.connections.peers.map(peer => <MotionButton className="secondary-button" aria-pressed={selectedPeer?.pair_id === peer.pair_id} key={peer.pair_id} onClick={() => setSelectedPeer(peer)}>{peer.local_name || peer.device_name}</MotionButton>)}</div>}
           <MotionButton className="primary-button guest-wide" busy={state.busy} disabled={!selectedPeer} onClick={() => perform(async () => { if (!selectedPeer) return; const id = await runtime.send(file, selectedPeer, maxBytes); setJobId(id); setFile(undefined); setPanel(null) })}>{state.busy ? c.preparing : c.send}</MotionButton>
         </div>}
         {visualPanel === 'job' && selectedJob && <div className="guest-job-detail">
           <div className="guest-file-row"><FileText size={40} strokeWidth={1.3} /><span>{selectedJob.name}</span></div>
-          <div className="guest-job-meta"><span>{jobStatus(selectedJob)}</span><span>{formatBytes(selectedJob.plainSize, locale)}</span></div>
+          {fromFiles && <MotionTooltip label={c.backFiles}><MotionButton icon className="guest-icon-button workspace-back" aria-label={c.backFiles} onClick={() => setPanel('files')}><ArrowLeft size={20} /></MotionButton></MotionTooltip>}
+          <div className="guest-job-meta"><span>{guestJobStatus(selectedJob, c)}</span><span>{formatBytes(selectedJob.plainSize, locale)}</span></div>
           {selectedJob.snapshot && selectedJob.phase !== 'complete' && <dl className="guest-progress-detail"><div><dt>{c.received}</dt><dd>{formatBytes(selectedJob.snapshot.delivery.acknowledged_bytes, locale)} / {formatBytes(selectedJob.snapshot.delivery.total_bytes, locale)}</dd></div><div><dt>{c.upload}</dt><dd>{selectedJob.snapshot.completion.stored ? c.stored : formatBytes(selectedJob.snapshot.spool.acknowledged_bytes, locale)}</dd></div></dl>}
           {selectedJob.transfer?.state === 'PENDING' && selectedJob.direction === 'receive' && selectedJob.phase === 'waiting' ? <><MotionButton className="primary-button guest-wide" onClick={() => perform(async () => { await runtime.accept(selectedJob.id); setPanel(null) })}>{c.receive}</MotionButton><MotionButton className="auth-text-button guest-wide" onClick={() => perform(async () => { await runtime.reject(selectedJob.id); setPanel(null) })}>{c.decline}</MotionButton></> : <>
             {selectedJob.phase === 'complete' && selectedJob.plain && <MotionButton className="primary-button guest-wide" onClick={() => perform(() => runtime.download(selectedJob.id))}><ArrowDownToLine size={18} />{c.download}</MotionButton>}
@@ -130,10 +146,21 @@ function VisitorHome({ runtime }: { runtime: GuestRuntime }) {
               {selectedJob.snapshot?.capabilities.cancel && <MotionTooltip label={c.cancel}><MotionButton icon className="guest-icon-button" aria-label={c.cancel} onClick={() => perform(() => runtime.control(selectedJob.id, 'cancel'))}><X size={21} /></MotionButton></MotionTooltip>}
               {selectedJob.error && selectedJob.phase !== 'stopped' && <MotionTooltip label={c.retry}><MotionButton icon className="guest-icon-button" aria-label={c.retry} onClick={() => perform(() => runtime.retry(selectedJob.id))}><RefreshCw size={21} /></MotionButton></MotionTooltip>}
             </div>
-            {['complete', 'stopped'].includes(selectedJob.phase) && <MotionButton className="secondary-button guest-wide" onClick={() => { setPanel(null); void perform(() => runtime.dismiss(selectedJob.id)) }}>{c.another}</MotionButton>}
+            {['complete', 'stopped'].includes(selectedJob.phase) && <MotionButton className="secondary-button guest-wide" onClick={() => { close(); void perform(() => runtime.dismiss(selectedJob.id)) }}>{c.another}</MotionButton>}
           </>}
         </div>}
-        {visualPanel === 'history' && <div className="guest-history">{state.jobs.length ? state.jobs.map(job => <button key={job.id} className="guest-history-file" onClick={() => openJob(job)}><span className="guest-history-icon"><FileText size={42} strokeWidth={1.2} /><MotionTooltip label={job.phase === 'complete' && job.plain ? c.saved : job.phase === 'stopped' ? (job.error === 'FILE_EXPIRED' || job.snapshot?.state === 'EXPIRED' ? c.fileExpired : c.stopped) : c.once}><span className="guest-file-badge" aria-label={jobStatus(job)}>{job.phase === 'complete' && job.plain ? <Check size={11} /> : job.phase === 'stopped' ? <Clock3 size={11} /> : '1'}</span></MotionTooltip></span><span title={job.name}>{job.name}</span></button>) : <p className="guest-muted">{c.empty}</p>}</div>}
+        {visualPanel === 'files' && <FilesCollection jobs={filePeer ? state.jobs.filter(job => job.peer.pair_id === filePeer.pair_id) : state.jobs} records={filePeer ? accountRecords.filter(record => record.peer === filePeer.device_id) : accountRecords} filter={filter} onFilter={setFilter} onJob={openJob} onRecord={record => { setRecordId(record.id); setPanel('account-job') }} error={account.ready && account.records.isError} loading={account.ready && account.records.isPending} />}
+        {visualPanel === 'account-job' && selectedRecord && <><MotionTooltip label={c.backFiles}><MotionButton icon className="guest-icon-button" aria-label={c.backFiles} onClick={() => setPanel('files')}><ArrowLeft size={20} /></MotionButton></MotionTooltip><AccountTaskDetails record={selectedRecord} queryKey={account.recordKey} reader={account.reader} /></>}
+        {visualPanel === 'account-request' && selectedRequest && <AccountRequest request={selectedRequest} onDone={() => openFiles(undefined, 'active')} reader={account.reader} />}
+        {visualPanel === 'notifications' && <div className="workspace-notifications-list">
+          {pairRequests.map(request => <MotionButton key={request.id} className="workspace-notification" onClick={() => { seen.current.add(request.id); setCandidateId(request.id); setPanel('pair') }}><DeviceGlyph name={request.device_name} /><span><strong>{request.device_name}</strong><small>{c.wantsConnect}</small></span></MotionButton>)}
+          {fileRequests.map(job => <MotionButton key={job.id} className="workspace-notification" onClick={() => { seen.current.add(job.id); openJob(job) }}><FileText /><span><strong>{job.name}</strong><small>{c.waitingFile}</small></span></MotionButton>)}
+          {requests.map(request => <MotionButton key={request.id} className="workspace-notification" onClick={() => { setRequestId(request.id); setPanel('account-request') }}><FileText /><span><strong>{request.file_name === 'encrypted' ? t('encryptedFile') : request.file_name || c.file}</strong><small>{request.sender_device_id}</small></span></MotionButton>)}
+          {!notificationCount && (!account.ready || !account.notifications.isError && !account.notifications.isPending) && <p className="guest-muted" role="status">{c.noNotifications}</p>}
+          {account.ready && account.notifications.isError && <p role="alert" className="guest-inline-error">{c.accountNotificationsError}</p>}
+        </div>}
+        {visualPanel === 'rename' && selectedPeer && <form className="workspace-rename" onSubmit={event => { event.preventDefault(); if (savingPeer) return; setSavingPeer(true); void perform(async () => { try { await runtime.renamePeer(selectedPeer.pair_id, name); close() } finally { setSavingPeer(false) } }) }}><label>{c.nameLabel}<Input value={name} maxLength={128} onChange={event => setName(event.target.value)} autoComplete="off" /></label><MotionButton className="primary-button guest-wide" type="submit" busy={savingPeer} disabled={!name.trim()}>{c.save}</MotionButton></form>}
+        {visualPanel === 'remove' && selectedPeer && <div className="workspace-remove"><p className="guest-muted">{peerBusy ? c.connectionBusy : state.offline ? c.removeOffline : c.removeHint}</p>{peerBusy ? <MotionButton className="primary-button guest-wide" onClick={() => openJob(peerBusy)}>{c.viewTransfer}</MotionButton> : <MotionButton className="primary-button guest-wide" disabled={state.offline} busy={savingPeer} onClick={() => { if (savingPeer) return; setSavingPeer(true); void perform(async () => { try { await runtime.removePeer(selectedPeer.pair_id); setSelectedPeer(undefined); close() } finally { setSavingPeer(false) } }) }}>{c.remove}</MotionButton>}</div>}
         {errorText && <p className="guest-inline-error" role="alert">{errorText}</p>}
       </div>
     </MotionSurface>

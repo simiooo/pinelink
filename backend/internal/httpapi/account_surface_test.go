@@ -48,6 +48,8 @@ func TestGuestRouteScopeCannotExpandToSignallingOrUnknownOperations(t *testing.T
 	}{
 		{"POST", "/v1/guest/invites", true}, {"POST", "/v1/guest/candidates/id/approve", true},
 		{"GET", "/v1/guest/connections", true}, {"POST", "/v1/p2p", true},
+		{"DELETE", "/v1/guest/connections/id", true}, {"PATCH", "/v1/guest/connections/id", false},
+		{"DELETE", "/v1/guest/connections/id/future-action", false},
 		{"POST", "/v1/p2p/id/relay-ticket", true}, {"GET", "/v1/p2p/id/relay?role=receiver", true},
 		{"POST", "/v1/p2p/id/progress", true}, {"POST", "/v1/transfers/id/accept", true}, {"POST", "/v1/tasks/id/resume", true},
 		{"POST", "/v1/p2p/id/signals", false}, {"GET", "/v1/p2p/id/signals", false},
