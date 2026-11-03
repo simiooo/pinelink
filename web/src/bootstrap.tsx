@@ -10,6 +10,8 @@ import { startPwa } from './pwa'
 import { loadServerPin } from './data/service-profile'
 import { completePendingLogout, prepareAuth, sessionExpired, signOut } from './auth/client'
 import { dataAccess } from './data/access'
+import { captureGuestLink } from './guest/Home'
+import { getGuestRuntime, closeGuestRuntime } from './guest/runtime'
 
 let root: Root | undefined
 let router: ReturnType<typeof createAppRouter> | undefined
@@ -21,14 +23,17 @@ import.meta.hot?.dispose(() => {
   root?.unmount()
   router?.history.destroy()
   void closeClient()
+  void closeGuestRuntime()
 })
 
 async function bootstrap() {
+  captureGuestLink()
   let runtime: ClientRuntime | undefined
   try {
     let logoutBlocked = false
     try { await completePendingLogout() } catch { logoutBlocked = true }
     const state = await prepareAuth(logoutBlocked)
+    if (state.capabilities.guests) await getGuestRuntime().catch(() => undefined)
     const managed = state.capabilities.enabled
     dataAccess.managed = managed
     const account = state.session?.account ?? state.offlineAccount

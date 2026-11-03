@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"net/netip"
 	"strings"
 	"time"
 
@@ -18,18 +19,46 @@ func (a *API) withDeviceAuth(next http.Handler) http.Handler {
 		return next
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !a.deviceAuthRequired && !a.service.Accounts().Required() && !strings.HasPrefix(r.Header.Get("X-Pinelink-Owner"), "acct-") {
+		if !a.deviceAuthRequired && !a.service.Accounts().Required() && !strings.HasPrefix(r.Header.Get("X-Pinelink-Owner"), "acct-") && !strings.HasPrefix(r.Header.Get("X-Pinelink-Owner"), "guest-") && !strings.Contains(r.Header.Get("Sec-WebSocket-Protocol"), "pinelink-ticket.") {
 			next.ServeHTTP(w, r)
 			return
 		}
-		if r.URL.Path == "/healthz" || strings.HasPrefix(r.URL.Path, "/v1/auth/") || (r.Method == http.MethodGet && r.URL.Path == "/v1/replication/info") {
+		if r.URL.Path == "/healthz" || strings.HasPrefix(r.URL.Path, "/v1/auth/") || r.URL.Path == "/v1/guest/challenge" || r.URL.Path == "/v1/guest/enroll" || (r.Method == http.MethodGet && r.URL.Path == "/v1/replication/info") {
 			next.ServeHTTP(w, r)
 			return
 		}
 		ownerID := r.Header.Get("X-Pinelink-Owner")
 		deviceID := r.Header.Get("X-Pinelink-Device")
 		sessionID := ""
-		if accountService := a.service.Accounts(); accountService != nil && (accountService.Required() || strings.HasPrefix(ownerID, "acct-")) {
+		guestSessionID := ""
+		ticketIdentity, ticketed, ticketErr := a.browserRelayIdentity(r)
+		if ticketErr != nil {
+			writeError(w, ticketErr)
+			return
+		}
+		if ticketed {
+			ownerID = ticketIdentity.OwnerID
+			deviceID = ticketIdentity.DeviceID
+			sessionID = ticketIdentity.SessionID
+			guestSessionID = ticketIdentity.GuestSessionID
+		} else if strings.HasPrefix(ownerID, "guest-") {
+			s := a.service.Accounts()
+			if s == nil {
+				writeError(w, service.ErrUnauthorized)
+				return
+			}
+			token := guestToken(r)
+			p, err := s.GuestSession(r.Context(), token)
+			if err != nil || p.OwnerID != ownerID || p.DeviceID != deviceID || (p.Surface == "app") != (r.Header.Get("X-Pinelink-Surface") == "app") || (p.Kind == "native" && (r.Header.Get("Origin") != "" || r.Header.Get("Sec-Fetch-Site") != "")) {
+				writeJSON(w, 401, map[string]string{"code": "GUEST_EXPIRED"})
+				return
+			}
+			if r.Method != "GET" && r.Method != "HEAD" && !a.guestCSRF(r, token) {
+				writeJSON(w, 403, map[string]string{"code": "AUTH_CSRF"})
+				return
+			}
+			guestSessionID = p.SessionID
+		} else if accountService := a.service.Accounts(); accountService != nil && (accountService.Required() || strings.HasPrefix(ownerID, "acct-")) {
 			token := accountToken(r)
 			principal, err := accountService.Session(r.Context(), token)
 			if err != nil || principal.AccountID != ownerID || principal.DeviceID != deviceID {
@@ -42,20 +71,34 @@ func (a *API) withDeviceAuth(next http.Handler) http.Handler {
 			}
 			sessionID = principal.SessionID
 		}
+		if guestSessionID != "" && !guestRouteAllowed(r) {
+			writeJSON(w, 403, map[string]string{"code": "GUEST_SCOPE_REQUIRED"})
+			return
+		}
 		registration := r.Method == http.MethodPost && r.URL.Path == "/v1/devices/register"
 		var body []byte
 		if r.Body != nil {
 			var err error
-			body, err = io.ReadAll(io.LimitReader(r.Body, 16<<20+1))
+			limit := 16 << 20
+			if guestSessionID != "" {
+				limit = 256 << 10
+			}
+			body, err = io.ReadAll(io.LimitReader(r.Body, int64(limit)+1))
 			if err != nil {
 				writeError(w, err)
 				return
 			}
+			if len(body) > limit {
+				writeError(w, service.ErrInvalid)
+				return
+			}
 			_ = r.Body.Close()
 		}
-		if err := a.service.VerifyDevice(r.Context(), ownerID, deviceID, r.Header.Get("X-Pinelink-Timestamp"), r.Method, r.URL.RequestURI(), body, r.Header.Get("X-Pinelink-Signature"), registration); err != nil {
-			writeError(w, err)
-			return
+		if !ticketed {
+			if err := a.service.VerifyDevice(r.Context(), ownerID, deviceID, r.Header.Get("X-Pinelink-Timestamp"), r.Method, r.URL.RequestURI(), body, r.Header.Get("X-Pinelink-Signature"), registration); err != nil {
+				writeError(w, err)
+				return
+			}
 		}
 		if r.Method == http.MethodPost && r.URL.Path == "/v1/devices/revoke" && !revocationTargetsSelf(body, deviceID) {
 			writeJSON(w, http.StatusForbidden, map[string]string{"code": "DEVICE_REVOCATION_FORBIDDEN", "message": "device may revoke its own registration"})
@@ -75,12 +118,16 @@ func (a *API) withDeviceAuth(next http.Handler) http.Handler {
 		// The authenticated principal is authoritative even when query identity is omitted.
 		query.Set("owner_id", ownerID)
 		query.Set("device_id", deviceID)
-		if sessionID != "" {
+		if sessionID != "" || guestSessionID != "" {
 			query.Set("scope_id", ownerID)
 		}
 		r.URL.RawQuery = query.Encode()
-		r = r.WithContext(auth.WithIdentity(r.Context(), auth.Identity{OwnerID: ownerID, DeviceID: deviceID, SessionID: sessionID}))
-		if sessionID != "" {
+		ip := a.trustedClientIP(r)
+		if addr, e := netip.ParseAddr(ip); e == nil && addr.Is6() {
+			ip = netip.PrefixFrom(addr, 64).Masked().String()
+		}
+		r = r.WithContext(auth.WithIdentity(r.Context(), auth.Identity{OwnerID: ownerID, DeviceID: deviceID, SessionID: sessionID, GuestSessionID: guestSessionID, ResourceIP: ip, RelayFromBytes: ticketIdentity.RelayFromBytes}))
+		if sessionID != "" || guestSessionID != "" {
 			ctx, cancel := context.WithCancel(r.Context())
 			defer cancel()
 			done := make(chan struct{})
@@ -95,7 +142,13 @@ func (a *API) withDeviceAuth(next http.Handler) http.Handler {
 					case <-ctx.Done():
 						return
 					case <-tick.C:
-						if a.service.Accounts().SessionAlive(ctx, sessionID) != nil {
+						var err error
+						if guestSessionID != "" {
+							err = a.service.Accounts().GuestSessionAlive(ctx, guestSessionID)
+						} else {
+							err = a.service.Accounts().SessionAlive(ctx, sessionID)
+						}
+						if err != nil {
 							cancel()
 							return
 						}

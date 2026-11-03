@@ -4,10 +4,11 @@ import { base64, digest, nonce, utf8 } from '../data/crypto'
 import { LocalStore, storeName } from '../data/store'
 import { API_URL, IDENTITY } from '../api/client'
 import { closeClient } from '../data'
+import { guestWorkPending } from '../guest/continuity'
 
 export type Account = { id: string; email: string; name: string; methods: string[] }
 export type Session = { account: Account; device_id: string; expires_at: string; csrf: string }
-export type Capabilities = { enabled: boolean; required: boolean; google?: boolean; password?: boolean; email?: boolean }
+export type Capabilities = { enabled: boolean; required: boolean; google?: boolean; password?: boolean; email?: boolean; guests?: boolean; guest_max_file_bytes?: number }
 export type Challenge = { id: string; purpose: 'signup' | 'reset'; generation: number; expires_at: string; resend_at: string; delivery_state: string }
 export type Pending = { id: string; privateKey: CryptoKey; verifier: string; expires: number; email?: string; challenge?: Challenge; resetGrant?: string }
 class AuthStore extends Dexie {
@@ -162,4 +163,11 @@ export function sessionExpired(expected: string) {
 }
 export const legacyIdentity = () => { IDENTITY.owner = import.meta.env.VITE_PINELINK_OWNER ?? 'dev-owner' }
 const authChannel = typeof window.BroadcastChannel !== 'undefined' ? new window.BroadcastChannel(prefix) : undefined
-authChannel?.addEventListener('message', event => { if (event.data === 'changing') void closeClient(); else if (event.data === 'changed') location.reload(); else if (event.data === 'expired') void closeClient().then(() => location.assign('/login?error=AUTH_EXPIRED')) })
+authChannel?.addEventListener('message', event => {
+  if (event.data === 'changing') void closeClient()
+  else if (event.data === 'changed') {
+    if (!guestWorkPending()) { location.reload(); return }
+    // Updating account state must not replace the independent visitor worker.
+    void authFetch<Session>('/v1/auth/session').then(value => { session = value; offlineAccount = value.account; save(prefix, value.account); emit() }).catch(() => { session = undefined; offlineAccount = undefined; emit() })
+  } else if (event.data === 'expired') void closeClient().then(() => { session = undefined; emit(); if (!guestWorkPending()) location.assign('/login?error=AUTH_EXPIRED') })
+})

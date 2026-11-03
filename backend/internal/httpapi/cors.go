@@ -11,7 +11,7 @@ func withCORS(next http.Handler, origins []string) http.Handler {
 		if origin != "" && slices.Contains(origins, origin) {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 			w.Header().Add("Vary", "Origin")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Chunk-SHA256, X-Pinelink-Owner, X-Pinelink-Device, X-Pinelink-Timestamp, X-Pinelink-Signature, X-Pinelink-Auth-Signature, X-Pinelink-CSRF, X-Pinelink-Session, X-Pinelink-Surface, Authorization")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Chunk-SHA256, X-Pinelink-Owner, X-Pinelink-Device, X-Pinelink-Timestamp, X-Pinelink-Signature, X-Pinelink-Auth-Signature, X-Pinelink-CSRF, X-Pinelink-Session, X-Pinelink-Guest-Session, X-Pinelink-Surface, Authorization")
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
 		}

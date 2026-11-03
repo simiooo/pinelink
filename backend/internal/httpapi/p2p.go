@@ -1,8 +1,10 @@
 package httpapi
 
 import (
+	"github.com/simiooo/pinelink/backend/internal/auth"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/simiooo/pinelink/backend/internal/service"
 )
@@ -16,6 +18,7 @@ func (a *API) registerP2P(mux *http.ServeMux) {
 	mux.HandleFunc("POST /v1/p2p/{id}/complete", a.completeP2P)
 	mux.HandleFunc("GET /v1/p2p/{id}/relay-transport", a.relayTransport)
 	mux.HandleFunc("GET /v1/p2p/{id}/relay", a.relaySocket)
+	mux.HandleFunc("POST /v1/p2p/{id}/relay-ticket", a.mintRelayTicket)
 }
 
 func (a *API) p2pProgressSnapshot(w http.ResponseWriter, r *http.Request) {
@@ -24,6 +27,12 @@ func (a *API) p2pProgressSnapshot(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) createP2P(w http.ResponseWriter, r *http.Request) {
+	if i, ok := auth.FromContext(r.Context()); ok && i.GuestSessionID != "" {
+		if err := a.service.Accounts().Rate(r.Context(), "guest-transfer/"+i.OwnerID, 120, time.Hour); err != nil {
+			authFailure(w, err)
+			return
+		}
+	}
 	var req service.P2PCreateRequest
 	if !readRequest(w, r, &req) {
 		return

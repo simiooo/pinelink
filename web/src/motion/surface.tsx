@@ -11,6 +11,8 @@ export function MotionSurface({ open, onClose, title, children, closeLabel }: { 
   const [mobile, setMobile] = useState(() => typeof matchMedia === 'function' && matchMedia('(max-width: 639px)').matches)
   const reduced = useReducedMotion(), seen = useRef(new WeakSet<HTMLElement>())
   const trigger = useRef<HTMLElement | null>(null), wasOpen = useRef(false)
+  const latestOpen = useRef(open)
+  latestOpen.current = open
   const gesture = useRef<{ id: number; y: number; started: number; offset: number } | null>(null)
   useEffect(() => {
     if (typeof matchMedia !== 'function') return
@@ -42,7 +44,10 @@ export function MotionSurface({ open, onClose, title, children, closeLabel }: { 
   const common = {
     ref: panel, forceMount: true as const, showCloseButton: false, 'aria-describedby': undefined,
     className: 'pinelink-motion-surface', 'aria-hidden': !open || undefined, inert: !open,
-    onCloseAutoFocus: (event: Event) => { if (trigger.current?.isConnected) { event.preventDefault(); trigger.current.focus({ preventScroll: true }) } },
+    onCloseAutoFocus: (event: Event) => {
+      if (latestOpen.current || document.querySelector('[role="dialog"][data-state="open"]')) { event.preventDefault(); return }
+      if (trigger.current?.isConnected) { event.preventDefault(); trigger.current.focus({ preventScroll: true }) }
+    },
   }
   const content = <>
     {mobile && <div className="sheet-drag-target" onPointerDown={event => {

@@ -33,6 +33,9 @@ func denied() error                       { return fault(401, "AUTH_INVALID") }
 
 type Config struct {
 	Required                                                                     bool
+	GuestsEnabled                                                                bool
+	GuestMaxFileBytes                                                            int64
+	GuestDailyBytes, GuestIPDailyBytes, GuestGlobalDailyBytes                    int64
 	Origin, EncryptionKey, GoogleClientID, GoogleClientSecret, GoogleRedirectURI string
 	ResendKey, MailFrom, ReplyTo                                                 string
 	QuotaBytes                                                                   int64
@@ -52,7 +55,7 @@ type Service struct {
 }
 
 func New(db *pgxpool.Pool, cfg Config) (*Service, error) {
-	if !cfg.Required && cfg.Origin == "" {
+	if !cfg.Required && !cfg.GuestsEnabled && cfg.Origin == "" {
 		return nil, nil
 	}
 	u, err := url.Parse(cfg.Origin)
@@ -66,6 +69,14 @@ func New(db *pgxpool.Pool, cfg Config) (*Service, error) {
 	}
 	if cfg.QuotaBytes <= 0 {
 		cfg.QuotaBytes = 1 << 30
+	}
+	if cfg.GuestMaxFileBytes < 0 || cfg.GuestMaxFileBytes > 1<<30 {
+		return nil, fmt.Errorf("guest file limit outside supported range")
+	}
+	for _, limit := range []int64{cfg.GuestDailyBytes, cfg.GuestIPDailyBytes, cfg.GuestGlobalDailyBytes} {
+		if limit < 0 || limit > 1<<50 {
+			return nil, fmt.Errorf("guest resource budget outside supported range")
+		}
 	}
 	s := &Service{db: db, config: cfg, key: key, kdfSlots: make(chan struct{}, 2), now: time.Now}
 	s.config.BreachCheck = false
@@ -95,7 +106,7 @@ func New(db *pgxpool.Pool, cfg Config) (*Service, error) {
 func (s *Service) Required() bool { return s != nil && s.config.Required }
 func (s *Service) Origin() string { return s.config.Origin }
 func (s *Service) Capabilities() map[string]any {
-	return map[string]any{"enabled": true, "required": s.config.Required, "google": s.google != nil, "password": true, "email": s.sender != nil, "password_min": 15, "password_max": 128}
+	return map[string]any{"enabled": true, "required": s.config.Required, "google": s.google != nil, "password": true, "email": s.sender != nil, "password_min": 15, "password_max": 128, "guests": s.GuestsEnabled(), "guest_max_file_bytes": s.GuestMaxFileBytes()}
 }
 func (s *Service) Rate(ctx context.Context, bucket string, limit int, window time.Duration) error {
 	return s.rate(ctx, s.db, bucket, limit, window)

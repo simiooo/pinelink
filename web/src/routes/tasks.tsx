@@ -11,10 +11,15 @@ import { TransferGraph } from '../motion/graph'
 import { MotionSurface } from '../motion/surface'
 import { useOnline } from '../motion/react'
 import { confirmedPercent } from '../motion/tokens'
+import { useVisitorMode } from '../guest/useMode'
+import { GuestHome } from '../guest/Home'
 
 export { taskStatus } from '../i18n/status'
 
 export function TasksPage() {
+  return useVisitorMode() ? <GuestHome /> : <AccountTasksPage />
+}
+function AccountTasksPage() {
   const client = useQueryClient(), { t, locale } = useI18n(), online = useOnline()
   const [selected, setSelected] = useState<string>(), [details, setDetails] = useState(false)
   const [confirmCancel, setConfirmCancel] = useState(false), [notice, setNotice] = useState('')

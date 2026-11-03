@@ -40,7 +40,7 @@ func (a *API) relaySocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Default same-origin checks remain enabled; a reverse proxy must preserve Host.
-	conn, err := websocket.Accept(w, r, nil)
+	conn, err := websocket.Accept(w, r, &websocket.AcceptOptions{Subprotocols: []string{"pinelink-relay-v1"}})
 	if err != nil {
 		return
 	}

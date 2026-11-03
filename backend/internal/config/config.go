@@ -60,6 +60,11 @@ func FromEnv() Config {
 
 func accountConfig() accounts.Config {
 	required, _ := strconv.ParseBool(getenv("PINELINK_ACCOUNTS_REQUIRED", "false"))
+	guests, _ := strconv.ParseBool(getenv("PINELINK_GUESTS_ENABLED", "false"))
+	guestMax, _ := strconv.ParseInt(getenv("PINELINK_GUEST_MAX_FILE_BYTES", "67108864"), 10, 64)
+	guestDaily, _ := strconv.ParseInt(getenv("PINELINK_GUEST_DAILY_BYTES", "268435456"), 10, 64)
+	guestIP, _ := strconv.ParseInt(getenv("PINELINK_GUEST_IP_DAILY_BYTES", "536870912"), 10, 64)
+	guestGlobal, _ := strconv.ParseInt(getenv("PINELINK_GUEST_GLOBAL_DAILY_BYTES", "8589934592"), 10, 64)
 	breach, _ := strconv.ParseBool(getenv("PINELINK_PASSWORD_BREACH_CHECK", "false"))
 	quota, _ := strconv.ParseInt(getenv("PINELINK_ACCOUNT_QUOTA_BYTES", "1073741824"), 10, 64)
 	var proxies []netip.Prefix
@@ -68,7 +73,7 @@ func accountConfig() accounts.Config {
 			proxies = append(proxies, p)
 		}
 	}
-	return accounts.Config{TrustedProxies: proxies, Required: required, Origin: getenv("PINELINK_ACCOUNT_ORIGIN", ""), EncryptionKey: getenv("PINELINK_ACCOUNT_ENCRYPTION_KEY", ""), GoogleClientID: getenv("PINELINK_GOOGLE_CLIENT_ID", ""), GoogleClientSecret: getenv("PINELINK_GOOGLE_CLIENT_SECRET", ""), GoogleRedirectURI: getenv("PINELINK_GOOGLE_REDIRECT_URI", ""), ResendKey: getenv("PINELINK_RESEND_API_KEY", ""), MailFrom: getenv("PINELINK_MAIL_FROM", ""), ReplyTo: getenv("PINELINK_MAIL_REPLY_TO", ""), QuotaBytes: quota, BreachCheck: breach}
+	return accounts.Config{GuestDailyBytes: guestDaily, GuestIPDailyBytes: guestIP, GuestGlobalDailyBytes: guestGlobal, GuestsEnabled: guests, GuestMaxFileBytes: guestMax, TrustedProxies: proxies, Required: required, Origin: getenv("PINELINK_ACCOUNT_ORIGIN", ""), EncryptionKey: getenv("PINELINK_ACCOUNT_ENCRYPTION_KEY", ""), GoogleClientID: getenv("PINELINK_GOOGLE_CLIENT_ID", ""), GoogleClientSecret: getenv("PINELINK_GOOGLE_CLIENT_SECRET", ""), GoogleRedirectURI: getenv("PINELINK_GOOGLE_REDIRECT_URI", ""), ResendKey: getenv("PINELINK_RESEND_API_KEY", ""), MailFrom: getenv("PINELINK_MAIL_FROM", ""), ReplyTo: getenv("PINELINK_MAIL_REPLY_TO", ""), QuotaBytes: quota, BreachCheck: breach}
 }
 
 func getenv(key, fallback string) string {

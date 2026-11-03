@@ -13,6 +13,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@noble/ciphers": "2.4.0",
+    "@noble/hashes": "2.4.0",
     "@tanstack/react-query": "^5.90.0",
     "@tanstack/react-router": "^1.134.0",
     "age-encryption": "^0.3.1",
@@ -21,10 +23,12 @@
     "dexie": "^4.4.7",
     "lucide-react": "^0.468.0",
     "radix-ui": "^1.8.1",
+    "qrcode": "1.5.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@types/qrcode": "1.5.5",
     "@tailwindcss/vite": "^4.3.4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",

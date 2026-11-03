@@ -48,6 +48,7 @@ func NewServerWithTLS(addr string, svc *service.Service, logger log.Logger, devi
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", api.health)
 	api.registerAccounts(mux)
+	api.registerGuests(mux)
 	mux.HandleFunc("POST /v1/uploads/prepare", api.prepare)
 	mux.HandleFunc("PUT /v1/uploads/{uploadID}/chunks/{index}", api.uploadChunk)
 	mux.HandleFunc("POST /v1/uploads/{uploadID}/complete", api.completeUpload)
@@ -336,6 +337,8 @@ func writeError(w http.ResponseWriter, err error) {
 		current, resource = stateConflict.Current, stateConflict.Resource
 	case errors.Is(err, service.ErrUnauthorized):
 		status, code, message = http.StatusUnauthorized, "DEVICE_UNAUTHORIZED", "device authentication failed"
+	case errors.Is(err, service.ErrQuotaExceeded):
+		status, code, message = http.StatusTooManyRequests, "GUEST_LIMIT_REACHED", "resource limit reached"
 	case errors.Is(err, service.ErrInvalid):
 		status, code, message = http.StatusBadRequest, "INVALID_REQUEST", err.Error()
 	case errors.Is(err, service.ErrNotFound):

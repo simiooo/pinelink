@@ -3,10 +3,15 @@ package auth
 import "context"
 
 type Identity struct {
-	OwnerID   string
-	DeviceID  string
-	SessionID string
+	OwnerID        string
+	DeviceID       string
+	SessionID      string
+	GuestSessionID string
+	ResourceIP     string
+	RelayFromBytes *int64
 }
+
+func (i Identity) HasSession() bool { return i.SessionID != "" || i.GuestSessionID != "" }
 
 type contextKey struct{}
 
