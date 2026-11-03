@@ -1,16 +1,28 @@
-# pinelink_mobile
+# Pinelink mobile
 
-A new Flutter project.
+The Flutter client targets Android and iOS. The independent Web/PWA client lives
+in `web/` and continues its normal build, deployment and release process.
 
-## Getting Started
+## Release targets
 
-This project is a starting point for a Flutter application.
+- Android: deliver an installable, release-signed APK through GitHub Releases,
+  with its source revision, version and SHA-256 checksum.
+- iOS: retain development support; do not distribute an IPA, TestFlight build or
+  App Store release until the user changes this publishing boundary.
+- Flutter Web may support compatibility checks and previews. Those results do
+  not replace Android installation, native behavior or APK delivery.
 
-A few resources to get you started if this is your first Flutter project:
+This release policy was confirmed by the user on 2026-11-03. Existing published
+Flutter Web previews remain historical artifacts.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Native delivery
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Use the verified stable SDK pinned in `.fvmrc`; build and test on the Fedora
+builder. Before the first Android release, finish the stable application ID and
+release signing setup. The current generated Android configuration still uses a
+template application ID and a debug signing configuration.
+
+Keep signing keys and passwords private. Validate the actual Android app against
+staging, including account return, persistence, file selection/saving and Web
+interoperability. SIM-936 tracks native guest pairing and real file transfer;
+the Android APK and its GitHub Release are part of that delivery.
