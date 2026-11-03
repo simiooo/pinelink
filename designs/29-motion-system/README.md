@@ -5,7 +5,7 @@
 - [OpenPencil 可编辑文件](../29-pinelink-motion-system.fig)：保留 v28 的27个非空页面，新增5页32张关键帧，共298张画板。新增页从 `27 / Motion system` 到 `31 / Motion accessibility`。
 - [可播放原型](motion-lab.html)：自包含 HTML，离线打开即可播放；支持桌面/移动、系统/完整/减少动态效果、反向、慢放、暂停和阶段比较。左侧109项是状态/交互审计目标，共享29种配方，不代表109个已实现产品组件或109套独立业务场景。
 - [调研与取舍](research.md)、[完整覆盖表](coverage.md)、[动画与状态契约](motion-contract.md)、[演示操作说明](preview-guide.md)。
-- staging 评审地址：`https://staging-pinelink.sqmem.top/designs/motion-v29.html`。沿用现有预览认证；实际部署和冒烟结果另见 `evidence/staging-preview-verification.json`，该文件存在并成功才表示已部署。
+- [staging 可播放评审](https://staging-pinelink.sqmem.top/designs/motion-v29.html)：沿用现有预览认证。2026-11-03 13:16（Asia/Shanghai）实际部署 Helm12，设计来源 `ad0dd5b`；公网浏览器20项检查通过。应用运行版本仍为 `1daeffa`，仅新增隔离评审路径。证据见 `evidence/staging-preview-deployment.json` 和 `evidence/staging-preview-verification.json`。
 
 ## 盘点口径
 

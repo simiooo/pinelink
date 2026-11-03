@@ -1,0 +1,108 @@
+{
+  "tested_at": "2026-11-03T05:16:38.511Z",
+  "url": "https://staging-pinelink.sqmem.top/designs/motion-v29.html",
+  "browser": "156.0.8078.73",
+  "checks": [
+    {
+      "name": "preview retains authentication",
+      "passed": true,
+      "details": {
+        "status": 401
+      }
+    },
+    {
+      "name": "published artifact is served",
+      "passed": true,
+      "details": {
+        "status": 200
+      }
+    },
+    {
+      "name": "public artifact matches reviewed bytes",
+      "passed": true,
+      "details": {
+        "sha256": "d0ba06ff24a742749b956dab3c416887245be238e496461a2e060493468f7ccb"
+      }
+    },
+    {
+      "name": "preview has opaque sandbox and no API access",
+      "passed": true
+    },
+    {
+      "name": "preview cannot be cached or transformed",
+      "passed": true
+    },
+    {
+      "name": "preview served through Cloudflare",
+      "passed": true
+    },
+    {
+      "name": "109 targets available",
+      "passed": true
+    },
+    {
+      "name": "storage isolated from product origin",
+      "passed": true
+    },
+    {
+      "name": "offline embedded font loaded",
+      "passed": true
+    },
+    {
+      "name": "one relevant flow loop",
+      "passed": true
+    },
+    {
+      "name": "reduced motion stops flow",
+      "passed": true
+    },
+    {
+      "name": "sandbox surface closes and releases focus",
+      "passed": true
+    },
+    {
+      "name": "Google stays intrinsic with no email field",
+      "passed": true
+    },
+    {
+      "name": "mobile review has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "unknown review path does not return app shell",
+      "passed": true,
+      "details": {
+        "status": 404
+      }
+    },
+    {
+      "name": "existing application still served",
+      "passed": true
+    },
+    {
+      "name": "runtime version retained /version.json",
+      "passed": true,
+      "details": {
+        "version": "1daeffad033f916eca27d7a7a947acae800ddfbb"
+      }
+    },
+    {
+      "name": "runtime version retained /healthz",
+      "passed": true,
+      "details": {
+        "version": "1daeffad033f916eca27d7a7a947acae800ddfbb"
+      }
+    },
+    {
+      "name": "no preview API effects",
+      "passed": true
+    },
+    {
+      "name": "no preview page errors",
+      "passed": true
+    }
+  ],
+  "page_errors": [],
+  "preview_domain_requests": [],
+  "passed": true
+}
