@@ -1,4 +1,11 @@
 {{- $designPreview := .Values.designPreview | default dict -}}
+{{- $previewAccess := .Values.previewAccess | default (dict "enabled" true) -}}
+{{- if and (not $previewAccess.enabled) (not .Values.existingSecrets.accounts) -}}
+{{- fail "Disabling previewAccess requires existingSecrets.accounts and an enforced application identity service" -}}
+{{- end -}}
+{{- if and $previewAccess.enabled (not .Values.existingSecrets.edge) -}}
+{{- fail "Enabled previewAccess requires existingSecrets.edge" -}}
+{{- end -}}
 {{- if and ($designPreview.enabled | default false) (ne .Values.environment "staging") -}}
 {{- fail "Design previews are only available in staging" -}}
 {{- end -}}
@@ -70,7 +77,9 @@ spec:
             - {name: tmp, mountPath: /tmp}
             - {name: ca, mountPath: /etc/pinelink/ca, readOnly: true}
             - {name: tls, mountPath: /etc/pinelink/tls, readOnly: true}
+{{- if $previewAccess.enabled }}
             - {name: auth, mountPath: /etc/pinelink/auth, readOnly: true}
+{{- end }}
             - {name: profile, mountPath: /etc/pinelink/service-profile, readOnly: true}
 {{- if $designPreview.enabled }}
             - {name: design-preview, mountPath: /usr/share/nginx/html/designs, readOnly: true}
@@ -96,8 +105,10 @@ spec:
 {{- if eq $component "web" }}
         - name: profile
           configMap: {name: {{ $.Release.Name }}-service-profile}
+{{- if $previewAccess.enabled }}
         - name: auth
           secret: {secretName: {{ $.Values.existingSecrets.edge }}, defaultMode: 288}
+{{- end }}
         - name: config
           configMap: {name: {{ $.Release.Name }}-config}
 {{- if $designPreview.enabled }}

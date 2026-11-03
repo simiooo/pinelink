@@ -6,7 +6,7 @@ The official environment names are `staging-pinelink.sqmem.top` and `pinelink.sq
 
 ## Traffic and storage
 
-DNS is a proxied CNAME to an environment-specific Cloudflare Tunnel. Each connector reaches only its namespace's internal Web service; the chart creates ClusterIP services and no public Ingress, NodePort, host network or host ports. This prevents a direct origin HTTP route from bypassing the edge. An environment-specific operator password protects the private preview until the official user identity/bootstrap work is complete.
+DNS is a proxied CNAME to an environment-specific Cloudflare Tunnel. Each connector reaches only its namespace's internal Web service; the chart creates ClusterIP services and no public Ingress, NodePort, host network or host ports. This prevents a direct origin HTTP route from bypassing the edge. The legacy operator-password gate is controlled by `previewAccess.enabled` and remains enabled by default. After account sessions and signed devices are enforced, turn it off to make anonymous mode and account pages directly accessible. Staging uses this application identity flow; older environments retain their existing gate until explicitly migrated.
 
 The central relay uses binary WebSocket frames, which Cloudflare can proxy. Native direct peer-to-peer and fully offline LAN transfer remain separate paths. The WebSocket relay reuses the existing fenced encrypted spool, quota, grant, progress, checksum and receipt logic. Upload completion means stored ciphertext; receiver verification and the receipt still determine delivery. Set `PINELINK_RELAY_TRANSPORT=websocket` at the center; existing direct deployments default to `webrtc`. Older clients need an update to use a center configured for the WebSocket relay. Edge deployments may interrupt sockets; clients can reopen using durable checkpoints.
 
@@ -18,7 +18,7 @@ R2 buckets stay private. A bucket-scoped Object Read & Write credential is suffi
 
 ## Runtime credentials
 
-The chart accepts existing Secret names and does not render Secret values. It uses separate Secrets for API, PostgreSQL, NATS, connector and operator-password hash. Pods have no Kubernetes API token, run without root or added capabilities, and use read-only root filesystems. Default-deny policies permit only the required service edges, DNS and public TLS egress. Stateful volumes are retained when StatefulSets are removed or scaled down. Namespace deletion remains destructive; it is not part of the deployment script.
+The chart accepts existing Secret names and does not render Secret values. It uses separate Secrets for API, PostgreSQL, NATS and connector; the optional preview gate mounts its operator-password hash only while enabled. Pods have no Kubernetes API token, run without root or added capabilities, and use read-only root filesystems. Default-deny policies permit only the required service edges, DNS and public TLS egress. Stateful volumes are retained when StatefulSets are removed or scaled down. Namespace deletion remains destructive; it is not part of the deployment script.
 
 Kubernetes Secret base64 is not encryption. Enable and verify datastore Secret encryption before injection. On an existing shared k3s cluster, that is a separate control-plane change requiring its owner's approval and a consistent encrypted backup. The operator script refuses to send values while encryption is disabled. Public CI has no cluster/vault/Cloudflare credentials and is not allowed to deploy an untrusted pull request.
 
@@ -38,7 +38,7 @@ Build from a clean source commit and record its full SHA. Use immutable image di
 
 ## Acceptance
 
-Verify both namespaces and bucket credentials are isolated; the staging key must fail against production storage and the staging password must fail at the production ingress. Check anonymous requests are rejected, edge/API responses are not cached, no origin bypass exists, and both domains have valid public TLS. Inspect actual source versions, image digests and CA validation. Scan the proposed Git changes, build context, image history, pod specs, operator output and service logs for the live credential values without printing matching data.
+Verify both namespaces and bucket credentials are isolated; the staging key must fail against production storage. Password-gated previews reject absent and cross-environment operator credentials. With the gate disabled, a fresh browser must reach guest mode and account pages without HTTP credentials, while protected API data still requires an authorized account or guest device. Retain no-store responses, CSRF, Secure/HttpOnly cookies, valid public TLS and protection against direct origin access. Inspect actual source versions, image digests and CA validation. Scan proposed Git changes, runtime configuration and operator logs for live credentials without printing matching values.
 
 Run real encrypted direct/relay/fallback/preupload/restore transfers, an interrupted receiver and sender, private-object cleanup, signed receipts, and Web/PWA persistence and reconnection checks. Test pod restarts and certificate renewal. A single-replica PostgreSQL and local-path volume are not a high-availability database; encrypted backup/restore and storage placement remain operational requirements before general production access.
 

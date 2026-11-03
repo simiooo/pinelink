@@ -29,6 +29,13 @@ client bundle, public values file or GitHub workflow.
 The proxy preserves Origin for CSRF checks, discards preview Basic credentials
 before forwarding, and does not log requests or cache authentication responses.
 Cloudflare must forward to this trusted proxy; direct API access stays private.
+Once the account service is enforced, deploy with `previewAccess.enabled=false`
+to let visitors reach guest mode, registration and sign-in directly. This removes
+the browser's old operator-password prompt and its Secret mount. It does not
+disable application sessions, device signatures, CSRF or HttpOnly cookies.
+The chart keeps the gate enabled by default for older previews. Disabling it
+requires `existingSecrets.accounts`; the operator must also verify
+`PINELINK_ACCOUNTS_REQUIRED=true` before opening access.
 The app serves the shell offline, while proof, callback, short-link and session
 responses always use the network. Passwords never enter a sync journal.
 
