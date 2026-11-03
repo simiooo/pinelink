@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "design_revision": 25,
-  "review_status": "awaiting_product_design_acceptance",
+  "review_status": "accepted_by_user_2026-11-03",
   "recorded_at": "2026-11-03T01:58:28Z",
   "native_file": "../25-pinelink-rounded-typography.fig",
   "native_file_sha256": "2537d4d8204029cf42725142bc9f089020ad323070e1e221ca67c4d5e54a756f",
@@ -176,7 +176,7 @@
   ],
   "limits": [
     "Design checks do not replace product acceptance.",
-    "Application fonts, PWA precaching, Fedora application tests and staging deployment are pending design acceptance.",
+    "Design accepted; runtime fonts and precaching are implemented, while Fedora application tests and staging verification are recorded separately.",
     "Preview rasterization may vary by host font renderer; no pixel-identical render assertion is made."
   ]
 }

@@ -31,3 +31,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  licenses:
+    - assets/fonts/OFL.txt
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Variable.ttf
