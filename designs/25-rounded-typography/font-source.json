@@ -1,0 +1,41 @@
+{
+  "family": "Nunito",
+  "license": "SIL Open Font License 1.1",
+  "source_repository": "https://github.com/googlefonts/nunito",
+  "source_revision": "8c6a9bb9732545b9ed53f29ec5e1ab0ff53c4e6f",
+  "source_url": "https://raw.githubusercontent.com/googlefonts/nunito/8c6a9bb9732545b9ed53f29ec5e1ab0ff53c4e6f/fonts/variable/Nunito%5Bwght%5D.ttf",
+  "original_sha256": "bb55a5ca5c2042335b3991af27c4d0705d0ef41cac6164ac737fd8f2a1e85207",
+  "original_bytes": 276932,
+  "font_version": "Version 3.602",
+  "static_generation": "fontTools.varLib.instancer; named 400/600/700/800 instances for native design font loading",
+  "static_instances": [
+    {
+      "file": "Nunito-Regular.ttf",
+      "weight": 400,
+      "style": "Regular",
+      "sha256": "0a287301d901b14879ad7323260a56fd3ae959b80b72c982e7112fe53a697a6c",
+      "bytes": 132452
+    },
+    {
+      "file": "Nunito-SemiBold.ttf",
+      "weight": 600,
+      "style": "SemiBold",
+      "sha256": "3362b926ddc957e62f0cb8a62f2b4a50256e5000262f2016ad4d78cb9af7e039",
+      "bytes": 132388
+    },
+    {
+      "file": "Nunito-Bold.ttf",
+      "weight": 700,
+      "style": "Bold",
+      "sha256": "ce623d5b3d38fd96097cb9d28410c80420db768d6723c05da2939d3a1fb9a3ec",
+      "bytes": 132384
+    },
+    {
+      "file": "Nunito-ExtraBold.ttf",
+      "weight": 800,
+      "style": "ExtraBold",
+      "sha256": "dd0472603e9f08d25c8b11fb6667a2e35921405f21028e4a272c55c7ab491ba9",
+      "bytes": 132316
+    }
+  ]
+}

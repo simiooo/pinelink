@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "design_revision": 25,
+  "review_status": "awaiting_product_design_acceptance",
+  "recorded_at": "2026-11-03T01:58:28Z",
+  "native_file": "../25-pinelink-rounded-typography.fig",
+  "native_file_sha256": "2537d4d8204029cf42725142bc9f089020ad323070e1e221ca67c4d5e54a756f",
+  "baseline": "../20-pinelink-direct-relay.fig",
+  "native_save_and_reopen": true,
+  "typography": {
+    "family": "Nunito",
+    "weights": {
+      "regular": 400,
+      "semibold": 600,
+      "bold": 700
+    },
+    "text_nodes": 1452,
+    "weight_counts": {
+      "400": 751,
+      "600": 414,
+      "700": 287
+    },
+    "remeasured_text_nodes": 1452,
+    "corrected_horizontal_positions": 371,
+    "center_or_right_aligned_text_nodes": 527,
+    "max_center_or_right_edge_delta_px": 0,
+    "symbol_fallback": {
+      "family": "Segoe UI",
+      "characters": [
+        "→",
+        "↔"
+      ],
+      "text_nodes": 14,
+      "ranges": 22
+    }
+  },
+  "checks": {
+    "native_pages": 20,
+    "faithful_fonts_before_save": true,
+    "faithful_fonts_after_reopen": true,
+    "major_or_critical_text_parent_overflows": 0,
+    "preserved_text_node_ids": true,
+    "intended_text_content_changes": [
+      "foundation revision label",
+      "foundation font family label"
+    ],
+    "visual_samples": [
+      "desktop-history.png",
+      "mobile-history.png",
+      "desktop-transfer-details.png",
+      "mobile-transfer-details.png",
+      "mobile-devices.png"
+    ]
+  },
+  "page_checks": [
+    {
+      "page": "00 / Foundations",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "01 / Desktop",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "02 / Mobile",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "03 / Components",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "04 / Node states",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "05 / Transfer states",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "06 / Drag and drop",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "07 / Mobile states",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "08 / Motion",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "09 / Desktop progress",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "10 / Mobile progress",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "11 / Progress contract",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "12 / History availability",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "13 / Cloud restore",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "14 / Retention contract",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "15 / Semantic rules",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "16 / Relay before consent",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "17 / Atomic lifecycle",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "18 / Direct and relay",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    },
+    {
+      "page": "19 / Route continuity",
+      "faithful_before_save": true,
+      "faithful_after_reopen": true,
+      "major_or_critical_text_parent_overflows": 0
+    }
+  ],
+  "limits": [
+    "Design checks do not replace product acceptance.",
+    "Application fonts, PWA precaching, Fedora application tests and staging deployment are pending design acceptance.",
+    "Preview rasterization may vary by host font renderer; no pixel-identical render assertion is made."
+  ]
+}
