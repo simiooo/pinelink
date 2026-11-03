@@ -1,0 +1,199 @@
+{
+  "revision": 27,
+  "checked_at_utc": "2026-11-03 03:11:48 UTC",
+  "scope": "OpenPencil native design only; no complete account runtime deployed",
+  "native_sha256": "0d73ef7c3d58c1f65d887a12fc786b866f84b46b06db5bb10a6a30a2a59d8a58",
+  "native_save_close_reopen": true,
+  "inherited_nonempty_pages": 20,
+  "account_frames": 75,
+  "generated_frames": 73,
+  "native_graph_clones": 2,
+  "preview_count": 18,
+  "manual_review": [
+    "desktop and mobile password sign-in",
+    "Google handoff without Pinelink email input",
+    "320px sign-in and signup",
+    "password errors",
+    "numeric keyboard",
+    "cross-device signup link",
+    "graph account menu",
+    "purpose-specific emails",
+    "flow and motion contract"
+  ],
+  "checks": [
+    {
+      "page_id": "0:24",
+      "font": {
+        "faithful": true,
+        "faces": [
+          {
+            "family": "Nunito",
+            "style": "Bold",
+            "status": "available",
+            "source": "local",
+            "node_count": 70
+          },
+          {
+            "family": "Nunito",
+            "style": "Regular",
+            "status": "available",
+            "source": "local",
+            "node_count": 223
+          },
+          {
+            "family": "Nunito",
+            "style": "SemiBold",
+            "status": "available",
+            "source": "google",
+            "node_count": 84
+          }
+        ],
+        "issues": []
+      },
+      "layout": {
+        "overlaps": [],
+        "summary": {
+          "totalNodes": 1292,
+          "analyzedNodes": 1118,
+          "overlapCount": 0,
+          "byCategory": {
+            "sibling-overlap": 0,
+            "parent-overflow": 0,
+            "overlay": 0
+          },
+          "bySeverity": {
+            "critical": 0,
+            "major": 0,
+            "minor": 0,
+            "info": 0
+          }
+        }
+      }
+    },
+    {
+      "page_id": "0:25",
+      "font": {
+        "faithful": true,
+        "faces": [
+          {
+            "family": "Nunito",
+            "style": "Bold",
+            "status": "available",
+            "source": "local",
+            "node_count": 72
+          },
+          {
+            "family": "Nunito",
+            "style": "Regular",
+            "status": "available",
+            "source": "local",
+            "node_count": 96
+          },
+          {
+            "family": "Nunito",
+            "style": "SemiBold",
+            "status": "available",
+            "source": "google",
+            "node_count": 66
+          }
+        ],
+        "issues": []
+      },
+      "layout": {
+        "overlaps": [],
+        "summary": {
+          "totalNodes": 734,
+          "analyzedNodes": 690,
+          "overlapCount": 0,
+          "byCategory": {
+            "sibling-overlap": 0,
+            "parent-overflow": 0,
+            "overlay": 0
+          },
+          "bySeverity": {
+            "critical": 0,
+            "major": 0,
+            "minor": 0,
+            "info": 0
+          }
+        }
+      }
+    },
+    {
+      "page_id": "0:26",
+      "font": {
+        "faithful": true,
+        "faces": [
+          {
+            "family": "Nunito",
+            "style": "Bold",
+            "status": "available",
+            "source": "local",
+            "node_count": 12
+          },
+          {
+            "family": "Nunito",
+            "style": "Regular",
+            "status": "available",
+            "source": "local",
+            "node_count": 19
+          },
+          {
+            "family": "Nunito",
+            "style": "SemiBold",
+            "status": "available",
+            "source": "google",
+            "node_count": 2
+          }
+        ],
+        "issues": []
+      },
+      "layout": {
+        "overlaps": [],
+        "summary": {
+          "totalNodes": 46,
+          "analyzedNodes": 46,
+          "overlapCount": 0,
+          "byCategory": {
+            "sibling-overlap": 0,
+            "parent-overflow": 0,
+            "overlay": 0
+          },
+          "bySeverity": {
+            "critical": 0,
+            "major": 0,
+            "minor": 0,
+            "info": 0
+          }
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Product design acceptance pending",
+    "Account API, Web and Flutter integration not complete",
+    "Motion specified, not a runnable prototype",
+    "Mail sender and real provider/callback smoke still required"
+  ],
+  "preview_sha256": {
+    "desktop-sign-in.png": "d13fe660897350f713ef20cadd8be50257ddbbad5ce94a73f8f2997c5d5d0a4a",
+    "email-reset.png": "7765a39b0deb2c9eacefa955e3c9c94cdff7a4a7162981b31a2ac61510888fdc",
+    "email-signup.png": "e2f50f0a63f7b6bd3bb25e12f279695f25cc040eaa5e76096af4a60a96afc2c7",
+    "flow-contract.png": "47796ae52d133285d6afc3d6747dfe16f279737bcb8b60b89231e67dc4219b8d",
+    "google-continue-neutral.png": "111b248b590600a98f9c8682920dd76de82f6ded9302a63927b15bbe4a73658f",
+    "mobile-account.png": "96f8309f44570ac3d9c0e187f97aa312ef86649b5aa013134b474f4e2826faea",
+    "mobile-forgot.png": "b04aa32163f11fb4e02ffeedf519deab243d8583f27724e44b4f959caabc94b9",
+    "mobile-google-wait.png": "7e9fd4bb0c500fdbfc7b8f016cf80d3d638209df4ca4b77b327fed055fc80255",
+    "mobile-graph-entry.png": "f167621d53c7b391687c24e6c3ce4620af86ad327c9c4e32c686292d1dc4e063",
+    "mobile-link-other-device.png": "30aa9b63b878226da40ea4b11db0f1aed25da805253283c5f66618fd7a2dc22e",
+    "mobile-reset-password.png": "bf55dfa6dd79114522385c997e472ff0a14257b927b1b634b47e9f34f7b41291",
+    "mobile-sign-in-320.png": "cf8d26f691cedbe9192f0d5f9ec5968da2cd65bcec3ed462475a5422074e4c71",
+    "mobile-sign-in-error.png": "1d09ed0b6ba73cf350b2911c00d77b001c5df463adbaaca5e3bd20e198f438ee",
+    "mobile-sign-in.png": "1f6c187270f0f30500614176aa26442a5ab231ae33f0e0abed4dd8b45da14b35",
+    "mobile-sign-up-320.png": "579512de1f7c52ab6fee791b845023228aed3d30ded382f92f03ab33fcf9b225",
+    "mobile-sign-up-weak.png": "c7b57c26da4e89e89c3e71fff7d5edc39a09ed19d33c444b6c70cfa171b7917e",
+    "mobile-sign-up.png": "56672a08d7470dd69bb5ca3ed17ca25c8557c4a80848fe789250ea3cbf7aaa96",
+    "mobile-verify-keyboard.png": "749166b901ccc9207faf4a29091553099fd49ef9a3dce1d3f19db41422e37ddc",
+    "motion-contract.png": "cd0e68e07c3974f0f5c58479b47e2477ebd53c342a85580fb103a2d1c16c7e9d"
+  }
+}

@@ -1,0 +1,1410 @@
+{
+  "summary": {
+    "react_components": 12,
+    "react_tsx_files": 13,
+    "react_jsx_sites": 265,
+    "react_interaction_sites": 47,
+    "flutter_source_files": 17,
+    "flutter_widget_declarations": 21,
+    "flutter_state_classes": 9,
+    "flutter_painters": 1,
+    "flutter_handler_sites": 23,
+    "targets": 109,
+    "animated_targets": 101,
+    "native_targets": 4,
+    "static_targets": 4,
+    "recipes": 29,
+    "unmapped_interaction_sites": 0,
+    "production_motion_delivery": false
+  },
+  "web_components": [
+    {
+      "name": "AppShell",
+      "file": "web/src/components/AppShell.tsx",
+      "line": 6,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "Courier",
+      "file": "web/src/components/Courier.tsx",
+      "line": 3,
+      "disposition": "retire-mascot"
+    },
+    {
+      "name": "FileIcon",
+      "file": "web/src/components/FileIcon.tsx",
+      "line": 3,
+      "disposition": "static-icon-with-stateful-host"
+    },
+    {
+      "name": "SendPreparation",
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 9,
+      "disposition": "replace-cli-preparation"
+    },
+    {
+      "name": "I18nProvider",
+      "file": "web/src/i18n/index.tsx",
+      "line": 34,
+      "disposition": "nonvisual-lifecycle"
+    },
+    {
+      "name": "App",
+      "file": "web/src/main.tsx",
+      "line": 28,
+      "disposition": "nonvisual-lifecycle"
+    },
+    {
+      "name": "HistoryPage",
+      "file": "web/src/routes/history.tsx",
+      "line": 26,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "NewTransferPage",
+      "file": "web/src/routes/index.tsx",
+      "line": 8,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "NotificationsPage",
+      "file": "web/src/routes/notifications.tsx",
+      "line": 8,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "SettingsPage",
+      "file": "web/src/routes/settings.tsx",
+      "line": 8,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "TasksPage",
+      "file": "web/src/routes/tasks.tsx",
+      "line": 12,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "ClientWorker",
+      "file": "web/src/data/ClientWorker.tsx",
+      "line": 7,
+      "disposition": "nonvisual-lifecycle"
+    }
+  ],
+  "flutter_components": [
+    {
+      "name": "PinelinkApp",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/main.dart",
+      "line": 15,
+      "disposition": "nonvisual-lifecycle"
+    },
+    {
+      "name": "_PinelinkAppState",
+      "base": "State<PinelinkApp>",
+      "ui": true,
+      "file": "mobile/lib/main.dart",
+      "line": 24,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "PinelinkShell",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 13,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "_PinelinkShellState",
+      "base": "State<PinelinkShell>",
+      "ui": true,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 25,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "PinelinkAppBar",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 46,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "_LanguageOption",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 167,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "_NavButton",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 181,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "PinelinkI18n",
+      "base": "InheritedWidget",
+      "ui": true,
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 87,
+      "disposition": "nonvisual-lifecycle"
+    },
+    {
+      "name": "HistoryPage",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 27,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "_HistoryPageState",
+      "base": "State<HistoryPage>",
+      "ui": true,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 34,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "HistoryMetadata",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 400,
+      "disposition": "static-content"
+    },
+    {
+      "name": "NewTransferPage",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 10,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "_NewTransferPageState",
+      "base": "State<NewTransferPage>",
+      "ui": true,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 18,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "NotificationsPage",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 8,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "_NotificationsPageState",
+      "base": "State<NotificationsPage>",
+      "ui": true,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 16,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "MetadataRow",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 267,
+      "disposition": "static-content"
+    },
+    {
+      "name": "EmptyNotifications",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 287,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "StorageNote",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 313,
+      "disposition": "static-content"
+    },
+    {
+      "name": "SendPreparationPage",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 13,
+      "disposition": "replace-cli-preparation"
+    },
+    {
+      "name": "_SendPreparationPageState",
+      "base": "State<SendPreparationPage>",
+      "ui": true,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 27,
+      "disposition": "replace-cli-preparation"
+    },
+    {
+      "name": "SettingsPage",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 17,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "_SettingsPageState",
+      "base": "State<SettingsPage>",
+      "ui": true,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 24,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "SettingsHeading",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 452,
+      "disposition": "static-content"
+    },
+    {
+      "name": "SettingsCard",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 465,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "TasksPage",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 73,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "_TasksPageState",
+      "base": "State<TasksPage>",
+      "ui": true,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 80,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "EmptyTasks",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 478,
+      "disposition": "shared-motion-and-designed-layout"
+    },
+    {
+      "name": "Courier",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 16,
+      "disposition": "retire-mascot"
+    },
+    {
+      "name": "_CourierState",
+      "base": "State<Courier>",
+      "ui": true,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 30,
+      "disposition": "retire-mascot"
+    },
+    {
+      "name": "CourierPainter",
+      "base": "CustomPainter",
+      "ui": true,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 97,
+      "disposition": "retire-mascot"
+    },
+    {
+      "name": "FileIcon",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 42,
+      "disposition": "static-icon-with-stateful-host"
+    }
+  ],
+  "web": [
+    {
+      "id": "W001",
+      "file": "web/src/components/AppShell.tsx",
+      "line": 30,
+      "tag": "Link",
+      "events": [],
+      "role": null,
+      "className": "\"brand\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "nav-link"
+      ],
+      "reason": "Subtle activation and route relationship."
+    },
+    {
+      "id": "W002",
+      "file": "web/src/components/AppShell.tsx",
+      "line": 32,
+      "tag": "Link",
+      "events": [],
+      "role": null,
+      "className": "\"chip\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "nav-link"
+      ],
+      "reason": "Subtle activation and route relationship."
+    },
+    {
+      "id": "W003",
+      "file": "web/src/components/AppShell.tsx",
+      "line": 34,
+      "tag": "summary",
+      "events": [],
+      "role": "\"button\"",
+      "className": "\"chip\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "menu"
+      ],
+      "reason": "Trigger and panel share one interruptible transition."
+    },
+    {
+      "id": "W004",
+      "file": "web/src/components/AppShell.tsx",
+      "line": 36,
+      "tag": "Link",
+      "events": [],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "nav-link"
+      ],
+      "reason": "Subtle activation and route relationship."
+    },
+    {
+      "id": "W005",
+      "file": "web/src/components/AppShell.tsx",
+      "line": 37,
+      "tag": "Link",
+      "events": [],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "nav-link"
+      ],
+      "reason": "Subtle activation and route relationship."
+    },
+    {
+      "id": "W006",
+      "file": "web/src/components/AppShell.tsx",
+      "line": 38,
+      "tag": "Link",
+      "events": [],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "nav-link"
+      ],
+      "reason": "Subtle activation and route relationship."
+    },
+    {
+      "id": "W007",
+      "file": "web/src/components/AppShell.tsx",
+      "line": 39,
+      "tag": "Link",
+      "events": [],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "nav-link"
+      ],
+      "reason": "Subtle activation and route relationship."
+    },
+    {
+      "id": "W008",
+      "file": "web/src/components/AppShell.tsx",
+      "line": 42,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "native",
+      "targets": [
+        "select",
+        "filter-change"
+      ],
+      "reason": "Native picker, immediate selection; a redesigned keyed result may transition."
+    },
+    {
+      "id": "W009",
+      "file": "web/src/components/AppShell.tsx",
+      "line": 48,
+      "tag": "p",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"language-note\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "toast",
+        "loading"
+      ],
+      "reason": "Actual result/busy state; do not re-announce unchanged polling."
+    },
+    {
+      "id": "W010",
+      "file": "web/src/components/Courier.tsx",
+      "line": 5,
+      "tag": "svg",
+      "events": [],
+      "role": "\"img\"",
+      "className": "{`courier courier-${action}`}",
+      "type": null,
+      "disposition": "retire",
+      "targets": [],
+      "reason": "Legacy mascot or CLI preparation UI; replace through the accepted node/real-client feature unit rather than embellishing it."
+    },
+    {
+      "id": "W011",
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 35,
+      "tag": "input",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "retire",
+      "targets": [],
+      "reason": "Legacy mascot or CLI preparation UI; replace through the accepted node/real-client feature unit rather than embellishing it."
+    },
+    {
+      "id": "W012",
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 36,
+      "tag": "input",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "retire",
+      "targets": [],
+      "reason": "Legacy mascot or CLI preparation UI; replace through the accepted node/real-client feature unit rather than embellishing it."
+    },
+    {
+      "id": "W013",
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 37,
+      "tag": "input",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "retire",
+      "targets": [],
+      "reason": "Legacy mascot or CLI preparation UI; replace through the accepted node/real-client feature unit rather than embellishing it."
+    },
+    {
+      "id": "W014",
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 39,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"primary-button\"",
+      "type": null,
+      "disposition": "retire",
+      "targets": [],
+      "reason": "Legacy mascot or CLI preparation UI; replace through the accepted node/real-client feature unit rather than embellishing it."
+    },
+    {
+      "id": "W015",
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 40,
+      "tag": "p",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"feedback\"",
+      "type": null,
+      "disposition": "retire",
+      "targets": [],
+      "reason": "Legacy mascot or CLI preparation UI; replace through the accepted node/real-client feature unit rather than embellishing it."
+    },
+    {
+      "id": "W016",
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 41,
+      "tag": "textarea",
+      "events": [
+        "onFocus"
+      ],
+      "role": null,
+      "className": "\"command-preview\"",
+      "type": null,
+      "disposition": "retire",
+      "targets": [],
+      "reason": "Legacy mascot or CLI preparation UI; replace through the accepted node/real-client feature unit rather than embellishing it."
+    },
+    {
+      "id": "W017",
+      "file": "web/src/routes/history.tsx",
+      "line": 48,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "native",
+      "targets": [
+        "select",
+        "filter-change"
+      ],
+      "reason": "Native picker, immediate selection; a redesigned keyed result may transition."
+    },
+    {
+      "id": "W018",
+      "file": "web/src/routes/history.tsx",
+      "line": 49,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "native",
+      "targets": [
+        "select",
+        "filter-change"
+      ],
+      "reason": "Native picker, immediate selection; a redesigned keyed result may transition."
+    },
+    {
+      "id": "W019",
+      "file": "web/src/routes/history.tsx",
+      "line": 50,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "native",
+      "targets": [
+        "select",
+        "filter-change"
+      ],
+      "reason": "Native picker, immediate selection; a redesigned keyed result may transition."
+    },
+    {
+      "id": "W020",
+      "file": "web/src/routes/history.tsx",
+      "line": 52,
+      "tag": "p",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"feedback\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "toast",
+        "loading"
+      ],
+      "reason": "Actual result/busy state; do not re-announce unchanged polling."
+    },
+    {
+      "id": "W021",
+      "file": "web/src/routes/history.tsx",
+      "line": 54,
+      "tag": "div",
+      "events": [],
+      "role": "\"alert\"",
+      "className": "\"state-panel\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "error"
+      ],
+      "reason": "Persistent error and accessible announcement, no page shake."
+    },
+    {
+      "id": "W022",
+      "file": "web/src/routes/history.tsx",
+      "line": 65,
+      "tag": "p",
+      "events": [],
+      "role": "\"note\"",
+      "className": "\"error-note\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "send-pending",
+        "error"
+      ],
+      "reason": "Shared action feedback; actual operation authority remains in its existing event handler."
+    },
+    {
+      "id": "W023",
+      "file": "web/src/routes/history.tsx",
+      "line": 67,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"secondary-button history-delete\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "send-pending",
+        "error"
+      ],
+      "reason": "Shared action feedback; actual operation authority remains in its existing event handler."
+    },
+    {
+      "id": "W024",
+      "file": "web/src/routes/index.tsx",
+      "line": 29,
+      "tag": "div",
+      "events": [
+        "onDragOver",
+        "onDragLeave",
+        "onDrop"
+      ],
+      "role": null,
+      "className": "{`dropzone ${dragging ? 'dragging' : ''}`}",
+      "type": null,
+      "disposition": "replace",
+      "targets": [
+        "drag-over",
+        "drag-leave",
+        "drop-accept",
+        "drag-cancel"
+      ],
+      "reason": "Legacy large drop area maps to the explicit eligible device target; nested dragleave must not flicker."
+    },
+    {
+      "id": "W025",
+      "file": "web/src/routes/index.tsx",
+      "line": 40,
+      "tag": "input",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": "\"file\"",
+      "disposition": "native",
+      "targets": [
+        "select"
+      ],
+      "reason": "System file picker; do not draw a second modal animation."
+    },
+    {
+      "id": "W026",
+      "file": "web/src/routes/index.tsx",
+      "line": 41,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"primary-button\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "send-pending",
+        "error"
+      ],
+      "reason": "Shared action feedback; actual operation authority remains in its existing event handler."
+    },
+    {
+      "id": "W027",
+      "file": "web/src/routes/notifications.tsx",
+      "line": 36,
+      "tag": "div",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"state-panel\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "toast",
+        "loading"
+      ],
+      "reason": "Actual result/busy state; do not re-announce unchanged polling."
+    },
+    {
+      "id": "W028",
+      "file": "web/src/routes/notifications.tsx",
+      "line": 37,
+      "tag": "div",
+      "events": [],
+      "role": "\"alert\"",
+      "className": "\"state-panel\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "error"
+      ],
+      "reason": "Persistent error and accessible announcement, no page shake."
+    },
+    {
+      "id": "W029",
+      "file": "web/src/routes/notifications.tsx",
+      "line": 38,
+      "tag": "p",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"feedback\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "toast",
+        "loading"
+      ],
+      "reason": "Actual result/busy state; do not re-announce unchanged polling."
+    },
+    {
+      "id": "W030",
+      "file": "web/src/routes/notifications.tsx",
+      "line": 41,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "native",
+      "targets": [
+        "select",
+        "filter-change"
+      ],
+      "reason": "Native picker, immediate selection; a redesigned keyed result may transition."
+    },
+    {
+      "id": "W031",
+      "file": "web/src/routes/notifications.tsx",
+      "line": 63,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"secondary-button\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "send-pending",
+        "error"
+      ],
+      "reason": "Shared action feedback; actual operation authority remains in its existing event handler."
+    },
+    {
+      "id": "W032",
+      "file": "web/src/routes/notifications.tsx",
+      "line": 64,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"primary-button\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "send-pending",
+        "error"
+      ],
+      "reason": "Shared action feedback; actual operation authority remains in its existing event handler."
+    },
+    {
+      "id": "W033",
+      "file": "web/src/routes/settings.tsx",
+      "line": 43,
+      "tag": "p",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"feedback\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "toast",
+        "loading"
+      ],
+      "reason": "Actual result/busy state; do not re-announce unchanged polling."
+    },
+    {
+      "id": "W034",
+      "file": "web/src/routes/settings.tsx",
+      "line": 54,
+      "tag": "div",
+      "events": [],
+      "role": "\"progressbar\"",
+      "className": "\"progress-track\"",
+      "type": null,
+      "disposition": "replace",
+      "targets": [
+        "progress-ack"
+      ],
+      "reason": "Main transfer progress moves to the real confirmed curve; detailed/quota meters remain bounded."
+    },
+    {
+      "id": "W035",
+      "file": "web/src/routes/settings.tsx",
+      "line": 61,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "native",
+      "targets": [
+        "select",
+        "filter-change"
+      ],
+      "reason": "Native picker, immediate selection; a redesigned keyed result may transition."
+    },
+    {
+      "id": "W036",
+      "file": "web/src/routes/settings.tsx",
+      "line": 65,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"secondary-button\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "send-pending",
+        "error"
+      ],
+      "reason": "Shared action feedback; actual operation authority remains in its existing event handler."
+    },
+    {
+      "id": "W037",
+      "file": "web/src/routes/settings.tsx",
+      "line": 71,
+      "tag": "div",
+      "events": [],
+      "role": "\"alert\"",
+      "className": "\"state-panel\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "error"
+      ],
+      "reason": "Persistent error and accessible announcement, no page shake."
+    },
+    {
+      "id": "W038",
+      "file": "web/src/routes/settings.tsx",
+      "line": 72,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "native",
+      "targets": [
+        "select",
+        "filter-change"
+      ],
+      "reason": "Native picker, immediate selection; a redesigned keyed result may transition."
+    },
+    {
+      "id": "W039",
+      "file": "web/src/routes/settings.tsx",
+      "line": 73,
+      "tag": "summary",
+      "events": [],
+      "role": "\"button\"",
+      "className": "\"secondary-button\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "menu"
+      ],
+      "reason": "Trigger and panel share one interruptible transition."
+    },
+    {
+      "id": "W040",
+      "file": "web/src/routes/settings.tsx",
+      "line": 73,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"secondary-button\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "send-pending",
+        "error"
+      ],
+      "reason": "Shared action feedback; actual operation authority remains in its existing event handler."
+    },
+    {
+      "id": "W041",
+      "file": "web/src/routes/tasks.tsx",
+      "line": 36,
+      "tag": "div",
+      "events": [],
+      "role": "\"alert\"",
+      "className": "\"state-panel\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "error"
+      ],
+      "reason": "Persistent error and accessible announcement, no page shake."
+    },
+    {
+      "id": "W042",
+      "file": "web/src/routes/tasks.tsx",
+      "line": 48,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null,
+      "disposition": "native",
+      "targets": [
+        "select",
+        "filter-change"
+      ],
+      "reason": "Native picker, immediate selection; a redesigned keyed result may transition."
+    },
+    {
+      "id": "W043",
+      "file": "web/src/routes/tasks.tsx",
+      "line": 49,
+      "tag": "p",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"feedback\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "toast",
+        "loading"
+      ],
+      "reason": "Actual result/busy state; do not re-announce unchanged polling."
+    },
+    {
+      "id": "W044",
+      "file": "web/src/routes/tasks.tsx",
+      "line": 56,
+      "tag": "div",
+      "events": [],
+      "role": "\"progressbar\"",
+      "className": "\"progress-track\"",
+      "type": null,
+      "disposition": "replace",
+      "targets": [
+        "progress-ack"
+      ],
+      "reason": "Main transfer progress moves to the real confirmed curve; detailed/quota meters remain bounded."
+    },
+    {
+      "id": "W045",
+      "file": "web/src/routes/tasks.tsx",
+      "line": 63,
+      "tag": "p",
+      "events": [],
+      "role": "\"alert\"",
+      "className": "\"error-note\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "error"
+      ],
+      "reason": "Persistent error and accessible announcement, no page shake."
+    },
+    {
+      "id": "W046",
+      "file": "web/src/routes/tasks.tsx",
+      "line": 66,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"primary-button\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "send-pending",
+        "error"
+      ],
+      "reason": "Shared action feedback; actual operation authority remains in its existing event handler."
+    },
+    {
+      "id": "W047",
+      "file": "web/src/routes/tasks.tsx",
+      "line": 67,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"secondary-button\"",
+      "type": null,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "send-pending",
+        "error"
+      ],
+      "reason": "Shared action feedback; actual operation authority remains in its existing event handler."
+    }
+  ],
+  "flutter": [
+    {
+      "id": "F001",
+      "event": "onTap",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 69,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "nav-link",
+        "error"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F002",
+      "event": "onTap",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 85,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "nav-link",
+        "error"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F003",
+      "event": "onSelected",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 90,
+      "disposition": "native-or-shared-control",
+      "targets": [
+        "select",
+        "input-focus",
+        "filter-change"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F004",
+      "event": "onTap",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 187,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "nav-link",
+        "error"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F005",
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 141,
+      "disposition": "native-or-shared-control",
+      "targets": [
+        "select",
+        "input-focus",
+        "filter-change"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F006",
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 170,
+      "disposition": "native-or-shared-control",
+      "targets": [
+        "select",
+        "input-focus",
+        "filter-change"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F007",
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 196,
+      "disposition": "native-or-shared-control",
+      "targets": [
+        "select",
+        "input-focus",
+        "filter-change"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F008",
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 324,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "nav-link",
+        "error"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F009",
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 106,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "nav-link",
+        "error"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F010",
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 112,
+      "disposition": "native-or-shared-control",
+      "targets": [
+        "select",
+        "input-focus",
+        "filter-change"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F011",
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 192,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "nav-link",
+        "error"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F012",
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 201,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "nav-link",
+        "error"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F013",
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 107,
+      "disposition": "retire",
+      "targets": [],
+      "reason": "Legacy CLI preparation; replace with real client sending."
+    },
+    {
+      "id": "F014",
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 117,
+      "disposition": "retire",
+      "targets": [],
+      "reason": "Legacy CLI preparation; replace with real client sending."
+    },
+    {
+      "id": "F015",
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 127,
+      "disposition": "retire",
+      "targets": [],
+      "reason": "Legacy CLI preparation; replace with real client sending."
+    },
+    {
+      "id": "F016",
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 144,
+      "disposition": "retire",
+      "targets": [],
+      "reason": "Legacy CLI preparation; replace with real client sending."
+    },
+    {
+      "id": "F017",
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 235,
+      "disposition": "native-or-shared-control",
+      "targets": [
+        "select",
+        "input-focus",
+        "filter-change"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F018",
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 282,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "nav-link",
+        "error"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F019",
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 332,
+      "disposition": "native-or-shared-control",
+      "targets": [
+        "select",
+        "input-focus",
+        "filter-change"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F020",
+      "event": "onSelected",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 347,
+      "disposition": "native-or-shared-control",
+      "targets": [
+        "select",
+        "input-focus",
+        "filter-change"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F021",
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 185,
+      "disposition": "native-or-shared-control",
+      "targets": [
+        "select",
+        "input-focus",
+        "filter-change"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F022",
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 386,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "nav-link",
+        "error"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    },
+    {
+      "id": "F023",
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 403,
+      "disposition": "animated",
+      "targets": [
+        "primary-action",
+        "nav-link",
+        "error"
+      ],
+      "reason": "Preserve the current handler authority; apply the shared control/native picker recipe."
+    }
+  ],
+  "limitations": [
+    "Flutter constructor-like tokens are a lexical inventory and include declarations/style/data objects; only Widget subclasses are counted as Widget declarations.",
+    "A controller or AnimatedBuilder name alone does not prove visual motion; the i18n AnimatedBuilder only listens for locale rebuilds.",
+    "All 70 source interaction/semantic-control sites have a disposition. Design-native containers are inventoried separately and are not falsely called independent components."
+  ]
+}

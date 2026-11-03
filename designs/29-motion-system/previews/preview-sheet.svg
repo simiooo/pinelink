@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1120" height="640" viewBox="0 0 1120 640">
+  <g>
+    <rect width="1120" height="640" fill="#FFFFFF"/>
+    <g transform="translate(32, 32)">
+      <text x="0" y="22" font-family="Nunito" font-size="22" font-weight="700" fill="#101010">Mobile sheet</text>
+    </g>
+    <g transform="translate(32, 84)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">24px approach; direct manipulation follows the pointer, release keeps velocity.</text>
+    </g>
+    <g transform="translate(32, 144)">
+      <g>
+        <g transform="translate(8, 72)" opacity="0.2">
+          <rect width="312" height="232" rx="24" ry="24" fill="#FFFFFF" stroke="#DBDBDB" stroke-width="1"/>
+          <g transform="translate(16, 20)">
+            <text x="0" y="20" font-family="Nunito" font-size="20" font-weight="700" fill="#101010">Alex’s iPhone</text>
+          </g>
+          <g transform="translate(264, 10)">
+            <g transform="translate(14, 14)">
+              <path d="M5 5L15 15M5 15L15 5" fill="none" stroke="#101010" stroke-width="1.42" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(16, 88)">
+            <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Meet at the north entrance.</text>
+          </g>
+          <g transform="translate(16, 152)">
+            <g>
+              <rect width="280" height="48" rx="24" ry="24" fill="#0866FF"/>
+              <g transform="translate(16, 12)">
+                <text x="124" y="15" font-family="Nunito" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Send</text>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">Before</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Ready</text>
+        </g>
+      </g>
+      <g transform="translate(360, 0)">
+        <g transform="translate(8, 58)" opacity="0.7">
+          <rect width="312" height="232" rx="24" ry="24" fill="#FFFFFF" stroke="#DBDBDB" stroke-width="1"/>
+          <g transform="translate(16, 20)">
+            <text x="0" y="20" font-family="Nunito" font-size="20" font-weight="700" fill="#101010">Alex’s iPhone</text>
+          </g>
+          <g transform="translate(264, 10)">
+            <g transform="translate(14, 14)">
+              <path d="M5 5L15 15M5 15L15 5" fill="none" stroke="#101010" stroke-width="1.42" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(16, 88)">
+            <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Meet at the north entrance.</text>
+          </g>
+          <g transform="translate(16, 152)">
+            <g>
+              <rect width="280" height="48" rx="24" ry="24" fill="#0866FF"/>
+              <g transform="translate(16, 12)">
+                <text x="124" y="15" font-family="Nunito" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Send</text>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">During</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">220ms enter / 160ms exit</text>
+        </g>
+      </g>
+      <g transform="translate(720, 0)">
+        <g transform="translate(8, 48)">
+          <rect width="312" height="232" rx="24" ry="24" fill="#FFFFFF" stroke="#DBDBDB" stroke-width="1"/>
+          <g transform="translate(16, 20)">
+            <text x="0" y="20" font-family="Nunito" font-size="20" font-weight="700" fill="#101010">Alex’s iPhone</text>
+          </g>
+          <g transform="translate(264, 10)">
+            <g transform="translate(14, 14)">
+              <path d="M5 5L15 15M5 15L15 5" fill="none" stroke="#101010" stroke-width="1.42" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(16, 88)">
+            <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Meet at the north entrance.</text>
+          </g>
+          <g transform="translate(16, 152)">
+            <g>
+              <rect width="280" height="48" rx="24" ry="24" fill="#0866FF"/>
+              <g transform="translate(16, 12)">
+                <text x="124" y="15" font-family="Nunito" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Send</text>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">After</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Settled state</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(32, 560)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Reduced motion · Immediate geometry; native gesture remains usable.</text>
+    </g>
+  </g>
+</svg>

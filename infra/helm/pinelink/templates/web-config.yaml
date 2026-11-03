@@ -107,6 +107,15 @@ data:
         location = /sw.js { expires -1; }
         location = /service-config.json { alias /etc/pinelink/service-profile/service-config.json; default_type application/json; }
         location = /version.json { expires -1; }
+        location ^~ /designs/ {
+          try_files $uri =404;
+          add_header Cross-Origin-Opener-Policy same-origin always;
+          add_header Cross-Origin-Embedder-Policy require-corp always;
+          add_header X-Content-Type-Options nosniff always;
+          add_header Referrer-Policy no-referrer always;
+          add_header Cache-Control "private, no-store, no-transform" always;
+          add_header Content-Security-Policy "sandbox allow-scripts; default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'" always;
+        }
         location / { try_files $uri $uri/ /index.html; }
       }
     }

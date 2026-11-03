@@ -179,5 +179,11 @@
   "connectionFailed": "连接失败，请稍后重试。",
   "timeUnknown": "时间未知",
   "receivedFile": "接收文件",
-  "sentFile": "上传文件"
+  "sentFile": "上传文件",
+  "transferDetails": "传输详情",
+  "close": "关闭",
+  "cloudNode": "云端",
+  "cloudStored": "已暂存到云端",
+  "transferState": "状态",
+  "awaitingConfirmation": "等待确认"
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1120" height="720" viewBox="0 0 1120 720">
+  <g>
+    <rect width="1120" height="720" fill="#FFFFFF"/>
+    <g transform="translate(32, 32)">
+      <text x="0" y="24" font-family="Nunito" font-size="24" font-weight="700" fill="#101010">A small, shared motion vocabulary</text>
+    </g>
+    <g transform="translate(32, 88)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Feedback</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">80ms press, 120ms state, 160ms control, 220ms surface, 280ms page. Hit areas remain at least 48px.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 200)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Space</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">8px local approach, 24px sheet approach, 16px parent-child page relationship; small spatial overshoot only.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 312)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Effects</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Opacity and colors never overshoot. Progress is monotonic, bounded by real confirmed bytes.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 424)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Lifecycle</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Retarget from the current pose and velocity. Cancel owned animation/listeners; stop invisible activity.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 536)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Continuity</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Tab/list/locale refreshes preserve identity, selection, focus and drafts. Polling does not replay entrances.</text>
+      </g>
+    </g>
+  </g>
+</svg>

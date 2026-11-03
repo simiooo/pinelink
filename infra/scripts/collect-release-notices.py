@@ -15,6 +15,16 @@ missing=[]
 def notices(kind,name,version,directory,declared=None):
     directory=Path(directory)
     candidates=[p for p in directory.iterdir() if p.is_file() and re.match(r'^(?:licen[cs]e|copying|notice|authors|patents)(?:$|[._-])',p.name,re.I)]
+    if kind=='font' and (directory/'OFL.txt').is_file():
+        candidates.append(directory/'OFL.txt')
+        if (directory/'provenance.json').is_file():candidates.append(directory/'provenance.json')
+    # This tarball declares MIT but omits its file. Package and pinned upstream
+    # notice provenance are recorded beside the reviewed copy.
+    reviewed={('npm','react-remove-scroll-bar','2.3.8'):ROOT/'third_party/react-remove-scroll-bar-2.3.8'}
+    if not candidates and (kind,name,version) in reviewed:
+        directory=reviewed[(kind,name,version)]
+        candidates=[directory/'LICENSE'] if (directory/'LICENSE').is_file() else []
+        if candidates and (directory/'provenance.json').is_file():candidates.append(directory/'provenance.json')
     if not candidates:
         missing.append({'kind':kind,'name':name,'version':version,'declared':declared})
         return
@@ -60,6 +70,9 @@ for path,entry in lock['packages'].items():
     metadata=json.loads(package.read_text(encoding='utf-8'))
     if entry.get('dev') and not metadata['name'].startswith('workbox-'):continue
     notices('npm',metadata['name'],metadata['version'],directory,metadata.get('license'))
+
+notices('source','shadcn-ui-components','4.23.0',ROOT/'web/src/components/ui','MIT')
+notices('font','Noto Sans SC','a85815a42757',ROOT/'mobile/assets/fonts/noto-sans-sc','OFL-1.1')
 
 config=ROOT/'mobile/.dart_tool/package_config.json'
 if config.is_file():

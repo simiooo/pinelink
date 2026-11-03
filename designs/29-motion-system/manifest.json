@@ -1,0 +1,43 @@
+{
+  "version": 29,
+  "issue": "SIM-898",
+  "status": "design-proposal",
+  "native": "../29-pinelink-motion-system.fig",
+  "native_sha256": "0345398f4b93019e2502c1f3b5413205411ca3cf281c3621a6563ac880437a5a",
+  "inherited_nonempty_pages": 27,
+  "inherited_boards": 266,
+  "new_pages": 5,
+  "new_boards": 32,
+  "total_nonempty_pages": 32,
+  "total_boards": 298,
+  "native_exports": {
+    "png": 15,
+    "svg": 15
+  },
+  "source_baseline": "545ee8425aa6ad1af6258b722efeea1212e460d0",
+  "prototype": "motion-lab.html",
+  "prototype_sha256": "d0ba06ff24a742749b956dab3c416887245be238e496461a2e060493468f7ccb",
+  "prototype_checks": 151,
+  "inventory": {
+    "react_components": 12,
+    "react_tsx_files": 13,
+    "react_jsx_sites": 265,
+    "react_interaction_sites": 47,
+    "flutter_source_files": 17,
+    "flutter_widget_declarations": 21,
+    "flutter_state_classes": 9,
+    "flutter_painters": 1,
+    "flutter_handler_sites": 23,
+    "targets": 109,
+    "animated_targets": 101,
+    "native_targets": 4,
+    "static_targets": 4,
+    "recipes": 29,
+    "unmapped_interaction_sites": 0,
+    "production_motion_delivery": false
+  },
+  "product_runtime_wiring_delivered": false,
+  "native_keyframes_playable": false,
+  "html_shared_recipes_playable": true,
+  "staging_url": "https://staging-pinelink.sqmem.top/designs/motion-v29.html"
+}

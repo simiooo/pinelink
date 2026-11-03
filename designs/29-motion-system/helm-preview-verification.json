@@ -1,0 +1,48 @@
+{
+  "helm": "v4.3.1+gc0d08d0",
+  "lint_passed": true,
+  "checks": [
+    {
+      "name": "default preview disabled",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "staging preview enabled",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "production rejects enabled preview",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "name": "enabled preview needs config map",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "name": "production without preview still renders",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "template guard survives skipped schema",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "name": "web revision can advance independently",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "web revision rejects invalid source hash",
+      "passed": true,
+      "exit": 1
+    }
+  ],
+  "passed": true,
+  "render_only": true
+}

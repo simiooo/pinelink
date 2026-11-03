@@ -1,0 +1,19 @@
+{
+  "family": "Noto Sans SC",
+  "source_commit": "a85815a42757630ce188fdad368c2dfc444d4773",
+  "source": "https://github.com/google/fonts/tree/a85815a42757630ce188fdad368c2dfc444d4773/ofl/notosanssc",
+  "license": "OFL-1.1",
+  "purpose": "Bundle the existing CJK fallback for offline Flutter Web; Nunito stays primary.",
+  "files": [
+    {
+      "file": "NotoSansSC-Variable.ttf",
+      "bytes": 17772300,
+      "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da"
+    },
+    {
+      "file": "OFL.txt",
+      "bytes": 4388,
+      "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9"
+    }
+  ]
+}

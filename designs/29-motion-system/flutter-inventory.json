@@ -1,0 +1,5452 @@
+{
+  "method": "Dart token inventory; comments/literals/generated sources excluded. Calls include non-widget constructors and are explicitly classified during review, not counted as widgets automatically.",
+  "files": [
+    {
+      "file": "mobile/lib/main.dart",
+      "lines": 56
+    },
+    {
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "lines": 319
+    },
+    {
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "lines": 203
+    },
+    {
+      "file": "mobile/lib/src/data/database.dart",
+      "lines": 371
+    },
+    {
+      "file": "mobile/lib/src/data/identity.dart",
+      "lines": 117
+    },
+    {
+      "file": "mobile/lib/src/data/runtime.dart",
+      "lines": 523
+    },
+    {
+      "file": "mobile/lib/src/data/wire.dart",
+      "lines": 230
+    },
+    {
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "lines": 116
+    },
+    {
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "lines": 421
+    },
+    {
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "lines": 177
+    },
+    {
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "lines": 332
+    },
+    {
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "lines": 193
+    },
+    {
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "lines": 488
+    },
+    {
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "lines": 503
+    },
+    {
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "lines": 68
+    },
+    {
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "lines": 220
+    },
+    {
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "lines": 82
+    }
+  ],
+  "classes": [
+    {
+      "name": "PinelinkApp",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/main.dart",
+      "line": 15
+    },
+    {
+      "name": "_PinelinkAppState",
+      "base": "State<PinelinkApp>",
+      "ui": true,
+      "file": "mobile/lib/main.dart",
+      "line": 24
+    },
+    {
+      "name": "TransferTask",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 7
+    },
+    {
+      "name": "TransferRequest",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 32
+    },
+    {
+      "name": "Device",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 55
+    },
+    {
+      "name": "Quota",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 62
+    },
+    {
+      "name": "FileSnapshot",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 68
+    },
+    {
+      "name": "ApiException",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 85
+    },
+    {
+      "name": "PinelinkApi",
+      "base": "ChangeNotifier",
+      "ui": false,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 91
+    },
+    {
+      "name": "PinelinkShell",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 13
+    },
+    {
+      "name": "_PinelinkShellState",
+      "base": "State<PinelinkShell>",
+      "ui": true,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 25
+    },
+    {
+      "name": "PinelinkAppBar",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 46
+    },
+    {
+      "name": "_LanguageOption",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 167
+    },
+    {
+      "name": "_NavButton",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 181
+    },
+    {
+      "name": "ClientMetadata",
+      "base": "Table",
+      "ui": false,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 13
+    },
+    {
+      "name": "ConfirmedPeers",
+      "base": "Table",
+      "ui": false,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 21
+    },
+    {
+      "name": "ReceivedHistory",
+      "base": "Table",
+      "ui": false,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 31
+    },
+    {
+      "name": "HistoryProjection",
+      "base": "Table",
+      "ui": false,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 41
+    },
+    {
+      "name": "ResponseCache",
+      "base": "Table",
+      "ui": false,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 54
+    },
+    {
+      "name": "PreparedHistory",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 62
+    },
+    {
+      "name": "ClientDatabase",
+      "base": "_",
+      "ui": false,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 79
+    },
+    {
+      "name": "IdentityVault",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 28
+    },
+    {
+      "name": "PlatformVault",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 33
+    },
+    {
+      "name": "LocalIdentity",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 42
+    },
+    {
+      "name": "DataException",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 13
+    },
+    {
+      "name": "ClientRuntime",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 19
+    },
+    {
+      "name": "I18nController",
+      "base": "ChangeNotifier",
+      "ui": false,
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 20
+    },
+    {
+      "name": "PinelinkI18n",
+      "base": "InheritedWidget",
+      "ui": true,
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 87
+    },
+    {
+      "name": "HistoryPage",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 27
+    },
+    {
+      "name": "_HistoryPageState",
+      "base": "State<HistoryPage>",
+      "ui": true,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 34
+    },
+    {
+      "name": "HistoryMetadata",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 400
+    },
+    {
+      "name": "NewTransferPage",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 10
+    },
+    {
+      "name": "_NewTransferPageState",
+      "base": "State<NewTransferPage>",
+      "ui": true,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 18
+    },
+    {
+      "name": "NotificationsPage",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 8
+    },
+    {
+      "name": "_NotificationsPageState",
+      "base": "State<NotificationsPage>",
+      "ui": true,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 16
+    },
+    {
+      "name": "MetadataRow",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 267
+    },
+    {
+      "name": "EmptyNotifications",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 287
+    },
+    {
+      "name": "StorageNote",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 313
+    },
+    {
+      "name": "SendPreparationPage",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 13
+    },
+    {
+      "name": "_SendPreparationPageState",
+      "base": "State<SendPreparationPage>",
+      "ui": true,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 27
+    },
+    {
+      "name": "SettingsData",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 9
+    },
+    {
+      "name": "SettingsPage",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 17
+    },
+    {
+      "name": "_SettingsPageState",
+      "base": "State<SettingsPage>",
+      "ui": true,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 24
+    },
+    {
+      "name": "SettingsHeading",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 452
+    },
+    {
+      "name": "SettingsCard",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 465
+    },
+    {
+      "name": "TaskData",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 9
+    },
+    {
+      "name": "TasksPage",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 73
+    },
+    {
+      "name": "_TasksPageState",
+      "base": "State<TasksPage>",
+      "ui": true,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 80
+    },
+    {
+      "name": "EmptyTasks",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 478
+    },
+    {
+      "name": "PinelinkColors",
+      "base": "",
+      "ui": false,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 3
+    },
+    {
+      "name": "Courier",
+      "base": "StatefulWidget",
+      "ui": true,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 16
+    },
+    {
+      "name": "_CourierState",
+      "base": "State<Courier>",
+      "ui": true,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 30
+    },
+    {
+      "name": "CourierPainter",
+      "base": "CustomPainter",
+      "ui": true,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 97
+    },
+    {
+      "name": "FileIcon",
+      "base": "StatelessWidget",
+      "ui": true,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 42
+    }
+  ],
+  "constructors": [
+    {
+      "name": "WidgetsFlutterBinding",
+      "constructor": "ensureInitialized",
+      "file": "mobile/lib/main.dart",
+      "line": 9
+    },
+    {
+      "name": "I18nController",
+      "constructor": null,
+      "file": "mobile/lib/main.dart",
+      "line": 10
+    },
+    {
+      "name": "PinelinkApp",
+      "constructor": null,
+      "file": "mobile/lib/main.dart",
+      "line": 12
+    },
+    {
+      "name": "PinelinkApp",
+      "constructor": null,
+      "file": "mobile/lib/main.dart",
+      "line": 16
+    },
+    {
+      "name": "_PinelinkAppState",
+      "constructor": null,
+      "file": "mobile/lib/main.dart",
+      "line": 21
+    },
+    {
+      "name": "I18nController",
+      "constructor": null,
+      "file": "mobile/lib/main.dart",
+      "line": 25
+    },
+    {
+      "name": "PinelinkApi",
+      "constructor": null,
+      "file": "mobile/lib/main.dart",
+      "line": 26
+    },
+    {
+      "name": "AnimatedBuilder",
+      "constructor": null,
+      "file": "mobile/lib/main.dart",
+      "line": 36
+    },
+    {
+      "name": "PinelinkI18n",
+      "constructor": null,
+      "file": "mobile/lib/main.dart",
+      "line": 38
+    },
+    {
+      "name": "MaterialApp",
+      "constructor": null,
+      "file": "mobile/lib/main.dart",
+      "line": 40
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/main.dart",
+      "line": 45
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/main.dart",
+      "line": 45
+    },
+    {
+      "name": "PinelinkShell",
+      "constructor": null,
+      "file": "mobile/lib/main.dart",
+      "line": 51
+    },
+    {
+      "name": "TransferTask",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 8
+    },
+    {
+      "name": "TransferRequest",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 33
+    },
+    {
+      "name": "Device",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 56
+    },
+    {
+      "name": "Quota",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 63
+    },
+    {
+      "name": "FileSnapshot",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 69
+    },
+    {
+      "name": "ApiException",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 86
+    },
+    {
+      "name": "String",
+      "constructor": "fromEnvironment",
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 92
+    },
+    {
+      "name": "String",
+      "constructor": "fromEnvironment",
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 96
+    },
+    {
+      "name": "String",
+      "constructor": "fromEnvironment",
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 100
+    },
+    {
+      "name": "PinelinkApi",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 105
+    },
+    {
+      "name": "String",
+      "constructor": "fromEnvironment",
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 108
+    },
+    {
+      "name": "Function",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 113
+    },
+    {
+      "name": "Future",
+      "constructor": "error",
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 121
+    },
+    {
+      "name": "StateError",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 121
+    },
+    {
+      "name": "ClientRuntime",
+      "constructor": "open",
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 139
+    },
+    {
+      "name": "String",
+      "constructor": "fromEnvironment",
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 142
+    },
+    {
+      "name": "String",
+      "constructor": "fromEnvironment",
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 143
+    },
+    {
+      "name": "StateError",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 147
+    },
+    {
+      "name": "TransferTask",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 183
+    },
+    {
+      "name": "TransferRequest",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 214
+    },
+    {
+      "name": "Device",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 264
+    },
+    {
+      "name": "Quota",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 271
+    },
+    {
+      "name": "FileSnapshot",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 276
+    },
+    {
+      "name": "ApiException",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 307
+    },
+    {
+      "name": "ApiException",
+      "constructor": null,
+      "file": "mobile/lib/src/api/pinelink_api.dart",
+      "line": 315
+    },
+    {
+      "name": "PinelinkShell",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 14
+    },
+    {
+      "name": "_PinelinkShellState",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 22
+    },
+    {
+      "name": "Scaffold",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 28
+    },
+    {
+      "name": "PinelinkAppBar",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 30
+    },
+    {
+      "name": "SafeArea",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 34
+    },
+    {
+      "name": "NewTransferPage",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 36
+    },
+    {
+      "name": "NotificationsPage",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 37
+    },
+    {
+      "name": "TasksPage",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 38
+    },
+    {
+      "name": "HistoryPage",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 39
+    },
+    {
+      "name": "SettingsPage",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 40
+    },
+    {
+      "name": "PinelinkAppBar",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 47
+    },
+    {
+      "name": "Size",
+      "constructor": "fromHeight",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 55
+    },
+    {
+      "name": "Material",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 58
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 60
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "symmetric",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 62
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 63
+    },
+    {
+      "name": "Border",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 64
+    },
+    {
+      "name": "BorderSide",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 64
+    },
+    {
+      "name": "Row",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 66
+    },
+    {
+      "name": "InkWell",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 68
+    },
+    {
+      "name": "Padding",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 70
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "symmetric",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 71
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 72
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 74
+    },
+    {
+      "name": "Spacer",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 81
+    },
+    {
+      "name": "_NavButton",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 83
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 87
+    },
+    {
+      "name": "PopupMenuButton",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 89
+    },
+    {
+      "name": "PinelinkI18n",
+      "constructor": "of",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 92
+    },
+    {
+      "name": "PinelinkI18n",
+      "constructor": "of",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 98
+    },
+    {
+      "name": "PopupMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 100
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 102
+    },
+    {
+      "name": "PopupMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 104
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 106
+    },
+    {
+      "name": "PopupMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 108
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 110
+    },
+    {
+      "name": "PopupMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 113
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 115
+    },
+    {
+      "name": "PopupMenuDivider",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 117
+    },
+    {
+      "name": "PopupMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 118
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 120
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 122
+    },
+    {
+      "name": "PopupMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 128
+    },
+    {
+      "name": "_LanguageOption",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 130
+    },
+    {
+      "name": "PopupMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 135
+    },
+    {
+      "name": "_LanguageOption",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 137
+    },
+    {
+      "name": "PopupMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 142
+    },
+    {
+      "name": "_LanguageOption",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 144
+    },
+    {
+      "name": "PopupMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 150
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 152
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 154
+    },
+    {
+      "name": "_NavButton",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 159
+    },
+    {
+      "name": "_LanguageOption",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 168
+    },
+    {
+      "name": "Row",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 172
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 174
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 174
+    },
+    {
+      "name": "Icon",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 176
+    },
+    {
+      "name": "_NavButton",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 182
+    },
+    {
+      "name": "InkWell",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 186
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 188
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 189
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "symmetric",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 190
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 191
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 193
+    },
+    {
+      "name": "Border",
+      "constructor": "all",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 194
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 196
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 198
+    },
+    {
+      "name": "DataClassName",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 20
+    },
+    {
+      "name": "Constant",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 25
+    },
+    {
+      "name": "DataClassName",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 30
+    },
+    {
+      "name": "DataClassName",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 40
+    },
+    {
+      "name": "DataClassName",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 53
+    },
+    {
+      "name": "PreparedHistory",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 63
+    },
+    {
+      "name": "DriftDatabase",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 70
+    },
+    {
+      "name": "ClientDatabase",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 80
+    },
+    {
+      "name": "DriftNativeOptions",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 84
+    },
+    {
+      "name": "DriftWebOptions",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 85
+    },
+    {
+      "name": "Uri",
+      "constructor": "parse",
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 86
+    },
+    {
+      "name": "Uri",
+      "constructor": "parse",
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 87
+    },
+    {
+      "name": "ClientDatabase",
+      "constructor": "testing",
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 91
+    },
+    {
+      "name": "Function",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 94
+    },
+    {
+      "name": "Stopwatch",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 97
+    },
+    {
+      "name": "Duration",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 114
+    },
+    {
+      "name": "Future",
+      "constructor": "delayed",
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 117
+    },
+    {
+      "name": "Duration",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 118
+    },
+    {
+      "name": "MigrationStrategy",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 127
+    },
+    {
+      "name": "ClientMetadataCompanion",
+      "constructor": "insert",
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 147
+    },
+    {
+      "name": "OrderingTerm",
+      "constructor": "desc",
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 180
+    },
+    {
+      "name": "DateTime",
+      "constructor": "now",
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 187
+    },
+    {
+      "name": "StateError",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 190
+    },
+    {
+      "name": "StateError",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 220
+    },
+    {
+      "name": "StateError",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 224
+    },
+    {
+      "name": "StateError",
+      "constructor": null,
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 232
+    },
+    {
+      "name": "ReceivedHistoryCompanion",
+      "constructor": "insert",
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 243
+    },
+    {
+      "name": "HistoryProjectionCompanion",
+      "constructor": "insert",
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 263
+    },
+    {
+      "name": "ResponseCacheCompanion",
+      "constructor": "insert",
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 310
+    },
+    {
+      "name": "OrderingTerm",
+      "constructor": "asc",
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 326
+    },
+    {
+      "name": "ResponseCacheCompanion",
+      "constructor": "insert",
+      "file": "mobile/lib/src/data/database.dart",
+      "line": 360
+    },
+    {
+      "name": "Sha256",
+      "constructor": null,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 14
+    },
+    {
+      "name": "Random",
+      "constructor": "secure",
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 16
+    },
+    {
+      "name": "List",
+      "constructor": "generate",
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 17
+    },
+    {
+      "name": "FlutterSecureStorage",
+      "constructor": null,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 34
+    },
+    {
+      "name": "LocalIdentity",
+      "constructor": null,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 43
+    },
+    {
+      "name": "StateError",
+      "constructor": null,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 66
+    },
+    {
+      "name": "Ed25519",
+      "constructor": null,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 72
+    },
+    {
+      "name": "X25519Identity",
+      "constructor": "generate",
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 73
+    },
+    {
+      "name": "Ed25519",
+      "constructor": null,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 83
+    },
+    {
+      "name": "X25519Identity",
+      "constructor": "parse",
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 87
+    },
+    {
+      "name": "StateError",
+      "constructor": null,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 90
+    },
+    {
+      "name": "LocalIdentity",
+      "constructor": null,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 102
+    },
+    {
+      "name": "Ed25519",
+      "constructor": null,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 107
+    },
+    {
+      "name": "StateError",
+      "constructor": null,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 110
+    },
+    {
+      "name": "AgeDecrypter",
+      "constructor": null,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 111
+    },
+    {
+      "name": "Uint8List",
+      "constructor": "fromList",
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 112
+    },
+    {
+      "name": "StateError",
+      "constructor": null,
+      "file": "mobile/lib/src/data/identity.dart",
+      "line": 113
+    },
+    {
+      "name": "DataException",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 14
+    },
+    {
+      "name": "ClientRuntime",
+      "constructor": "_",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 20
+    },
+    {
+      "name": "RegExp",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 54
+    },
+    {
+      "name": "ClientDatabase",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 57
+    },
+    {
+      "name": "LocalIdentity",
+      "constructor": "load",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 60
+    },
+    {
+      "name": "PlatformVault",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 62
+    },
+    {
+      "name": "ClientRuntime",
+      "constructor": "_",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 70
+    },
+    {
+      "name": "Client",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 76
+    },
+    {
+      "name": "DataException",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 83
+    },
+    {
+      "name": "Function",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 86
+    },
+    {
+      "name": "Future",
+      "constructor": "error",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 87
+    },
+    {
+      "name": "DataException",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 87
+    },
+    {
+      "name": "Future",
+      "constructor": "sync",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 88
+    },
+    {
+      "name": "Completer",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 109
+    },
+    {
+      "name": "Duration",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 113
+    },
+    {
+      "name": "TimeoutException",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 116
+    },
+    {
+      "name": "AbortableRequest",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 132
+    },
+    {
+      "name": "Uri",
+      "constructor": "parse",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 134
+    },
+    {
+      "name": "DateTime",
+      "constructor": "now",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 141
+    },
+    {
+      "name": "DataException",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 164
+    },
+    {
+      "name": "DataException",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 174
+    },
+    {
+      "name": "DataException",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 177
+    },
+    {
+      "name": "RegExp",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 186
+    },
+    {
+      "name": "RegExp",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 189
+    },
+    {
+      "name": "Uri",
+      "constructor": "parse",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 202
+    },
+    {
+      "name": "DataException",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 212
+    },
+    {
+      "name": "DataException",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 246
+    },
+    {
+      "name": "DateTime",
+      "constructor": "now",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 296
+    },
+    {
+      "name": "Uri",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 386
+    },
+    {
+      "name": "OrderingTerm",
+      "constructor": "asc",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 422
+    },
+    {
+      "name": "Future",
+      "constructor": "error",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 433
+    },
+    {
+      "name": "DataException",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 433
+    },
+    {
+      "name": "DateTime",
+      "constructor": "now",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 439
+    },
+    {
+      "name": "DateTime",
+      "constructor": "now",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 446
+    },
+    {
+      "name": "DateTime",
+      "constructor": "now",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 458
+    },
+    {
+      "name": "Timer",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 484
+    },
+    {
+      "name": "Duration",
+      "constructor": null,
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 484
+    },
+    {
+      "name": "Future",
+      "constructor": "wait",
+      "file": "mobile/lib/src/data/runtime.dart",
+      "line": 518
+    },
+    {
+      "name": "StateError",
+      "constructor": null,
+      "file": "mobile/lib/src/data/wire.dart",
+      "line": 10
+    },
+    {
+      "name": "RegExp",
+      "constructor": null,
+      "file": "mobile/lib/src/data/wire.dart",
+      "line": 18
+    },
+    {
+      "name": "Ed25519",
+      "constructor": null,
+      "file": "mobile/lib/src/data/wire.dart",
+      "line": 28
+    },
+    {
+      "name": "Signature",
+      "constructor": null,
+      "file": "mobile/lib/src/data/wire.dart",
+      "line": 30
+    },
+    {
+      "name": "SimplePublicKey",
+      "constructor": null,
+      "file": "mobile/lib/src/data/wire.dart",
+      "line": 32
+    },
+    {
+      "name": "StateError",
+      "constructor": null,
+      "file": "mobile/lib/src/data/wire.dart",
+      "line": 43
+    },
+    {
+      "name": "RegExp",
+      "constructor": null,
+      "file": "mobile/lib/src/data/wire.dart",
+      "line": 45
+    },
+    {
+      "name": "RegExp",
+      "constructor": null,
+      "file": "mobile/lib/src/data/wire.dart",
+      "line": 48
+    },
+    {
+      "name": "RegExp",
+      "constructor": null,
+      "file": "mobile/lib/src/data/wire.dart",
+      "line": 105
+    },
+    {
+      "name": "RegExp",
+      "constructor": null,
+      "file": "mobile/lib/src/data/wire.dart",
+      "line": 110
+    },
+    {
+      "name": "PreparedHistory",
+      "constructor": null,
+      "file": "mobile/lib/src/data/wire.dart",
+      "line": 219
+    },
+    {
+      "name": "I18nController",
+      "constructor": null,
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 21
+    },
+    {
+      "name": "SharedPreferences",
+      "constructor": "getInstance",
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 36
+    },
+    {
+      "name": "SharedPreferences",
+      "constructor": "getInstance",
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 52
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 59
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 60
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 65
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 66
+    },
+    {
+      "name": "PinelinkI18n",
+      "constructor": null,
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 88
+    },
+    {
+      "name": "PinelinkI18n",
+      "constructor": "of",
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 109
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 111
+    },
+    {
+      "name": "PinelinkI18n",
+      "constructor": "of",
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 115
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/src/i18n/controller.dart",
+      "line": 115
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 10
+    },
+    {
+      "name": "HistoryPage",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 28
+    },
+    {
+      "name": "_HistoryPageState",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 31
+    },
+    {
+      "name": "FutureBuilder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 76
+    },
+    {
+      "name": "ListView",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 89
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 90
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 92
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 94
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 96
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 97
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 99
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 101
+    },
+    {
+      "name": "Row",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 102
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 104
+    },
+    {
+      "name": "DropdownButtonFormField",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 105
+    },
+    {
+      "name": "InputDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 107
+    },
+    {
+      "name": "OutlineInputBorder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 109
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 112
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 114
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 116
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 118
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 120
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 122
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 124
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 126
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 128
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 130
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 132
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 134
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 136
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 138
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 148
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 149
+    },
+    {
+      "name": "DropdownButtonFormField",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 150
+    },
+    {
+      "name": "InputDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 152
+    },
+    {
+      "name": "OutlineInputBorder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 154
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 157
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 159
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 161
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 163
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 165
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 167
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 180
+    },
+    {
+      "name": "DropdownButtonFormField",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 181
+    },
+    {
+      "name": "InputDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 183
+    },
+    {
+      "name": "OutlineInputBorder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 185
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 189
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 191
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 203
+    },
+    {
+      "name": "Padding",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 205
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "only",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 206
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 207
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 209
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 216
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 218
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 220
+    },
+    {
+      "name": "Builder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 222
+    },
+    {
+      "name": "Column",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 239
+    },
+    {
+      "name": "Row",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 242
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 244
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 245
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 247
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 253
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 254
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 255
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 257
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 259
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 261
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 269
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 270
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 271
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 272
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 274
+    },
+    {
+      "name": "Border",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 275
+    },
+    {
+      "name": "Column",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 277
+    },
+    {
+      "name": "HistoryMetadata",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 280
+    },
+    {
+      "name": "HistoryMetadata",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 290
+    },
+    {
+      "name": "HistoryMetadata",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 296
+    },
+    {
+      "name": "HistoryMetadata",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 302
+    },
+    {
+      "name": "Padding",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 307
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "only",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 308
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 309
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 311
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 313
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 322
+    },
+    {
+      "name": "OutlinedButton",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 323
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 336
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 344
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 345
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 347
+    },
+    {
+      "name": "HistoryMetadata",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 401
+    },
+    {
+      "name": "Padding",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 405
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "only",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 406
+    },
+    {
+      "name": "Row",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 407
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 409
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 411
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 413
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 416
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 416
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 416
+    },
+    {
+      "name": "NewTransferPage",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 11
+    },
+    {
+      "name": "_NewTransferPageState",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 15
+    },
+    {
+      "name": "SendPreparationPage",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 43
+    },
+    {
+      "name": "ListView",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 49
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 50
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 52
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 54
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 56
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 57
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 59
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 61
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 62
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 64
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 65
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 67
+    },
+    {
+      "name": "Border",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 68
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 68
+    },
+    {
+      "name": "Column",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 70
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 73
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 76
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 78
+    },
+    {
+      "name": "Icon",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 80
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 86
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 87
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 89
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 94
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 95
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 99
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 104
+    },
+    {
+      "name": "ElevatedButton",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 105
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 109
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 113
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 114
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 116
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 124
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 125
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 126
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 127
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 129
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 131
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 133
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 140
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 141
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 143
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 145
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 156
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 158
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 159
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 161
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 163
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 165
+    },
+    {
+      "name": "NotificationsPage",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 9
+    },
+    {
+      "name": "_NotificationsPageState",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 13
+    },
+    {
+      "name": "Center",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 61
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 61
+    },
+    {
+      "name": "Center",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 64
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 64
+    },
+    {
+      "name": "ListView",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 70
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 71
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 73
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 75
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 77
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 78
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 80
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 82
+    },
+    {
+      "name": "Padding",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 84
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "only",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 85
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 86
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 88
+    },
+    {
+      "name": "DropdownButtonFormField",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 95
+    },
+    {
+      "name": "InputDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 97
+    },
+    {
+      "name": "OutlineInputBorder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 99
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 103
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 105
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 114
+    },
+    {
+      "name": "EmptyNotifications",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 117
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 119
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 120
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 121
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 123
+    },
+    {
+      "name": "Border",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 124
+    },
+    {
+      "name": "Column",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 126
+    },
+    {
+      "name": "Row",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 129
+    },
+    {
+      "name": "FileIcon",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 131
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 132
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 133
+    },
+    {
+      "name": "Column",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 134
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 137
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 143
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 148
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 149
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 155
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 165
+    },
+    {
+      "name": "MetadataRow",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 166
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 170
+    },
+    {
+      "name": "MetadataRow",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 171
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 175
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 176
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 178
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 187
+    },
+    {
+      "name": "Row",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 188
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 190
+    },
+    {
+      "name": "OutlinedButton",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 191
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 195
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 198
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 199
+    },
+    {
+      "name": "ElevatedButton",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 200
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 204
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 211
+    },
+    {
+      "name": "StorageNote",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 212
+    },
+    {
+      "name": "MetadataRow",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 268
+    },
+    {
+      "name": "Row",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 272
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 275
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 277
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 279
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 282
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 282
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 282
+    },
+    {
+      "name": "EmptyNotifications",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 288
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 290
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 291
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 292
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 294
+    },
+    {
+      "name": "Column",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 296
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 299
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 301
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 303
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 304
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 306
+    },
+    {
+      "name": "StorageNote",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 314
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 316
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 317
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 318
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 320
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 322
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 324
+    },
+    {
+      "name": "SendPreparationPage",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 14
+    },
+    {
+      "name": "_SendPreparationPageState",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 24
+    },
+    {
+      "name": "TextEditingController",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 28
+    },
+    {
+      "name": "TextEditingController",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 31
+    },
+    {
+      "name": "TextEditingController",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 32
+    },
+    {
+      "name": "RegExp",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 36
+    },
+    {
+      "name": "RegExp",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 40
+    },
+    {
+      "name": "ListView",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 56
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 57
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 59
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 61
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 63
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 64
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 66
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 68
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 69
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 70
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 71
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 73
+    },
+    {
+      "name": "Row",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 75
+    },
+    {
+      "name": "FileIcon",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 77
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 78
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 79
+    },
+    {
+      "name": "Column",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 80
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 83
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 85
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 90
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 91
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 93
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 104
+    },
+    {
+      "name": "TextField",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 105
+    },
+    {
+      "name": "InputDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 108
+    },
+    {
+      "name": "OutlineInputBorder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 111
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 114
+    },
+    {
+      "name": "TextField",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 115
+    },
+    {
+      "name": "InputDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 118
+    },
+    {
+      "name": "OutlineInputBorder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 121
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 124
+    },
+    {
+      "name": "TextField",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 125
+    },
+    {
+      "name": "InputDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 128
+    },
+    {
+      "name": "OutlineInputBorder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 130
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 133
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 134
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 136
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 142
+    },
+    {
+      "name": "ElevatedButton",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 143
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 145
+    },
+    {
+      "name": "Padding",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 148
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "only",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 149
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 150
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 152
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 159
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 160
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 161
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 162
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 164
+    },
+    {
+      "name": "SelectableText",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 166
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 168
+    },
+    {
+      "name": "Clipboard",
+      "constructor": "setData",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 182
+    },
+    {
+      "name": "ClipboardData",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 183
+    },
+    {
+      "name": "SettingsData",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 10
+    },
+    {
+      "name": "SettingsPage",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 18
+    },
+    {
+      "name": "_SettingsPageState",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 21
+    },
+    {
+      "name": "SettingsData",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 83
+    },
+    {
+      "name": "FutureBuilder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 91
+    },
+    {
+      "name": "Center",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 95
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 95
+    },
+    {
+      "name": "Center",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 98
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 98
+    },
+    {
+      "name": "ListView",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 114
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 115
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 117
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 119
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 121
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 122
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 124
+    },
+    {
+      "name": "Padding",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 127
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "only",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 128
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 129
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 131
+    },
+    {
+      "name": "SettingsHeading",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 137
+    },
+    {
+      "name": "SettingsCard",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 138
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 140
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 142
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 147
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 156
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 161
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 163
+    },
+    {
+      "name": "SettingsHeading",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 170
+    },
+    {
+      "name": "SettingsCard",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 171
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 173
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 175
+    },
+    {
+      "name": "LinearProgressIndicator",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 180
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 183
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 188
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 190
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 192
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 195
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 197
+    },
+    {
+      "name": "SettingsHeading",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 205
+    },
+    {
+      "name": "SettingsCard",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 207
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 209
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 211
+    },
+    {
+      "name": "DropdownButtonFormField",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 219
+    },
+    {
+      "name": "InputDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 221
+    },
+    {
+      "name": "OutlineInputBorder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 223
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 227
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 229
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 242
+    },
+    {
+      "name": "SettingsCard",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 243
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 245
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 248
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 253
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 263
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 269
+    },
+    {
+      "name": "FittedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 272
+    },
+    {
+      "name": "Courier",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 273
+    },
+    {
+      "name": "OutlinedButton",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 281
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 285
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 288
+    },
+    {
+      "name": "FittedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 291
+    },
+    {
+      "name": "Courier",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 292
+    },
+    {
+      "name": "SettingsHeading",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 302
+    },
+    {
+      "name": "SettingsCard",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 304
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 306
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 308
+    },
+    {
+      "name": "DropdownButtonFormField",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 316
+    },
+    {
+      "name": "InputDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 318
+    },
+    {
+      "name": "OutlineInputBorder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 320
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 324
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 326
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 345
+    },
+    {
+      "name": "PopupMenuButton",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 346
+    },
+    {
+      "name": "PopupMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 349
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 351
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 356
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "symmetric",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 357
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 361
+    },
+    {
+      "name": "Border",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 362
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 363
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 365
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 367
+    },
+    {
+      "name": "SettingsHeading",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 453
+    },
+    {
+      "name": "Padding",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 456
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "only",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 457
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 458
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 460
+    },
+    {
+      "name": "SettingsCard",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 466
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 469
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 471
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 472
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 474
+    },
+    {
+      "name": "Border",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 475
+    },
+    {
+      "name": "Column",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 477
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 481
+    },
+    {
+      "name": "TaskData",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 10
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 17
+    },
+    {
+      "name": "TaskData",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 70
+    },
+    {
+      "name": "TasksPage",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 74
+    },
+    {
+      "name": "_TasksPageState",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 77
+    },
+    {
+      "name": "FutureBuilder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 127
+    },
+    {
+      "name": "Center",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 131
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 131
+    },
+    {
+      "name": "Center",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 134
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 134
+    },
+    {
+      "name": "ListView",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 145
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 146
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 148
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 150
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 152
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 153
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 155
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 157
+    },
+    {
+      "name": "Padding",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 159
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "only",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 160
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 161
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 163
+    },
+    {
+      "name": "DropdownButtonFormField",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 170
+    },
+    {
+      "name": "InputDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 172
+    },
+    {
+      "name": "OutlineInputBorder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 174
+    },
+    {
+      "name": "DropdownMenuItem",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 178
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 180
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 191
+    },
+    {
+      "name": "EmptyTasks",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 194
+    },
+    {
+      "name": "Builder",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 196
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 234
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 235
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 236
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 238
+    },
+    {
+      "name": "Border",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 239
+    },
+    {
+      "name": "Column",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 241
+    },
+    {
+      "name": "Row",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 244
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 246
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 247
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 249
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 255
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 256
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "symmetric",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 257
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 261
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 263
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 265
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 267
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 275
+    },
+    {
+      "name": "Row",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 276
+    },
+    {
+      "name": "Courier",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 278
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 291
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 292
+    },
+    {
+      "name": "Column",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 293
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 296
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 300
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 305
+    },
+    {
+      "name": "LinearProgressIndicator",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 307
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 310
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 314
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 315
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 317
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 323
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 324
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 326
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 333
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 334
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 341
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 352
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 353
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 355
+    },
+    {
+      "name": "Padding",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 363
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "only",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 364
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 365
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 369
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 371
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 381
+    },
+    {
+      "name": "Row",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 382
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 384
+    },
+    {
+      "name": "ElevatedButton",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 385
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 392
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 400
+    },
+    {
+      "name": "Expanded",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 401
+    },
+    {
+      "name": "OutlinedButton",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 402
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 415
+    },
+    {
+      "name": "EmptyTasks",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 479
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 481
+    },
+    {
+      "name": "EdgeInsets",
+      "constructor": "all",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 482
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 483
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 485
+    },
+    {
+      "name": "Column",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 487
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 490
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 492
+    },
+    {
+      "name": "SizedBox",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 494
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 495
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 497
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 4
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 5
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 6
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 7
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 8
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 9
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 10
+    },
+    {
+      "name": "ThemeData",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 13
+    },
+    {
+      "name": "ColorScheme",
+      "constructor": "light",
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 17
+    },
+    {
+      "name": "TextTheme",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 28
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 29
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 34
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 39
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 40
+    },
+    {
+      "name": "ElevatedButtonThemeData",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 42
+    },
+    {
+      "name": "ElevatedButton",
+      "constructor": "styleFrom",
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 43
+    },
+    {
+      "name": "Size",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 46
+    },
+    {
+      "name": "RoundedRectangleBorder",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 47
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 47
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 48
+    },
+    {
+      "name": "OutlinedButtonThemeData",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 55
+    },
+    {
+      "name": "OutlinedButton",
+      "constructor": "styleFrom",
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 56
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 57
+    },
+    {
+      "name": "BorderSide",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 63
+    },
+    {
+      "name": "RoundedRectangleBorder",
+      "constructor": null,
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 64
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/theme/tokens.dart",
+      "line": 64
+    },
+    {
+      "name": "Courier",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 17
+    },
+    {
+      "name": "_CourierState",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 27
+    },
+    {
+      "name": "AnimationController",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 31
+    },
+    {
+      "name": "Duration",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 33
+    },
+    {
+      "name": "MediaQuery",
+      "constructor": "maybeOf",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 49
+    },
+    {
+      "name": "Duration",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 54
+    },
+    {
+      "name": "Duration",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 57
+    },
+    {
+      "name": "Semantics",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 76
+    },
+    {
+      "name": "AnimatedBuilder",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 79
+    },
+    {
+      "name": "Transform",
+      "constructor": "translate",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 81
+    },
+    {
+      "name": "Offset",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 82
+    },
+    {
+      "name": "CustomPaint",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 83
+    },
+    {
+      "name": "Size",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 84
+    },
+    {
+      "name": "CourierPainter",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 85
+    },
+    {
+      "name": "CourierPainter",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 98
+    },
+    {
+      "name": "Paint",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 111
+    },
+    {
+      "name": "RRect",
+      "constructor": "fromRectAndRadius",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 115
+    },
+    {
+      "name": "Radius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 115
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 119
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 119
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 120
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 120
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 121
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 121
+    },
+    {
+      "name": "Offset",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 129
+    },
+    {
+      "name": "Paint",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 131
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 132
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 139
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 139
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 140
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 140
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 141
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 141
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 142
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 142
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 143
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 143
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 144
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 144
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 145
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 145
+    },
+    {
+      "name": "Path",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 146
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 155
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 159
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 159
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 161
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 161
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 162
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 162
+    },
+    {
+      "name": "Offset",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 164
+    },
+    {
+      "name": "Offset",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 165
+    },
+    {
+      "name": "Offset",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 166
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 171
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 171
+    },
+    {
+      "name": "Path",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 175
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 181
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 184
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 184
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 187
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 188
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 196
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 196
+    },
+    {
+      "name": "Path",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 197
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 207
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 208
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 211
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 211
+    },
+    {
+      "name": "Rect",
+      "constructor": "fromLTWH",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 212
+    },
+    {
+      "name": "Color",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 212
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 6
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 17
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 21
+    },
+    {
+      "name": "Locale",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 31
+    },
+    {
+      "name": "DateTime",
+      "constructor": "tryParse",
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 32
+    },
+    {
+      "name": "FileIcon",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 43
+    },
+    {
+      "name": "Container",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 52
+    },
+    {
+      "name": "BoxDecoration",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 55
+    },
+    {
+      "name": "BorderRadius",
+      "constructor": "circular",
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 57
+    },
+    {
+      "name": "Column",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 59
+    },
+    {
+      "name": "Icon",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 62
+    },
+    {
+      "name": "Text",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 68
+    },
+    {
+      "name": "TextStyle",
+      "constructor": null,
+      "file": "mobile/lib/src/widgets/file_icon.dart",
+      "line": 72
+    }
+  ],
+  "handlers": [
+    {
+      "event": "onTap",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 69
+    },
+    {
+      "event": "onTap",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 85
+    },
+    {
+      "event": "onSelected",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 90
+    },
+    {
+      "event": "onTap",
+      "file": "mobile/lib/src/components/app_shell.dart",
+      "line": 187
+    },
+    {
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 141
+    },
+    {
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 170
+    },
+    {
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 196
+    },
+    {
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/history_page.dart",
+      "line": 324
+    },
+    {
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/new_transfer_page.dart",
+      "line": 106
+    },
+    {
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 112
+    },
+    {
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 192
+    },
+    {
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/notifications_page.dart",
+      "line": 201
+    },
+    {
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 107
+    },
+    {
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 117
+    },
+    {
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 127
+    },
+    {
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/send_preparation_page.dart",
+      "line": 144
+    },
+    {
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 235
+    },
+    {
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 282
+    },
+    {
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 332
+    },
+    {
+      "event": "onSelected",
+      "file": "mobile/lib/src/pages/settings_page.dart",
+      "line": 347
+    },
+    {
+      "event": "onChanged",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 185
+    },
+    {
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 386
+    },
+    {
+      "event": "onPressed",
+      "file": "mobile/lib/src/pages/tasks_page.dart",
+      "line": 403
+    }
+  ],
+  "motion": [
+    {
+      "symbol": "AnimatedBuilder",
+      "file": "mobile/lib/main.dart",
+      "line": 36
+    },
+    {
+      "symbol": "SingleTickerProviderStateMixin",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 30
+    },
+    {
+      "symbol": "AnimationController",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 31
+    },
+    {
+      "symbol": "AnimationController",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 31
+    },
+    {
+      "symbol": "disableAnimations",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 49
+    },
+    {
+      "symbol": "AnimatedBuilder",
+      "file": "mobile/lib/src/widgets/courier.dart",
+      "line": 79
+    }
+  ]
+}

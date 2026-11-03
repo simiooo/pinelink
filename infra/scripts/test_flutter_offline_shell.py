@@ -8,12 +8,21 @@ import unittest
 SCRIPT = Path(__file__).with_name('flutter-offline-shell.py')
 
 class FlutterReleaseMetadata(unittest.TestCase):
+    def test_release_without_database_assets_is_rejected(self):
+        with tempfile.TemporaryDirectory(prefix='pinelink-shell-') as scratch:
+            root=Path(scratch).resolve()
+            for name in ['index.html','flutter_bootstrap.js','main.dart.js']:
+                (root/name).write_text('runtime',encoding='utf-8')
+            result=subprocess.run([sys.executable,str(SCRIPT),str(root)],capture_output=True)
+            self.assertNotEqual(result.returncode,0)
+            self.assertFalse((root/'pinelink-sw.js').exists())
+
     def test_release_removes_metadata_before_precaching(self):
         with tempfile.TemporaryDirectory(prefix='pinelink-shell-') as scratch:
             root = Path(scratch).resolve()
             self.assertEqual(root.parent, Path(tempfile.gettempdir()).resolve())
             self.assertTrue(root.name.startswith('pinelink-shell-'))
-            for name in ['index.html', 'flutter_bootstrap.js', 'main.dart.js', 'drift_worker.js']:
+            for name in ['index.html', 'flutter_bootstrap.js', 'main.dart.js', 'drift_worker.js', 'sqlite3.wasm']:
                 (root / name).write_text('runtime content', encoding='utf-8')
             for name in ['drift_worker.js.deps', 'main.dart.js.map', 'drift_worker.dart']:
                 (root / name).write_text('generated build metadata', encoding='utf-8')

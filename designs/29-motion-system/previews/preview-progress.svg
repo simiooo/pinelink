@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1120" height="640" viewBox="0 0 1120 640">
+  <g>
+    <rect width="1120" height="640" fill="#FFFFFF"/>
+    <g transform="translate(32, 32)">
+      <text x="0" y="22" font-family="Nunito" font-size="22" font-weight="700" fill="#101010">Real progress and pause</text>
+    </g>
+    <g transform="translate(32, 84)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Blue tracks confirmed bytes only; numeric values change immediately, never count up.</text>
+    </g>
+    <g transform="translate(32, 144)">
+      <g>
+        <g>
+          <g>
+            <g transform="translate(125, 122)">
+              <path d="M39 78C0 54.6 78 23.4 39 0" fill="none" stroke="#E5E5E5" stroke-width="3"/>
+            </g>
+            <g transform="translate(124, 200)">
+              <rect width="80" height="80" rx="40" ry="40" fill="#F5F5F5"/>
+              <g transform="translate(20, 20)">
+                <path d="M28.33 3.33L28.33 36.67L11.67 36.67L11.67 3.33L28.33 3.33ZM18.33 31.67L21.67 31.67" fill="none" stroke="#101010" stroke-width="2.83" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+            </g>
+            <g transform="translate(64, 292)">
+              <text x="100" y="13" font-family="Nunito" font-size="13" fill="#101010" text-anchor="middle">This device</text>
+            </g>
+          </g>
+          <g>
+            <g transform="translate(136, 26)">
+              <rect width="56" height="56" rx="28" ry="28" fill="#F5F5F5"/>
+              <g transform="translate(14, 14)">
+                <path d="M19.83 2.33L19.83 25.67L8.17 25.67L8.17 2.33L19.83 2.33ZM12.83 22.17L15.17 22.17" fill="none" stroke="#101010" stroke-width="1.98" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <g transform="translate(48, 48)">
+                <rect width="8" height="8" rx="4" ry="4" fill="#101010"/>
+              </g>
+            </g>
+            <g transform="translate(64, 94)">
+              <text x="100" y="13" font-family="Nunito" font-size="13" fill="#101010" text-anchor="middle">Alex’s iPhone</text>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">Ready</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Ready</text>
+        </g>
+      </g>
+      <g transform="translate(360, 0)">
+        <g>
+          <g>
+            <g transform="translate(125, 122)">
+              <g>
+                <path d="M39 78C0 54.6 78 23.4 39 0" fill="none" stroke="#E5E5E5" stroke-width="3"/>
+                <path d="M39 78L38.05 77.41L37.15 76.82L36.29 76.23L35.48 75.63L34.72 75.04L34 74.43L33.32 73.83L32.69 73.22L32.1 72.61L31.55 72L31.04 71.38L30.58 70.76L30.15 70.14L29.76 69.52L29.4 68.89L29.09 68.26L28.8 67.63L28.56 67L28.35 66.36L28.17 65.72L28.02 65.08L27.91 64.44L27.82 63.8L27.77 63.15L27.74 62.5L27.75 61.85L27.78 61.2L27.84 60.54L27.92 59.89L28.03 59.23L28.17 58.57L28.32 57.91L28.5 57.25L28.71 56.59L28.93 55.92L29.17 55.26L29.44 54.59L29.72 53.92L30.02 53.25L30.33 52.58L30.67 51.91L31.01 51.23L31.38 50.56L31.75 49.88L32.14 49.21L32.55 48.53L32.96 47.85L33.38 47.17L33.82 46.5L34.26 45.82L34.71 45.14L34.73 45.1" fill="none" stroke="#0866FF" stroke-width="3"/>
+              </g>
+            </g>
+            <g transform="translate(124, 200)">
+              <rect width="80" height="80" rx="40" ry="40" fill="#F5F5F5"/>
+              <g transform="translate(20, 20)">
+                <path d="M28.33 3.33L28.33 36.67L11.67 36.67L11.67 3.33L28.33 3.33ZM18.33 31.67L21.67 31.67" fill="none" stroke="#101010" stroke-width="2.83" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+            </g>
+            <g transform="translate(64, 292)">
+              <text x="100" y="13" font-family="Nunito" font-size="13" fill="#101010" text-anchor="middle">This device</text>
+            </g>
+          </g>
+          <g>
+            <g transform="translate(136, 26)">
+              <rect width="56" height="56" rx="28" ry="28" fill="#F5F5F5"/>
+              <g transform="translate(14, 14)">
+                <path d="M19.83 2.33L19.83 25.67L8.17 25.67L8.17 2.33L19.83 2.33ZM12.83 22.17L15.17 22.17" fill="none" stroke="#101010" stroke-width="1.98" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <g transform="translate(48, 48)">
+                <rect width="8" height="8" rx="4" ry="4" fill="#101010"/>
+              </g>
+            </g>
+            <g transform="translate(64, 94)">
+              <text x="100" y="13" font-family="Nunito" font-size="13" fill="#101010" text-anchor="middle">Alex’s iPhone</text>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">Running · confirmed bytes</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">120ms bounded correction</text>
+        </g>
+      </g>
+      <g transform="translate(720, 0)">
+        <g>
+          <g>
+            <g transform="translate(125, 122)">
+              <g>
+                <path d="M39 78C0 54.6 78 23.4 39 0" fill="none" stroke="#E5E5E5" stroke-width="3"/>
+                <path d="M39 78L38.05 77.41L37.15 76.82L36.29 76.23L35.48 75.63L34.72 75.04L34 74.43L33.32 73.83L32.69 73.22L32.1 72.61L31.55 72L31.04 71.38L30.58 70.76L30.15 70.14L29.76 69.52L29.4 68.89L29.09 68.26L28.8 67.63L28.56 67L28.35 66.36L28.17 65.72L28.02 65.08L27.91 64.44L27.82 63.8L27.77 63.15L27.74 62.5L27.75 61.85L27.78 61.2L27.84 60.54L27.92 59.89L28.03 59.23L28.17 58.57L28.32 57.91L28.5 57.25L28.71 56.59L28.93 55.92L29.17 55.26L29.44 54.59L29.72 53.92L30.02 53.25L30.33 52.58L30.67 51.91L31.01 51.23L31.38 50.56L31.75 49.88L32.14 49.21L32.55 48.53L32.96 47.85L33.38 47.17L33.82 46.5L34.26 45.82L34.71 45.14L34.73 45.1" fill="none" stroke="#0866FF" stroke-width="3"/>
+              </g>
+            </g>
+            <g transform="translate(124, 200)">
+              <rect width="80" height="80" rx="40" ry="40" fill="#F5F5F5"/>
+              <g transform="translate(20, 20)">
+                <path d="M28.33 3.33L28.33 36.67L11.67 36.67L11.67 3.33L28.33 3.33ZM18.33 31.67L21.67 31.67" fill="none" stroke="#101010" stroke-width="2.83" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+            </g>
+            <g transform="translate(64, 292)">
+              <text x="100" y="13" font-family="Nunito" font-size="13" fill="#101010" text-anchor="middle">This device</text>
+            </g>
+          </g>
+          <g>
+            <g transform="translate(136, 26)">
+              <rect width="56" height="56" rx="28" ry="28" fill="#F5F5F5"/>
+              <g transform="translate(14, 14)">
+                <path d="M19.83 2.33L19.83 25.67L8.17 25.67L8.17 2.33L19.83 2.33ZM12.83 22.17L15.17 22.17" fill="none" stroke="#101010" stroke-width="1.98" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <g transform="translate(48, 48)">
+                <rect width="8" height="8" rx="4" ry="4" fill="#101010"/>
+              </g>
+            </g>
+            <g transform="translate(64, 94)">
+              <text x="100" y="13" font-family="Nunito" font-size="13" fill="#101010" text-anchor="middle">Alex’s iPhone</text>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">Paused · no flow</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Settled state</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(32, 560)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Reduced motion · Immediate boundary.</text>
+    </g>
+  </g>
+</svg>

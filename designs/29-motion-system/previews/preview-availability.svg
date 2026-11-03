@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1120" height="640" viewBox="0 0 1120 640">
+  <g>
+    <rect width="1120" height="640" fill="#FFFFFF"/>
+    <g transform="translate(32, 32)">
+      <text x="0" y="22" font-family="Nunito" font-size="22" font-weight="700" fill="#101010">File availability</text>
+    </g>
+    <g transform="translate(32, 84)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Small overlaid icon crossfade; no repeated pulse or status paragraph.</text>
+    </g>
+    <g transform="translate(32, 144)">
+      <g>
+        <g transform="translate(28, 108)">
+          <g>
+            <path d="M38 16L28 16L28 4L38 14L38 44L10 44L10 4L28 4M16 24L32 24M16 32L32 32" fill="none" stroke="#6E6E6E" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(28, 28)">
+              <rect width="20" height="20" rx="10" ry="10" fill="#FFFFFF"/>
+              <path d="M7 3.5L7 7L9.33 8.17M12.83 7C12.83 10.22 10.22 12.83 7 12.83C3.78 12.83 1.17 10.22 1.17 7C1.17 3.78 3.78 1.17 7 1.17C10.22 1.17 12.83 3.78 12.83 7" fill="none" stroke="#6E6E6E" stroke-width="0.99" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(0, 60)">
+            <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Project brief.pdf</text>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">Temporary</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Ready</text>
+        </g>
+      </g>
+      <g transform="translate(360, 0)">
+        <g transform="translate(28, 108)">
+          <g>
+            <path d="M38 16L28 16L28 4L38 14L38 44L10 44L10 4L28 4M16 24L32 24M16 32L32 32" fill="none" stroke="#6E6E6E" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(28, 28)">
+              <rect width="20" height="20" rx="10" ry="10" fill="#FFFFFF"/>
+              <path d="M4.08 11.08C3 11.14 1.97 10.6 1.41 9.67C0.85 8.75 0.85 7.58 1.41 6.66C1.97 5.73 3 5.19 4.08 5.25C4.08 3.32 5.65 1.75 7.58 1.75C9.51 1.75 11.08 3.32 11.08 5.25C12.62 5.34 13.83 6.62 13.83 8.16C13.83 9.71 12.62 10.99 11.08 11.08L4.08 11.08" fill="none" stroke="#6E6E6E" stroke-width="0.99" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(0, 60)">
+            <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Project brief.pdf</text>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">Cloud copy</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">120ms</text>
+        </g>
+      </g>
+      <g transform="translate(720, 0)">
+        <g transform="translate(28, 108)">
+          <g>
+            <path d="M38 16L28 16L28 4L38 14L38 44L10 44L10 4L28 4M16 24L32 24M16 32L32 32" fill="none" stroke="#6E6E6E" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(28, 28)">
+              <rect width="20" height="20" rx="10" ry="10" fill="#FFFFFF"/>
+              <path d="M2.92 7L5.25 9.33L11.08 3.5" fill="none" stroke="#6E6E6E" stroke-width="0.99" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(0, 60)">
+            <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Project brief.pdf</text>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">On this device</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Settled state</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(32, 560)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Reduced motion · Immediate icon with tooltip/accessible name.</text>
+    </g>
+  </g>
+</svg>

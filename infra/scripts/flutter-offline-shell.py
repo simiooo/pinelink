@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 
 root=Path(sys.argv[1]).resolve()
-if not all((root/name).is_file() for name in ['index.html','flutter_bootstrap.js','main.dart.js']):
+if not all((root/name).is_file() for name in ['index.html','flutter_bootstrap.js','main.dart.js','drift_worker.js','sqlite3.wasm']):
     raise SystemExit('Expected a built Flutter release directory; source files were not changed')
 # The dependency graph can contain absolute workstation/cache paths. Filtering
 # it out of precaching alone still leaves it publicly downloadable in an archive.

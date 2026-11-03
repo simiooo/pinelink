@@ -1,3 +1,5 @@
+import { MotionButton } from '../motion/components'
+import { MotionDropzone } from '../motion/dropzone'
 import { useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getTasks, IDENTITY } from '../api/client'
@@ -9,7 +11,6 @@ export function NewTransferPage() {
   const inputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File | null>(null)
   const [preparing, setPreparing] = useState(false)
-  const [dragging, setDragging] = useState(false)
   const { t, locale } = useI18n()
   const tasks = useQuery({ queryKey: ['tasks', IDENTITY.owner, IDENTITY.device], queryFn: () => getTasks(IDENTITY.owner, IDENTITY.device) })
 
@@ -26,21 +27,16 @@ export function NewTransferPage() {
         <h1 id="transfer-title">{t('homeTitle')}</h1>
         <p>{t('homeSubtitle')}</p>
       </div>
-      <div
-        className={`dropzone ${dragging ? 'dragging' : ''}`}
-        onDragOver={event => { event.preventDefault(); setDragging(true) }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={event => { event.preventDefault(); setDragging(false); choose(event.dataTransfer.files[0]) }}
-      >
+      <MotionDropzone onFile={selected => choose(selected)}>
         <div className="upload-icon" aria-hidden="true">↓</div>
         <div className="drop-copy">
           <strong>{file ? file.name : t('dropTitle')}</strong>
           <span>{file ? `${formatBytes(file.size, locale)} · ${t('fileReady')}` : t('dropHint')}</span>
         </div>
         <input ref={inputRef} type="file" hidden onChange={event => choose(event.target.files?.[0])} />
-        <button className="primary-button" onClick={() => file ? setPreparing(true) : choose()}>{t(file ? 'continue' : 'chooseFile')}</button>
+        <MotionButton className="primary-button" onClick={() => file ? setPreparing(true) : choose()}>{t(file ? 'continue' : 'chooseFile')}</MotionButton>
         <small>{t('fileSupport')}</small>
-      </div>
+      </MotionDropzone>
       <aside className="privacy-note">
         <p>{t('relayNote')}</p>
         <p>{t('persistenceNote')}</p>

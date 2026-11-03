@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="390" height="844" viewBox="0 0 390 844">
+  <defs>
+    <clipPath id="clip0">
+      <rect width="390" height="844"/>
+    </clipPath>
+  </defs>
+  <g>
+    <rect width="390" height="844" fill="#FFFFFF"/>
+    <g clip-path="url(#clip0)">
+      <g opacity="0.12">
+        <g transform="translate(26, 302)">
+          <path d="M169 338C49 158 329 68 169 0" fill="none" stroke="#E5E5E5" stroke-width="3"/>
+        </g>
+        <g transform="translate(167, 202)">
+          <rect width="56" height="56" rx="28" ry="28" fill="#F5F5F5"/>
+          <g transform="translate(14, 14)">
+            <path d="M19.83 2.33L19.83 25.67L8.17 25.67L8.17 2.33L19.83 2.33ZM12.83 22.17L15.17 22.17" fill="none" stroke="#101010" stroke-width="1.98" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+          <g transform="translate(0, 38)">
+            <rect width="18" height="18" rx="9" ry="9" fill="#FFFFFF"/>
+            <g transform="translate(3, 3)">
+              <path d="M8 3C8 4.1 7.1 5 6 5C4.9 5 4 4.1 4 3C4 1.9 4.9 1 6 1C7.1 1 8 1.9 8 3M1.5 11L1.5 9.5C1.5 7.01 3.51 5 6 5C8.49 5 10.5 7.01 10.5 9.5L10.5 11" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(46, 46)">
+            <rect width="8" height="8" rx="4" ry="4" fill="#101010"/>
+          </g>
+        </g>
+        <g transform="translate(95, 270)">
+          <g transform="translate(60, 0)">
+            <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Alex’s iPhone</text>
+          </g>
+        </g>
+        <g transform="translate(155, 640)">
+          <rect width="80" height="80" rx="40" ry="40" fill="#F5F5F5"/>
+          <g transform="translate(20, 20)">
+            <path d="M28.33 3.33L28.33 36.67L11.67 36.67L11.67 3.33L28.33 3.33ZM18.33 31.67L21.67 31.67" fill="none" stroke="#101010" stroke-width="2.83" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+        </g>
+        <g transform="translate(95, 732)">
+          <g transform="translate(64.5, 0)">
+            <text x="0" y="14" font-family="Nunito" font-size="14" fill="#101010">This device</text>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(20, 56)" opacity="0.14">
+        <g transform="translate(0, 8)">
+          <text x="0" y="24" font-family="Nunito" font-size="24" font-weight="700" fill="#101010">pinelink</text>
+        </g>
+        <g transform="translate(302, 0)">
+          <g transform="translate(14, 14)">
+            <path d="M3.33 10L3.34 10M10 10L10.01 10M16.67 10L16.68 10" fill="none" stroke="#101010" stroke-width="1.42" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(20, 12)">
+        <g>
+          <text x="0" y="14" font-family="Nunito" font-size="14" fill="#101010">9:41</text>
+        </g>
+      </g>
+      <g transform="translate(0, 144)">
+        <rect width="390" height="700" rx="24" ry="24" fill="#FFFFFF"/>
+        <g transform="translate(16, 24)">
+          <g transform="translate(0, 10)">
+            <text x="0" y="20" font-family="Nunito" font-size="20" font-weight="700" fill="#101010">Alex’s iPhone</text>
+          </g>
+          <g transform="translate(310, 0)">
+            <g transform="translate(14, 14)">
+              <path d="M5 5L15 15M5 15L15 5" fill="none" stroke="#101010" stroke-width="1.42" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(16, 96)">
+          <g>
+            <g>
+              <g transform="translate(12, 13)">
+                <text x="0" y="15" font-family="Nunito" font-size="15" fill="#6E6E6E">Files</text>
+              </g>
+              <g transform="translate(14.5, 46)">
+                <rect width="35" height="2" fill="#FFFFFF"/>
+              </g>
+            </g>
+            <g transform="translate(72, 0)">
+              <g transform="translate(12, 13)">
+                <text x="0" y="15" font-family="Nunito" font-size="15" font-weight="700" fill="#101010">Text</text>
+              </g>
+              <g transform="translate(14, 46)">
+                <rect width="28" height="2" fill="#0866FF"/>
+              </g>
+            </g>
+          </g>
+          <g transform="translate(0, 72)">
+            <rect width="358" height="200" rx="14" ry="14" fill="#FFFFFF" stroke="#DBDBDB" stroke-width="1"/>
+            <g transform="translate(16, 16)">
+              <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Meet at the north entrance.</text>
+            </g>
+            <g transform="translate(16, 48)">
+              <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">I’ll be there at 18:30.</text>
+            </g>
+          </g>
+          <g transform="translate(0, 296)">
+            <rect width="358" height="48" rx="24" ry="24" fill="#0866FF"/>
+            <g transform="translate(161.5, 14)">
+              <text x="0" y="15" font-family="Nunito" font-size="15" font-weight="600" fill="#FFFFFF">Send</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(132, 824)">
+        <rect width="126" height="4" rx="2" ry="2" fill="#101010"/>
+      </g>
+    </g>
+  </g>
+</svg>

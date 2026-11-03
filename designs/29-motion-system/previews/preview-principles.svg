@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1120" height="720" viewBox="0 0 1120 720">
+  <g>
+    <rect width="1120" height="720" fill="#FFFFFF"/>
+    <g transform="translate(32, 32)">
+      <text x="0" y="24" font-family="Nunito" font-size="24" font-weight="700" fill="#101010">Motion with a purpose</text>
+    </g>
+    <g transform="translate(32, 88)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Respond</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Press immediately. Keep labels and hit targets stable. Rich feedback follows an interaction or an actual state change.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 200)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Connect</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Origins, nodes, lines and surfaces explain relationships. Back and dismiss reverse the spatial direction.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 312)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Resolve</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">A receipt, permission or durable commit determines success. An animation never sends or approves a request.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 424)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Stay coherent</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">One shared language: 80 / 120 / 160 / 220 / 280ms; a small spatial spring; one visible activity loop.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 536)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Be inclusive</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Static content and native controls stay readable. Reduced motion removes travel, scale, stagger and loops.</text>
+      </g>
+    </g>
+  </g>
+</svg>

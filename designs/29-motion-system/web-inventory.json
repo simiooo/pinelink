@@ -1,0 +1,757 @@
+{
+  "method": "TypeScript AST, all non-test TSX under web/src; DOM events and semantic controls; CSS motion declarations",
+  "files": [
+    {
+      "file": "web/src/bootstrap.tsx",
+      "lines": 38
+    },
+    {
+      "file": "web/src/components/AppShell.tsx",
+      "lines": 57
+    },
+    {
+      "file": "web/src/components/Courier.tsx",
+      "lines": 38
+    },
+    {
+      "file": "web/src/components/FileIcon.tsx",
+      "lines": 6
+    },
+    {
+      "file": "web/src/components/SendPreparation.tsx",
+      "lines": 46
+    },
+    {
+      "file": "web/src/data/ClientWorker.tsx",
+      "lines": 14
+    },
+    {
+      "file": "web/src/i18n/index.tsx",
+      "lines": 62
+    },
+    {
+      "file": "web/src/main.tsx",
+      "lines": 51
+    },
+    {
+      "file": "web/src/routes/history.tsx",
+      "lines": 76
+    },
+    {
+      "file": "web/src/routes/index.tsx",
+      "lines": 60
+    },
+    {
+      "file": "web/src/routes/notifications.tsx",
+      "lines": 80
+    },
+    {
+      "file": "web/src/routes/settings.tsx",
+      "lines": 80
+    },
+    {
+      "file": "web/src/routes/tasks.tsx",
+      "lines": 75
+    }
+  ],
+  "components": [
+    {
+      "name": "AppShell",
+      "file": "web/src/components/AppShell.tsx",
+      "line": 6
+    },
+    {
+      "name": "Courier",
+      "file": "web/src/components/Courier.tsx",
+      "line": 3
+    },
+    {
+      "name": "FileIcon",
+      "file": "web/src/components/FileIcon.tsx",
+      "line": 3
+    },
+    {
+      "name": "SendPreparation",
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 9
+    },
+    {
+      "name": "I18nProvider",
+      "file": "web/src/i18n/index.tsx",
+      "line": 34
+    },
+    {
+      "name": "App",
+      "file": "web/src/main.tsx",
+      "line": 28
+    },
+    {
+      "name": "HistoryPage",
+      "file": "web/src/routes/history.tsx",
+      "line": 26
+    },
+    {
+      "name": "NewTransferPage",
+      "file": "web/src/routes/index.tsx",
+      "line": 8
+    },
+    {
+      "name": "NotificationsPage",
+      "file": "web/src/routes/notifications.tsx",
+      "line": 8
+    },
+    {
+      "name": "SettingsPage",
+      "file": "web/src/routes/settings.tsx",
+      "line": 8
+    },
+    {
+      "name": "TasksPage",
+      "file": "web/src/routes/tasks.tsx",
+      "line": 12
+    }
+  ],
+  "nonVisualComponents": [
+    {
+      "name": "ClientWorker",
+      "file": "web/src/data/ClientWorker.tsx",
+      "line": 7
+    }
+  ],
+  "tags": {
+    "StrictMode": 1,
+    "ClientWorker": 1,
+    "App": 1,
+    "div": 52,
+    "header": 1,
+    "Link": 6,
+    "nav": 1,
+    "details": 2,
+    "summary": 2,
+    "label": 11,
+    "select": 8,
+    "option": 19,
+    "p": 28,
+    "main": 1,
+    "Outlet": 1,
+    "svg": 1,
+    "g": 6,
+    "ellipse": 8,
+    "path": 5,
+    "circle": 5,
+    "rect": 6,
+    "File": 1,
+    "span": 15,
+    "section": 10,
+    "h1": 9,
+    "FileIcon": 2,
+    "strong": 12,
+    "input": 4,
+    "button": 9,
+    "textarea": 1,
+    "I18nContext.Provider": 1,
+    "I18nProvider": 1,
+    "QueryClientProvider": 1,
+    "RouterProvider": 1,
+    "article": 5,
+    "dl": 2,
+    "dt": 6,
+    "dd": 6,
+    "SendPreparation": 1,
+    "small": 2,
+    "aside": 2,
+    "h2": 5,
+    "Courier": 3
+  },
+  "interactions": [
+    {
+      "file": "web/src/components/AppShell.tsx",
+      "line": 30,
+      "tag": "Link",
+      "events": [],
+      "role": null,
+      "className": "\"brand\"",
+      "type": null
+    },
+    {
+      "file": "web/src/components/AppShell.tsx",
+      "line": 32,
+      "tag": "Link",
+      "events": [],
+      "role": null,
+      "className": "\"chip\"",
+      "type": null
+    },
+    {
+      "file": "web/src/components/AppShell.tsx",
+      "line": 34,
+      "tag": "summary",
+      "events": [],
+      "role": "\"button\"",
+      "className": "\"chip\"",
+      "type": null
+    },
+    {
+      "file": "web/src/components/AppShell.tsx",
+      "line": 36,
+      "tag": "Link",
+      "events": [],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/components/AppShell.tsx",
+      "line": 37,
+      "tag": "Link",
+      "events": [],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/components/AppShell.tsx",
+      "line": 38,
+      "tag": "Link",
+      "events": [],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/components/AppShell.tsx",
+      "line": 39,
+      "tag": "Link",
+      "events": [],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/components/AppShell.tsx",
+      "line": 42,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/components/AppShell.tsx",
+      "line": 48,
+      "tag": "p",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"language-note\"",
+      "type": null
+    },
+    {
+      "file": "web/src/components/Courier.tsx",
+      "line": 5,
+      "tag": "svg",
+      "events": [],
+      "role": "\"img\"",
+      "className": "{`courier courier-${action}`}",
+      "type": null
+    },
+    {
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 35,
+      "tag": "input",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 36,
+      "tag": "input",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 37,
+      "tag": "input",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 39,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"primary-button\"",
+      "type": null
+    },
+    {
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 40,
+      "tag": "p",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"feedback\"",
+      "type": null
+    },
+    {
+      "file": "web/src/components/SendPreparation.tsx",
+      "line": 41,
+      "tag": "textarea",
+      "events": [
+        "onFocus"
+      ],
+      "role": null,
+      "className": "\"command-preview\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/history.tsx",
+      "line": 48,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/routes/history.tsx",
+      "line": 49,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/routes/history.tsx",
+      "line": 50,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/routes/history.tsx",
+      "line": 52,
+      "tag": "p",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"feedback\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/history.tsx",
+      "line": 54,
+      "tag": "div",
+      "events": [],
+      "role": "\"alert\"",
+      "className": "\"state-panel\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/history.tsx",
+      "line": 65,
+      "tag": "p",
+      "events": [],
+      "role": "\"note\"",
+      "className": "\"error-note\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/history.tsx",
+      "line": 67,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"secondary-button history-delete\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/index.tsx",
+      "line": 29,
+      "tag": "div",
+      "events": [
+        "onDragOver",
+        "onDragLeave",
+        "onDrop"
+      ],
+      "role": null,
+      "className": "{`dropzone ${dragging ? 'dragging' : ''}`}",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/index.tsx",
+      "line": 40,
+      "tag": "input",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": "\"file\""
+    },
+    {
+      "file": "web/src/routes/index.tsx",
+      "line": 41,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"primary-button\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/notifications.tsx",
+      "line": 36,
+      "tag": "div",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"state-panel\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/notifications.tsx",
+      "line": 37,
+      "tag": "div",
+      "events": [],
+      "role": "\"alert\"",
+      "className": "\"state-panel\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/notifications.tsx",
+      "line": 38,
+      "tag": "p",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"feedback\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/notifications.tsx",
+      "line": 41,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/routes/notifications.tsx",
+      "line": 63,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"secondary-button\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/notifications.tsx",
+      "line": 64,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"primary-button\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/settings.tsx",
+      "line": 43,
+      "tag": "p",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"feedback\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/settings.tsx",
+      "line": 54,
+      "tag": "div",
+      "events": [],
+      "role": "\"progressbar\"",
+      "className": "\"progress-track\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/settings.tsx",
+      "line": 61,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/routes/settings.tsx",
+      "line": 65,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"secondary-button\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/settings.tsx",
+      "line": 71,
+      "tag": "div",
+      "events": [],
+      "role": "\"alert\"",
+      "className": "\"state-panel\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/settings.tsx",
+      "line": 72,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/routes/settings.tsx",
+      "line": 73,
+      "tag": "summary",
+      "events": [],
+      "role": "\"button\"",
+      "className": "\"secondary-button\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/settings.tsx",
+      "line": 73,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"secondary-button\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/tasks.tsx",
+      "line": 36,
+      "tag": "div",
+      "events": [],
+      "role": "\"alert\"",
+      "className": "\"state-panel\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/tasks.tsx",
+      "line": 48,
+      "tag": "select",
+      "events": [
+        "onChange"
+      ],
+      "role": null,
+      "className": null,
+      "type": null
+    },
+    {
+      "file": "web/src/routes/tasks.tsx",
+      "line": 49,
+      "tag": "p",
+      "events": [],
+      "role": "\"status\"",
+      "className": "\"feedback\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/tasks.tsx",
+      "line": 56,
+      "tag": "div",
+      "events": [],
+      "role": "\"progressbar\"",
+      "className": "\"progress-track\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/tasks.tsx",
+      "line": 63,
+      "tag": "p",
+      "events": [],
+      "role": "\"alert\"",
+      "className": "\"error-note\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/tasks.tsx",
+      "line": 66,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"primary-button\"",
+      "type": null
+    },
+    {
+      "file": "web/src/routes/tasks.tsx",
+      "line": 67,
+      "tag": "button",
+      "events": [
+        "onClick"
+      ],
+      "role": null,
+      "className": "\"secondary-button\"",
+      "type": null
+    }
+  ],
+  "motionSites": [],
+  "cssMotion": [
+    {
+      "file": "web/src/styles/app.css",
+      "line": 225,
+      "rule": ".courier-run .courier-body { animation: courier-step 1.8s ease-in-out infinite; }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 226,
+      "rule": ".courier-run .courier-tail { animation: courier-tail 1.8s ease-in-out infinite; }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 227,
+      "rule": ".courier-pause .courier-ear { animation: courier-listen .5s ease-in-out 1; }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 229,
+      "rule": ".courier-persist .courier-body { transform-origin: 150px 180px; animation: courier-cloud-walk .5s ease-out 1 forwards; }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 230,
+      "rule": ".courier-notify .courier-ripple { transform-origin: 185px 100px; animation: courier-ripple .3s ease-out 1; }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 231,
+      "rule": ".courier-store .courier-package, .courier-persist .courier-package { animation: courier-package .5s ease-in-out 1; }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 232,
+      "rule": ".courier-pull .courier-body { animation: courier-peek .5s ease-out 1; }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 233,
+      "rule": ".courier-seal .courier-package { animation: courier-seal .2s ease-out 1; }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 234,
+      "rule": ".courier-permission .courier-cap { animation: courier-nod .4s ease-in-out 1; }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 235,
+      "rule": ".courier-deny .courier-body { animation: courier-deny .2s ease-in-out 1; }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 239,
+      "rule": ".progress-track span { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width .2s ease-out; }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 243,
+      "rule": "@keyframes courier-step { 50% { transform: translateY(-3px); } }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 244,
+      "rule": "@keyframes courier-tail { 50% { transform: rotate(-3deg); } }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 245,
+      "rule": "@keyframes courier-listen { 50% { transform: translateY(-3px); } }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 246,
+      "rule": "@keyframes courier-ripple { from { opacity: .4; transform: scale(.7); } to { opacity: 0; transform: scale(1.15); } }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 247,
+      "rule": "@keyframes courier-package { to { transform: translate(12px, -22px); } }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 248,
+      "rule": "@keyframes courier-peek { from { transform: translateY(25px); } to { transform: translateY(0); } }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 249,
+      "rule": "@keyframes courier-seal { 50% { transform: scale(.94); } }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 250,
+      "rule": "@keyframes courier-nod { 50% { transform: translateY(4px); } }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 251,
+      "rule": "@keyframes courier-deny { 50% { transform: rotate(-3deg); } }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 252,
+      "rule": "@keyframes courier-cloud-walk { to { transform: translate(8px, -12px) scale(.96); } }"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 286,
+      "rule": "@media (prefers-reduced-motion: reduce) {"
+    },
+    {
+      "file": "web/src/styles/app.css",
+      "line": 287,
+      "rule": "*, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }"
+    }
+  ]
+}

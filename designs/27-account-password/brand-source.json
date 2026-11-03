@@ -1,0 +1,18 @@
+{
+  "provider": "Google",
+  "source_page": "https://developers.google.com/identity/branding-guidelines",
+  "source_archive_sha256": "ba884069e12093b06bcfd776915081254a7c95094b80d50be2c5dc6bac1c1da1",
+  "source_archive_entry": "Android + Web/PNG @2x/Neutral/Theme=Neutral, Show text=Yes, Shape=Pill, Platform=Android+Web@2x.png",
+  "asset_sha256": "111b248b590600a98f9c8682920dd76de82f6ded9302a63927b15bbe4a73658f",
+  "source_pixels": [
+    360,
+    80
+  ],
+  "native_display_pixels": [
+    180,
+    40
+  ],
+  "native_touch_target_height": 48,
+  "modified": false,
+  "rights": "Google brand artwork; used under Sign in with Google branding guidelines; not Apache-2.0 font artwork"
+}

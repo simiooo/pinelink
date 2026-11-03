@@ -1,0 +1,58 @@
+{
+  "revision": 26,
+  "status": "awaiting_product_design_acceptance",
+  "recorded_at": "2026-11-03T02:21:29Z",
+  "native_file": "../26-pinelink-account-onboarding.fig",
+  "sha256": "e71e762dc1a364d92ca69f2cc5c7c02557d0905ec9fd7670ff6ae5e099214db2",
+  "inherited_nonempty_pages": 20,
+  "new_pages": 3,
+  "new_frames": 51,
+  "matched_after_native_reopen": 51,
+  "preview_count": 18,
+  "native_save_close_reopen": true,
+  "font_and_overflow_checks": [
+    {
+      "page_id": "0:24",
+      "frames": 26,
+      "faithful": true,
+      "issues": [],
+      "overflows": 0
+    },
+    {
+      "page_id": "0:25",
+      "frames": 22,
+      "faithful": true,
+      "issues": [],
+      "overflows": 0
+    },
+    {
+      "page_id": "0:26",
+      "frames": 3,
+      "faithful": true,
+      "issues": [],
+      "overflows": 0
+    }
+  ],
+  "visual_checks": [
+    "desktop and mobile entry",
+    "320px entry",
+    "single code input and numeric keyboard",
+    "inline code error",
+    "mail preview",
+    "device graph More menu"
+  ],
+  "interaction_targets": "48px minimum, including policy links and Add email action",
+  "motion": "Specified as native contract board; application animations not implemented",
+  "implementation_status": {
+    "web": false,
+    "flutter": false,
+    "complete_auth_backend": false,
+    "staging_deployment": false
+  },
+  "font_decision": "Nunito accepted by user on 2026-11-03; runtime rollout is the next separate engineering unit.",
+  "notes": [
+    "Google artwork is unmodified and preserves aspect ratio.",
+    "No real credential, private key, email code or login token is included.",
+    "Auth runtime work remains under SIM-884."
+  ]
+}

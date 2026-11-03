@@ -1,3 +1,5 @@
+import '../motion/motion.dart';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -27,13 +29,16 @@ class _NewTransferPageState extends State<NewTransferPage> {
   void didUpdateWidget(covariant NewTransferPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.api != widget.api) {
+      _file = null;
+      _preparing = false;
       _tasks = widget.api.getTasks(PinelinkApi.owner, PinelinkApi.device);
     }
   }
 
   Future<void> _choose() async {
+    final api = widget.api;
     final result = await FilePicker.platform.pickFiles(withData: false);
-    if (!mounted || result == null) return;
+    if (!mounted || widget.api != api || result == null) return;
     setState(() => _file = result.files.first);
   }
 
@@ -102,7 +107,7 @@ class _NewTransferPageState extends State<NewTransferPage> {
                 ),
               ),
               const SizedBox(height: 28),
-              ElevatedButton(
+              MotionButton.primary(
                 onPressed: _file == null
                     ? _choose
                     : () => setState(() => _preparing = true),

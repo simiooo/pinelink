@@ -1,0 +1,10 @@
+{
+  "package": "react-remove-scroll-bar",
+  "version": "2.3.8",
+  "npm_registry": "https://registry.npmjs.org/react-remove-scroll-bar/2.3.8",
+  "package_git_head": "b3b1287aad81def2e2ae707274b74531b61ddbaf",
+  "license_upstream_commit": "7301c160fda44cb8cf2b9fdfde61efad35736196",
+  "license_url": "https://raw.githubusercontent.com/theKashey/react-remove-scroll-bar/7301c160fda44cb8cf2b9fdfde61efad35736196/LICENSE",
+  "license_sha256": "a79aae0c0f21990d9d963bb3c5a79cdcea9a46f8523ba55c58d7fe776b6ebc84",
+  "reason": "Published npm tarball declares MIT but omits the license file. This is the pinned upstream project MIT notice; no LICENSE exists at the npm package gitHead."
+}

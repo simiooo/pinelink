@@ -14,6 +14,8 @@ const cacheable = (path: string) => /^\/v1\/(tasks|transfers|notifications|devic
 const invalidatesCache = (error: unknown): error is DataError => error instanceof DataError && [401, 403, 404, 410].includes(error.status)
 
 export class ClientRuntime {
+  private networkSnapshots = new Set<string>()
+  isNetworkFresh(path: string) { return !this.closed && this.networkSnapshots.has(path) }
   private active?: Promise<void>
   private attempt?: { skipped: boolean }
   private timer?: ReturnType<typeof setTimeout>
@@ -108,6 +110,7 @@ export class ClientRuntime {
     let started = 0
     try {
       if (navigator.onLine === false && method === 'GET' && cacheable(path)) {
+        this.networkSnapshots.delete(path)
         const saved = await this.store.responses.get(path)
         if (saved?.invalid) throw new DataError(saved.invalid.status, saved.invalid.code)
         if (saved && !saved.pending) return saved.value as T
@@ -125,7 +128,7 @@ export class ClientRuntime {
           const saved = await this.store.responses.get(path)
           this.assertOpen()
           if (saved?.invalid) throw new DataError(saved.invalid.status, saved.invalid.code)
-          if (saved && !saved.pending) return saved.value as T
+          if (saved && !saved.pending) { this.networkSnapshots.add(path); return saved.value as T }
           // A control completed during the very first read. No earlier cache
           // exists to use; obtain a fresh snapshot instead of returning stale data.
           continue
@@ -137,6 +140,7 @@ export class ClientRuntime {
       throw new DataError(409, 'RESPONSE_SUPERSEDED')
     } catch (error) {
       this.assertOpen()
+      this.networkSnapshots.delete(path)
       if (started && method === 'GET' && cacheable(path) && invalidatesCache(error)) await this.store.invalidateResponse(path, { status: error.status, code: error.code }, started)
       const retryable = !(error instanceof DataError) || error.status >= 500 || error.status === 408 || error.status === 429
       if (method === 'GET' && cacheable(path) && retryable) {

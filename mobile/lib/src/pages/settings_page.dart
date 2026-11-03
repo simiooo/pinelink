@@ -1,9 +1,10 @@
+import '../motion/motion.dart';
+
 import 'package:flutter/material.dart';
 
 import '../api/pinelink_api.dart';
 import '../i18n/controller.dart';
 import '../theme/tokens.dart';
-import '../widgets/courier.dart';
 import '../widgets/file_icon.dart';
 
 class SettingsData {
@@ -26,6 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
   String? _entry;
   String? _device;
   String? _notice;
+  String? _noticeZone;
   String? _savedFile;
   bool _confirm = false;
   bool _responding = false;
@@ -91,7 +93,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) => FutureBuilder<SettingsData>(
     future: _data,
     builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
+      if (snapshot.connectionState == ConnectionState.waiting &&
+          !snapshot.hasData) {
         return Center(child: Text(tr(context, 'loadingDevices')));
       }
       if (snapshot.hasError) {
@@ -123,17 +126,6 @@ class _SettingsPageState extends State<SettingsPage> {
             tr(context, 'settingsSubtitle'),
             style: const TextStyle(fontSize: 12, color: PinelinkColors.muted),
           ),
-          if (_notice != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Text(
-                _notice!,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: PinelinkColors.accent,
-                ),
-              ),
-            ),
           SettingsHeading(title: tr(context, 'thisDevice')),
           SettingsCard(
             children: [
@@ -177,12 +169,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              LinearProgressIndicator(
+              MotionMeter(
+                label: tr(context, 'quotaLabel'),
                 value: percent / 100,
-                minHeight: 8,
-                borderRadius: BorderRadius.circular(4),
-                backgroundColor: PinelinkColors.line,
-                color: PinelinkColors.accent,
               ),
               if (percent >= 80)
                 Text(
@@ -266,36 +255,26 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
                 if (_savedFile == file?.id)
-                  SizedBox(
-                    width: 72,
-                    height: 76,
-                    child: FittedBox(
-                      child: Courier(
-                        running: false,
-                        action: CourierAction.persist,
-                        label: tr(context, 'persistedCourier'),
-                      ),
-                    ),
+                  MotionStateIcon(
+                    identity: file!.id,
+                    icon: Icons.check,
+                    label: tr(context, 'savedPersistent'),
+                    color: PinelinkColors.accent,
                   ),
                 if (file != null && file.retentionClass != 'PERSISTENT')
-                  OutlinedButton(
+                  MotionButton(
                     onPressed: _responding || file.state != 'AVAILABLE'
                         ? null
                         : () => _promote(file),
                     child: Text(tr(context, 'savePersistent')),
                   ),
                 if (file == null)
-                  SizedBox(
-                    width: 72,
-                    height: 76,
-                    child: FittedBox(
-                      child: Courier(
-                        running: false,
-                        action: CourierAction.deny,
-                        label: tr(context, 'deniedCourier'),
-                      ),
-                    ),
+                  MotionStateIcon(
+                    identity: 'unavailable',
+                    icon: Icons.cloud_off_outlined,
+                    label: tr(context, 'fileStorageError'),
                   ),
+                if (_noticeZone == 'file' && _notice != null) _feedback(),
               ],
             ),
           ],
@@ -344,6 +323,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     .isNotEmpty) ...[
               const SizedBox(height: 16),
               PopupMenuButton<String>(
+                popUpAnimationStyle: PinelinkMotion.menu(context),
                 onSelected: (_) => _revoke(selectedDevice),
                 itemBuilder: (_) => [
                   PopupMenuItem(
@@ -370,16 +350,19 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ],
           ],
+          if (_noticeZone == 'device' && _notice != null) _feedback(),
         ],
       );
     },
   );
 
   Future<void> _promote(FileSnapshot file) async {
+    if (_responding) return;
     final api = widget.api;
     setState(() {
       _responding = true;
       _notice = null;
+      _noticeZone = 'file';
     });
     try {
       await api.promoteFile(
@@ -421,7 +404,9 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _revoke(String device) async {
+    if (_responding) return;
     final api = widget.api;
+    _noticeZone = 'device';
     if (!_confirm) {
       setState(() {
         _confirm = true;
@@ -447,6 +432,14 @@ class _SettingsPageState extends State<SettingsPage> {
       }
     }
   }
+
+  Widget _feedback() => MotionReveal(
+    identity: _notice!,
+    child: Semantics(
+      liveRegion: true,
+      child: Text(_notice!, style: const TextStyle(fontSize: 12)),
+    ),
+  );
 }
 
 class SettingsHeading extends StatelessWidget {

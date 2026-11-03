@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1120" height="640" viewBox="0 0 1120 640">
+  <g>
+    <rect width="1120" height="640" fill="#FFFFFF"/>
+    <g transform="translate(32, 32)">
+      <text x="0" y="22" font-family="Nunito" font-size="22" font-weight="700" fill="#101010">Approach and leave a target</text>
+    </g>
+    <g transform="translate(32, 84)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">One eligible halo, slight target scale; handoff retargets without flicker.</text>
+    </g>
+    <g transform="translate(32, 144)">
+      <g>
+        <g>
+          <g transform="translate(116, 108)">
+            <rect width="96" height="96" rx="80" ry="80" fill="#FFFFFF" stroke="#DBDBDB" stroke-width="1"/>
+          </g>
+          <g transform="translate(132, 124)">
+            <rect width="64" height="64" rx="32" ry="32" fill="#F5F5F5"/>
+            <g transform="translate(16, 16)">
+              <path d="M22.67 2.67L22.67 29.33L9.33 29.33L9.33 2.67L22.67 2.67ZM14.67 25.33L17.33 25.33" fill="none" stroke="#101010" stroke-width="2.27" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(28, 240)">
+            <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Alex’s iPhone</text>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">Before</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Ready</text>
+        </g>
+      </g>
+      <g transform="translate(360, 0)">
+        <g>
+          <g transform="translate(102, 94)">
+            <rect width="124" height="124" rx="80" ry="80" fill="#EEF5FF" stroke="#0866FF" stroke-width="2"/>
+          </g>
+          <g transform="translate(132, 124)">
+            <rect width="64" height="64" rx="32" ry="32" fill="#F5F5F5"/>
+            <g transform="translate(16, 16)">
+              <path d="M22.67 2.67L22.67 29.33L9.33 29.33L9.33 2.67L22.67 2.67ZM14.67 25.33L17.33 25.33" fill="none" stroke="#101010" stroke-width="2.27" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(78, 104)">
+            <path d="M25.33 10.67L18.67 10.67L18.67 2.67L25.33 9.33L25.33 29.33L6.67 29.33L6.67 2.67L18.67 2.67M10.67 16L21.33 16M10.67 21.33L21.33 21.33" fill="none" stroke="#6E6E6E" stroke-width="2.27" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+          <g transform="translate(28, 240)">
+            <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Release to send</text>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">During</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">120ms enter / 100ms leave</text>
+        </g>
+      </g>
+      <g transform="translate(720, 0)">
+        <g>
+          <g transform="translate(110, 102)">
+            <rect width="108" height="108" rx="80" ry="80" fill="#EEF5FF" stroke="#0866FF" stroke-width="2"/>
+          </g>
+          <g transform="translate(132, 124)">
+            <rect width="64" height="64" rx="32" ry="32" fill="#F5F5F5"/>
+            <g transform="translate(16, 16)">
+              <path d="M22.67 2.67L22.67 29.33L9.33 29.33L9.33 2.67L22.67 2.67ZM14.67 25.33L17.33 25.33" fill="none" stroke="#101010" stroke-width="2.27" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(28, 240)">
+            <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Alex’s iPhone</text>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">After</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Settled state</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(32, 560)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Reduced motion · Static halo plus icon; same drop area.</text>
+    </g>
+  </g>
+</svg>

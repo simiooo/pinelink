@@ -33,7 +33,11 @@ flutter:
   uses-material-design: true
   licenses:
     - assets/fonts/OFL.txt
+    - assets/fonts/noto-sans-sc/OFL.txt
   fonts:
     - family: Nunito
       fonts:
         - asset: assets/fonts/Nunito-Variable.ttf
+    - family: Noto Sans SC
+      fonts:
+        - asset: assets/fonts/noto-sans-sc/NotoSansSC-Variable.ttf

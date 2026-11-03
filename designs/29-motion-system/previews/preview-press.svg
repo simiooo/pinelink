@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1120" height="640" viewBox="0 0 1120 640">
+  <g>
+    <rect width="1120" height="640" fill="#FFFFFF"/>
+    <g transform="translate(32, 32)">
+      <text x="0" y="22" font-family="Nunito" font-size="22" font-weight="700" fill="#101010">Press and release</text>
+    </g>
+    <g transform="translate(32, 84)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Scale 1 → .97 → 1; icon targets keep their 48px hit area.</text>
+    </g>
+    <g transform="translate(32, 144)">
+      <g>
+        <g transform="translate(28, 132)">
+          <g>
+            <rect width="280" height="48" rx="24" ry="24" fill="#0866FF"/>
+            <g transform="translate(16, 12)">
+              <text x="124" y="15" font-family="Nunito" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Send</text>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">Before</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Ready</text>
+        </g>
+      </g>
+      <g transform="translate(360, 0)">
+        <g transform="translate(28, 132)">
+          <g transform="translate(4.2, 0.72)">
+            <rect width="271.6" height="46.56" rx="24" ry="24" fill="#0866FF"/>
+            <g transform="translate(16, 12)">
+              <text x="119.8" y="15" font-family="Nunito" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Send</text>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">During</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">80ms down · spring release</text>
+        </g>
+      </g>
+      <g transform="translate(720, 0)">
+        <g transform="translate(28, 132)">
+          <g>
+            <rect width="280" height="48" rx="24" ry="24" fill="#0866FF"/>
+            <g transform="translate(16, 12)">
+              <text x="124" y="15" font-family="Nunito" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Send</text>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">After</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Settled state</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(32, 560)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Reduced motion · Immediate pressed color; no scale.</text>
+    </g>
+  </g>
+</svg>

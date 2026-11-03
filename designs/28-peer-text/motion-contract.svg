@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="880" viewBox="0 0 800 880">
+  <g>
+    <rect width="800" height="880" fill="#FFFFFF"/>
+    <g transform="translate(32, 32)">
+      <text x="0" y="28" font-family="Nunito" font-size="28" font-weight="700" fill="#101010">Motion follows confirmed state</text>
+    </g>
+    <g transform="translate(32, 92)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Connect</text>
+      </g>
+      <g transform="translate(0, 32)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Pending has a quiet activity cue. Only confirmed mutual authorization reveals the peer: opacity 0–1, Y 8–0, 180 ms. Error replacement 160 ms; no success timer fabricates a connection.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 196)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Surfaces</text>
+      </g>
+      <g transform="translate(0, 32)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Desktop modal: 160 ms opacity/scale. Mobile sheet: 220 ms with 24px travel; exit 160 ms. Keyboard follows the OS and keeps editor/actions reachable.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 300)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Transfer</text>
+      </g>
+      <g transform="translate(0, 32)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Blue follows actual receiver-confirmed arc length; the 1.8 s flow stays inside it. Pause freezes flow and preserves the boundary. Text may finish immediately after its real receipt.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 404)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Copy and access</text>
+      </g>
+      <g transform="translate(0, 32)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Copied appears only after clipboard success; announce it, then restore the action. 48px targets, visible focus, Enter submits only the focused form.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 508)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Reduced motion and races</text>
+      </g>
+      <g transform="translate(0, 32)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Immediate state changes with static busy state. No auth/invite/send/receive mutation from a React mount effect; use server idempotency, revision checks and account epochs.</text>
+      </g>
+    </g>
+  </g>
+</svg>

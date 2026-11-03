@@ -1,0 +1,20 @@
+{
+  "environment": "staging",
+  "url": "https://staging-pinelink.sqmem.top/designs/motion-v29.html",
+  "design_source_version": "ad0dd5b8fc5c6214a2a3cf93f8dc4aeb5679bb50",
+  "artifact_sha256": "d0ba06ff24a742749b956dab3c416887245be238e496461a2e060493468f7ccb",
+  "runtime_source_version": "1daeffad033f916eca27d7a7a947acae800ddfbb",
+  "helm_revision": 12,
+  "started_at": "2026-11-03T05:15:57.033814+00:00",
+  "completed_at": "2026-11-03T05:16:21.049590+00:00",
+  "status": "deployed",
+  "product_images_unchanged": true,
+  "production_unchanged": true,
+  "non_web_workloads_unchanged": true,
+  "nginx_configuration_valid": true,
+  "mounted_artifact_hash_verified": true,
+  "immutable_config_map": "pinelink-design-v29-ad0dd5b8-d0ba06ff",
+  "public_browser_smoke_pending": false,
+  "browser_smoke_checks": 20,
+  "browser_smoke_passed": true
+}

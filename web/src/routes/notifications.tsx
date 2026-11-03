@@ -1,3 +1,5 @@
+import { NativeSelect } from '../components/ui/native-select'
+import { MotionButton, MotionReveal } from '../motion/components'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ApiError, getPendingNotifications, IDENTITY, respondTransfer } from '../api/client'
@@ -35,12 +37,12 @@ export function NotificationsPage() {
       </div>
       {pending.isPending && <div className="state-panel" role="status">{t('loadingNotifications')}</div>}
       {pending.isError && <div className="state-panel" role="alert">{t('notificationsError')}</div>}
-      {notice && <p className="feedback" role="status">{notice}</p>}
+      {notice && <MotionReveal className="feedback" role="status" identity={notice}>{notice}</MotionReveal>}
       {!pending.isPending && !pending.isError && requests.length > 1 && (
         <label className="request-picker">{t('selectRequest')}
-          <select value={first?.id} onChange={event => setSelected(event.target.value)}>
+          <NativeSelect value={first?.id} onChange={event => setSelected(event.target.value)}>
             {requests.map(request => <option key={request.id} value={request.id}>{displayFileName(request.file_name, locale) ?? t('unknownFile')} · {request.sender_device_id}</option>)}
-          </select>
+          </NativeSelect>
         </label>
       )}
       {first ? (
@@ -60,8 +62,8 @@ export function NotificationsPage() {
             <p className="consent-note">{t('consentNote')}</p>
           </article>
           <div className="page-actions">
-            <button className="secondary-button" disabled={mutation.isPending} onClick={() => mutation.mutate({ id: first.id, action: 'reject', version: first.version })}>{t('reject')}</button>
-            <button className="primary-button" disabled={mutation.isPending} onClick={() => mutation.mutate({ id: first.id, action: 'accept', version: first.version })}>{t(mutation.isPending ? 'confirming' : 'accept')}</button>
+            <MotionButton className="secondary-button" disabled={mutation.isPending} onClick={() => mutation.mutateAsync({ id: first.id, action: 'reject', version: first.version })}>{t('reject')}</MotionButton>
+            <MotionButton className="primary-button" disabled={mutation.isPending} onClick={() => mutation.mutateAsync({ id: first.id, action: 'accept', version: first.version })}>{t(mutation.isPending ? 'confirming' : 'accept')}</MotionButton>
           </div>
           <aside className="privacy-note">
             <p>{t('relayNote')}</p>

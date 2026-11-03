@@ -1,0 +1,809 @@
+{
+  "created_at": "2026-11-03T05:08:04.054Z",
+  "scope": "Five v29 pages after final native save/close/reopen, including keyed-history refinement",
+  "document": "29-pinelink-motion-system.fig",
+  "native_sha256": "0345398f4b93019e2502c1f3b5413205411ca3cf281c3621a6563ac880437a5a",
+  "native_animations_playable": false,
+  "note": "Editable native keyframes; actual playback is the independent motion lab.",
+  "pages": [
+    {
+      "id": "0:31",
+      "name": "27 / Motion system",
+      "boards": [
+        {
+          "id": "0:855",
+          "type": "FRAME",
+          "name": "Motion with a purpose",
+          "w": 1120,
+          "h": 720
+        },
+        {
+          "id": "0:872",
+          "type": "FRAME",
+          "name": "Coverage and delivery boundary",
+          "w": 1120,
+          "h": 720
+        },
+        {
+          "id": "0:889",
+          "type": "FRAME",
+          "name": "A small, shared motion vocabulary",
+          "w": 1120,
+          "h": 720
+        }
+      ],
+      "font": {
+        "faithful": true,
+        "issues": [],
+        "faces": [
+          {
+            "family": "Nunito",
+            "style": "Bold",
+            "source": "local",
+            "status": "available"
+          },
+          {
+            "family": "Nunito",
+            "style": "Regular",
+            "source": "local",
+            "status": "available"
+          }
+        ]
+      },
+      "summary": {
+        "totalNodes": 51,
+        "analyzedNodes": 51,
+        "overlapCount": 0,
+        "byCategory": {
+          "sibling-overlap": 0,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0,
+          "info": 0
+        }
+      },
+      "reviewed_overlays": []
+    },
+    {
+      "id": "0:32",
+      "name": "28 / Control microinteractions",
+      "boards": [
+        {
+          "id": "0:906",
+          "type": "FRAME",
+          "name": "Motion / Press and release",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:932",
+          "type": "FRAME",
+          "name": "Motion / Icon state",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:961",
+          "type": "FRAME",
+          "name": "Motion / Hover and keyboard focus",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:991",
+          "type": "FRAME",
+          "name": "Motion / Anchored menu",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1025",
+          "type": "FRAME",
+          "name": "Motion / Tab selection",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1054",
+          "type": "FRAME",
+          "name": "Motion / Field focus",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1084",
+          "type": "FRAME",
+          "name": "Motion / Inline recovery",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1114",
+          "type": "FRAME",
+          "name": "Motion / Remember device",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1146",
+          "type": "FRAME",
+          "name": "Motion / Pending and confirmed",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1175",
+          "type": "FRAME",
+          "name": "Motion / Copy after success",
+          "w": 1120,
+          "h": 640
+        }
+      ],
+      "font": {
+        "faithful": true,
+        "issues": [],
+        "faces": [
+          {
+            "family": "Nunito",
+            "style": "Bold",
+            "source": "local",
+            "status": "available"
+          },
+          {
+            "family": "Nunito",
+            "style": "Regular",
+            "source": "local",
+            "status": "available"
+          },
+          {
+            "family": "Nunito",
+            "style": "SemiBold",
+            "source": "google",
+            "status": "available"
+          }
+        ]
+      },
+      "summary": {
+        "totalNodes": 298,
+        "analyzedNodes": 298,
+        "overlapCount": 0,
+        "byCategory": {
+          "sibling-overlap": 0,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0,
+          "info": 0
+        }
+      },
+      "reviewed_overlays": []
+    },
+    {
+      "id": "0:33",
+      "name": "29 / Graph and transfer motion",
+      "boards": [
+        {
+          "id": "0:1204",
+          "type": "FRAME",
+          "name": "Motion / Peer arrival and departure",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1272",
+          "type": "FRAME",
+          "name": "Motion / Select and return",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1340",
+          "type": "FRAME",
+          "name": "Motion / Online and offline badges",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1412",
+          "type": "FRAME",
+          "name": "Motion / Orbit actions",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1479",
+          "type": "FRAME",
+          "name": "Motion / Approach and leave a target",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1517",
+          "type": "FRAME",
+          "name": "Motion / Drop opens review",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1555",
+          "type": "FRAME",
+          "name": "Motion / Real progress and pause",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1625",
+          "type": "FRAME",
+          "name": "Motion / Route continuity",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1693",
+          "type": "FRAME",
+          "name": "Motion / Verified delivery",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1764",
+          "type": "FRAME",
+          "name": "Motion / Cloud is a real leg",
+          "w": 1120,
+          "h": 640
+        }
+      ],
+      "font": {
+        "faithful": true,
+        "issues": [],
+        "faces": [
+          {
+            "family": "Nunito",
+            "style": "Bold",
+            "source": "local",
+            "status": "available"
+          },
+          {
+            "family": "Nunito",
+            "style": "Regular",
+            "source": "local",
+            "status": "available"
+          },
+          {
+            "family": "Nunito",
+            "style": "SemiBold",
+            "source": "google",
+            "status": "available"
+          }
+        ]
+      },
+      "summary": {
+        "totalNodes": 628,
+        "analyzedNodes": 628,
+        "overlapCount": 35,
+        "byCategory": {
+          "sibling-overlap": 35,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 30,
+          "minor": 2,
+          "info": 3
+        }
+      },
+      "reviewed_overlays": [
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Dimmed context when selected",
+          "b": "Peer identity",
+          "expected": true,
+          "reason": "Peer identity is layered above dimmable graph context"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "path",
+          "b": "path",
+          "expected": true,
+          "reason": "Confirmed-byte curve intentionally overlays gray track"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "path",
+          "b": "path",
+          "expected": true,
+          "reason": "Confirmed-byte curve intentionally overlays gray track"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "path",
+          "b": "path",
+          "expected": true,
+          "reason": "Confirmed-byte curve intentionally overlays gray track"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Eligible drop halo",
+          "b": "Target",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Eligible drop halo",
+          "b": "Target",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Eligible drop halo",
+          "b": "Target",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Eligible drop halo",
+          "b": "Target",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Eligible drop halo",
+          "b": "Target",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Eligible drop halo",
+          "b": "Target",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "System drag image / before transfer",
+          "b": "Eligible drop halo",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "System drag image / before transfer",
+          "b": "Eligible drop halo",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Device glyph",
+          "b": "Receipt confirmed",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Device glyph",
+          "b": "Availability state / waiting",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "Device glyph",
+          "b": "Availability state / offline",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        }
+      ]
+    },
+    {
+      "id": "0:34",
+      "name": "30 / Surfaces and content motion",
+      "boards": [
+        {
+          "id": "0:1832",
+          "type": "FRAME",
+          "name": "Motion / Desktop modal",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1879",
+          "type": "FRAME",
+          "name": "Motion / Mobile sheet",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1926",
+          "type": "FRAME",
+          "name": "Motion / Enter and go back",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:1952",
+          "type": "FRAME",
+          "name": "Motion / Keyed history filters",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:2077",
+          "type": "FRAME",
+          "name": "Motion / File availability",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:2118",
+          "type": "FRAME",
+          "name": "Motion / Account result feedback",
+          "w": 1120,
+          "h": 640
+        },
+        {
+          "id": "0:2146",
+          "type": "FRAME",
+          "name": "Motion / Queue and catch up",
+          "w": 1120,
+          "h": 640
+        }
+      ],
+      "font": {
+        "faithful": true,
+        "issues": [],
+        "faces": [
+          {
+            "family": "Nunito",
+            "style": "Bold",
+            "source": "local",
+            "status": "available"
+          },
+          {
+            "family": "Nunito",
+            "style": "Regular",
+            "source": "local",
+            "status": "available"
+          },
+          {
+            "family": "Nunito",
+            "style": "SemiBold",
+            "source": "google",
+            "status": "available"
+          }
+        ]
+      },
+      "summary": {
+        "totalNodes": 352,
+        "analyzedNodes": 352,
+        "overlapCount": 15,
+        "byCategory": {
+          "sibling-overlap": 15,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 3,
+          "minor": 12,
+          "info": 0
+        }
+      },
+      "reviewed_overlays": [
+        {
+          "category": "sibling-overlap",
+          "a": "custom",
+          "b": "Availability badge",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "custom",
+          "b": "Availability badge",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "custom",
+          "b": "Availability badge",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "File glyph",
+          "b": "Availability icon",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "File glyph",
+          "b": "Availability icon",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "File glyph",
+          "b": "Availability icon",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "File glyph",
+          "b": "Availability icon",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "File glyph",
+          "b": "Availability icon",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "File glyph",
+          "b": "Availability icon",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "File glyph",
+          "b": "Availability icon",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "File glyph",
+          "b": "Availability icon",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "File glyph",
+          "b": "Availability icon",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "File glyph",
+          "b": "Availability icon",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "File glyph",
+          "b": "Availability icon",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        },
+        {
+          "category": "sibling-overlap",
+          "a": "File glyph",
+          "b": "Availability icon",
+          "expected": true,
+          "reason": "Intentional target halo or small state badge overlay"
+        }
+      ]
+    },
+    {
+      "id": "0:35",
+      "name": "31 / Motion accessibility",
+      "boards": [
+        {
+          "id": "0:2184",
+          "type": "FRAME",
+          "name": "Reduced motion keeps meaning",
+          "w": 1120,
+          "h": 720
+        },
+        {
+          "id": "0:2201",
+          "type": "FRAME",
+          "name": "Interruptions and truthful state",
+          "w": 1120,
+          "h": 720
+        }
+      ],
+      "font": {
+        "faithful": true,
+        "issues": [],
+        "faces": [
+          {
+            "family": "Nunito",
+            "style": "Bold",
+            "source": "local",
+            "status": "available"
+          },
+          {
+            "family": "Nunito",
+            "style": "Regular",
+            "source": "local",
+            "status": "available"
+          }
+        ]
+      },
+      "summary": {
+        "totalNodes": 34,
+        "analyzedNodes": 34,
+        "overlapCount": 0,
+        "byCategory": {
+          "sibling-overlap": 0,
+          "parent-overflow": 0,
+          "overlay": 0
+        },
+        "bySeverity": {
+          "critical": 0,
+          "major": 0,
+          "minor": 0,
+          "info": 0
+        }
+      },
+      "reviewed_overlays": []
+    }
+  ]
+}

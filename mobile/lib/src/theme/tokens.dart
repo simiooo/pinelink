@@ -13,6 +13,14 @@ class PinelinkColors {
 ThemeData pinelinkTheme() => ThemeData(
   useMaterial3: true,
   fontFamily: 'Nunito',
+  fontFamilyFallback: const ['Microsoft YaHei', 'Noto Sans SC'],
+  popupMenuTheme: PopupMenuThemeData(
+    color: Colors.white,
+    surfaceTintColor: Colors.transparent,
+    elevation: 2,
+    shadowColor: const Color(0x10000000),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+  ),
   scaffoldBackgroundColor: PinelinkColors.background,
   colorScheme: const ColorScheme.light(
     primary: PinelinkColors.accent,
@@ -43,8 +51,12 @@ ThemeData pinelinkTheme() => ThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: PinelinkColors.accent,
       foregroundColor: Colors.white,
-      minimumSize: const Size(168, 46),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      shadowColor: Colors.transparent,
+      splashFactory: NoSplash.splashFactory,
+      minimumSize: const Size(168, 48),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       textStyle: const TextStyle(
         fontFamily: 'Nunito',
         fontSize: 15,
@@ -60,8 +72,12 @@ ThemeData pinelinkTheme() => ThemeData(
         fontWeight: FontWeight.w600,
       ),
       foregroundColor: PinelinkColors.text,
-      side: const BorderSide(color: PinelinkColors.line),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      backgroundColor: const Color(0xFFF5F5F5),
+      minimumSize: const Size(48, 48),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      splashFactory: NoSplash.splashFactory,
+      side: BorderSide.none,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
     ),
   ),
 );

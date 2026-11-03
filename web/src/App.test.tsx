@@ -10,9 +10,9 @@ afterEach(() => {
 test('new transfer view keeps exactly three actions', async () => {
   render(<App initialEntries={['/']} />)
   expect(await screen.findByRole('button', { name: '选择文件' })).toBeInTheDocument()
-  expect(screen.getByRole('link', { name: '通知' })).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: '通知' })).toBeInTheDocument()
   expect(screen.getByRole('button', { name: '更多' })).toBeInTheDocument()
-  expect(screen.getAllByRole('button')).toHaveLength(2)
+  expect(screen.getAllByRole('button')).toHaveLength(3)
   expect(await screen.findByText('暂无任务。文件与接收设备确认后会出现在这里。')).toBeInTheDocument()
 })
 
@@ -24,7 +24,7 @@ test('notification shows the real sender and accepts only once', async () => {
   }))
   vi.stubGlobal('fetch', fetchMock)
   render(<App initialEntries={['/']} />)
-  fireEvent.click(await screen.findByRole('link', { name: '通知' }))
+  fireEvent.click(await screen.findByRole('button', { name: '通知' }))
   expect(await screen.findByText('设计回顾.pdf')).toBeInTheDocument()
   expect(screen.getByText('macbook-pro')).toBeInTheDocument()
   expect(screen.getByText('team-design')).toBeInTheDocument()
@@ -43,7 +43,7 @@ test('notification conflict refreshes rather than claiming success', async () =>
     ? { ok: false, status: 409, json: async () => ({ code: 'STATE_CONFLICT' }) }
     : { ok: true, json: async () => ({ tasks: [], transfers: [transfer] }) }))
   render(<App initialEntries={['/']} />)
-  fireEvent.click(await screen.findByRole('link', { name: '通知' }))
+  fireEvent.click(await screen.findByRole('button', { name: '通知' }))
   fireEvent.click(await screen.findByRole('button', { name: '拒绝' }))
   expect(await screen.findByText('请求状态已变化，正在为你刷新。')).toBeInTheDocument()
   expect(screen.queryByText('已拒绝文件请求。')).not.toBeInTheDocument()
@@ -52,7 +52,7 @@ test('notification conflict refreshes rather than claiming success', async () =>
 test('null notification and task lists have an empty state', async () => {
   vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ tasks: null, transfers: null }) })))
   render(<App initialEntries={['/']} />)
-  fireEvent.click(await screen.findByRole('link', { name: '通知' }))
+  fireEvent.click(await screen.findByRole('button', { name: '通知' }))
   expect(await screen.findByText('没有待处理的文件请求')).toBeInTheDocument()
   expect(screen.queryByRole('button', { name: '接受' })).not.toBeInTheDocument()
 })
@@ -72,8 +72,10 @@ test('task controls preserve progress and use the latest version', async () => {
     return { ok: true, json: async () => path.includes('/v1/transfers') ? { transfers: [{ id: 'request-1', file_name: '设计回顾.pdf', sender_device_id: 'macbook-pro' }] } : { tasks: [task] } }
   }))
   render(<App initialEntries={['/tasks']} />)
+  expect(await screen.findByRole('progressbar', { name: '真实传输进度' })).toHaveAttribute('aria-valuenow', '62')
+  expect(screen.queryByText('62%')).not.toBeInTheDocument()
+  fireEvent.click(screen.getByRole('button', { name: '传输详情' }))
   expect(await screen.findByText('设计回顾.pdf')).toBeInTheDocument()
-  expect(screen.getByRole('progressbar', { name: '真实传输进度' })).toHaveAttribute('aria-valuenow', '63')
   expect(screen.getAllByRole('button')).toHaveLength(3)
   fireEvent.click(screen.getByRole('button', { name: '暂停' }))
   expect(await screen.findByText('已暂停，进度已保留。')).toBeInTheDocument()
@@ -83,7 +85,7 @@ test('task controls preserve progress and use the latest version', async () => {
   fireEvent.click(await screen.findByRole('button', { name: '确认取消' }))
   expect(await screen.findByText('已取消任务。')).toBeInTheDocument()
   expect(actions).toEqual([{ action: 'pause', version: 1 }, { action: 'resume', version: 2 }, { action: 'cancel', version: 3 }])
-  expect(screen.getByText('63%')).toBeInTheDocument()
+  expect(screen.getByText('62%')).toBeInTheDocument()
 })
 
 test('file preparation creates a command without claiming a transfer', async () => {
@@ -96,7 +98,7 @@ test('file preparation creates a command without claiming a transfer', async () 
   fireEvent.change(screen.getByLabelText('接收账户'), { target: { value: 'team-design' } })
   fireEvent.change(screen.getByLabelText('接收设备'), { target: { value: 'macbook-pro' } })
   fireEvent.change(screen.getByLabelText('文件在终端中的路径'), { target: { value: 'D:\\Transfers\\设计回顾.pdf' } })
-  expect(screen.getAllByRole('button')).toHaveLength(2)
+  expect(screen.getAllByRole('button')).toHaveLength(3)
   fireEvent.click(screen.getByRole('button', { name: '复制发送命令' }))
   expect(await screen.findByText('已复制。请在已登记设备的终端执行；这里尚未发送文件。')).toBeInTheDocument()
   expect(writeText).toHaveBeenCalledWith("pinelink p2p send 'D:\\Transfers\\设计回顾.pdf' --to-owner 'team-design' --to-device 'macbook-pro' --path auto")

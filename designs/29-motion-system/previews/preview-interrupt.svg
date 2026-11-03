@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1120" height="720" viewBox="0 0 1120 720">
+  <g>
+    <rect width="1120" height="720" fill="#FFFFFF"/>
+    <g transform="translate(32, 32)">
+      <text x="0" y="24" font-family="Nunito" font-size="24" font-weight="700" fill="#101010">Interruptions and truthful state</text>
+    </g>
+    <g transform="translate(32, 88)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Reverse</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Rapid open/close and target changes start from the visible pose. One owner prevents old animations from winning.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 200)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Pause</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Stop flow immediately. A real late acknowledgment can correct the static boundary without restarting activity.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 312)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">No authority</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Unmount, animation end, timeout or a demo replay never approves, sends, deletes or copies content.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 424)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Background</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Only visible, relevant activity runs. Hidden and offscreen loops stop; dispose cancels owned resources.</text>
+      </g>
+    </g>
+    <g transform="translate(32, 536)">
+      <g>
+        <text x="0" y="18" font-family="Nunito" font-size="18" font-weight="700" fill="#101010">Prove</text>
+      </g>
+      <g transform="translate(0, 36)">
+        <text x="0" y="15" font-family="Nunito" font-size="15" fill="#101010">Verify reduced motion, rapid reversal, dragleave nesting, focus return, route epochs, stable lists and no API effects.</text>
+      </g>
+    </g>
+  </g>
+</svg>

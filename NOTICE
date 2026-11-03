@@ -12,6 +12,12 @@ Copyright 2014 The Nunito Project Authors (https://github.com/googlefonts/nunito
 Licensed under the SIL Open Font License, Version 1.1.
 See designs/25-rounded-typography/fonts/OFL.txt.
 
+Google sign-in branding artwork in designs/26-account-onboarding and
+designs/27-account-password:
+Provided by Google for use under its Sign in with Google branding guidelines.
+Google trademarks and brand artwork are not relicensed under Apache-2.0.
+See https://developers.google.com/identity/branding-guidelines.
+
 Bundled Nunito runtime fonts in web/src/assets/fonts and mobile/assets/fonts:
 Copyright 2014 The Nunito Project Authors (https://github.com/googlefonts/nunito)
 SIL Open Font License, Version 1.1; see web/public/fonts/OFL.txt and

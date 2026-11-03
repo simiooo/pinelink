@@ -1,0 +1,47 @@
+{
+  "source_revision": "30284d60787c6904a4b53e29d255588f1a9275b4",
+  "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "integration (websocket)",
+      "conclusion": "success",
+      "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243515"
+    },
+    {
+      "name": "go (cli)",
+      "conclusion": "success",
+      "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243650"
+    },
+    {
+      "name": "flutter",
+      "conclusion": "success",
+      "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243757"
+    },
+    {
+      "name": "web",
+      "conclusion": "success",
+      "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243774"
+    },
+    {
+      "name": "integration (webrtc)",
+      "conclusion": "success",
+      "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243782"
+    },
+    {
+      "name": "go (backend)",
+      "conclusion": "success",
+      "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243810"
+    },
+    {
+      "name": "deployment",
+      "conclusion": "success",
+      "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243870"
+    },
+    {
+      "name": "go (protocol)",
+      "conclusion": "success",
+      "url": "https://github.com/simiooo/pinelink/actions/runs/41593448327/job/125775243934"
+    }
+  ]
+}

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1120" height="640" viewBox="0 0 1120 640">
+  <g>
+    <rect width="1120" height="640" fill="#FFFFFF"/>
+    <g transform="translate(32, 32)">
+      <text x="0" y="22" font-family="Nunito" font-size="22" font-weight="700" fill="#101010">Keyed history filters</text>
+    </g>
+    <g transform="translate(32, 84)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Keyed items preserve location/selection; cap initial stagger at 3 items / 48ms.</text>
+    </g>
+    <g transform="translate(32, 144)">
+      <g>
+        <g>
+          <g transform="translate(18, 18)">
+            <text x="0" y="20" font-family="Nunito" font-size="20" font-weight="700" fill="#101010">Alex’s iPhone</text>
+          </g>
+          <g transform="translate(18, 72)">
+            <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">All     Reusable     One-time     Expired</text>
+          </g>
+          <g transform="translate(18, 100)">
+            <rect width="24" height="2" fill="#0866FF"/>
+          </g>
+          <g transform="translate(18, 124)">
+            <path d="M28.5 12L21 12L21 3L28.5 10.5L28.5 33L7.5 33L7.5 3L21 3M12 18L24 18M12 24L24 24" fill="none" stroke="#6E6E6E" stroke-width="2.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(0, 48)">
+              <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Design source</text>
+            </g>
+            <g transform="translate(26, 26)">
+              <rect width="16" height="16" rx="8" ry="8" fill="#FFFFFF"/>
+              <path d="M1 7C1 5.62 2.12 4.5 3.5 4.5C3.5 2.84 4.84 1.5 6.5 1.5C8.16 1.5 9.5 2.84 9.5 4.5C10.88 4.5 12 5.62 12 7C12 8.38 10.88 9.5 9.5 9.5L3.5 9.5C2.12 9.5 1 8.38 1 7Z" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(118, 124)">
+            <path d="M6 6L30 6M18 6L18 30M12 30L24 30" fill="none" stroke="#6E6E6E" stroke-width="2.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(0, 48)">
+              <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Travel notes</text>
+            </g>
+            <g transform="translate(26, 26)">
+              <rect width="16" height="16" rx="8" ry="8" fill="#FFFFFF"/>
+              <path d="M1 7C1 5.62 2.12 4.5 3.5 4.5C3.5 2.84 4.84 1.5 6.5 1.5C8.16 1.5 9.5 2.84 9.5 4.5C10.88 4.5 12 5.62 12 7C12 8.38 10.88 9.5 9.5 9.5L3.5 9.5C2.12 9.5 1 8.38 1 7Z" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(218, 124)">
+            <path d="M15 9L18 13.5L33 13.5L33 36L3 36L3 9L15 9ZM3 15L33 15" fill="none" stroke="#6E6E6E" stroke-width="2.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(0, 48)">
+              <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Photos</text>
+            </g>
+            <g transform="translate(26, 26)">
+              <rect width="16" height="16" rx="8" ry="8" fill="#FFFFFF"/>
+              <path d="M1 7C1 5.62 2.12 4.5 3.5 4.5C3.5 2.84 4.84 1.5 6.5 1.5C8.16 1.5 9.5 2.84 9.5 4.5C10.88 4.5 12 5.62 12 7C12 8.38 10.88 9.5 9.5 9.5L3.5 9.5C2.12 9.5 1 8.38 1 7Z" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(18, 212)">
+            <path d="M28.5 12L21 12L21 3L28.5 10.5L28.5 33L7.5 33L7.5 3L21 3M12 18L24 18M12 24L24 24" fill="none" stroke="#6E6E6E" stroke-width="2.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(0, 48)">
+              <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Project brief</text>
+            </g>
+            <g transform="translate(26, 26)">
+              <rect width="16" height="16" rx="8" ry="8" fill="#FFFFFF"/>
+              <path d="M1 7C1 5.62 2.12 4.5 3.5 4.5C3.5 2.84 4.84 1.5 6.5 1.5C8.16 1.5 9.5 2.84 9.5 4.5C10.88 4.5 12 5.62 12 7C12 8.38 10.88 9.5 9.5 9.5L3.5 9.5C2.12 9.5 1 8.38 1 7Z" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(118, 212)">
+            <path d="M6 6L30 6M18 6L18 30M12 30L24 30" fill="none" stroke="#6E6E6E" stroke-width="2.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(0, 48)">
+              <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Wi-Fi details</text>
+            </g>
+            <g transform="translate(26, 26)">
+              <rect width="16" height="16" rx="8" ry="8" fill="#FFFFFF"/>
+              <path d="M1 7C1 5.62 2.12 4.5 3.5 4.5C3.5 2.84 4.84 1.5 6.5 1.5C8.16 1.5 9.5 2.84 9.5 4.5C10.88 4.5 12 5.62 12 7C12 8.38 10.88 9.5 9.5 9.5L3.5 9.5C2.12 9.5 1 8.38 1 7Z" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(218, 212)">
+            <path d="M28.5 12L21 12L21 3L28.5 10.5L28.5 33L7.5 33L7.5 3L21 3M12 18L24 18M12 24L24 24" fill="none" stroke="#6E6E6E" stroke-width="2.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(0, 48)">
+              <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Iteration notes</text>
+            </g>
+            <g transform="translate(26, 26)">
+              <rect width="16" height="16" rx="8" ry="8" fill="#FFFFFF"/>
+              <path d="M1 7C1 5.62 2.12 4.5 3.5 4.5C3.5 2.84 4.84 1.5 6.5 1.5C8.16 1.5 9.5 2.84 9.5 4.5C10.88 4.5 12 5.62 12 7C12 8.38 10.88 9.5 9.5 9.5L3.5 9.5C2.12 9.5 1 8.38 1 7Z" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">Before</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Ready</text>
+        </g>
+      </g>
+      <g transform="translate(360, 0)">
+        <g>
+          <g transform="translate(18, 18)">
+            <text x="0" y="20" font-family="Nunito" font-size="20" font-weight="700" fill="#101010">Alex’s iPhone</text>
+          </g>
+          <g transform="translate(18, 72)">
+            <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">All     Reusable     One-time     Expired</text>
+          </g>
+          <g transform="translate(56, 100)">
+            <rect width="52" height="2" fill="#0866FF"/>
+          </g>
+          <g transform="translate(18, 132)">
+            <path d="M28.5 12L21 12L21 3L28.5 10.5L28.5 33L7.5 33L7.5 3L21 3M12 18L24 18M12 24L24 24" fill="none" stroke="#6E6E6E" stroke-width="2.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(0, 48)">
+              <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Design source</text>
+            </g>
+            <g transform="translate(26, 26)">
+              <rect width="16" height="16" rx="8" ry="8" fill="#FFFFFF"/>
+              <path d="M1 7C1 5.62 2.12 4.5 3.5 4.5C3.5 2.84 4.84 1.5 6.5 1.5C8.16 1.5 9.5 2.84 9.5 4.5C10.88 4.5 12 5.62 12 7C12 8.38 10.88 9.5 9.5 9.5L3.5 9.5C2.12 9.5 1 8.38 1 7Z" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(118, 132)">
+            <path d="M6 6L30 6M18 6L18 30M12 30L24 30" fill="none" stroke="#6E6E6E" stroke-width="2.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(0, 48)">
+              <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Travel notes</text>
+            </g>
+            <g transform="translate(26, 26)">
+              <rect width="16" height="16" rx="8" ry="8" fill="#FFFFFF"/>
+              <path d="M1 7C1 5.62 2.12 4.5 3.5 4.5C3.5 2.84 4.84 1.5 6.5 1.5C8.16 1.5 9.5 2.84 9.5 4.5C10.88 4.5 12 5.62 12 7C12 8.38 10.88 9.5 9.5 9.5L3.5 9.5C2.12 9.5 1 8.38 1 7Z" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(218, 132)">
+            <path d="M28.5 12L21 12L21 3L28.5 10.5L28.5 33L7.5 33L7.5 3L21 3M12 18L24 18M12 24L24 24" fill="none" stroke="#6E6E6E" stroke-width="2.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(0, 48)">
+              <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Iteration notes</text>
+            </g>
+            <g transform="translate(26, 26)">
+              <rect width="16" height="16" rx="8" ry="8" fill="#FFFFFF"/>
+              <path d="M1 7C1 5.62 2.12 4.5 3.5 4.5C3.5 2.84 4.84 1.5 6.5 1.5C8.16 1.5 9.5 2.84 9.5 4.5C10.88 4.5 12 5.62 12 7C12 8.38 10.88 9.5 9.5 9.5L3.5 9.5C2.12 9.5 1 8.38 1 7Z" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">During</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">180ms</text>
+        </g>
+      </g>
+      <g transform="translate(720, 0)">
+        <g>
+          <g transform="translate(18, 18)">
+            <text x="0" y="20" font-family="Nunito" font-size="20" font-weight="700" fill="#101010">Alex’s iPhone</text>
+          </g>
+          <g transform="translate(18, 72)">
+            <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">All     Reusable     One-time     Expired</text>
+          </g>
+          <g transform="translate(56, 100)">
+            <rect width="52" height="2" fill="#0866FF"/>
+          </g>
+          <g transform="translate(18, 124)">
+            <path d="M28.5 12L21 12L21 3L28.5 10.5L28.5 33L7.5 33L7.5 3L21 3M12 18L24 18M12 24L24 24" fill="none" stroke="#6E6E6E" stroke-width="2.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(0, 48)">
+              <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Design source</text>
+            </g>
+            <g transform="translate(26, 26)">
+              <rect width="16" height="16" rx="8" ry="8" fill="#FFFFFF"/>
+              <path d="M1 7C1 5.62 2.12 4.5 3.5 4.5C3.5 2.84 4.84 1.5 6.5 1.5C8.16 1.5 9.5 2.84 9.5 4.5C10.88 4.5 12 5.62 12 7C12 8.38 10.88 9.5 9.5 9.5L3.5 9.5C2.12 9.5 1 8.38 1 7Z" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(118, 124)">
+            <path d="M6 6L30 6M18 6L18 30M12 30L24 30" fill="none" stroke="#6E6E6E" stroke-width="2.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(0, 48)">
+              <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Travel notes</text>
+            </g>
+            <g transform="translate(26, 26)">
+              <rect width="16" height="16" rx="8" ry="8" fill="#FFFFFF"/>
+              <path d="M1 7C1 5.62 2.12 4.5 3.5 4.5C3.5 2.84 4.84 1.5 6.5 1.5C8.16 1.5 9.5 2.84 9.5 4.5C10.88 4.5 12 5.62 12 7C12 8.38 10.88 9.5 9.5 9.5L3.5 9.5C2.12 9.5 1 8.38 1 7Z" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <g transform="translate(218, 124)">
+            <path d="M28.5 12L21 12L21 3L28.5 10.5L28.5 33L7.5 33L7.5 3L21 3M12 18L24 18M12 24L24 24" fill="none" stroke="#6E6E6E" stroke-width="2.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(0, 48)">
+              <text x="0" y="13" font-family="Nunito" font-size="13" fill="#101010">Iteration notes</text>
+            </g>
+            <g transform="translate(26, 26)">
+              <rect width="16" height="16" rx="8" ry="8" fill="#FFFFFF"/>
+              <path d="M1 7C1 5.62 2.12 4.5 3.5 4.5C3.5 2.84 4.84 1.5 6.5 1.5C8.16 1.5 9.5 2.84 9.5 4.5C10.88 4.5 12 5.62 12 7C12 8.38 10.88 9.5 9.5 9.5L3.5 9.5C2.12 9.5 1 8.38 1 7Z" fill="none" stroke="#6E6E6E" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(0, 336)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" font-weight="600" fill="#101010">After</text>
+        </g>
+        <g transform="translate(0, 372)">
+          <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Settled state</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(32, 560)">
+      <text x="0" y="13" font-family="Nunito" font-size="13" fill="#6E6E6E">Reduced motion · Immediate keyed result, no stagger.</text>
+    </g>
+  </g>
+</svg>

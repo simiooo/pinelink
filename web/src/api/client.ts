@@ -61,8 +61,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export async function getTasks(owner = IDENTITY.owner, device = IDENTITY.device, includeDeleted = false) {
-  const result = await request<{ tasks: Task[] | null }>(`/v1/tasks?owner_id=${encodeURIComponent(owner)}&device_id=${encodeURIComponent(device)}&include_deleted=${includeDeleted}`)
-  return { tasks: result.tasks ?? [] }
+  const path = `/v1/tasks?owner_id=${encodeURIComponent(owner)}&device_id=${encodeURIComponent(device)}&include_deleted=${includeDeleted}`
+  const result = await request<{ tasks: Task[] | null }>(path)
+  return { tasks: result.tasks ?? [], live: navigator.onLine !== false && (clientRuntime()?.isNetworkFresh(path) ?? true) }
 }
 
 export async function getPendingNotifications(owner = IDENTITY.owner, device = IDENTITY.device) {

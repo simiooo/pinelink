@@ -1,3 +1,5 @@
+import '../motion/motion.dart';
+
 import 'package:flutter/material.dart';
 
 import '../api/pinelink_api.dart';
@@ -212,7 +214,8 @@ class _HistoryPageState extends State<HistoryPage> {
                 ),
               ),
             ),
-          if (snapshot.connectionState == ConnectionState.waiting)
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              !snapshot.hasData)
             Text(tr(context, 'historyLoading'))
           else if (snapshot.hasError)
             Text(tr(context, 'actionFailed'))
@@ -320,7 +323,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     ),
                     if (task.state != 'RUNNING' && task.state != 'DELETED') ...[
                       const SizedBox(height: 20),
-                      OutlinedButton(
+                      MotionButton(
                         onPressed: _responding
                             ? null
                             : () {

@@ -179,5 +179,11 @@
   "connectionFailed": "Connection failed. Try again later.",
   "timeUnknown": "Unknown time",
   "receivedFile": "Received file",
-  "sentFile": "Uploaded file"
+  "sentFile": "Uploaded file",
+  "transferDetails": "Transfer details",
+  "close": "Close",
+  "cloudNode": "Cloud",
+  "cloudStored": "Stored in cloud",
+  "transferState": "Status",
+  "awaitingConfirmation": "Awaiting confirmation"
 }

@@ -97,3 +97,7 @@ jobs:
         working-directory: mobile
       - run: flutter test
         working-directory: mobile
+      - run: python3 infra/scripts/prepare-flutter-web.py
+      - run: flutter build web --release --no-web-resources-cdn --no-wasm-dry-run
+        working-directory: mobile
+      - run: python3 infra/scripts/flutter-offline-shell.py mobile/build/web

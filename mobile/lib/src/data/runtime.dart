@@ -17,6 +17,18 @@ class DataException implements Exception {
 }
 
 class ClientRuntime with WidgetsBindingObserver {
+  final _networkSnapshots = <String>{};
+  bool isNetworkFresh(String path) =>
+      !_closed && _networkSnapshots.contains(_canonicalPath(path));
+  String _canonicalPath(String path) {
+    final uri = Uri.parse(path), query = {...uri.queryParameters};
+    if (query.containsKey('owner_id')) query['owner_id'] = owner;
+    if (query.containsKey('device_id')) query['device_id'] = identity.device;
+    return uri
+        .replace(queryParameters: query.isEmpty ? null : query)
+        .toString();
+  }
+
   ClientRuntime._(
     this.server,
     this.owner,
@@ -199,13 +211,7 @@ class ClientRuntime with WidgetsBindingObserver {
     Map<String, dynamic>? input,
   ) async {
     _checkOpen();
-    final uri = Uri.parse(path);
-    final query = {...uri.queryParameters};
-    if (query.containsKey('owner_id')) query['owner_id'] = owner;
-    if (query.containsKey('device_id')) query['device_id'] = identity.device;
-    path = uri
-        .replace(queryParameters: query.isEmpty ? null : query)
-        .toString();
+    path = _canonicalPath(path);
     if (input != null) {
       if (path == '/v1/devices/revoke' &&
           input['device_id'] != identity.device) {
@@ -236,7 +242,10 @@ class ClientRuntime with WidgetsBindingObserver {
           await database.cacheResponse(path, value, started);
           final saved = await database.cached(path);
           _checkOpen();
-          if (saved != null) return saved;
+          if (saved != null) {
+            _networkSnapshots.add(path);
+            return saved;
+          }
           continue;
         }
         if (method != 'GET') await database.cacheMutation(value);
@@ -246,6 +255,7 @@ class ClientRuntime with WidgetsBindingObserver {
       throw const DataException(409, 'RESPONSE_SUPERSEDED');
     } catch (error) {
       _checkOpen();
+      _networkSnapshots.remove(path);
       final retryable =
           error is! DataException ||
           error.status >= 500 ||
