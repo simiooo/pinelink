@@ -14,7 +14,9 @@ try {
   const a = await fresh(390), b = await fresh(320)
   await a.page.getByRole('button', { name: 'Connect a device', exact: true }).first().click()
   const code = await until(async () => { const v = await a.page.getByTestId('connection-code').textContent(); return v?.match(/[0-9A-Z]{4} [0-9A-Z]{4}/) ? v : null })
-  await b.page.getByRole('button', { name: 'Connect a device', exact: true }).first().click(); await b.page.getByRole('tab', { name: 'Enter code', exact: true }).click(); await b.page.getByLabel('Connection code').fill(code); await b.page.getByRole('button', { name: 'Connect', exact: true }).click()
+  let invitation = code
+  if (process.env.PINELINK_USE_LINK === '1') { await a.context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin }); await a.page.getByRole('button', { name: 'Copy link', exact: true }).click(); invitation = await a.page.evaluate(() => navigator.clipboard.readText()); assert.ok(invitation.startsWith(origin + '/connect#')) }
+  await b.page.getByRole('button', { name: 'Connect a device', exact: true }).first().click(); await b.page.getByRole('tab', { name: 'Enter code', exact: true }).click(); await b.page.getByLabel('Connection code').fill(invitation); await b.page.getByRole('button', { name: 'Connect', exact: true }).click()
   await a.page.getByRole('heading', { name: 'Connect this device?', exact: true }).waitFor(); await a.page.getByRole('button', { name: 'Connect', exact: true }).click(); await until(async () => !(await b.page.getByRole('dialog').count()))
   await a.page.locator('.guest-peer .guest-node').first().waitFor(); await openConversation(a.page)
   await a.page.getByRole('switch', { name: 'Sensitive', exact: true }).click(); const raw = '# Project\n\n**secret**  spaces'; await a.page.getByRole('textbox', { name: 'Write a message' }).fill(raw); await a.page.getByRole('button', { name: 'Send', exact: true }).click()

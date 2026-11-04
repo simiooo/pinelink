@@ -9,7 +9,7 @@ export function ConnectionEntry({ value, onValue, onSubmit, onError }: { value: 
   const [camera, setCamera] = useState(false), [busy, setBusy] = useState(false), alive = useRef(true), busyRef = useRef(false)
   useEffect(() => { alive.current = true; return () => { alive.current = false } }, [])
   const submit = async (code: string) => {
-    if (busyRef.current) return
+    if (!alive.current || busyRef.current) return
     busyRef.current = true; setBusy(true)
     try { await onSubmit(code) } finally { busyRef.current = false; if (alive.current) setBusy(false) }
   }
@@ -43,7 +43,7 @@ export function ConnectionEntry({ value, onValue, onSubmit, onError }: { value: 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [camera])
   return <div className="connection-entry">
-    <input ref={input} hidden type="file" accept=".pinelink,text/plain" aria-label={lc.import} onChange={event => { const file = event.target.files?.[0]; event.target.value = ''; if (!file) return; if (file.size > 18000) { onError('LOCAL_CODE_INVALID'); return }; void file.text().then(code => { onValue(code); return submit(code) }).catch(() => onError('LOCAL_CODE_INVALID')) }} />
+    <input ref={input} hidden type="file" accept=".pinelink,text/plain" aria-label={lc.import} onChange={event => { const file = event.target.files?.[0]; event.target.value = ''; if (!file) return; if (file.size > 18000) { onError('LOCAL_CODE_INVALID'); return }; void file.text().then(code => { if (!alive.current) return; onValue(code); return submit(code) }).catch(() => { if (alive.current) onError('LOCAL_CODE_INVALID') }) }} />
     {camera ? <div className="local-camera"><video ref={video} autoPlay playsInline muted aria-label={lc.scan} /><MotionButton className="secondary-button guest-wide" onClick={() => setCamera(false)}>{c.cancel}</MotionButton></div> : <form className="guest-code-form" onSubmit={event => { event.preventDefault(); void submit(value) }}>
       <label>{c.code}<textarea className="connection-input" value={value} onChange={event => onValue(event.target.value)} placeholder={c.codePlaceholder} maxLength={18000} spellCheck={false} autoComplete="off" autoCapitalize="none" required /></label>
       <MotionButton type="submit" className="primary-button guest-wide" disabled={!value.trim()} busy={busy}>{c.connectAction}</MotionButton>
