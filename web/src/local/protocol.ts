@@ -6,7 +6,7 @@ export type LocalIdentity = { root: string; device: string; name: string; signin
 export type Signed<T> = T & { signature: string }
 export type ConnectionPackage = Signed<{ v: 1; type: 'offer' | 'answer'; id: string; nonce: string; peer: LocalIdentity; sdp: string; reply: string }>
 export type LocalReceipt = Signed<{ v: 1; id: string; sender: string; recipient: string; root: string; plaintext_root: string; plaintext_size: number; delivered_at: string }>
-export type LocalState = Signed<{ id: string; sender: string; recipient: string; root: string; size: number; name: string; plain_size: number; state: 'PENDING' | 'ACCEPTED' | 'COMPLETED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED' | 'FAILED'; version: number; revision: number; received: number; paused: boolean; receipt?: LocalReceipt }>
+export type LocalState = Signed<{ id: string; sender: string; recipient: string; root: string; size: number; name: string; plain_size: number; content_kind?: 'TEXT'; state: 'PENDING' | 'ACCEPTED' | 'COMPLETED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED' | 'FAILED'; version: number; revision: number; received: number; paused: boolean; receipt?: LocalReceipt }>
 export const localID = (id: string) => 'local:' + id
 export const isLocalID = (id: string) => id.startsWith('local:') && uuid(id.slice(6))
 export const uuid = (id: unknown): id is string => typeof id === 'string' && /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(id)

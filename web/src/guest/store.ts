@@ -5,12 +5,14 @@ import { digest } from '../data/crypto'
 import { wireChunkSize } from './crypto'
 import type { DirectProof } from './direct'
 import type { LocalState } from '../local/protocol'
+import type { StoredText } from './text-storage'
 
 export type GuestJob = {
   id: string; created: number; direction: 'send' | 'receive'; peer: GuestPeer; transfer?: GuestTransfer
   prepared?: PreparedFile; received: number; snapshot?: ProgressSnapshot; plain?: Blob; name: string; plainSize: number
   phase: 'preparing' | 'waiting' | 'running' | 'paused' | 'verifying' | 'complete' | 'stopped'; error?: string; dismissed?: boolean; retryAt?: number; failures?: number; controlRevision?: number
   directAttempted?: boolean
+  payloadKind?: 'TEXT'; text?: StoredText
   transport?: { state: 'connecting' | 'direct' | 'switching' | 'cloud'; proof?: DirectProof }
   authority?: 'LOCAL_DEVICE'
   local?: { expires: number; state?: LocalState; manifest?: string; plainRoot?: string; intent?: 'pause' | 'cancel'; disconnected?: boolean }

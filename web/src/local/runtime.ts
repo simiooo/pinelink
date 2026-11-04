@@ -1,6 +1,7 @@
 import { digest, newProfile, nonce } from '../data/crypto'
 import type { DeviceProfile } from '../data/crypto'
-import { decodeFileFrame, decryptDare, encodeFileFrame, hashBlob, openManifest, prepareFile, safeFileName, suite, wireChunkSize, cipherSize } from '../guest/crypto'
+import { decodeFileFrame, decodeText, decryptDare, encodeFileFrame, hashBlob, openManifest, prepareFile, safeFileName, suite, wireChunkSize, cipherSize, textByteLimit } from '../guest/crypto'
+import type { StoredText } from '../guest/text-storage'
 import { directDelay, fragmentFrame, FrameAssembler } from '../guest/direct'
 import type { GuestJob, GuestStore } from '../guest/store'
 import type { GuestPeer, GuestTransfer, ProgressSnapshot } from '../guest/types'
@@ -124,7 +125,10 @@ export class LocalRuntime {
     const jobs = await this.store.jobs.filter(j => j.authority === 'LOCAL_DEVICE' && j.peer.root === peer.root).toArray()
     for (const job of jobs.slice(-100)) {
       if (job.direction === 'receive' && job.local?.state) await link.send({ type: 'state', state: job.local.state })
-      else if (job.direction === 'send' && active(job)) await this.offer(job, link)
+      else if (job.direction === 'send' && active(job)) {
+        if (job.payloadKind === 'TEXT' && !link.peer?.capabilities?.includes('text-v1')) { await this.store.jobs.update(job.id, { phase: 'paused', error: 'TEXT_UNSUPPORTED' }); continue }
+        await this.offer(job, link)
+      }
     }
   }
   private async closed(link: LocalSession) {
@@ -155,19 +159,21 @@ export class LocalRuntime {
     const link = this.links.get(peer.root!); if (link) { await link.send({ type: 'forget' }); link.close() }
     await this.store.localPeers.delete(pair); await this.changed()
   }
-  async send(file: File, peer: GuestPeer, maxBytes: number) {
+  async send(file: File, peer: GuestPeer, maxBytes: number, text?: { sensitivity: 'NORMAL' | 'SENSITIVE' }) {
     const link = this.links.get(peer.root!); if (!link?.isReady()) throw new Error('LOCAL_RECONNECT_REQUIRED')
+    if (text && !link.peer?.capabilities?.includes('text-v1')) throw new Error('TEXT_UNSUPPORTED')
     if (file.size > Math.min(maxBytes, 64 << 20)) throw new Error('FILE_TOO_LARGE')
     if (await this.store.jobs.filter(active).count() >= 2) throw new Error('GUEST_LIMIT_REACHED')
-    const prepared = await prepareFile(file, { sender: this.profile.encryptionKey, receiver: peer.encryption_key }), manifest = await openManifest(this.profile, prepared.senderManifest)
+    const prepared = await prepareFile(file, { sender: this.profile.encryptionKey, receiver: peer.encryption_key }, text), manifest = await openManifest(this.profile, prepared.senderManifest)
     link.signal.throwIfAborted(); const raw = crypto.randomUUID(), id = localID(raw), expires = Date.now() + 600000
     const transfer: GuestTransfer = { id, state: 'PENDING', version: 0, file_name: prepared.name, size_bytes: prepared.cipher.size, content_root: prepared.root, encryption_suite: suite, sender_owner_id: this.profile.root, sender_device_id: this.profile.device, recipient_owner_id: peer.root!, recipient_device_id: peer.device_id, expires_at: new Date(expires).toISOString(), received_bytes: 0 }
-    const job: GuestJob = { id, created: Date.now(), direction: 'send', peer, authority: 'LOCAL_DEVICE', prepared, received: 0, name: prepared.name, plainSize: file.size, phase: 'waiting', transfer, local: { expires, plainRoot: manifest.plaintext_root }, transport: { state: 'direct', proof: await link.proof() } }
+    const job: GuestJob = { id, created: Date.now(), direction: 'send', peer, authority: 'LOCAL_DEVICE', prepared, ...(text ? { payloadKind: 'TEXT', text: { cipher: prepared.cipher, manifest: prepared.senderManifest } } : {}), received: 0, name: prepared.name, plainSize: file.size, phase: 'waiting', transfer, local: { expires, plainRoot: manifest.plaintext_root }, transport: { state: 'direct', proof: await link.proof() } }
     await this.store.jobs.add(job); await this.changed(); await this.offer(job, link); return id
   }
   private offer(job: GuestJob, link: LocalSession) {
     if (!job.prepared || !job.transfer || !job.local) throw new Error('FILE_SOURCE_MISSING')
-    return link.send({ type: 'offer', id: job.id, root: job.prepared.root, size: job.prepared.cipher.size, name: job.name, plain_size: job.plainSize, remaining: Math.max(0, job.local.expires - Date.now()) })
+    if (job.payloadKind === 'TEXT' && !link.peer?.capabilities?.includes('text-v1')) throw new Error('TEXT_UNSUPPORTED')
+    return link.send({ type: 'offer', id: job.id, root: job.prepared.root, size: job.prepared.cipher.size, name: job.name, plain_size: job.plainSize, ...(job.payloadKind ? { content_kind: job.payloadKind } : {}), remaining: Math.max(0, job.local.expires - Date.now()) })
   }
   private snapshot(s: LocalState, disconnected = false): ProgressSnapshot {
     const done = s.state === 'COMPLETED', running = s.state === 'ACCEPTED' && !s.paused && !disconnected
@@ -180,7 +186,7 @@ export class LocalRuntime {
     const event = { event_id: `${state.recipient}:${state.id}:${state.version}:${state.revision}`, authority: 'LOCAL_DEVICE' as const, authority_device_id: state.recipient, transfer: state.id, snapshot: state, uploaded: 0 }
     if (!await this.store.localJournal.where('event_id').equals(event.event_id).count()) await this.store.localJournal.add(event)
   }
-  private async changeState(job: GuestJob, changes: Partial<LocalState>, link?: LocalSession, chunk?: { index: number; bytes: Uint8Array; hash: string }, plain?: Blob) {
+  private async changeState(job: GuestJob, changes: Partial<LocalState>, link?: LocalSession, chunk?: { index: number; bytes: Uint8Array; hash: string }, plain?: Blob, text?: StoredText) {
     const old = job.local!.state!, unsigned = { ...old, ...changes, signature: '' }, state = await signed(this.profile, 'state', unsigned)
     await this.store.transaction('rw', this.store.jobs, this.store.chunks, this.store.localJournal, this.store.localLeases, async () => {
       await this.assertLease(job.peer.root!)
@@ -193,26 +199,28 @@ export class LocalRuntime {
       }
       const fields=this.fields(current,state)
       if(terminal(state.state)&&state.state!=='COMPLETED'){fields.prepared=undefined;fields.local={...fields.local!,manifest:undefined};await this.store.chunks.where('job').equals(job.id).delete()}
-      await this.store.jobs.update(job.id, { ...fields, ...(plain ? { plain } : {}) }); await this.journal(state)
+      if (text) await this.store.chunks.where('job').equals(job.id).delete()
+      await this.store.jobs.update(job.id, { ...fields, ...(plain ? { plain } : {}), ...(text ? { text } : {}) }); await this.journal(state)
     })
     if (link?.isReady()) await link.send({ type: 'state', state }); await this.changed(); return state
   }
   private async offered(v: Record<string, unknown>, link: LocalSession) {
+    if (v.content_kind !== undefined && (v.content_kind !== 'TEXT' || !link.peer?.capabilities?.includes('text-v1') || v.name !== 'Text' || Number(v.plain_size) < 1 || Number(v.plain_size) > textByteLimit)) throw new Error('LOCAL_MESSAGE_INVALID')
     if (typeof v.id !== 'string' || !isLocalID(v.id) || typeof v.root !== 'string' || !/^[a-f0-9]{64}$/.test(v.root) || !Number.isSafeInteger(v.size) || Number(v.size) < 0 || Number(v.size) > cipherSize(64 << 20) || !Number.isSafeInteger(v.plain_size) || Number(v.plain_size) < 0 || cipherSize(Number(v.plain_size)) !== v.size || typeof v.name !== 'string' || safeFileName(v.name) !== v.name || !Number.isSafeInteger(v.remaining) || Number(v.remaining) < 1 || Number(v.remaining) > 600000) throw new Error('LOCAL_MESSAGE_INVALID')
     const id = v.id
     await this.task(id, async () => {
       const old = await this.store.jobs.get(id)
       if (old) {
-        if (old.direction !== 'receive' || old.authority !== 'LOCAL_DEVICE' || old.peer.root !== link.peer!.root || old.transfer!.content_root !== v.root || old.transfer!.size_bytes !== v.size) throw new Error('LOCAL_MESSAGE_INVALID')
+        if (old.direction !== 'receive' || old.authority !== 'LOCAL_DEVICE' || old.peer.root !== link.peer!.root || old.transfer!.content_root !== v.root || old.transfer!.size_bytes !== v.size || old.payloadKind !== v.content_kind) throw new Error('LOCAL_MESSAGE_INVALID')
         await link.send({ type: 'state', state: old.local!.state! }); return
       }
       if (await this.store.jobs.filter(active).count() >= 2) throw new Error('GUEST_LIMIT_REACHED')
       const stored = await this.store.jobs.filter(j => j.authority === 'LOCAL_DEVICE').toArray()
-      if (stored.reduce((n,j) => n + (j.plain?.size ?? j.prepared?.cipher.size ?? j.received), 0) + Number(v.size) * 2 > 256 << 20) throw new Error('LOCAL_STORAGE_FULL')
+      if (stored.reduce((n,j) => n + (j.plain?.size ?? j.prepared?.cipher.size ?? j.text?.cipher.size ?? j.received), 0) + Number(v.size) * 2 > 256 << 20) throw new Error('LOCAL_STORAGE_FULL')
       const expires = Date.now() + Number(v.remaining), peer = this.peer(link)
-      const state = await signed(this.profile, 'state', { id, sender: peer.root!, recipient: this.profile.root, root: v.root as string, size: Number(v.size), name: v.name as string, plain_size: Number(v.plain_size), state: 'PENDING' as const, version: 1, revision: 0, received: 0, paused: false })
+      const state = await signed(this.profile, 'state', { id, sender: peer.root!, recipient: this.profile.root, root: v.root as string, size: Number(v.size), name: v.name as string, plain_size: Number(v.plain_size), ...(v.content_kind === 'TEXT' ? { content_kind: 'TEXT' as const } : {}), state: 'PENDING' as const, version: 1, revision: 0, received: 0, paused: false })
       const transfer: GuestTransfer = { id, state: 'PENDING', version: 1, file_name: state.name, size_bytes: state.size, content_root: state.root, encryption_suite: suite, sender_owner_id: state.sender, sender_device_id: peer.device_id, recipient_owner_id: state.recipient, recipient_device_id: this.profile.device, expires_at: new Date(expires).toISOString(), received_bytes: 0 }
-      const job: GuestJob = { id, created: Date.now(), direction: 'receive', peer, authority: 'LOCAL_DEVICE', received: 0, name: state.name, plainSize: state.plain_size, phase: 'waiting', transfer, snapshot: this.snapshot(state), local: { expires, state }, transport: { state: 'direct', proof: await link.proof() } }
+      const job: GuestJob = { id, created: Date.now(), direction: 'receive', peer, authority: 'LOCAL_DEVICE', ...(state.content_kind ? { payloadKind: state.content_kind } : {}), received: 0, name: state.name, plainSize: state.plain_size, phase: 'waiting', transfer, snapshot: this.snapshot(state), local: { expires, state }, transport: { state: 'direct', proof: await link.proof() } }
       await this.store.transaction('rw', this.store.jobs, this.store.localJournal, this.store.localLeases, async () => { await this.assertLease(peer.root!); if (await this.store.jobs.get(id)) throw new Error('FILE_JOB_CHANGED'); await this.store.jobs.add(job); await this.journal(state) })
       await link.send({ type: 'state', state }); await this.changed()
     })
@@ -221,7 +229,7 @@ export class LocalRuntime {
     if (!s || !isLocalID(s.id) || s.recipient !== link.peer!.root || s.sender !== this.profile.root || !Number.isSafeInteger(s.version) || s.version < 1 || !Number.isSafeInteger(s.revision) || s.revision < 0 || !Number.isSafeInteger(s.received) || s.received < 0 || s.received > s.size || typeof s.paused !== 'boolean' || !['PENDING','ACCEPTED','COMPLETED','REJECTED','CANCELLED','EXPIRED','FAILED'].includes(s.state) || !await verified(link.peer!.signing_key, 'state', s)) throw new Error('LOCAL_MESSAGE_INVALID')
     await this.task(s.id, async () => {
       const job = await this.store.jobs.get(s.id); if (!job || job.direction !== 'send' || job.peer.root !== link.peer!.root) return
-      if (job.transfer!.content_root !== s.root || job.transfer!.size_bytes !== s.size || job.name !== s.name || job.plainSize !== s.plain_size) throw new Error('LOCAL_MESSAGE_INVALID')
+      if (job.transfer!.content_root !== s.root || job.transfer!.size_bytes !== s.size || job.name !== s.name || job.plainSize !== s.plain_size || job.payloadKind !== s.content_kind) throw new Error('LOCAL_MESSAGE_INVALID')
       const old = job.local!.state
       if (old && (s.version < old.version || s.revision < old.revision || s.received < old.received || terminal(old.state))) return
       if (s.state === 'COMPLETED') {
@@ -269,7 +277,7 @@ export class LocalRuntime {
       const job = await this.store.jobs.get(v.id as string), s = job?.local?.state
       if (!job || job.direction !== 'receive' || job.peer.root !== link.peer!.root || !s || s.state !== 'ACCEPTED' || s.paused || s.version !== v.version) return
       const manifest = await openManifest(this.profile, v.value as string)
-      if (manifest.plaintext_size !== job.plainSize || cipherSize(manifest.plaintext_size) !== s.size || safeFileName(manifest.file_name) !== job.name) throw new Error('FILE_MANIFEST_INVALID')
+      if (manifest.plaintext_size !== job.plainSize || cipherSize(manifest.plaintext_size) !== s.size || safeFileName(manifest.file_name) !== job.name || (manifest.content_kind === 'TEXT') !== (job.payloadKind === 'TEXT')) throw new Error('FILE_MANIFEST_INVALID')
       await this.store.jobs.update(job.id, { local: { ...job.local!, manifest: v.value as string, disconnected: false }, error: undefined, phase: 'running', transport: { state: 'direct', proof: await link.proof() } })
       this.assemblers.set(job.id, { version: s.version, assembler: new FrameAssembler(s.size, Math.floor(s.received / wireChunkSize)) })
       await link.send({ type: 'ready', id: job.id, version: s.version, from: s.received }); await this.changed()
@@ -322,16 +330,17 @@ export class LocalRuntime {
       const manifest = await openManifest(this.profile,job.local!.manifest!)
       const cipher = await this.store.receivedCipher(job); if (await hashBlob(cipher)!==s.root) throw new Error('FILE_CHECKSUM_INVALID')
       const plain = await decryptDare(cipher,manifest)
+      if (job.payloadKind === 'TEXT') decodeText(new Uint8Array(await plain.arrayBuffer()))
       const receipt: LocalReceipt = await signed(this.profile,'receipt',{v:1 as const,id,sender:s.sender,recipient:s.recipient,root:s.root,plaintext_root:manifest.plaintext_root,plaintext_size:manifest.plaintext_size,delivered_at:new Date().toISOString()})
       await this.task(id,()=>this.controlLease(job.peer.root!,async () => {
         const current = await this.store.jobs.get(id), state = current?.local?.state
         if (!current || !state || state.version!==s.version || state.paused || state.state!=='ACCEPTED' || Date.now()>=current.local!.expires) return
-        await this.changeState(current,{state:'COMPLETED',version:state.version+1,receipt},link,undefined,plain)
+        await this.changeState(current,{state:'COMPLETED',version:state.version+1,receipt},link,undefined,job.payloadKind === 'TEXT' ? undefined : plain,job.payloadKind === 'TEXT' ? { cipher, manifest: job.local!.manifest! } : undefined)
       }))
     })().catch(async error => {
       if(this.stopped)return
       const reason=error instanceof Error?error.message:'FILE_CHECKSUM_INVALID'
-      if(reason.startsWith('FILE_')&&reason!=='FILE_JOB_CHANGED'||error instanceof DOMException&&error.name==='OperationError')await this.task(id,async()=>{
+      if((reason.startsWith('FILE_')&&reason!=='FILE_JOB_CHANGED')||reason.startsWith('TEXT_')||error instanceof DOMException&&error.name==='OperationError')await this.task(id,async()=>{
         const current=await this.store.jobs.get(id),state=current?.local?.state
         if(!current||!state||state.version!==verifyingVersion||terminal(state.state))return
         await this.controlLease(current.peer.root!,()=>this.changeState(current,{state:'FAILED',version:state.version+1},link))

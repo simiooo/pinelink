@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto'
 import {webcrypto} from 'node:crypto'
-import {Blob as NodeBlob} from 'node:buffer'
+import {Blob as NodeBlob, File as NodeFile} from 'node:buffer'
 import {afterEach,expect,it,vi} from 'vitest'
 import {newProfile} from '../data/crypto'
 import type {DeviceProfile} from '../data/crypto'
@@ -33,6 +33,16 @@ it('a disconnected sender records a desired pause without inventing a receiver a
 })
 it('an active tab lease fences conflicting receiver mutations',async()=>{
  const r=await open(),j=await job(r,'receive',await newProfile());await r.store.localLeases.put({id:j.peer.root!,owner:'other-tab',until:Date.now()+15000});await expect(r.action(j.id,'cancel')).rejects.toThrow('LOCAL_OTHER_TAB');expect((await r.store.jobs.get(j.id))?.phase).toBe('running');expect(await r.store.localJournal.count()).toBe(0)
+})
+it('refuses a text offer to a connected legacy peer before saving or sending anything',async()=>{
+ const r=await open(),profile=await newProfile(),j=await job(r,'send',profile)
+ await r.store.jobs.delete(j.id)
+ const send=vi.fn(),link={isReady:()=>true,peer:identity(profile,'Peer'),send}
+ ;(r as unknown as {links:Map<string,unknown>}).links.set(profile.root,link)
+ const file=new NodeFile(['private text'],'Text') as unknown as File
+ await expect(r.send(file,j.peer,1024,{sensitivity:'SENSITIVE'})).rejects.toThrow('TEXT_UNSUPPORTED')
+ expect(await r.store.jobs.count()).toBe(0);expect(send).not.toHaveBeenCalled()
+ ;(r as unknown as {links:Map<string,unknown>}).links.clear()
 })
 it('closing during the lease commit releases the browser lock and its own reservation',async()=>{
  const r=await open(),peer=await newProfile();let held=0
