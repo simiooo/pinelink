@@ -204,7 +204,7 @@ func guestRouteAllowed(r *http.Request) bool {
 	switch parts[1] {
 	case "p2p":
 		switch parts[3] {
-		case "progress":
+		case "progress", "signals":
 			return r.Method == http.MethodGet || r.Method == http.MethodPost
 		case "relay", "relay-transport":
 			return r.Method == http.MethodGet
@@ -216,8 +216,8 @@ func guestRouteAllowed(r *http.Request) bool {
 	case "tasks":
 		return r.Method == http.MethodPost && (parts[3] == "pause" || parts[3] == "resume" || parts[3] == "cancel")
 	}
-	// Signalling and future endpoint families are not part of the bounded guest
-	// WebSocket transport; never expose them through a broad prefix permission.
+	// Signals has its own bounded browser-only channel policy in the service;
+	// unknown operations remain denied rather than inheriting a prefix grant.
 	return false
 }
 func (a *API) mintRelayTicket(w http.ResponseWriter, r *http.Request) {

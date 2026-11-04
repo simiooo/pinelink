@@ -1,0 +1,125 @@
+{
+  "version": 33,
+  "issue": "SIM-947",
+  "document": "tab-12",
+  "page": "1585797759:2625",
+  "savedReopened": true,
+  "exportedFrames": 14,
+  "font": "Nunito",
+  "faithful": true,
+  "textNodes": 67,
+  "frames": [
+    {
+      "key": "desktop-connecting",
+      "result": {
+        "id": "1585797759:3191",
+        "name": "desktop / connecting",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "desktop-direct",
+      "result": {
+        "id": "1585797759:3229",
+        "name": "desktop / direct",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "desktop-switching",
+      "result": {
+        "id": "1585797759:3778",
+        "name": "desktop / switching",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "desktop-cloud",
+      "result": {
+        "id": "1585797759:3300",
+        "name": "desktop / cloud",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-connecting",
+      "result": {
+        "id": "1585797759:3342",
+        "name": "mobile / connecting",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-direct",
+      "result": {
+        "id": "1585797759:3380",
+        "name": "mobile / direct",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-switching",
+      "result": {
+        "id": "1585797759:3817",
+        "name": "mobile / switching",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-cloud",
+      "result": {
+        "id": "1585797759:3451",
+        "name": "mobile / cloud",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-direct-paused",
+      "result": {
+        "id": "1585797759:3493",
+        "name": "mobile / direct / paused",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-reconnecting",
+      "result": {
+        "id": "1585797759:3856",
+        "name": "mobile / reconnecting",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-offline",
+      "result": {
+        "id": "1585797759:3895",
+        "name": "mobile / offline",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-direct-complete",
+      "result": {
+        "id": "1585797759:3604",
+        "name": "mobile / direct / complete",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-direct-details",
+      "result": {
+        "id": "1585797759:3639",
+        "name": "mobile / direct / details",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-cloud-details",
+      "result": {
+        "id": "1585797759:3689",
+        "name": "mobile / cloud / details",
+        "type": "FRAME"
+      }
+    }
+  ]
+}

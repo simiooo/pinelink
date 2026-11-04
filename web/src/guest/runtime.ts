@@ -6,12 +6,15 @@ import type { GuestJob } from './store'
 import type { GuestLease, GuestConnections, GuestInvite, GuestCandidate, GuestPeer, GuestTransfer, ProgressSnapshot } from './types'
 import { decodeFileFrame, decryptDare, encodeFileFrame, hashBlob, openManifest, prepareFile, safeFileName, suite, wireChunkSize } from './crypto'
 import { setGuestHistoryAvailable, setGuestWorkPending } from './continuity'
+import { DirectLink, DirectUnavailable, fallbackSignal } from './direct'
+import type { DirectProof } from './direct'
 
 export class GuestError extends Error { constructor(public code: string, public status = 0) { super(code) } }
 type Snapshot = { ready: boolean; connected: boolean; busy: boolean; offline: boolean; error?: string; checkedAt?: number; connections: GuestConnections; jobs: GuestJob[]; invite?: GuestInvite }
 type ControlledTask = { version: number; state: string; progress_bytes: number; total_bytes: number; progress_revision: number }
 const emptyConnections = (): GuestConnections => ({ invites: [], candidates: [], peers: [] })
 const activeJob = (job: GuestJob) => !['complete', 'stopped'].includes(job.phase)
+const hasSpool = (job: GuestJob) => !!job.snapshot && !['NOT_STARTED', 'NOT_REQUIRED'].includes(job.snapshot.spool.state)
 const progressPhase = (snapshot: ProgressSnapshot): GuestJob['phase'] => snapshot.completion.delivered ? 'complete' : [snapshot.state, snapshot.delivery.state].some(state => ['CANCELLED', 'REJECTED', 'EXPIRED', 'FAILED', 'DELETED'].includes(state)) ? 'stopped' : snapshot.delivery.state === 'PAUSED' ? 'paused' : snapshot.delivery.state === 'VERIFYING' ? 'verifying' : snapshot.state === 'PENDING' ? 'waiting' : 'running'
 const deviceName = () => /iPhone/.test(navigator.userAgent) ? 'iPhone' : /iPad/.test(navigator.userAgent) ? 'iPad' : /Android/.test(navigator.userAgent) ? 'Android' : /Macintosh/.test(navigator.userAgent) ? 'Mac' : /Windows/.test(navigator.userAgent) ? 'Windows PC' : 'Web browser'
 const wait = (ms: number, signal?: AbortSignal) => new Promise<void>((resolve, reject) => {
@@ -42,6 +45,8 @@ export class GuestRuntime {
     try {
       const runtime = new GuestRuntime(absolute, store, await store.profile())
       runtime.lease = await store.leases.get('self')
+      // Persisted route history is not a live PeerConnection after reopening.
+      await store.jobs.filter(job => activeJob(job) && job.transport?.state === 'direct').modify(job => { job.transport = { state: 'connecting', proof: job.transport?.proof } })
       await runtime.refreshLocal()
       runtime.snapshot = { ...runtime.snapshot, ready: true, connected: !!runtime.lease }
       if (typeof BroadcastChannel !== 'undefined') { runtime.channel = new BroadcastChannel(store.name); runtime.channel.onmessage = () => { void runtime.refreshLocal().catch(() => undefined) } }
@@ -203,7 +208,7 @@ export class GuestRuntime {
     throw new GuestError('STATE_CONFLICT')
   }
   private startJob(job: GuestJob) {
-    if (this.stopped || this.workers.has(job.id) || !activeJob(job) || job.phase === 'paused' || (job.retryAt ?? 0) > Date.now() || (job.direction === 'send' && job.snapshot?.completion.stored) || (job.direction === 'receive' && job.transfer?.state === 'PENDING')) return
+    if (this.stopped || this.workers.has(job.id) || !activeJob(job) || job.phase === 'paused' || (job.retryAt ?? 0) > Date.now() || (job.direction === 'send' && job.snapshot?.completion.stored) || (job.direction === 'receive' && job.transfer?.state === 'PENDING' && (job.directAttempted || hasSpool(job)))) return
     const controller = new AbortController(); this.workers.set(job.id, controller)
     const work = () => this.exclusive('job:' + job.id, async () => {
       const current = await this.store.jobs.get(job.id)
@@ -211,7 +216,13 @@ export class GuestRuntime {
       await (current.direction === 'send' ? this.sendJob(current, controller.signal) : this.receiveJob(current, controller.signal))
     }, controller.signal)
     const operation = work().catch(async error => {
-      if (!controller.signal.aborted && !this.stopped) { const failures = (job.failures ?? 0) + 1; await this.store.jobs.update(job.id, { error: error instanceof Error ? error.message : 'TRANSFER_INTERRUPTED', failures, retryAt: Date.now() + Math.min(30000, failures * 3000), ...((error instanceof GuestError && [403, 404, 410].includes(error.status)) ? { phase: 'stopped' as const } : {}) }); await this.changed() }
+      if (!controller.signal.aborted && !this.stopped) {
+        await this.store.transaction('rw', this.store.jobs, async () => {
+          const current = await this.store.jobs.get(job.id); if (controller.signal.aborted || this.stopped || !current || !activeJob(current)) return
+          const failures = (current.failures ?? 0) + 1
+          await this.store.jobs.update(job.id, { error: error instanceof Error ? error.message : 'TRANSFER_INTERRUPTED', failures, retryAt: Date.now() + Math.min(30000, failures * 3000), ...((error instanceof GuestError && [403, 404, 410].includes(error.status)) ? { phase: 'stopped' as const } : {}) })
+        }); await this.changed()
+      }
     }).catch(error => this.noteError(error)).finally(() => { if (this.workers.get(job.id) === controller) this.workers.delete(job.id); this.workerTasks.delete(operation) })
     this.workerTasks.add(operation)
   }
@@ -225,13 +236,97 @@ export class GuestRuntime {
     }
     const progress = await this.request<ProgressSnapshot>('GET', `/v1/p2p/${transfer.id}/progress`, undefined, signal)
     if (progress.completion.stored || progress.completion.delivered) return
+    job = (await this.store.jobs.get(job.id))!
+    if (!job.directAttempted && !hasSpool({ ...job, snapshot: progress })) {
+      await this.store.jobs.update(job.id, { directAttempted: true }); await this.transport(job.id, 'connecting', signal)
+      let link: DirectLink | undefined
+      try {
+        link = this.directLink(job, signal)
+        const proof = await link.connect(); await this.transport(job.id, 'direct', signal, proof)
+        await this.waitAccepted(job, link.signal)
+        const from = await link.waitReady()
+        let observedAt = Date.now()
+        for (let index = Math.floor(from / wireChunkSize); index < Math.max(1, Math.ceil(job.prepared!.cipher.size / wireChunkSize)); index++) {
+          signal.throwIfAborted()
+          const bytes = new Uint8Array(await job.prepared!.cipher.slice(index * wireChunkSize, (index + 1) * wireChunkSize).arrayBuffer())
+          await link.send(await encodeFileFrame(index, bytes), Math.min(job.prepared!.cipher.size, (index + 1) * wireChunkSize))
+          if (Date.now() - observedAt >= 500) { const snap = await this.observe(job, signal); if (snap.delivery.state === 'PAUSED') throw new DirectUnavailable(); await this.transport(job.id, 'direct', signal, await link.proof()); observedAt = Date.now() }
+        }
+        await this.waitDelivered(job, signal, link); return
+      } catch (error) {
+        signal.throwIfAborted()
+        // Check the authoritative receipt before interpreting a final channel
+        // close as a failure. Never upload a second copy after direct delivery.
+        const latest = await this.observe(job, signal)
+        if (latest.completion.delivered) return
+        if (latest.delivery.acknowledged_bytes === transfer.size_bytes && transfer.size_bytes > 0 && await this.receiptGrace(job, signal)) return
+        if (!(error instanceof DirectUnavailable) && !(error instanceof TypeError) && !(error instanceof DOMException && error.name === 'NotSupportedError')) throw error
+      } finally { await link?.close() }
+    }
+    await this.fallback(job, signal)
+    await this.sendCloud(job, signal)
+  }
+  private directLink(job: GuestJob, signal: AbortSignal) {
+    const transfer = job.transfer!
+    return new DirectLink(job.direction === 'send' ? 'SENDER' : 'RECEIVER', transfer.id, transfer.content_root, transfer.size_bytes,
+      (method, suffix, input, callSignal) => this.request(method, `/v1/p2p/${transfer.id}${suffix}`, input === undefined ? undefined : { ...input as object, owner_id: this.lease!.owner_id, device_id: this.profile.device }, callSignal ?? signal), signal)
+  }
+  private async transport(id: string, state: NonNullable<GuestJob['transport']>['state'], signal: AbortSignal, proof?: DirectProof) {
+    signal.throwIfAborted()
+    await this.store.transaction('rw', this.store.jobs, async () => {
+      const current = await this.store.jobs.get(id); signal.throwIfAborted()
+      if (current && (activeJob(current) || current.transport?.state === state)) await this.store.jobs.update(id, { transport: { state, proof: proof ?? current.transport?.proof } })
+    })
+    await this.changed()
+  }
+  private async observe(job: GuestJob, signal: AbortSignal) {
+    const snap = await this.request<ProgressSnapshot>('GET', `/v1/p2p/${job.transfer!.id}/progress`, undefined, signal)
+    await this.applyProgress(job.id, snap)
+    signal.throwIfAborted()
+    if (['CANCELLED', 'REJECTED', 'EXPIRED', 'FAILED', 'DELETED'].includes(snap.state)) throw new GuestError('FILE_EXPIRED', 410)
+    return snap
+  }
+  private async waitAccepted(job: GuestJob, signal: AbortSignal) {
+    while (true) { const snap = await this.observe(job, signal); if (snap.completion.delivered) return; if (snap.state === 'ACCEPTED') { if (snap.delivery.state === 'PAUSED') throw new DirectUnavailable(); return }; await wait(500, signal) }
+  }
+  private async waitDelivered(job: GuestJob, signal: AbortSignal, link?: DirectLink) {
+    let disconnectedAt = 0
+    while (true) {
+      const snap = await this.observe(job, signal)
+      if (link) await this.transport(job.id, 'direct', signal, await link.proof())
+      if (snap.completion.delivered) return
+      if (snap.delivery.state === 'PAUSED' && (snap.delivery.acknowledged_bytes < job.transfer!.size_bytes || !job.transfer!.size_bytes)) throw new DirectUnavailable()
+      // A lost channel cannot hide behind a still-connected ICE transport.
+      if (link?.signal.aborted) {
+        disconnectedAt ||= Date.now()
+        if (snap.delivery.acknowledged_bytes < job.transfer!.size_bytes || Date.now() - disconnectedAt > 1500) throw new DirectUnavailable()
+      }
+      await wait(500, signal)
+    }
+  }
+  private async receiptGrace(job: GuestJob, signal: AbortSignal) {
+    const until = Date.now() + 1500
+    do { if ((await this.observe(job, signal)).completion.delivered) return true; await wait(300, signal) } while (Date.now() < until)
+    return false
+  }
+  private async fallback(job: GuestJob, signal: AbortSignal) {
+    await this.transport(job.id, 'switching', signal)
+    const result = await this.request<{ signals: { channel: string }[] | null }>('GET', `/v1/p2p/${job.transfer!.id}/signals?after=0`, undefined, signal)
+    if (!result.signals?.some(fallbackSignal)) await this.request('POST', `/v1/p2p/${job.transfer!.id}/signals`, { owner_id: this.lease!.owner_id, device_id: this.profile.device, role: job.direction === 'send' ? 'SENDER' : 'RECEIVER', channel: job.direction === 'send' ? 'web-direct-failed-sender' : 'web-direct-failed', payload: 'unavailable' }, signal)
+  }
+  private async sendCloud(job: GuestJob, signal: AbortSignal) {
+    const transfer = job.transfer!
+    const progress = await this.observe(job, signal)
+    if (progress.completion.stored || progress.completion.delivered) return
+    if (progress.delivery.acknowledged_bytes === transfer.size_bytes && transfer.size_bytes > 0 && await this.receiptGrace(job, signal)) return
     const socket = await this.openSocket(transfer.id, 'sender', signal)
     try {
-      for (let index = 0; index < Math.max(1, Math.ceil(job.prepared.cipher.size / wireChunkSize)); index++) {
+      await this.transport(job.id, 'cloud', signal)
+      for (let index = 0; index < Math.max(1, Math.ceil(job.prepared!.cipher.size / wireChunkSize)); index++) {
         signal.throwIfAborted()
         while (socket.bufferedAmount > 256 << 10) { await wait(25, signal); if (socket.readyState !== WebSocket.OPEN) throw new Error('TRANSFER_INTERRUPTED') }
         if (socket.readyState !== WebSocket.OPEN) throw new Error('TRANSFER_INTERRUPTED')
-        const bytes = new Uint8Array(await job.prepared.cipher.slice(index * wireChunkSize, (index + 1) * wireChunkSize).arrayBuffer())
+        const bytes = new Uint8Array(await job.prepared!.cipher.slice(index * wireChunkSize, (index + 1) * wireChunkSize).arrayBuffer())
         socket.send(await encodeFileFrame(index, bytes))
       }
       while (true) { await wait(600, signal); const snap = await this.request<ProgressSnapshot>('GET', `/v1/p2p/${transfer.id}/progress`, undefined, signal); await this.applyProgress(job.id, snap); if (snap.completion.stored || snap.completion.delivered) break; if (socket.readyState !== WebSocket.OPEN) throw new Error('TRANSFER_INTERRUPTED') }
@@ -249,58 +344,132 @@ export class GuestRuntime {
     signal.throwIfAborted(); return socket
   }
   private async receiveJob(job: GuestJob, signal: AbortSignal) {
-    const transfer = job.transfer!; if (!transfer.encrypted_manifest) throw new Error('FILE_MANIFEST_MISSING')
-    const manifest = await openManifest(this.profile, transfer.encrypted_manifest)
-    await this.store.jobs.update(job.id, { name: safeFileName(manifest.file_name), plainSize: manifest.plaintext_size, phase: 'running', error: undefined })
+    const transfer = job.transfer!
     const snapshot = await this.request<ProgressSnapshot>('GET', `/v1/p2p/${transfer.id}/progress`, undefined, signal)
-    if (job.received >= transfer.size_bytes && (transfer.size_bytes > 0 || await this.store.chunks.get([job.id, 0]))) { await this.verifyAndFinish(job.id, manifest, signal); return }
+    if (transfer.state !== 'PENDING' && job.received >= transfer.size_bytes && (transfer.size_bytes > 0 || await this.store.chunks.get([job.id, 0]))) { await this.verifyAndFinish(job.id, await this.incomingManifest(job, signal), signal); return }
+    if (!job.directAttempted && !hasSpool({ ...job, snapshot })) {
+      await this.store.jobs.update(job.id, { directAttempted: true }); await this.transport(job.id, 'connecting', signal)
+      let link: DirectLink | undefined
+      try {
+        link = this.directLink(job, signal)
+        await this.transport(job.id, 'direct', signal, await link.connect())
+        await this.waitAccepted(job, link.signal)
+        const manifest = await this.incomingManifest(job, link.signal)
+        const live = await this.observe(job, signal), route = { kind: 'DIRECT', epoch: (live.route?.epoch ?? 0) + 1 }
+        await this.reportReceived(job, job.received, route, signal)
+        const from = Math.floor(Math.min(job.received, live.delivery.acknowledged_bytes) / wireChunkSize) * wireChunkSize
+        const direct = link, receive = this.frameReceiver(job, manifest, route, from, 1 << 20, received => direct.acknowledge(received))
+        await link.receive(from, receive)
+        await this.transport(job.id, 'direct', signal, await link.proof()); return
+      } catch (error) {
+        signal.throwIfAborted()
+        if (!(error instanceof DirectUnavailable) && !(error instanceof TypeError) && !(error instanceof DOMException && error.name === 'NotSupportedError')) throw error
+      } finally { await link?.close() }
+    }
+    job = (await this.store.jobs.get(job.id))!
+    if (job.transfer?.state !== 'PENDING' && job.received >= transfer.size_bytes && (transfer.size_bytes > 0 || await this.store.chunks.get([job.id, 0]))) { await this.verifyAndFinish(job.id, await this.incomingManifest(job, signal), signal); return }
+    await this.fallback(job, signal)
+    const current = await this.observe(job, signal)
+    if (current.state === 'PENDING') return
+    if (current.delivery.state === 'PAUSED') return
+    await this.receiveCloud(job, await this.incomingManifest(job, signal), current, signal)
+  }
+  private async incomingManifest(job: GuestJob, signal: AbortSignal) {
+    // The server intentionally withholds the recipient key envelope until file
+    // consent. Transport negotiation needs neither that envelope nor file data.
+    const current = await this.request<GuestTransfer>('GET', `/v1/transfers/${job.transfer!.id}`, undefined, signal)
+    if (current.content_root !== job.transfer!.content_root || current.size_bytes !== job.transfer!.size_bytes) throw new Error('FILE_JOB_CHANGED')
+    if (!current.encrypted_manifest || !['ACCEPTED', 'COMPLETED'].includes(current.state)) throw new Error('FILE_MANIFEST_MISSING')
+    const manifest = await openManifest(this.profile, current.encrypted_manifest); signal.throwIfAborted()
+    await this.store.transaction('rw', this.store.jobs, async () => {
+      const newest = await this.store.jobs.get(job.id); signal.throwIfAborted()
+      if (!newest || !activeJob(newest) || newest.phase === 'paused') throw new DOMException('Transfer stopped', 'AbortError')
+      await this.store.jobs.update(job.id, { transfer: current.version >= (newest.transfer?.version ?? 0) ? current : newest.transfer, name: safeFileName(manifest.file_name), plainSize: manifest.plaintext_size, error: undefined })
+    })
+    await this.changed(); return manifest
+  }
+  private async reportReceived(job: GuestJob, received: number, route: { kind: string; epoch: number }, signal: AbortSignal) {
+    await this.request('POST', `/v1/p2p/${job.transfer!.id}/progress`, { owner_id: this.lease!.owner_id, device_id: this.profile.device, received_bytes: received, route: route.kind, route_epoch: route.epoch }, signal)
+  }
+  private frameReceiver(job: GuestJob, manifest: Awaited<ReturnType<typeof openManifest>>, route: { kind: string; epoch: number }, from: number, threshold: number, acknowledged?: (received: number) => void) {
+    let lastAck = from, lastReport = Date.now()
+    return async (buffer: ArrayBuffer, signal: AbortSignal) => {
+      signal.throwIfAborted()
+      const frame = await decodeFileFrame(buffer, job.transfer!.size_bytes); signal.throwIfAborted()
+      const received = await this.store.storeFrame(job.id, frame.index, frame.bytes, signal)
+      if (received - lastAck >= threshold || Date.now() - lastReport >= 500 || received === job.transfer!.size_bytes) {
+        await this.reportReceived(job, received, route, signal); signal.throwIfAborted()
+        lastAck = received; lastReport = Date.now(); await this.changed()
+      }
+      // Peer flow control acknowledges durable local chunks; visible progress
+      // still uses the separately committed server ledger. This avoids a cloud
+      // round trip for every small SCTP window on a fast LAN.
+      signal.throwIfAborted(); acknowledged?.(received)
+      if (received === job.transfer!.size_bytes) { await this.verifyAndFinish(job.id, manifest, signal, route); return true }
+      return false
+    }
+  }
+  private async receiveCloud(job: GuestJob, manifest: Awaited<ReturnType<typeof openManifest>>, snapshot: ProgressSnapshot, signal: AbortSignal) {
+    const transfer = job.transfer!
     const from = Math.min(Math.floor(job.received / wireChunkSize) * wireChunkSize, Math.floor(snapshot.delivery.acknowledged_bytes / wireChunkSize) * wireChunkSize)
+    const route = { kind: 'RELAY', epoch: Math.max(1, (snapshot.route?.epoch ?? 0) + (snapshot.route?.kind === 'RELAY' ? 0 : 1)) }
     const socket = await this.openSocket(transfer.id, 'receiver', signal, from)
+    let drain = Promise.resolve()
     try {
+      // A sealed cloud copy can send immediately on WebSocket open. Install
+      // handlers synchronously, then gate processing on route initialization;
+      // awaiting HTTP/IndexedDB first would silently lose those first frames.
+      const setup = this.transport(job.id, 'cloud', signal).then(() => this.reportReceived(job, from, route, signal))
+      const receive = this.frameReceiver(job, manifest, route, from, 1 << 20)
       await new Promise<void>((resolve, reject) => {
-        let chain = Promise.resolve(), finished = false, lastAck = from, lastReport = 0
+        let chain = Promise.resolve(), finished = false
         const fail = (error: unknown) => { if (!finished) { finished = true; reject(error) } }
+        chain = setup.catch(fail); drain = chain
         socket.onmessage = event => {
           chain = chain.then(async () => {
             if (finished || signal.aborted) return
             if (!(event.data instanceof ArrayBuffer)) throw new Error('FILE_FRAME_INVALID')
-            const frame = await decodeFileFrame(event.data, transfer.size_bytes)
-            const received = await this.store.storeFrame(job.id, frame.index, frame.bytes)
-            // Durable local ciphertext precedes the server ACK. Lost responses are safe to retry.
-            if (received - lastAck >= (1 << 20) || Date.now() - lastReport >= 500 || received === transfer.size_bytes) {
-              await this.request('POST', `/v1/p2p/${transfer.id}/progress`, { owner_id: this.lease!.owner_id, device_id: this.profile.device, received_bytes: received, route: 'RELAY', route_epoch: 1 }, signal)
-              lastAck = received; lastReport = Date.now(); await this.changed()
-            }
-            if (received === transfer.size_bytes) { await this.verifyAndFinish(job.id, manifest, signal); finished = true; resolve() }
+            if (await receive(event.data, signal)) { finished = true; resolve() }
           }).catch(fail)
+          drain = chain
         }
         socket.onclose = () => { void chain.then(() => { if (!finished) fail(new Error('TRANSFER_INTERRUPTED')) }) }
         socket.onerror = () => fail(new Error('TRANSFER_INTERRUPTED'))
         signal.addEventListener('abort', () => fail(signal.reason), { once: true })
       })
-    } finally { socket.close() }
+    } finally { socket.close(); await drain.catch(() => undefined) }
   }
-  private async verifyAndFinish(id: string, manifest: Awaited<ReturnType<typeof openManifest>>, signal: AbortSignal) {
+  private async verifyAndFinish(id: string, manifest: Awaited<ReturnType<typeof openManifest>>, signal: AbortSignal, selected?: { kind: string; epoch: number }) {
     const job = (await this.store.jobs.get(id))!; if (!job.transfer) throw new Error('FILE_JOB_CHANGED')
     await this.store.jobs.update(id, { phase: 'verifying' }); await this.changed()
     const cipher = await this.store.receivedCipher(job)
     if (await hashBlob(cipher) !== job.transfer.content_root) throw new Error('FILE_CHECKSUM_MISMATCH')
     const plain = await decryptDare(cipher, manifest); signal.throwIfAborted()
     await this.store.jobs.update(id, { plain, name: safeFileName(manifest.file_name), plainSize: manifest.plaintext_size })
-    await this.request('POST', `/v1/p2p/${job.transfer.id}/progress`, { owner_id: this.lease!.owner_id, device_id: this.profile.device, received_bytes: job.transfer.size_bytes, route: 'RELAY', route_epoch: 1 }, signal)
+    const snapshot = await this.request<ProgressSnapshot>('GET', `/v1/p2p/${job.transfer.id}/progress`, undefined, signal)
+    const route = selected ?? { kind: snapshot.route?.kind === 'DIRECT' ? 'DIRECT' : 'RELAY', epoch: Math.max(1, snapshot.route?.epoch ?? 0) }
+    await this.reportReceived(job, job.transfer.size_bytes, route, signal)
     const current = await this.request<GuestTransfer>('GET', `/v1/transfers/${job.transfer.id}`, undefined, signal)
-    const completed = await this.request<GuestTransfer>('POST', `/v1/p2p/${current.id}/complete`, this.action(current), signal)
-    await this.store.jobs.update(id, { transfer: completed, phase: 'complete', error: undefined }); await this.changed()
+    const result = await this.request<GuestTransfer & { progress?: ProgressSnapshot }>('POST', `/v1/p2p/${current.id}/complete`, this.action(current), signal)
+    const { progress: projection, ...completed } = result
+    const fresh = projection ?? await this.request<ProgressSnapshot>('GET', `/v1/p2p/${current.id}/progress`, undefined, signal).catch(() => undefined)
+    await this.store.transaction('rw', this.store.jobs, async () => {
+      const newest = await this.store.jobs.get(id); if (!newest) return
+      const snapshot = fresh?.transfer_id === completed.id && fresh.completion.delivered && (fresh.state_version >= (newest.snapshot?.state_version ?? 0)) && (fresh.route?.epoch ?? 0) >= (newest.snapshot?.route?.epoch ?? 0) ? fresh : newest.snapshot
+      await this.store.jobs.update(id, { transfer: completed.version >= (newest.transfer?.version ?? 0) ? completed : newest.transfer, snapshot, phase: 'complete', error: undefined })
+    }); await this.changed()
   }
   private async applyProgress(id: string, snapshot: ProgressSnapshot) {
     await this.store.transaction('rw', this.store.jobs, async () => {
       const job = await this.store.jobs.get(id); if (!job) return
       if (snapshot.state_version < (job.transfer?.version ?? 0) || snapshot.control_revision < (job.controlRevision ?? 0)) return
-      if (job.snapshot && (snapshot.state_version < job.snapshot.state_version || snapshot.progress_revision < job.snapshot.progress_revision)) return
+      if (job.snapshot && (snapshot.state_version < job.snapshot.state_version || snapshot.progress_revision < job.snapshot.progress_revision || (snapshot.route?.epoch ?? 0) < (job.snapshot.route?.epoch ?? 0))) return
       const phase = progressPhase(snapshot)
       await this.store.jobs.update(id, { snapshot, phase, controlRevision: snapshot.control_revision, ...(snapshot.completion.delivered ? { error: undefined, ...(job.direction === 'send' ? { prepared: undefined } : {}) } : {}) })
     })
     await this.refreshLocal()
+    const current = this.snapshot.jobs.find(job => job.id === id)
+    if (current && (current.phase === 'stopped' || current.phase === 'complete' && current.direction === 'send' && current.transport?.state === 'cloud' || current.direction === 'receive' && (current.phase === 'paused' || ['connecting', 'direct'].includes(current.transport?.state ?? '') && hasSpool(current)))) this.workers.get(id)?.abort()
   }
   async control(id: string, action: 'pause' | 'resume' | 'cancel') {
     return this.command('control:' + action + ':' + id, async () => {

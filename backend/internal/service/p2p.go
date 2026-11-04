@@ -114,6 +114,10 @@ func (s *Service) CreateP2P(ctx context.Context, req P2PCreateRequest) (Transfer
 }
 
 func (s *Service) AddSignal(ctx context.Context, transferID string, req P2PSignalRequest) (P2PSignal, error) {
+	identity, _ := auth.FromContext(ctx)
+	if identity.HasSession() && (identity.OwnerID != req.OwnerID || identity.DeviceID != req.DeviceID) {
+		return P2PSignal{}, ErrUnauthorized
+	}
 	tx, tr, err := s.beginTransferObjects(ctx, transferID)
 	if err != nil {
 		return P2PSignal{}, err
@@ -134,16 +138,24 @@ func (s *Service) AddSignal(ctx context.Context, transferID string, req P2PSigna
 	}
 	permitted := (role == "SENDER" && (req.Channel == "direct-offer" || req.Channel == "direct-failed-sender" || req.Channel == "relay-uplink-offer")) ||
 		(role == "RECEIVER" && (req.Channel == "direct-answer" || req.Channel == "direct-failed" || req.Channel == "relay-downlink-offer"))
-	if !permitted || len(req.Payload) == 0 || len(req.Payload) > 4<<20 {
+	web := browserSignal(req.Channel)
+	if identity.GuestSessionID != "" && !web {
 		return P2PSignal{}, ErrInvalid
 	}
-	if tr.State != "ACCEPTED" && !(tr.State == "PENDING" && role == "SENDER" && req.Channel == "relay-uplink-offer") {
+	if (!permitted && !browserSignalRole(req.Channel, role)) || len(req.Payload) == 0 || len(req.Payload) > 4<<20 {
+		return P2PSignal{}, ErrInvalid
+	}
+	if tr.State != "ACCEPTED" && !(tr.State == "PENDING" && (web && identity.GuestSessionID != "" || role == "SENDER" && req.Channel == "relay-uplink-offer")) {
 		return P2PSignal{}, &StateConflictError{Resource: "transfer", Current: presentTransfer(tr, req.OwnerID, req.DeviceID)}
 	}
 	if req.ReplyTo < 0 {
 		return P2PSignal{}, ErrInvalid
 	}
-	if req.Channel == "direct-answer" {
+	if web {
+		if err = s.validateBrowserSignal(ctx, tx, tr, req, role); err != nil {
+			return P2PSignal{}, err
+		}
+	} else if req.Channel == "direct-answer" {
 		var matches bool
 		if err = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM peer_signals WHERE sequence=$1 AND transfer_id=$2 AND channel='direct-offer' AND sender_role='SENDER')`, req.ReplyTo, transferID).Scan(&matches); err != nil {
 			return P2PSignal{}, err
@@ -155,7 +167,6 @@ func (s *Service) AddSignal(ctx context.Context, transferID string, req P2PSigna
 		return P2PSignal{}, ErrInvalid
 	}
 	var signal P2PSignal
-	identity, _ := auth.FromContext(ctx)
 	err = tx.QueryRow(ctx, `INSERT INTO peer_signals(transfer_id,sender_role,channel,payload,reply_to,auth_session_id,guest_session_id) VALUES($1,$2,$3,$4,$5,NULLIF($6,'')::uuid,NULLIF($7,'')::uuid) RETURNING sequence,created_at`, transferID, role, req.Channel, req.Payload, req.ReplyTo, identity.SessionID, identity.GuestSessionID).Scan(&signal.Sequence, &signal.CreatedAt)
 	if err != nil {
 		return P2PSignal{}, err
@@ -165,6 +176,12 @@ func (s *Service) AddSignal(ctx context.Context, transferID string, req P2PSigna
 }
 
 func (s *Service) Signals(ctx context.Context, transferID, ownerID, deviceID string, after int64) (P2PSignalList, error) {
+	if after < 0 {
+		return P2PSignalList{}, ErrInvalid
+	}
+	if i, ok := auth.FromContext(ctx); ok && i.GuestSessionID != "" {
+		return s.guestSignals(ctx, transferID, ownerID, deviceID, after)
+	}
 	tr, err := s.GetTransfer(ctx, transferID, ownerID, deviceID)
 	if err != nil {
 		return P2PSignalList{}, err
@@ -288,6 +305,9 @@ func (s *Service) CompleteP2P(ctx context.Context, transferID string, req Transf
 	transfer.State = "COMPLETED"
 	transfer.Version++
 	transfer.UpdatedAt = s.now()
+	if err := releaseBrowserSignals(ctx, tx, transferID); err != nil {
+		return Transfer{}, err
+	}
 	if _, err := tx.Exec(ctx, `UPDATE transfer_requests SET state='COMPLETED', version=$2, updated_at=now(), responded_at=now() WHERE id=$1`, transferID, transfer.Version); err != nil {
 		return Transfer{}, err
 	}

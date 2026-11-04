@@ -41,3 +41,45 @@ it('does not imply recipient completion when the entire cloud copy is stored', (
   expect(container.querySelector('.guest-cloud')).not.toBeInTheDocument()
   expect(container.querySelector('.guest-peer')).toBe(endpoint)
 })
+
+it('draws one real direct delivery ledger and freezes it while paused', () => {
+  const value = job(); value.transport = { state: 'direct' }; value.snapshot!.route = { kind: 'DIRECT', epoch: 1 }
+  value.snapshot!.spool.state = 'NOT_REQUIRED'; value.snapshot!.completion.stored = false
+  const { container, rerender } = render(view(value)), curve = container.querySelector('[data-ledger=delivery]')
+  expect(container.querySelector('.guest-network')).toHaveAttribute('data-route', 'direct')
+  expect(container.querySelectorAll('.guest-node')).toHaveLength(2)
+  expect(container.querySelectorAll('.guest-curve')).toHaveLength(1)
+  expect(curve).toHaveAttribute('data-blue', '0.35')
+  expect(curve).toHaveAttribute('data-running', 'true')
+  value.phase = 'paused'; value.snapshot!.delivery.state = 'PAUSED'; rerender(view(value))
+  expect(container.querySelector('[data-ledger=delivery]')).toBe(curve)
+  expect(curve).toHaveAttribute('data-running', 'false')
+  expect(screen.getByRole('button', { name: 'Paused' })).toBeInTheDocument()
+})
+it('retains acknowledged bytes and the same device nodes while switching to the actual cloud route', () => {
+  const value = job(); value.transport = { state: 'switching' }; value.snapshot!.route = { kind: 'DIRECT', epoch: 1 }
+  value.snapshot!.spool.state = 'NOT_REQUIRED'; value.snapshot!.completion.stored = false
+  const { container, rerender } = render(view(value)), endpoint = container.querySelector('.guest-peer')
+  expect(container.querySelector('.guest-cloud')).not.toBeInTheDocument()
+  expect(container.querySelector('[data-ledger=delivery]')).toHaveAttribute('data-blue', '0.35')
+  expect(container.querySelector('[data-ledger=delivery]')).toHaveAttribute('data-running', 'false')
+  value.transport.state = 'cloud'; value.snapshot!.route = { kind: 'RELAY', epoch: 2 }
+  value.snapshot!.spool = { state: 'SPOOLING', acknowledged_bytes: 58, total_bytes: 100 }; rerender(view(value))
+  expect(container.querySelector('.guest-peer')).toBe(endpoint)
+  expect(container.querySelectorAll('.guest-node')).toHaveLength(3)
+  expect(container.querySelector('[data-ledger=delivery]')).toHaveAttribute('data-blue', '0.35')
+  expect(container.querySelector('[data-ledger=spool]')).toHaveAttribute('data-blue', '0.58')
+})
+it('does not resurrect a cached direct connection after a reload', () => {
+  const value = job(); value.snapshot!.spool.state = 'NOT_REQUIRED'; value.snapshot!.completion.stored = false; value.snapshot!.route = { kind: 'DIRECT', epoch: 1 }
+  const { container } = render(view(value))
+  expect(container.querySelector('.guest-network')).toHaveAttribute('data-route', 'connecting')
+  expect(container.querySelector('[data-ledger=delivery]')).toHaveAttribute('data-running', 'false')
+})
+it('keeps the verified delivery path distinct from an independent cloud backup', () => {
+  const value = job(); value.phase = 'complete'; value.snapshot!.completion.delivered = true; value.snapshot!.route = { kind: 'DIRECT', epoch: 1 }
+  const { container } = render(view(value))
+  expect(container.querySelector('.guest-network')).toHaveAttribute('data-route', 'direct')
+  expect(container.querySelector('.guest-cloud')).not.toBeInTheDocument()
+  expect(container.querySelector('[data-ledger=delivery]')).toHaveAttribute('data-blue', '1')
+})

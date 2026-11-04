@@ -41,7 +41,7 @@ func TestGuestAndAccountCookiesNeverSelectEachOther(t *testing.T) {
 	}
 }
 
-func TestGuestRouteScopeCannotExpandToSignallingOrUnknownOperations(t *testing.T) {
+func TestGuestRouteScopeOnlyAddsBoundedSignallingAndDeniesUnknownOperations(t *testing.T) {
 	for _, test := range []struct {
 		method, path string
 		allowed      bool
@@ -52,7 +52,8 @@ func TestGuestRouteScopeCannotExpandToSignallingOrUnknownOperations(t *testing.T
 		{"DELETE", "/v1/guest/connections/id/future-action", false},
 		{"POST", "/v1/p2p/id/relay-ticket", true}, {"GET", "/v1/p2p/id/relay?role=receiver", true},
 		{"POST", "/v1/p2p/id/progress", true}, {"POST", "/v1/transfers/id/accept", true}, {"POST", "/v1/tasks/id/resume", true},
-		{"POST", "/v1/p2p/id/signals", false}, {"GET", "/v1/p2p/id/signals", false},
+		{"POST", "/v1/p2p/id/signals", true}, {"GET", "/v1/p2p/id/signals", true},
+		{"PATCH", "/v1/p2p/id/signals", false}, {"DELETE", "/v1/p2p/id/signals", false}, {"POST", "/v1/p2p/id/signals/future", false},
 		{"POST", "/v1/uploads/prepare", false}, {"POST", "/v1/transfers", false}, {"POST", "/v1/tasks/id/delete", false},
 		{"POST", "/v1/p2p/id/future-action", false}, {"POST", "/v1/guest/future-action", false}, {"DELETE", "/v1/tasks/id", false},
 	} {

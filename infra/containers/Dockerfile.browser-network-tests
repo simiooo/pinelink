@@ -1,0 +1,8 @@
+FROM node:24-bookworm-slim
+ARG PLAYWRIGHT_VERSION
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN test -n "$PLAYWRIGHT_VERSION" && apt-get update \
+    && apt-get install -y --no-install-recommends iptables \
+    && npx --yes "playwright@$PLAYWRIGHT_VERSION" install --with-deps chromium firefox \
+    && rm -rf /var/lib/apt/lists/*
+LABEL org.opencontainers.image.description="Pinelink isolated browser network checks; never a production image"

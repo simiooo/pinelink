@@ -3,11 +3,14 @@ import { LocalStore } from '../data/store'
 import type { PreparedFile, GuestLease, GuestPeer, GuestTransfer, ProgressSnapshot } from './types'
 import { digest } from '../data/crypto'
 import { wireChunkSize } from './crypto'
+import type { DirectProof } from './direct'
 
 export type GuestJob = {
   id: string; created: number; direction: 'send' | 'receive'; peer: GuestPeer; transfer?: GuestTransfer
   prepared?: PreparedFile; received: number; snapshot?: ProgressSnapshot; plain?: Blob; name: string; plainSize: number
   phase: 'preparing' | 'waiting' | 'running' | 'paused' | 'verifying' | 'complete' | 'stopped'; error?: string; dismissed?: boolean; retryAt?: number; failures?: number; controlRevision?: number
+  directAttempted?: boolean
+  transport?: { state: 'connecting' | 'direct' | 'switching' | 'cloud'; proof?: DirectProof }
 }
 export class GuestStore extends LocalStore {
   leases!: Table<GuestLease, string>
@@ -20,9 +23,10 @@ export class GuestStore extends LocalStore {
     this.version(3).stores({ leases: 'id', jobs: 'id,created,transfer.id,direction', chunks: '[job+index],job' })
     this.version(4).stores({ guestPeers: 'pair_id', peerRemovals: 'pair,expires' })
   }
-  async storeFrame(id: string, index: number, bytes: Uint8Array) {
+  async storeFrame(id: string, index: number, bytes: Uint8Array, signal?: AbortSignal) {
     const hash = await digest(bytes)
     return this.transaction('rw', this.jobs, this.chunks, async () => {
+      signal?.throwIfAborted()
       const job = await this.jobs.get(id)
       if (!job?.transfer || job.direction !== 'receive') throw new Error('FILE_JOB_CHANGED')
       const old = await this.chunks.get([id, index])
