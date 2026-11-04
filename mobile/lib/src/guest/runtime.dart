@@ -20,6 +20,17 @@ class NativeGuestRuntime {
   final GuestConnections connections;
   final NativeGuestStore store;
   late final GuestRelay relay = GuestRelay(session);
+  final Set<Future<void>> _transfers = {};
+  bool _closed = false;
+
+  Future<void> _transfer(Future<void> Function() work) {
+    if (_closed) return Future.error(StateError('GUEST_CLOSED'));
+    late Future<void> operation;
+    operation = Future<void>.sync(work)
+        .whenComplete(() => _transfers.remove(operation));
+    _transfers.add(operation);
+    return operation;
+  }
 
   static Future<NativeGuestRuntime> open({
     required String server,
@@ -183,10 +194,37 @@ class NativeGuestRuntime {
           );
           final latest = await store.job(existing['id']);
           if (latest != null) {
+            final previousTransfer = latest['transfer'] as Map;
+            final previousProgress = latest['progress'] as Map?;
+            if ((item['version'] as int) <
+                    (previousTransfer['version'] as int) ||
+                (progress['control_revision'] as int? ?? 0) <
+                    ((latest['controlRevision'] as int?) ??
+                        (previousProgress?['control_revision'] as int?) ??
+                        0) ||
+                (progress['progress_revision'] as int? ?? 0) <
+                    (previousProgress?['progress_revision'] as int? ?? 0)) {
+              continue;
+            }
+            final previousState = latest['state'];
+            if ([
+                  'COMPLETED',
+                  'REJECTED',
+                  'CANCELLED',
+                  'EXPIRED',
+                  'FAILED',
+                ].contains(previousState) &&
+                item['state'] != previousState) {
+              continue;
+            }
+            final delivery = progress['delivery'] as Map?;
             await store.update(existing['id'], latest['localRevision'], {
               'transfer': item,
               'progress': progress,
-              if (terminal || existing['direction'] == 'send')
+              'paused': delivery?['state'] == 'PAUSED',
+              if (terminal ||
+                  existing['direction'] == 'send' ||
+                  item['state'] == 'ACCEPTED' && previousState == 'PENDING')
                 'state': item['state'],
             });
           }
@@ -268,9 +306,9 @@ class NativeGuestRuntime {
     });
   }
 
-  Future<void> receive(String id) async {
+  Future<void> receive(String id) => _transfer(() async {
     await relay.receive(store, id);
-  }
+  });
 
   Future<void> control(String id, String action) async {
     if (!['pause', 'resume', 'cancel'].contains(action)) {
@@ -316,22 +354,29 @@ class NativeGuestRuntime {
     );
     if (matches.isEmpty) throw StateError('TRANSFER_INTERRUPTED');
     final task = matches.first as Map;
-    await session.request('POST', '/v1/tasks/${task['id']}/$action', {
-      'owner_id': session.owner,
-      'device_id': identity.device,
-      'expected_version': task['version'],
-    });
+    final changedTask = await session.request(
+      'POST',
+      '/v1/tasks/${task['id']}/$action',
+      {
+        'owner_id': session.owner,
+        'device_id': identity.device,
+        'expected_version': task['version'],
+      },
+    );
     if (action != 'resume') await relay.stop(transfer['id']);
     final latest = await store.job(id);
     if (latest != null) {
       await store.update(id, latest['localRevision'], {
         'paused': action == 'pause',
+        'controlRevision': changedTask['version'],
         if (action == 'cancel') 'state': 'CANCELLED',
       });
     }
   }
 
-  Future<void> upload(String id) async {
+  Future<void> upload(String id) => _transfer(() => _upload(id));
+
+  Future<void> _upload(String id) async {
     await session.ensureSession();
     final job = await store.job(id);
     if (job == null || job['direction'] != 'send' || job['transfer'] is! Map) {
@@ -384,7 +429,12 @@ class NativeGuestRuntime {
   }
 
   Future<void> close() async {
+    if (_closed) return;
+    _closed = true;
     await relay.close();
+    await Future.wait(
+      _transfers.toList().map((task) => task.catchError((Object _) {})),
+    );
     session.close();
     await database.close();
   }

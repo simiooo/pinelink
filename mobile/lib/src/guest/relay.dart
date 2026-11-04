@@ -44,6 +44,12 @@ class GuestRelay {
     final id = transfer['id'] as String;
     final generation = _generation[id] ?? 0;
     if (_closed) throw StateError('GUEST_CLOSED');
+    void checkActive() {
+      if (_closed || generation != (_generation[id] ?? 0)) {
+        throw StateError('TRANSFER_INTERRUPTED');
+      }
+    }
+
     final size = transfer['size_bytes'] as int;
     if (size < 0 || size > (65 << 20)) throw StateError('FILE_SIZE_INVALID');
     final current = await session.request('GET', '/v1/transfers/$id');
@@ -58,6 +64,7 @@ class GuestRelay {
       current['encrypted_manifest'],
     );
     validateManifest(manifest);
+    checkActive();
     if ((manifest['content_kind'] == 'TEXT') !=
         (current['content_kind'] == 'TEXT')) {
       throw StateError('FILE_MANIFEST_INVALID');
@@ -71,7 +78,9 @@ class GuestRelay {
       }
       final plain = await decryptDare(cipher, manifest);
       if (current['content_kind'] == 'TEXT') decodeText(plain);
+      checkActive();
       final fresh = await session.request('GET', '/v1/transfers/$id');
+      checkActive();
       final completed = fresh['state'] == 'COMPLETED'
           ? fresh
           : await session.request('POST', '/v1/p2p/$id/complete', {
@@ -80,7 +89,12 @@ class GuestRelay {
               'expected_version': fresh['version'],
             });
       job = await store.job(jobId);
-      if (job == null) throw StateError('GUEST_JOB_CHANGED');
+      if (job == null ||
+          job!['state'] != 'ACCEPTED' ||
+          job!['paused'] == true) {
+        throw StateError('GUEST_JOB_CHANGED');
+      }
+      checkActive();
       await store.update(jobId, job!['localRevision'], {
         'state': 'COMPLETED',
         'transfer': completed,
@@ -99,6 +113,7 @@ class GuestRelay {
     final acknowledged =
         (snapshot['delivery'] as Map)['acknowledged_bytes'] as int;
     final local = await store.bytes(jobId, 'received');
+    checkActive();
     if (acknowledged > (local?.length ?? 0)) {
       throw StateError('FILE_CHECKPOINT_MISSING');
     }
@@ -111,6 +126,7 @@ class GuestRelay {
           'route_epoch': epoch,
         });
     await report(acknowledged);
+    checkActive();
     final path = '/v1/p2p/$id/relay?role=receiver';
     final url = Uri.parse('${session.server}$path');
     final socket = await WebSocket.connect(
@@ -133,6 +149,7 @@ class GuestRelay {
         max(0, (size + wireChunkSize - 1) ~/ wireChunkSize - 1),
       );
       await for (final event in socket.timeout(const Duration(minutes: 2))) {
+        checkActive();
         if (event is! List<int> || event.length < 36) {
           throw StateError('FILE_FRAME_INVALID');
         }
@@ -152,6 +169,7 @@ class GuestRelay {
         }
         job = await store.job(jobId);
         if (job == null) throw StateError('GUEST_JOB_CHANGED');
+        checkActive();
         final received = min(size, (index + 1) * wireChunkSize);
         await store.update(
           jobId,
@@ -161,6 +179,7 @@ class GuestRelay {
           chunk: bytes,
         );
         await report(received);
+        checkActive();
         expected++;
         if (received == size) {
           return await finish();
@@ -176,13 +195,21 @@ class GuestRelay {
   Future<Map<String, dynamic>> upload(String id, Uint8List ciphertext) async {
     final generation = _generation[id] ?? 0;
     if (_closed) throw StateError('GUEST_CLOSED');
+    void checkActive() {
+      if (_closed || generation != (_generation[id] ?? 0)) {
+        throw StateError('TRANSFER_INTERRUPTED');
+      }
+    }
+
     final initial = await session.request('GET', '/v1/p2p/$id/progress');
+    checkActive();
     final completion = initial['completion'];
     if (completion is Map &&
         (completion['stored'] == true || completion['delivered'] == true)) {
       return initial;
     }
     final signals = await session.request('GET', '/v1/p2p/$id/signals?after=0');
+    checkActive();
     final items = signals['signals'] as List? ?? [];
     if (!items.any(
       (item) =>
@@ -222,6 +249,7 @@ class GuestRelay {
         (ciphertext.length + wireChunkSize - 1) ~/ wireChunkSize,
       );
       for (var index = 0; index < count; index++) {
+        checkActive();
         if (socket.readyState != WebSocket.open) {
           throw StateError('TRANSFER_INTERRUPTED');
         }
@@ -231,13 +259,16 @@ class GuestRelay {
           index,
           Uint8List.sublistView(ciphertext, start, end),
         );
+        checkActive();
         await socket
             .addStream(Stream.value(frame))
             .timeout(const Duration(seconds: 15));
       }
       final deadline = DateTime.now().add(const Duration(minutes: 2));
       while (DateTime.now().isBefore(deadline)) {
+        checkActive();
         final snapshot = await session.request('GET', '/v1/p2p/$id/progress');
+        checkActive();
         final completion = snapshot['completion'];
         if (completion is Map &&
             (completion['stored'] == true || completion['delivered'] == true)) {

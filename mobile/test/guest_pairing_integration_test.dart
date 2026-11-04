@@ -25,6 +25,22 @@ void main() {
   // This integration case intentionally targets the isolated loopback fixture.
   setUpAll(() => HttpOverrides.global = null);
   final server = Platform.environment['PINELINK_NATIVE_GUEST_TEST_API'];
+  Future<void> slowBlobs(int milliseconds) async {
+    final client = HttpClient();
+    try {
+      final uri = Uri.parse(server!).replace(
+        port: 8085,
+        path: '/delay',
+        queryParameters: {'ms': '$milliseconds'},
+      );
+      final response = await (await client.postUrl(uri)).close();
+      if (response.statusCode != 204) throw StateError('FIXTURE_UNAVAILABLE');
+      await response.drain<void>();
+    } finally {
+      client.close(force: true);
+    }
+  }
+
   test(
     'two native visitor identities pair only after approval on the real API',
     () async {
@@ -76,7 +92,7 @@ void main() {
         expect(pending['encrypted_manifest'], isNull);
         await runtimeA.upload(jobId);
         final payload = Uint8List.fromList(
-          List.generate(150000, (index) => index % 251),
+          List.generate(2 * 1024 * 1024, (index) => index % 251),
         );
         final fileId = await runtimeA.offer(
           payload,
@@ -89,6 +105,30 @@ void main() {
           (j) => j['name'] == 'sample.bin',
         );
         await runtimeB.respond(file['id'], true);
+        await slowBlobs(40);
+        final operation = runtimeB
+            .receive(file['id'])
+            .then((_) => true, onError: (Object _) => false);
+        final deadline = DateTime.now().add(const Duration(seconds: 15));
+        while (((await runtimeB.store.job(file['id']))?['received'] as int? ??
+                    0) ==
+                0 &&
+            DateTime.now().isBefore(deadline)) {
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+        }
+        expect(
+          (await runtimeB.store.job(file['id']))!['received'],
+          greaterThan(0),
+        );
+        await runtimeB.control(file['id'], 'pause');
+        expect(await operation, isFalse);
+        final paused = (await runtimeB.store.job(file['id']))!;
+        expect(paused['state'], 'ACCEPTED');
+        expect(paused['paused'], isTrue);
+        await runtimeB.syncIncoming();
+        expect((await runtimeB.store.job(file['id']))!['paused'], isTrue);
+        await slowBlobs(0);
+        await runtimeB.control(file['id'], 'resume');
         await runtimeB.receive(file['id']);
         expect(await runtimeB.plaintext(file['id']), payload);
         final emptyId = await runtimeA.offer(
