@@ -234,6 +234,7 @@ class LocalStore {
     Uint8List? chunk,
     int? index,
     Uint8List? plain,
+    Uint8List? textCipher,
     List<({int index, Uint8List bytes})>? chunks,
   }) => transaction(() async {
     await lease(oldJob['peer']['root']);
@@ -260,6 +261,10 @@ class LocalStore {
       'error': null,
     };
     if (localTerminal(state['state'])) {
+      if (state['state'] == 'COMPLETED' && textCipher != null) {
+        next['textManifest'] = current['manifest'];
+        await bytes(oldJob['id'], 'text', 0, textCipher);
+      }
       next.remove('manifest');
       next.remove('recipientManifest');
       if (state['state'] != 'COMPLETED') {

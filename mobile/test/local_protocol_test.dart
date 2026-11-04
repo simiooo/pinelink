@@ -148,6 +148,57 @@ void main() {
     expect((await store.job(job['id']))!['state']['received'], 2);
     expect(await store.readBytes(job['id'], 'chunk'), [1, 2]);
   });
+  test(
+    'text completion stores only encrypted bytes and rolls back on failure',
+    () async {
+      final store = LocalStore(db);
+      await store.initialize();
+      final root = 'c' * 64;
+      await store.reserve(root, 'text-test');
+      final state = <String, dynamic>{
+        'id': 'local:${randomUuid()}',
+        'recipient': identity.root,
+        'state': 'ACCEPTED',
+        'version': 2,
+        'revision': 1,
+        'received': 3,
+        'paused': false,
+      };
+      final job = <String, dynamic>{
+        'id': state['id'],
+        'created': 1,
+        'peer': {'root': root},
+        'state': state,
+        'manifest': 'encrypted-envelope',
+        'contentKind': 'TEXT',
+      };
+      await store.put(job);
+      await store.bytes(job['id'], 'chunk', 0, Uint8List.fromList([1, 2, 3]));
+      final next = {...state, 'state': 'COMPLETED', 'version': 3};
+      await db.customStatement(
+        "CREATE TEMP TRIGGER fail_text BEFORE INSERT ON local_bytes WHEN NEW.kind='text' BEGIN SELECT RAISE(ABORT,'simulated write failure'); END",
+      );
+      await expectLater(
+        store.saveState(job, next, textCipher: Uint8List.fromList([1, 2, 3])),
+        throwsA(anything),
+      );
+      expect((await store.job(job['id']))!['state']['state'], 'ACCEPTED');
+      expect(await store.readBytes(job['id'], 'chunk'), [1, 2, 3]);
+      await db.customStatement('DROP TRIGGER fail_text');
+      await store.saveState(
+        job,
+        next,
+        textCipher: Uint8List.fromList([1, 2, 3]),
+      );
+      expect(
+        (await store.job(job['id']))!['textManifest'],
+        'encrypted-envelope',
+      );
+      expect(await store.readBytes(job['id'], 'text'), [1, 2, 3]);
+      expect(await store.hasBytes(job['id'], 'plain'), isFalse);
+      expect(await store.hasBytes(job['id'], 'chunk'), isFalse);
+    },
+  );
   test('LAN signal sockets allow private IPv4, IPv6 and mapped peers but reject public hosts', () {
     for (final host in [
       '192.168.1.5',

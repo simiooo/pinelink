@@ -372,6 +372,10 @@ class NativeLocalRuntime extends LocalController {
         await link.send({'type': 'state', 'state': job['state']});
       } else if (!localTerminal(job['state']?['state']) &&
           job['expires'] > now) {
+        if (job['contentKind'] == 'TEXT' &&
+            !(peer['capabilities'] as List? ?? []).contains('text-v1')) {
+          continue;
+        }
         await _offer(job, link);
       }
     }
@@ -436,19 +440,42 @@ class NativeLocalRuntime extends LocalController {
     'size': job['cipherSize'],
     'name': job['name'],
     'plain_size': job['plainSize'],
+    if (job['contentKind'] == 'TEXT') 'content_kind': 'TEXT',
     'remaining': max(0, job['expires'] - now),
   });
   @override
-  Future<String> send(Uint8List bytes, String name, Json peer) async {
+  Future<String> send(Uint8List bytes, String name, Json peer) =>
+      _send(bytes, name, peer);
+
+  Future<String> sendText(Uint8List bytes, Json peer, String sensitivity) =>
+      _send(bytes, 'Text', peer, sensitivity);
+
+  Future<String> _send(
+    Uint8List bytes,
+    String name,
+    Json peer, [
+    String? sensitivity,
+  ]) async {
     _check();
     final link = _links[peer['root']];
     if (link?.ready != true) bad('LOCAL_RECONNECT_REQUIRED');
+    if (sensitivity != null &&
+        !(link!.peer?['capabilities'] as List? ?? []).contains('text-v1')) {
+      bad('TEXT_UNSUPPORTED');
+    }
     if (bytes.length > (64 << 20)) bad('FILE_TOO_LARGE');
-    final prepared = await compute(prepareFileWorker, (
-      bytes,
-      name,
-      peer['encryption_key'] as String,
-    ));
+    final prepared = sensitivity == null
+        ? await compute(prepareFileWorker, (
+            bytes,
+            name,
+            peer['encryption_key'] as String,
+          ))
+        : await compute(prepareTextWorker, (
+            bytes,
+            peer['encryption_key'] as String,
+            identity.encryptionKey,
+            sensitivity,
+          ));
     link!.check();
     final id = 'local:${randomUuid()}';
     final job = <String, dynamic>{
@@ -462,6 +489,10 @@ class NativeLocalRuntime extends LocalController {
       'cipherRoot': prepared['root'],
       'plainRoot': prepared['plainRoot'],
       'recipientManifest': prepared['manifest'],
+      if (sensitivity != null) ...{
+        'contentKind': 'TEXT',
+        'textManifest': prepared['senderManifest'],
+      },
       'expires': now + 600000,
     };
     await store.transaction(() async {
@@ -469,11 +500,16 @@ class NativeLocalRuntime extends LocalController {
       if ((await store.jobs()).where(localActive).length >= 2) {
         bad('LOCAL_LIMIT_REACHED');
       }
-      if (await store.storedBytes() + job['cipherSize'] > (256 << 20)) {
+      if (await store.storedBytes() +
+              job['cipherSize'] * (sensitivity == null ? 1 : 2) >
+          (256 << 20)) {
         bad('LOCAL_STORAGE_FULL');
       }
       await store.put(job);
       await store.bytes(id, 'source', 0, prepared['cipher']);
+      if (sensitivity != null) {
+        await store.bytes(id, 'text', 0, prepared['cipher']);
+      }
     });
     await _refresh();
     await _offer(job, link);
@@ -488,6 +524,7 @@ class NativeLocalRuntime extends LocalController {
     int? index,
     Uint8List? plain,
     List<({int index, Uint8List bytes})>? chunks,
+    Uint8List? textCipher,
   ]) async {
     final state = await signed(identity, 'state', {
       ...job['state'] as Json,
@@ -501,6 +538,7 @@ class NativeLocalRuntime extends LocalController {
       index: index,
       plain: plain,
       chunks: chunks,
+      textCipher: textCipher,
     );
     if (link?.ready == true) {
       await link!.send({'type': 'state', 'state': state});
@@ -510,6 +548,15 @@ class NativeLocalRuntime extends LocalController {
   }
 
   Future<void> _offered(Json v, LocalSession link) async {
+    if (v['content_kind'] != null &&
+        (v['content_kind'] != 'TEXT' ||
+            !(link.peer?['capabilities'] as List? ?? []).contains('text-v1') ||
+            v['name'] != 'Text' ||
+            v['plain_size'] is! int ||
+            v['plain_size'] < 1 ||
+            v['plain_size'] > textByteLimit)) {
+      bad();
+    }
     if (!localId(v['id']) ||
         !wire.validRoot(v['root']) ||
         !wire.integer(v['size']) ||
@@ -530,7 +577,8 @@ class NativeLocalRuntime extends LocalController {
             old['cipherRoot'] != v['root'] ||
             old['cipherSize'] != v['size'] ||
             old['name'] != v['name'] ||
-            old['plainSize'] != v['plain_size']) {
+            old['plainSize'] != v['plain_size'] ||
+            old['contentKind'] != v['content_kind']) {
           bad();
         }
         await link.send({'type': 'state', 'state': old['state']});
@@ -544,6 +592,7 @@ class NativeLocalRuntime extends LocalController {
         'size': v['size'],
         'name': v['name'],
         'plain_size': v['plain_size'],
+        if (v['content_kind'] == 'TEXT') 'content_kind': 'TEXT',
         'state': 'PENDING',
         'version': 1,
         'revision': 0,
@@ -557,6 +606,7 @@ class NativeLocalRuntime extends LocalController {
         'peer': link.peer,
         'name': v['name'],
         'plainSize': v['plain_size'],
+        if (v['content_kind'] == 'TEXT') 'contentKind': 'TEXT',
         'cipherRoot': v['root'],
         'cipherSize': v['size'],
         'expires': now + v['remaining'],
@@ -610,7 +660,8 @@ class NativeLocalRuntime extends LocalController {
       if (job['cipherRoot'] != s['root'] ||
           job['cipherSize'] != s['size'] ||
           job['plainSize'] != s['plain_size'] ||
-          job['name'] != s['name']) {
+          job['name'] != s['name'] ||
+          job['contentKind'] != s['content_kind']) {
         bad();
       }
       final old = job['state'] as Json?;
@@ -794,7 +845,8 @@ class NativeLocalRuntime extends LocalController {
       validateManifest(m);
       if (m['plaintext_size'] != job['plainSize'] ||
           cipherSize(m['plaintext_size']) != s['size'] ||
-          safeFileName(m['file_name']) != job['name']) {
+          safeFileName(m['file_name']) != job['name'] ||
+          (m['content_kind'] == 'TEXT') != (job['contentKind'] == 'TEXT')) {
         bad('FILE_MANIFEST_INVALID');
       }
       link.check();
@@ -996,6 +1048,7 @@ class NativeLocalRuntime extends LocalController {
               bad('FILE_CHECKSUM_INVALID');
             }
             final plain = await compute(decryptFileWorker, (cipher, manifest));
+            if (job['contentKind'] == 'TEXT') decodeText(plain);
             final receipt = await signed(identity, 'receipt', {
               'v': 1,
               'id': id,
@@ -1027,7 +1080,9 @@ class NativeLocalRuntime extends LocalController {
                   link,
                   null,
                   null,
-                  plain,
+                  job['contentKind'] == 'TEXT' ? null : plain,
+                  null,
+                  job['contentKind'] == 'TEXT' ? cipher : null,
                 );
               }),
             );

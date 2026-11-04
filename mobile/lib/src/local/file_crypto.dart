@@ -25,6 +25,15 @@ String decodeText(Uint8List bytes) {
 Future<Map<String, dynamic>> prepareFileWorker(
   (Uint8List, String, String) input,
 ) => prepareLocalFile(input.$1, input.$2, input.$3);
+Future<Map<String, dynamic>> prepareTextWorker(
+  (Uint8List, String, String, String) input,
+) => prepareLocalFile(
+  input.$1,
+  'Text',
+  input.$2,
+  senderRecipient: input.$3,
+  sensitivity: input.$4,
+);
 Future<Uint8List> decryptFileWorker((Uint8List, Map<String, dynamic>) input) =>
     decryptDare(input.$1, input.$2);
 int cipherSize(int n) => n + ((n + wireChunkSize - 1) ~/ wireChunkSize) * 32;
