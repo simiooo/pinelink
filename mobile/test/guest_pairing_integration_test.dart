@@ -75,11 +75,29 @@ void main() {
         expect(pending['content_kind'], 'TEXT');
         expect(pending['encrypted_manifest'], isNull);
         await runtimeA.upload(jobId);
+        final payload = Uint8List.fromList(
+          List.generate(150000, (index) => index % 251),
+        );
+        final fileId = await runtimeA.offer(
+          payload,
+          'sample.bin',
+          Map<String, dynamic>.from(peer),
+        );
+        await runtimeA.upload(fileId);
+        await runtimeB.syncIncoming();
+        final file = (await runtimeB.store.jobs()).firstWhere(
+          (j) => j['name'] == 'sample.bin',
+        );
+        await runtimeB.respond(file['id'], true);
+        await runtimeB.receive(file['id']);
+        expect(await runtimeB.plaintext(file['id']), payload);
         final stored = (await runtimeA.store.job(jobId))!['progress'];
         expect(stored['completion']['stored'], isTrue);
         expect(stored['completion']['delivered'], isFalse);
         await runtimeB.syncIncoming();
-        final incoming = (await runtimeB.store.jobs()).single;
+        final incoming = (await runtimeB.store.jobs()).firstWhere(
+          (j) => j['contentKind'] == 'TEXT',
+        );
         expect(incoming['state'], 'PENDING');
         await expectLater(runtimeB.receive(incoming['id']), throwsStateError);
         await runtimeB.respond(incoming['id'], true);
