@@ -1,5 +1,5 @@
-import { afterEach, expect, it } from 'vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { afterEach, expect, it, vi } from 'vitest'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { MotionProvider } from '../motion/react'
 import { I18nProvider } from '../i18n'
 import { GuestGraph } from './Graph'
@@ -8,8 +8,18 @@ import type { GuestPeer } from './types'
 
 const peer: GuestPeer = { pair_id: 'pair', owner_id: 'guest-peer', device_id: 'peer-device', device_name: 'Peer phone', encryption_key: 'key', signing_key: 'key', expires_at: '2099-01-01T00:00:00Z', online: false }
 const job = (): GuestJob => ({ id: 'job', created: 0, direction: 'receive', peer, received: 35, name: 'file.bin', plainSize: 100, phase: 'running', transfer: { id: 'transfer', state: 'ACCEPTED', version: 2, file_name: 'file.bin', size_bytes: 100, content_root: 'root', encryption_suite: 'suite', sender_owner_id: 'guest-peer', sender_device_id: 'peer-device', recipient_owner_id: 'guest-self', recipient_device_id: 'self', expires_at: peer.expires_at, received_bytes: 35 }, snapshot: { transfer_id: 'transfer', state: 'ACCEPTED', state_version: 2, control_revision: 1, progress_revision: 1, delivery: { state: 'RUNNING', acknowledged_bytes: 35, total_bytes: 100, revision: 1 }, spool: { state: 'SEALED', acknowledged_bytes: 100, total_bytes: 100 }, completion: { delivered: false, stored: true }, capabilities: { pause: true, resume: false, cancel: false, restore: false } } })
-const view = (value?: GuestJob) => <I18nProvider initialPreference="en-US"><MotionProvider><GuestGraph peers={[peer]} job={value} onConnect={() => {}} onPeer={() => {}} onDetails={() => {}} dragging={false} onFileDrop={() => {}} localDevice="self" /></MotionProvider></I18nProvider>
+const view = (value?: GuestJob) => <I18nProvider initialPreference="en-US"><MotionProvider><GuestGraph peers={[peer]} job={value} onConnect={() => {}} onConversation={() => {}} onDetails={() => {}} dragging={false} onFileDrop={() => {}} localDevice="self" /></MotionProvider></I18nProvider>
 afterEach(cleanup)
+
+it('opens one conversation action while retaining device management', () => {
+  const open = vi.fn()
+  render(<I18nProvider initialPreference="en-US"><MotionProvider><GuestGraph peers={[peer]} onConnect={() => {}} onConversation={open} onDetails={() => {}} dragging={false} onFileDrop={() => {}} localDevice="self" /></MotionProvider></I18nProvider>)
+  fireEvent.click(screen.getByRole('button', { name: 'Peer phone' }))
+  const actions = within(screen.getByRole('group', { name: 'Device actions' }))
+  expect(actions.getAllByRole('button')).toHaveLength(3)
+  fireEvent.click(actions.getByRole('button', { name: 'Conversation' }))
+  expect(open).toHaveBeenCalledWith(peer)
+})
 
 it('keeps the endpoint device and an independent cloud node with two real byte ledgers', () => {
   const { container } = render(view(job()))

@@ -125,9 +125,8 @@
 .guest-network[data-route=idle] .guest-peer[data-selected] .guest-node { border: 2px solid #111!important; }
 .guest-node-actions { position: absolute; inset: 0; pointer-events: none; }
 .guest-node-action { position: absolute; top: 24px; left: calc(50% - 104px); --action-x: 80px; --action-y: 0px; animation: guest-action-enter 200ms cubic-bezier(.2,.8,.2,1) both; }
-.guest-node-action:nth-child(2) { left: calc(50% + 56px); --action-x: -80px; }
-.guest-node-action:nth-child(3) { top: 136px; left: calc(50% - 82px); --action-x: 58px; --action-y: -112px; }
-.guest-node-action:nth-child(4) { top: 136px; left: calc(50% + 34px); --action-x: -58px; --action-y: -112px; }
+.guest-node-action:nth-child(2) { top: 136px; left: calc(50% - 82px); --action-x: 58px; --action-y: -112px; }
+.guest-node-action:nth-child(3) { top: 136px; left: calc(50% + 34px); --action-x: -58px; --action-y: -112px; }
 .guest-node-actions .icon-button { pointer-events: auto; border: 1px solid #e5e5e5!important; background: white!important; }
 @keyframes guest-action-enter { from { opacity: 0; transform: translate(var(--action-x), var(--action-y)) scale(.35); } to { opacity: 1; transform: translate(0, 0) scale(1); } }
 @media (prefers-reduced-motion: reduce) { .guest-node-action { animation: none; } }
@@ -165,9 +164,8 @@
   .guest-network[data-route=idle] .guest-peer .guest-dot { top: 63px; }
   .guest-network[data-route=idle] .guest-peer .guest-badge { top: 18px; }
   .guest-node-action { left: calc(50% - 88px); --action-x: 64px; }
-  .guest-node-action:nth-child(2) { left: calc(50% + 40px); --action-x: -64px; }
-  .guest-node-action:nth-child(3) { left: calc(50% - 72px); --action-x: 48px; }
-  .guest-node-action:nth-child(4) { left: calc(50% + 24px); --action-x: -48px; }
+  .guest-node-action:nth-child(2) { left: calc(50% - 72px); --action-x: 48px; }
+  .guest-node-action:nth-child(3) { left: calc(50% + 24px); --action-x: -48px; }
   .pinelink-motion-surface[data-slot]:has(.workspace-files) { inset: 0; width: 100%; height: 100dvh; max-height: 100dvh; border: 0; border-radius: 0; padding-top: max(20px,env(safe-area-inset-top)); box-shadow: none; }
   .pinelink-motion-surface:has(.workspace-files) .sheet-drag-target { display: none; }
 }
