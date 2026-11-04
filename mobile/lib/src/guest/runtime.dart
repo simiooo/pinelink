@@ -231,6 +231,59 @@ class NativeGuestRuntime {
     await GuestRelay(session).receive(store, id);
   }
 
+  Future<void> upload(String id) async {
+    await session.ensureSession();
+    final job = await store.job(id);
+    if (job == null || job['direction'] != 'send' || job['transfer'] is! Map) {
+      throw StateError('GUEST_JOB_CHANGED');
+    }
+    final cipher = await store.bytes(id, 'source');
+    if (cipher == null ||
+        cipher.length != job['cipherSize'] ||
+        await digest(cipher) != job['cipherRoot']) {
+      throw StateError('FILE_SOURCE_MISSING');
+    }
+    final result = await GuestRelay(session)
+        .upload((job['transfer'] as Map)['id'], cipher);
+    final latest = await store.job(id);
+    if (latest == null) throw StateError('GUEST_JOB_CHANGED');
+    await store.update(id, latest['localRevision'], {'progress': result});
+  }
+
+  Future<({String value, bool sensitive})?> text(String id) async {
+    final job = await store.job(id);
+    if (job == null || job['contentKind'] != 'TEXT') return null;
+    final sent = job['direction'] == 'send';
+    if (!sent && job['state'] != 'COMPLETED') return null;
+    final envelope = sent ? job['senderManifest'] : job['manifest'];
+    if (envelope is! String) return null;
+    final cipher = await store.bytes(id, sent ? 'source' : 'received');
+    if (cipher == null) return null;
+    final manifest = await identity.decrypt(envelope);
+    validateManifest(manifest);
+    if (manifest['content_kind'] != 'TEXT') {
+      throw StateError('FILE_MANIFEST_INVALID');
+    }
+    return (
+      value: decodeText(await decryptDare(cipher, manifest)),
+      sensitive: manifest['sensitivity'] == 'SENSITIVE',
+    );
+  }
+
+  Future<Uint8List?> plaintext(String id) async {
+    final job = await store.job(id);
+    if (job == null ||
+        job['direction'] != 'receive' ||
+        job['state'] != 'COMPLETED' ||
+        job['contentKind'] == 'TEXT' ||
+        job['manifest'] is! String) {
+      return null;
+    }
+    final cipher = await store.bytes(id, 'received');
+    if (cipher == null) return null;
+    return decryptDare(cipher, await identity.decrypt(job['manifest']));
+  }
+
   Future<void> close() async {
     session.close();
     await database.close();

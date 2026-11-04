@@ -8,7 +8,6 @@ import 'package:pinelink_mobile/src/data/database.dart';
 import 'package:pinelink_mobile/src/data/identity.dart';
 import 'package:pinelink_mobile/src/guest/connections.dart';
 import 'package:pinelink_mobile/src/guest/runtime.dart';
-import 'package:pinelink_mobile/src/guest/relay.dart';
 import 'package:pinelink_mobile/src/local/file_crypto.dart';
 
 class _Vault implements IdentityVault {
@@ -75,10 +74,8 @@ void main() {
         );
         expect(pending['content_kind'], 'TEXT');
         expect(pending['encrypted_manifest'], isNull);
-        final stored = await GuestRelay(sessionA).upload(
-          transfer['id'] as String,
-          (await runtimeA.store.bytes(jobId, 'source'))!,
-        );
+        await runtimeA.upload(jobId);
+        final stored = (await runtimeA.store.job(jobId))!['progress'];
         expect(stored['completion']['stored'], isTrue);
         expect(stored['completion']['delivered'], isFalse);
         await runtimeB.syncIncoming();
@@ -89,6 +86,9 @@ void main() {
         await runtimeB.receive(incoming['id']);
         final received = (await runtimeB.store.job(incoming['id']))!;
         expect(received['state'], 'COMPLETED');
+        expect((await runtimeB.text(incoming['id']))?.value, 'private text');
+        expect((await runtimeB.text(incoming['id']))?.sensitive, isTrue);
+        expect((await runtimeA.text(jobId))?.value, 'private text');
         final manifest = await runtimeB.identity.decrypt(received['manifest']);
         final cipher = (await runtimeB.store.bytes(
           incoming['id'],
