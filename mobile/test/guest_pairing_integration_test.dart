@@ -83,6 +83,9 @@ void main() {
         expect(incoming['state'], 'PENDING');
         await expectLater(runtimeB.receive(incoming['id']), throwsStateError);
         await runtimeB.respond(incoming['id'], true);
+        await runtimeB.control(incoming['id'], 'pause');
+        await expectLater(runtimeB.receive(incoming['id']), throwsStateError);
+        await runtimeB.control(incoming['id'], 'resume');
         await runtimeB.receive(incoming['id']);
         final received = (await runtimeB.store.job(incoming['id']))!;
         expect(received['state'], 'COMPLETED');

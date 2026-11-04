@@ -19,6 +19,7 @@ class NativeGuestRuntime {
   final GuestSession session;
   final GuestConnections connections;
   final NativeGuestStore store;
+  late final GuestRelay relay = GuestRelay(session);
 
   static Future<NativeGuestRuntime> open({
     required String server,
@@ -268,7 +269,66 @@ class NativeGuestRuntime {
   }
 
   Future<void> receive(String id) async {
-    await GuestRelay(session).receive(store, id);
+    await relay.receive(store, id);
+  }
+
+  Future<void> control(String id, String action) async {
+    if (!['pause', 'resume', 'cancel'].contains(action)) {
+      throw StateError('GUEST_ACTION_INVALID');
+    }
+    await session.ensureSession();
+    final job = await store.job(id);
+    if (job == null || job['transfer'] is! Map) {
+      throw StateError('GUEST_JOB_CHANGED');
+    }
+    final transfer = job['transfer'] as Map;
+    if (action == 'cancel' && job['direction'] == 'send') {
+      final fresh = await session.request(
+        'GET',
+        '/v1/transfers/${transfer['id']}',
+      );
+      final cancelled = await session.request(
+        'POST',
+        '/v1/transfers/${transfer['id']}/cancel',
+        {
+          'owner_id': session.owner,
+          'device_id': identity.device,
+          'expected_version': fresh['version'],
+        },
+      );
+      await relay.stop(transfer['id']);
+      final latest = await store.job(id);
+      if (latest != null) {
+        await store.update(id, latest['localRevision'], {
+          'state': cancelled['state'],
+          'transfer': cancelled,
+        });
+      }
+      return;
+    }
+    final tasks =
+        (await session.request('GET', '/v1/tasks'))['tasks'] as List? ?? [];
+    final matches = tasks.where(
+      (t) =>
+          t is Map &&
+          t['kind'] == 'DOWNLOAD' &&
+          t['reference_id'] == transfer['id'],
+    );
+    if (matches.isEmpty) throw StateError('TRANSFER_INTERRUPTED');
+    final task = matches.first as Map;
+    await session.request('POST', '/v1/tasks/${task['id']}/$action', {
+      'owner_id': session.owner,
+      'device_id': identity.device,
+      'expected_version': task['version'],
+    });
+    if (action != 'resume') await relay.stop(transfer['id']);
+    final latest = await store.job(id);
+    if (latest != null) {
+      await store.update(id, latest['localRevision'], {
+        'paused': action == 'pause',
+        if (action == 'cancel') 'state': 'CANCELLED',
+      });
+    }
   }
 
   Future<void> upload(String id) async {
@@ -283,8 +343,7 @@ class NativeGuestRuntime {
         await digest(cipher) != job['cipherRoot']) {
       throw StateError('FILE_SOURCE_MISSING');
     }
-    final result = await GuestRelay(session)
-        .upload((job['transfer'] as Map)['id'], cipher);
+    final result = await relay.upload((job['transfer'] as Map)['id'], cipher);
     final latest = await store.job(id);
     if (latest == null) throw StateError('GUEST_JOB_CHANGED');
     await store.update(id, latest['localRevision'], {'progress': result});
@@ -325,6 +384,7 @@ class NativeGuestRuntime {
   }
 
   Future<void> close() async {
+    await relay.close();
     session.close();
     await database.close();
   }

@@ -13,6 +13,19 @@ import 'store.dart';
 class GuestRelay {
   GuestRelay(this.session);
   final GuestSession session;
+  final Map<String, WebSocket> _sockets = {};
+  final Map<String, int> _generation = {};
+  bool _closed = false;
+
+  Future<void> stop(String id) async {
+    _generation[id] = (_generation[id] ?? 0) + 1;
+    await _sockets.remove(id)?.close();
+  }
+
+  Future<void> close() async {
+    _closed = true;
+    await Future.wait(_sockets.keys.toList().map(stop));
+  }
 
   /// The caller has already recorded the recipient's consent. A chunk is
   /// committed to local storage before the corresponding server acknowledgement.
@@ -23,11 +36,14 @@ class GuestRelay {
     var job = await store.job(jobId);
     if (job == null ||
         job['direction'] != 'receive' ||
-        job['state'] != 'ACCEPTED') {
+        job['state'] != 'ACCEPTED' ||
+        job['paused'] == true) {
       throw StateError('GUEST_CONSENT_REQUIRED');
     }
     final transfer = job['transfer'] as Map<String, dynamic>;
     final id = transfer['id'] as String;
+    final generation = _generation[id] ?? 0;
+    if (_closed) throw StateError('GUEST_CLOSED');
     final size = transfer['size_bytes'] as int;
     if (size < 0 || size > (65 << 20)) throw StateError('FILE_SIZE_INVALID');
     final current = await session.request('GET', '/v1/transfers/$id');
@@ -102,6 +118,15 @@ class GuestRelay {
       protocols: ['pinelink-relay-v1'],
       headers: await session.signedHeaders('GET', path),
     ).timeout(const Duration(seconds: 15));
+    if (_closed || generation != (_generation[id] ?? 0)) {
+      await socket.close();
+      throw StateError('TRANSFER_INTERRUPTED');
+    }
+    if (_sockets.containsKey(id)) {
+      await socket.close();
+      throw StateError('GUEST_BUSY');
+    }
+    _sockets[id] = socket;
     try {
       var expected = min(
         acknowledged ~/ wireChunkSize,
@@ -143,11 +168,14 @@ class GuestRelay {
       }
       throw StateError('TRANSFER_INTERRUPTED');
     } finally {
+      if (identical(_sockets[id], socket)) _sockets.remove(id);
       await socket.close();
     }
   }
 
   Future<Map<String, dynamic>> upload(String id, Uint8List ciphertext) async {
+    final generation = _generation[id] ?? 0;
+    if (_closed) throw StateError('GUEST_CLOSED');
     final initial = await session.request('GET', '/v1/p2p/$id/progress');
     final completion = initial['completion'];
     if (completion is Map &&
@@ -179,6 +207,15 @@ class GuestRelay {
       protocols: ['pinelink-relay-v1'],
       headers: await session.signedHeaders('GET', path),
     ).timeout(const Duration(seconds: 15));
+    if (_closed || generation != (_generation[id] ?? 0)) {
+      await socket.close();
+      throw StateError('TRANSFER_INTERRUPTED');
+    }
+    if (_sockets.containsKey(id)) {
+      await socket.close();
+      throw StateError('GUEST_BUSY');
+    }
+    _sockets[id] = socket;
     try {
       final count = max(
         1,
@@ -219,6 +256,7 @@ class GuestRelay {
       }
       throw StateError('TRANSFER_INTERRUPTED');
     } finally {
+      if (identical(_sockets[id], socket)) _sockets.remove(id);
       await socket.close();
     }
   }
