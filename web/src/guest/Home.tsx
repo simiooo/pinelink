@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { ArrowDownToLine, ArrowLeft, Clock3, FilePlus2, FileText, FolderOpen, Pause, Play, Plus, RefreshCw, X } from 'lucide-react'
-import { authState } from '../auth/client'
+import { authFetch, authState, AuthError } from '../auth/client'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import QRCode from 'qrcode'
 import { MotionButton, MotionReveal, MotionTooltip } from '../motion/components'
@@ -11,7 +11,7 @@ import { Button } from '../components/ui/button'
 import { useGuestCopy, guestErrorText } from './copy'
 import { displayedRoute } from './route'
 import { DeviceGlyph, GuestGraph } from './Graph'
-import { getGuestRuntime } from './runtime'
+import { getGuestRuntime, GuestError } from './runtime'
 import type { GuestRuntime } from './runtime'
 import type { GuestJob } from './store'
 import type { GuestPeer } from './types'
@@ -26,6 +26,8 @@ import { localError, useLocalCopy } from '../local/copy'
 import { Conversation } from './Conversation'
 import { TextComposer } from './TextComposer'
 import type { TextSensitivity } from './TextComposer'
+import { ConnectionEntry } from './ConnectionEntry'
+import { parseConnectionInput } from './connection-input'
 
 const linkKey = 'pinelink:guest-link'
 export function captureGuestLink() {
@@ -58,12 +60,12 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
   const lastPanel = useRef(panel)
   if (panel) lastPanel.current = panel
   const visualPanel = panel ?? lastPanel.current
-  const [tab, setTab] = useState(pendingLink() ? 'enter' : 'show'), [code, setCode] = useState(''), [token, setToken] = useState(pendingLink)
+  const [tab, setTab] = useState(pendingLink() ? 'enter' : 'show'), [code, setCode] = useState(pendingLink)
   const [error, setError] = useState<string>(), [copied, setCopied] = useState(false), [qr, setQr] = useState(''), [dragging, setDragging] = useState(false), [now, setNow] = useState(Date.now())
   const [file, setFile] = useState<File>(), [selectedPeer, setSelectedPeer] = useState<GuestPeer>(), [jobId, setJobId] = useState<string>()
   const [message, setMessage] = useState(''), [sensitivity, setSensitivity] = useState<TextSensitivity>('NORMAL'), [attachmentDraft, setAttachmentDraft] = useState<{ peer: string; file: File }>()
   const attachment = attachmentDraft && filePeer && attachmentDraft.peer === filePeer.pair_id ? attachmentDraft.file : undefined
-  const [candidateId, setCandidateId] = useState<string>(), [joining, setJoining] = useState<{ id: string; invite: string; expires: number }>(), seen = useRef(new Set<string>(state.jobs.filter(job => job.phase === 'complete').map(job => 'done:' + job.id))), input = useRef<HTMLInputElement>(null), dragDepth = useRef(0)
+  const [candidateId, setCandidateId] = useState<string>(), [joining, setJoining] = useState<{ id: string; invite: string; expires: number }>(), seen = useRef(new Set<string>(state.jobs.filter(job => job.phase === 'complete').map(job => 'done:' + job.id))), input = useRef<HTMLInputElement>(null), dragDepth = useRef(0), connectionAttempt = useRef(0)
   const active = state.jobs.find(job => !job.dismissed && !['complete', 'stopped'].includes(job.phase))
   const selectedJob = state.jobs.find(job => job.id === jobId) ?? active
   const candidate = state.connections.candidates.find(item => item.id === candidateId)
@@ -76,7 +78,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
   const fileRequests = state.jobs.filter(job => job.direction === 'receive' && job.phase === 'waiting' && job.transfer?.state === 'PENDING' && Date.parse(job.transfer.expires_at) > (job.authority==='LOCAL_DEVICE'?Date.now():now))
   const notificationCount = pairRequests.length + fileRequests.length + requests.length
   const peerBusy = state.jobs.find(job => job.peer.pair_id === selectedPeer?.pair_id && !['complete', 'stopped'].includes(job.phase) && (!job.transfer || Date.parse(job.transfer.expires_at) > (job.authority==='LOCAL_DEVICE'?Date.now():now)))
-  const close = () => { setPanel(null); setError(undefined); if (pathname !== '/') void navigate({ to: '/', replace: true }) }
+  const close = () => { connectionAttempt.current++; if (panel === 'connect' && runtime.local.getSnapshot().phase !== 'connected') runtime.local.cancelPairing(); setPanel(null); setError(undefined); if (pathname !== '/') void navigate({ to: '/', replace: true }) }
   const openFiles = (peer?: GuestPeer, value: FileFilter = 'all') => { setError(undefined); setFilePeer(peer); setFilter(value); setPanel('files'); void navigate({ to: '/files' }) }
   useEffect(() => { setMessage(''); setSensitivity('NORMAL'); setAttachmentDraft(current => current?.peer === filePeer?.pair_id ? current : undefined) }, [filePeer?.pair_id])
   useEffect(() => { setPanel(routePanel(pathname)); setError(undefined); if (['/tasks', '/history', '/local-files'].includes(pathname)) { setFilter(routeFilter(pathname)); setFilePeer(undefined) } }, [pathname])
@@ -102,8 +104,46 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
       else if (joining.expires <= now) { setError('EXPIRED'); setTab('enter'); setPanel('connect') }
     }
   }, [state.connections, state.jobs, panel, joining, now, jobId])
-  const connect = () => { if(runtime.local.getSnapshot().phase==='connected')runtime.local.cancelPairing();const local=state.offline||!!authState().capabilities.local_only&&(!authState().capabilities.enabled||!state.checkedAt||now-state.checkedAt>15000);setLocalMode(local);setPanel('connect');setTab('show');if(!local)void perform(()=>runtime.connect()) }
-  const reconnect=(peer:GuestPeer)=>{setLocalMode(true);setPanel('connect');void perform(()=>runtime.local.invite(peer.root))}
+  const startLocal = (expected?: string) => {
+    const attempt = ++connectionAttempt.current; setLocalMode(true); setTab('show'); setError(undefined)
+    void runtime.local.invite(expected).catch(reason => { if (attempt === connectionAttempt.current) setError(reason instanceof Error ? reason.message : 'LOCAL_CONNECTION_LOST') })
+  }
+  const startOnline = () => {
+    const attempt = ++connectionAttempt.current; setLocalMode(false); setError(undefined)
+    void (async () => {
+      try {
+        if (authState().capabilities.local_only && !authState().capabilities.enabled) {
+          const capability = await authFetch<{ local_only?: boolean }>('/v1/auth/capabilities')
+          if (attempt !== connectionAttempt.current) return
+          if (capability.local_only) { startLocal(); return }
+        }
+        await runtime.connect()
+      } catch (reason) {
+        if (attempt !== connectionAttempt.current) return
+        const unavailable = navigator.onLine === false || reason instanceof TypeError || reason instanceof DOMException && ['TimeoutError', 'NetworkError'].includes(reason.name) || (reason instanceof GuestError || reason instanceof AuthError) && reason.status >= 500
+        if (unavailable) startLocal()
+        else setError(reason instanceof Error ? reason.message : 'GUEST_UNAVAILABLE')
+      }
+    })()
+  }
+  const connect = () => { if (runtime.local.getSnapshot().phase === 'connected') runtime.local.cancelPairing(); setPanel('connect'); setTab('show'); if (navigator.onLine === false) startLocal(); else startOnline() }
+  const reconnect=(peer:GuestPeer)=>{setPanel('connect');startLocal(peer.root)}
+  const joinCode = async (input: string) => {
+    const attempt = ++connectionAttempt.current
+    setError(undefined)
+    try {
+      const parsed = parseConnectionInput(input, location.origin)
+      if (parsed.kind === 'local') {
+        await runtime.local.join(parsed.value, runtime.local.getSnapshot().expected); if (attempt !== connectionAttempt.current) return; setCode(''); setLocalMode(true); setTab('show'); return
+      }
+      const candidate = await runtime.join(parsed.value)
+      if (attempt !== connectionAttempt.current) return
+      runtime.local.cancelPairing(); connectionAttempt.current++; sessionStorage.removeItem(linkKey); setCode(''); setJoining({ id: candidate.id, invite: candidate.invite_id, expires: Date.parse(candidate.expires_at) }); setPanel('waiting')
+    } catch (error) {
+      if (error instanceof Error && ['EXPIRED', 'NOT_FOUND', 'INVALID_REQUEST'].includes(error.message)) sessionStorage.removeItem(linkKey)
+      if (attempt === connectionAttempt.current) setError(error instanceof Error ? error.message : 'GUEST_UNAVAILABLE')
+    }
+  }
   const openJob = (job?: GuestJob) => { if (job) { setFromFiles(panel === 'files'); setJobId(job.id); setPanel('job') } }
   const choose = (chosen?: File, peer?: GuestPeer) => {
     if (!chosen) { if (peer) setSelectedPeer(peer); input.current?.click(); return }
@@ -128,23 +168,18 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
     <MotionSurface open={!!panel} onClose={close} title={title} closeLabel={c.close}>
       <div className="guest-surface-body">
         {visualPanel === 'connect' && <div className="guest-connect">
-          <Tabs value={localMode?'local':'online'} onValueChange={value=>{setLocalMode(value==='local');setError(undefined);if(value==='online')void perform(()=>runtime.connect())}}><TabsList variant="line" className="guest-tabs"><TabsTrigger value="online" disabled={!!authState().capabilities.local_only&&!authState().capabilities.enabled}>{lc.online}</TabsTrigger><TabsTrigger value="local">{lc.local}</TabsTrigger></TabsList></Tabs>
-          {localMode?<LocalConnect runtime={runtime.local} onConnected={close}/>:<>
-          <Tabs value={tab} onValueChange={value => { setTab(value); setError(undefined); if (value === 'show') void perform(() => runtime.connect()) }}>
+          <Tabs value={tab} onValueChange={value => { if (value === 'enter' && !localMode) connectionAttempt.current++; setTab(value); setError(undefined); if (value === 'show' && !localMode && !invite) startOnline() }}>
             <TabsList variant="line" className="guest-tabs"><TabsTrigger value="show">{c.showCode}</TabsTrigger><TabsTrigger value="enter">{c.enterCode}</TabsTrigger></TabsList>
-            <TabsContent value="show"><div className="guest-code-view">
+            <TabsContent value="show">{localMode ? <LocalConnect runtime={runtime.local} onConnected={close}/> : <div className="guest-code-view">
               {expired ? <><Clock3 size={32} /><h3>{c.expired}</h3><MotionButton className="primary-button" onClick={() => perform(() => runtime.connect())}>{c.newCode}</MotionButton></> : <>
                 {qr ? <img width={216} height={216} src={qr} alt={c.code} /> : <div className="guest-qr-placeholder" aria-busy={state.busy} />}
                 <strong className="guest-code" data-testid="connection-code">{invite?.code ? invite.code.slice(0, 4) + ' ' + invite.code.slice(4) : '···· ····'}</strong><span className="guest-muted">{c.expires}</span>
                 <MotionButton className="secondary-button guest-wide" disabled={!inviteURL} onClick={() => perform(async () => { await navigator.clipboard.writeText(inviteURL); setCopied(true) })}>{copied ? c.copied : c.copyLink}</MotionButton>
               </>}
-            </div></TabsContent>
-            <TabsContent value="enter"><form className="guest-code-form" onSubmit={event => { event.preventDefault(); void perform(async () => { try { const candidate = await runtime.join(token || code); sessionStorage.removeItem(linkKey); setToken(''); setJoining({ id: candidate.id, invite: candidate.invite_id, expires: Date.parse(candidate.expires_at) }); setPanel('waiting') } catch (error) { if (error instanceof Error && ['EXPIRED', 'NOT_FOUND', 'INVALID_REQUEST'].includes(error.message)) { setToken(''); sessionStorage.removeItem(linkKey) }; throw error } }) }}>
-              {!token && <label>{c.code}<Input value={code} onChange={event => setCode(event.target.value.toUpperCase())} autoCapitalize="characters" autoComplete="off" spellCheck={false} maxLength={16} className="guest-code-input" placeholder="K7M4 8F2Q" required /></label>}
-              <MotionButton type="submit" className="primary-button guest-wide" disabled={!token && code.replace(/[ -]/g, '').length !== 8} busy={state.busy}>{c.connectAction}</MotionButton>
-            </form></TabsContent>
+              <MotionButton className="auth-text-button connection-offline" onClick={() => startLocal()}>{c.connectOffline}</MotionButton>
+            </div>}</TabsContent>
+            <TabsContent value="enter"><ConnectionEntry value={code} onValue={setCode} onSubmit={joinCode} onError={setError} /></TabsContent>
           </Tabs>
-          </>}
         </div>}
         {visualPanel === 'pair' && candidate && <div className="guest-pair"><div className="guest-preview-icon"><DeviceGlyph name={candidate.device_name} /></div><div className="guest-file-copy"><h3>{candidate.device_name}</h3><span className="guest-muted">{c.device} · {candidate.device_id.slice(-4).toUpperCase()}</span></div><MotionButton className="primary-button guest-wide" onClick={() => perform(async () => { await runtime.respondCandidate(candidate.id, true); setPanel(null) })}>{c.connectAction}</MotionButton><MotionButton className="auth-text-button guest-wide" onClick={() => perform(async () => { await runtime.respondCandidate(candidate.id, false); setPanel(null) })}>{c.decline}</MotionButton></div>}
         {visualPanel === 'waiting' && <div className="guest-waiting"><Clock3 size={30} /><p>{c.keepOpen}</p><MotionButton className="secondary-button guest-wide" onClick={() => setPanel(null)}>{c.done}</MotionButton></div>}
