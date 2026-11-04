@@ -1,6 +1,8 @@
 import { API_URL } from '../api/client'
+import { authState } from '../auth/client'
 import { assertCryptoContext, base64, digest, utf8 } from '../data/crypto'
 import type { DeviceProfile } from '../data/crypto'
+import type { ClientRuntime } from '../data/runtime'
 import { GuestStore } from './store'
 import type { GuestJob } from './store'
 import type { GuestLease, GuestConnections, GuestInvite, GuestCandidate, GuestPeer, GuestTransfer, ProgressSnapshot } from './types'
@@ -40,7 +42,7 @@ export class GuestRuntime {
   private closing?: Promise<void>
   private timer?: ReturnType<typeof setTimeout>
   private channel?: BroadcastChannel
-  private constructor(readonly server: string, readonly store: GuestStore, readonly profile: DeviceProfile) {}
+  private constructor(readonly server: string, readonly store: GuestStore, readonly profile: DeviceProfile, private readonly account?: { owner: string; csrf?: string; offset: number }) {}
   static async open(server = API_URL,localOnly=false) {
     assertCryptoContext()
     const absolute = new URL(server, location.href).href.replace(/\/$/, '')
@@ -60,10 +62,28 @@ export class GuestRuntime {
       return runtime
     } catch (error) { store.close(); throw error }
   }
+  static async openAccount(reader: ClientRuntime, local: LocalRuntime) {
+    assertCryptoContext()
+    if (reader.access.localOnly && authState().offlineAccount?.id !== reader.owner) throw new GuestError('ACCOUNT_SIGN_IN_REQUIRED', 401)
+    const store = new GuestStore('pinelink-account-conversation:' + await digest(utf8.encode(`${reader.server}\n${reader.owner}\n${reader.profile.device}`)))
+    try {
+      const runtime = new GuestRuntime(reader.server, store, reader.profile, { owner: reader.owner, csrf: reader.access.csrf, offset: (await reader.store.target()).offset })
+      runtime.local = local
+      if (!reader.access.localOnly) await runtime.ensureSession()
+      await store.jobs.filter(job => job.authority !== 'LOCAL_DEVICE' && activeJob(job) && job.transport?.state === 'direct').modify(job => { job.transport = { state: 'connecting', proof: job.transport?.proof } })
+      await runtime.refreshLocal()
+      runtime.snapshot = { ...runtime.snapshot, ready: true, connected: !!runtime.lease }
+      if (typeof BroadcastChannel !== 'undefined') { runtime.channel = new BroadcastChannel(store.name); runtime.channel.onmessage = () => { void runtime.refreshLocal().catch(() => undefined) } }
+      window.addEventListener('online', runtime.wake); window.addEventListener('offline', runtime.wake)
+      document.addEventListener('visibilitychange', runtime.visibility)
+      if (runtime.lease && navigator.onLine !== false) void runtime.poll().catch(error => runtime.noteError(error))
+      return runtime
+    } catch (error) { store.close(); throw error }
+  }
   getSnapshot = () => this.snapshot
   now = () => Date.now() + (this.lease?.offset ?? 0)
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener) } }
-  private emit(patch: Partial<Snapshot> = {}) { if (this.stopped) return; this.snapshot = { ...this.snapshot, ...patch }; setGuestWorkPending(this.snapshot.jobs.filter(activeJob).length + (this.snapshot.busy ? 1 : 0)); for (const listener of this.listeners) listener() }
+  private emit(patch: Partial<Snapshot> = {}) { if (this.stopped) return; this.snapshot = { ...this.snapshot, ...patch }; if (!this.account) setGuestWorkPending(this.snapshot.jobs.filter(activeJob).length + (this.snapshot.busy ? 1 : 0)); for (const listener of this.listeners) listener() }
   private noteError(error: unknown) { if (this.stopped) return; this.emit({ offline: navigator.onLine === false, error: error instanceof Error ? error.message : 'GUEST_UNAVAILABLE' }) }
   private wake = () => { this.emit({ offline: navigator.onLine === false }); if (navigator.onLine !== false && this.lease) void this.ensureSession().then(() => this.poll()).catch(error => this.noteError(error)) }
   private visibility = () => { if (!document.hidden) this.wake() }
@@ -71,8 +91,7 @@ export class GuestRuntime {
     const jobs = (await this.store.jobs.toArray()).sort((a, b) => b.created - a.created).map(job=>job.authority==='LOCAL_DEVICE'&&activeJob(job)&&!this.local.reachable(job.peer.root)?{...job,peer:{...job.peer,online:false},phase:job.phase==='waiting'?'waiting' as const:'paused' as const,local:{...job.local!,disconnected:true}}:job)
     const peers = [...(await this.store.guestPeers.toArray()).filter(peer => Date.parse(peer.expires_at) > this.now()), ...(await this.store.localPeers.toArray()).map(peer=>({...peer,online:this.local.reachable(peer.root)}))]
     this.lifetime.signal.throwIfAborted()
-    setGuestHistoryAvailable(jobs.length > 0)
-    setGuestWorkPending(jobs.filter(activeJob).length)
+    if (!this.account) { setGuestHistoryAvailable(jobs.length > 0); setGuestWorkPending(jobs.filter(activeJob).length) }
     this.emit({ jobs, connections: { ...this.snapshot.connections, peers } })
   }
   private async changed() { await this.refreshLocal(); this.channel?.postMessage('changed') }
@@ -93,6 +112,14 @@ export class GuestRuntime {
     return value
   }
   async ensureSession() {
+    if (this.account) {
+      if (this.stopped) throw new Error('GUEST_CLOSED')
+      const session = authState().session
+      if (!session || session.account.id !== this.account.owner || session.device_id !== this.profile.device || session.csrf !== this.account.csrf) throw new GuestError('ACCOUNT_SIGN_IN_REQUIRED', 401)
+      this.lease = { id: 'self', owner_id: session.account.id, device_id: session.device_id, device_name: deviceName(), expires_at: session.expires_at, csrf: session.csrf, offset: this.account.offset }
+      this.emit({ connected: true, error: undefined, offline: navigator.onLine === false })
+      return
+    }
     if (this.enrollment) return this.enrollment
     this.enrollment = this.exclusive('enroll', async () => {
       if (this.stopped) throw new Error('GUEST_CLOSED')
@@ -568,7 +595,7 @@ export class GuestRuntime {
   private async finishClose() {
     this.stopped = true; this.lifetime.abort(); clearTimeout(this.timer); for (const worker of this.workers.values()) worker.abort()
     window.removeEventListener('online', this.wake); window.removeEventListener('offline', this.wake); document.removeEventListener('visibilitychange', this.visibility); this.channel?.close()
-    await Promise.allSettled([...this.workerTasks, ...this.commands.values(), ...(this.polling ? [this.polling] : []), ...(this.enrollment ? [this.enrollment] : []),this.local.close()]); this.store.close(); setGuestWorkPending(0)
+    await Promise.allSettled([...this.workerTasks, ...this.commands.values(), ...(this.polling ? [this.polling] : []), ...(this.enrollment ? [this.enrollment] : []), ...(!this.account ? [this.local.close()] : [])]); this.store.close(); if (!this.account) setGuestWorkPending(0)
   }
 }
 let runtime: Promise<GuestRuntime> | undefined

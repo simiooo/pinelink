@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { ArrowDownToLine, ArrowLeft, Clock3, FilePlus2, FileText, FolderOpen, Pause, Play, Plus, RefreshCw, X } from 'lucide-react'
 import { authFetch, authState, AuthError } from '../auth/client'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
@@ -11,8 +11,8 @@ import { Button } from '../components/ui/button'
 import { useGuestCopy, guestErrorText } from './copy'
 import { displayedRoute } from './route'
 import { DeviceGlyph, GuestGraph } from './Graph'
-import { getGuestRuntime, GuestError } from './runtime'
-import type { GuestRuntime } from './runtime'
+import { GuestError } from './runtime'
+import { getWorkspaceRuntime, WorkspaceRuntime } from './workspace'
 import type { GuestJob } from './store'
 import type { GuestPeer } from './types'
 import { useI18n } from '../i18n'
@@ -37,10 +37,15 @@ export function captureGuestLink() {
   history.replaceState(null, '', '/connect')
 }
 const pendingLink = () => { try { const v = JSON.parse(sessionStorage.getItem(linkKey) ?? 'null') as { token: string; expires: number } | null; return v && v.expires > Date.now() ? v.token : '' } catch { return '' } }
+const accountDeviceName = (name: string, device: string, locale: string) => {
+  if (name !== device || !/^(web|flutter)-[0-9a-f-]{36}$/i.test(device)) return name
+  const mobile = device.startsWith('flutter-'), label = locale === 'zh-CN' ? mobile ? '移动设备' : '浏览器' : mobile ? 'Mobile device' : 'Browser'
+  return `${label} · ${device.slice(-4).toUpperCase()}`
+}
 
 export function GuestHome({ onNotifications }: { onNotifications?: (count: number) => void } = {}) {
-  const c = useGuestCopy(), {locale}=useI18n(), [runtime, setRuntime] = useState<GuestRuntime>(), [error, setError] = useState(''), [retry, setRetry] = useState(0)
-  useEffect(() => { let live = true; void getGuestRuntime().then(value => { if (live) setRuntime(value) }).catch(reason => { if (live) setError(reason instanceof Error ? reason.message : 'STORAGE_UNAVAILABLE') }); return () => { live = false } }, [retry])
+  const c = useGuestCopy(), {locale}=useI18n(), [runtime, setRuntime] = useState<WorkspaceRuntime>(), [error, setError] = useState(''), [retry, setRetry] = useState(0)
+  useEffect(() => { let live = true; void getWorkspaceRuntime().then(value => { if (live) setRuntime(value) }).catch(reason => { if (live) setError(reason instanceof Error ? reason.message : 'STORAGE_UNAVAILABLE') }); return () => { live = false } }, [retry])
   if (!runtime) {
     if (!error) return <div className="guest-loading" aria-busy="true" />
     const unsupported = error === 'BROWSER_CRYPTO_UNAVAILABLE', insecure = error === 'BROWSER_CONTEXT_UNAVAILABLE', zh=locale==='zh-CN'
@@ -49,13 +54,20 @@ export function GuestHome({ onNotifications }: { onNotifications?: (count: numbe
   return <VisitorHome runtime={runtime} onNotifications={onNotifications} />
 }
 type Panel = 'connect' | 'pair' | 'waiting' | 'send' | 'job' | 'files' | 'notifications' | 'rename' | 'remove' | 'account-job' | 'account-request' | null
-function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNotifications?: (count: number) => void }) {
-  const c = useGuestCopy(), lc=useLocalCopy(), { t, locale } = useI18n(), state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot)
+function VisitorHome({ runtime, onNotifications }: { runtime: WorkspaceRuntime; onNotifications?: (count: number) => void }) {
+  const c = useGuestCopy(), lc=useLocalCopy(), { t, locale } = useI18n(), snapshot = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot)
+  const state = useMemo(() => {
+    const namePeer = (peer: GuestPeer) => peer.owner_id.startsWith('acct-') ? { ...peer, device_name: accountDeviceName(peer.device_name, peer.device_id, locale) } : peer
+    return { ...snapshot, jobs: snapshot.jobs.map(job => ({ ...job, peer: namePeer(job.peer) })), connections: { ...snapshot.connections, peers: snapshot.connections.peers.map(namePeer), candidates: snapshot.connections.candidates.map(candidate => ({ ...candidate, device_name: accountDeviceName(candidate.device_name, candidate.device_id, locale) })) } }
+  }, [snapshot, locale])
   const [localMode,setLocalMode]=useState(false)
   const pathname = useRouterState({ select: state => state.location.pathname }), navigate = useNavigate()
   const [panel, setPanel] = useState<Panel>(routePanel(pathname)), [filter, setFilter] = useState<FileFilter>(routeFilter(pathname)), [filePeer, setFilePeer] = useState<GuestPeer>()
   const [name, setName] = useState(''), [savingPeer, setSavingPeer] = useState(false), [recordId, setRecordId] = useState<string>(), [requestId, setRequestId] = useState<string>(), [fromFiles, setFromFiles] = useState(false)
-  const account = useAccountWorkspace(), accountRecords = account.records.data ?? [], requests = account.notifications.data?.transfers ?? []
+  const account = useAccountWorkspace(), auth = authState(), session = auth.session
+  useEffect(() => { void runtime.setAccount(session || auth.offlineAccount ? account.reader : undefined).catch(() => undefined) }, [runtime, account.reader, session?.csrf, auth.offlineAccount?.id])
+  const accountJobs = state.jobs.filter(job => job.authority === 'ACCOUNT'), accountRefs = new Set(accountJobs.flatMap(job => [job.transfer?.id, job.transfer?.entry_id].filter((value): value is string => !!value)))
+  const accountRecords = (account.records.data ?? []).filter(record => !accountRefs.has(record.reference_id)), requests = (account.notifications.data?.transfers ?? []).filter(request => !accountRefs.has(request.id))
   const selectedRecord = accountRecords.find(record => record.id === recordId), selectedRequest = requests.find(request => request.id === requestId)
   const lastPanel = useRef(panel)
   if (panel) lastPanel.current = panel
@@ -64,6 +76,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
   const [error, setError] = useState<string>(), [copied, setCopied] = useState(false), [qr, setQr] = useState(''), [dragging, setDragging] = useState(false), [now, setNow] = useState(Date.now())
   const [file, setFile] = useState<File>(), [selectedPeer, setSelectedPeer] = useState<GuestPeer>(), [jobId, setJobId] = useState<string>()
   const [message, setMessage] = useState(''), [sensitivity, setSensitivity] = useState<TextSensitivity>('NORMAL'), [attachmentDraft, setAttachmentDraft] = useState<{ peer: string; file: File }>()
+  useEffect(() => { if (!session && !auth.offlineAccount && filePeer?.authority === 'ACCOUNT') { setFilePeer(undefined); setPanel(null); setMessage(''); setAttachmentDraft(undefined) } }, [session, auth.offlineAccount, filePeer])
   const attachment = attachmentDraft && filePeer && attachmentDraft.peer === filePeer.pair_id ? attachmentDraft.file : undefined
   const [candidateId, setCandidateId] = useState<string>(), [joining, setJoining] = useState<{ id: string; invite: string; expires: number }>(), seen = useRef(new Set<string>(state.jobs.filter(job => job.phase === 'complete').map(job => 'done:' + job.id))), input = useRef<HTMLInputElement>(null), dragDepth = useRef(0), connectionAttempt = useRef(0)
   const active = state.jobs.find(job => !job.dismissed && !['complete', 'stopped'].includes(job.phase))
@@ -157,7 +170,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
     onDragLeave={() => { if (--dragDepth.current <= 0) { dragDepth.current = 0; setDragging(false) } }}
     onDrop={event => { event.preventDefault(); dragDepth.current = 0; setDragging(false); if (event.dataTransfer.files.length === 1) { if (panel === 'files' && filePeer) setAttachmentDraft({ peer: filePeer.pair_id, file: event.dataTransfer.files[0] }); else choose(event.dataTransfer.files[0]) } else setError('ONE_FILE_ONLY') }}>
     <input ref={input} type="file" hidden aria-label={c.file} onChange={event => { choose(event.target.files?.[0]); event.target.value = '' }} />
-    <GuestGraph peers={peers} job={active} onConnect={connect} onConversation={peer => openFiles(peer)} onDetails={() => openJob(active)} dragging={dragging} localDevice={runtime.profile.device} onFiles={() => openFiles(undefined, 'saved')} onRename={peer => { setSelectedPeer(peer); setName(peer.local_name || peer.device_name); setError(undefined); setPanel('rename') }} onRemove={peer => { setSelectedPeer(peer); setError(undefined); setPanel('remove') }} onFileDrop={(file, peer) => { dragDepth.current = 0; setDragging(false); openFiles(peer); setAttachmentDraft({ peer: peer.pair_id, file }) }} />
+    <GuestGraph peers={peers} job={active} onConnect={connect} onConversation={peer => openFiles(peer)} onDetails={() => openJob(active)} dragging={dragging} localDevice={active ? active.authority === 'ACCOUNT' ? runtime.accountProfile?.device ?? runtime.profile.device : runtime.profile.device : runtime.accountProfile?.device ?? runtime.profile.device} localAccount={active ? active.authority === 'ACCOUNT' : runtime.hasAccount} onFiles={() => openFiles(undefined, 'saved')} onRename={peer => { setSelectedPeer(peer); setName(peer.local_name || peer.device_name); setError(undefined); setPanel('rename') }} onRemove={peer => { setSelectedPeer(peer); setError(undefined); setPanel('remove') }} onFileDrop={(file, peer) => { dragDepth.current = 0; setDragging(false); openFiles(peer); setAttachmentDraft({ peer: peer.pair_id, file }) }} />
     {dragging && <div className="guest-drop-label" role="status">{c.file}</div>}
     <footer className="guest-footer"><MotionTooltip label={c.files}><MotionButton icon className="guest-icon-button" aria-label={c.files} onClick={() => openFiles()}><FolderOpen size={23} /></MotionButton></MotionTooltip>
       {state.offline && <span className="guest-offline" role="status">{lc.noInternet}</span>}
@@ -205,8 +218,8 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
             {['complete', 'stopped'].includes(selectedJob.phase) && <MotionButton className="secondary-button guest-wide" onClick={() => { close(); void perform(() => runtime.dismiss(selectedJob.id)) }}>{c.another}</MotionButton>}
           </>}
         </div>}
-        {visualPanel === 'files' && (filePeer ? <div className="conversation-panel">
-          <Conversation jobs={state.jobs.filter(job => job.peer.pair_id === filePeer.pair_id)} records={accountRecords.filter(record => record.peer === filePeer.device_id)} profile={filePeer.authority === 'LOCAL_DEVICE' ? runtime.local.profile : runtime.profile} locale={locale} onJob={openJob} onRecord={record => { setRecordId(record.id); setPanel('account-job') }} labels={locale === 'zh-CN' ? { copy: '复制', copied: '已复制', copyFailed: '请选择文字复制', sensitive: '敏感信息', reveal: '显示', hide: '隐藏', unavailable: '不可用', waiting: '等待中', sent: '已发送', received: '已接收', stored: '已存储', file: '文件' } : { copy: 'Copy', copied: 'Copied', copyFailed: 'Select text to copy', sensitive: 'Sensitive', reveal: 'Reveal', hide: 'Hide', unavailable: 'Unavailable', waiting: 'Waiting', sent: 'Sent', received: 'Received', stored: 'Stored', file: 'File' }} />
+        {visualPanel === 'files' && (filePeer ? (filePeer.authority !== 'ACCOUNT' || runtime.accountProfile) && <div className="conversation-panel">
+          <Conversation jobs={state.jobs.filter(job => job.peer.pair_id === filePeer.pair_id)} records={filePeer.authority === 'ACCOUNT' ? accountRecords.filter(record => record.peer === filePeer.device_id) : []} profile={filePeer.authority === 'LOCAL_DEVICE' ? runtime.local.profile : filePeer.authority === 'ACCOUNT' ? runtime.accountProfile! : runtime.profile} locale={locale} onJob={openJob} onRecord={record => { setRecordId(record.id); setPanel('account-job') }} labels={locale === 'zh-CN' ? { copy: '复制', copied: '已复制', copyFailed: '请选择文字复制', sensitive: '敏感信息', reveal: '显示', hide: '隐藏', unavailable: '不可用', waiting: '等待中', sent: '已发送', received: '已接收', stored: '已存储', file: '文件' } : { copy: 'Copy', copied: 'Copied', copyFailed: 'Select text to copy', sensitive: 'Sensitive', reveal: 'Reveal', hide: 'Hide', unavailable: 'Unavailable', waiting: 'Waiting', sent: 'Sent', received: 'Received', stored: 'Stored', file: 'File' }} />
           {errorText && <p className="guest-inline-error" role="alert">{errorText}</p>}
           <TextComposer value={message} sensitivity={sensitivity} attachment={attachment} supported={filePeer.authority !== 'LOCAL_DEVICE' || runtime.local.supportsText(filePeer.root)} busy={state.busy} onValue={setMessage} onSensitivity={setSensitivity} onAttachment={file => setAttachmentDraft(file ? { peer: filePeer.pair_id, file } : undefined)} onSend={includeText => perform(async () => {
             if (attachment) { await runtime.send(attachment, filePeer, maxBytes); setAttachmentDraft(current => current?.file === attachment && current.peer === filePeer.pair_id ? undefined : current) }

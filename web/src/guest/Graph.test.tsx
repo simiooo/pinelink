@@ -11,6 +11,16 @@ const job = (): GuestJob => ({ id: 'job', created: 0, direction: 'receive', peer
 const view = (value?: GuestJob) => <I18nProvider initialPreference="en-US"><MotionProvider><GuestGraph peers={[peer]} job={value} onConnect={() => {}} onConversation={() => {}} onDetails={() => {}} dragging={false} onFileDrop={() => {}} localDevice="self" /></MotionProvider></I18nProvider>
 afterEach(cleanup)
 
+it('labels the remote identity independently of the local transfer slot', () => {
+  const accountPeer = { ...peer, pair_id: 'account', owner_id: 'acct-peer', device_name: 'Account peer' }
+  const visitorPeer = { ...peer, pair_id: 'visitor', authority: 'ACCOUNT' as const, device_name: 'Visitor peer' }
+  const { container } = render(<I18nProvider initialPreference="en-US"><MotionProvider><GuestGraph peers={[accountPeer, visitorPeer]} onConnect={() => {}} onConversation={() => {}} onDetails={() => {}} dragging={false} onFileDrop={() => {}} localDevice="account-self" localAccount /></MotionProvider></I18nProvider>)
+  const nodes = container.querySelectorAll('.guest-peer')
+  expect(nodes[0].querySelector('.guest-account-icon')).toBeInTheDocument()
+  expect(nodes[1].querySelector('.guest-account-icon')).not.toBeInTheDocument()
+  expect(container.querySelector('.guest-local .guest-account-icon')).toBeInTheDocument()
+})
+
 it('opens one conversation action while retaining device management', () => {
   const open = vi.fn()
   render(<I18nProvider initialPreference="en-US"><MotionProvider><GuestGraph peers={[peer]} onConnect={() => {}} onConversation={open} onDetails={() => {}} dragging={false} onFileDrop={() => {}} localDevice="self" /></MotionProvider></I18nProvider>)
