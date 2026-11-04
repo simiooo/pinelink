@@ -7,6 +7,7 @@ import { MotionButton, MotionReveal, MotionTooltip } from '../motion/components'
 import { MotionSurface } from '../motion/surface'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { Input } from '../components/ui/input'
+import { Button } from '../components/ui/button'
 import { useGuestCopy, guestErrorText } from './copy'
 import { displayedRoute } from './route'
 import { DeviceGlyph, GuestGraph } from './Graph'
@@ -33,9 +34,13 @@ export function captureGuestLink() {
 const pendingLink = () => { try { const v = JSON.parse(sessionStorage.getItem(linkKey) ?? 'null') as { token: string; expires: number } | null; return v && v.expires > Date.now() ? v.token : '' } catch { return '' } }
 
 export function GuestHome({ onNotifications }: { onNotifications?: (count: number) => void } = {}) {
-  const c = useGuestCopy(), [runtime, setRuntime] = useState<GuestRuntime>(), [error, setError] = useState(false), [retry, setRetry] = useState(0)
-  useEffect(() => { let live = true; void getGuestRuntime().then(value => { if (live) setRuntime(value) }).catch(() => { if (live) setError(true) }); return () => { live = false } }, [retry])
-  if (!runtime) return error ? <section className="guest-storage"><h1>{c.storage}</h1><p>{c.storageHint}</p><MotionButton className="primary-button" onClick={() => { setError(false); setRetry(value => value + 1) }}>{c.retry}</MotionButton></section> : <div className="guest-loading" aria-busy="true" />
+  const c = useGuestCopy(), {locale}=useI18n(), [runtime, setRuntime] = useState<GuestRuntime>(), [error, setError] = useState(''), [retry, setRetry] = useState(0)
+  useEffect(() => { let live = true; void getGuestRuntime().then(value => { if (live) setRuntime(value) }).catch(reason => { if (live) setError(reason instanceof Error ? reason.message : 'STORAGE_UNAVAILABLE') }); return () => { live = false } }, [retry])
+  if (!runtime) {
+    if (!error) return <div className="guest-loading" aria-busy="true" />
+    const unsupported = error === 'BROWSER_CRYPTO_UNAVAILABLE', insecure = error === 'BROWSER_CONTEXT_UNAVAILABLE', zh=locale==='zh-CN'
+    return <section className="guest-storage"><h1>{unsupported?(zh?'请更新浏览器':'Update your browser'):insecure?(zh?'请使用安全地址':'Open Pinelink securely'):c.storage}</h1><p>{unsupported?(zh?'当前浏览器不支持安全传输。':"Secure transfer isn't supported here."):insecure?(zh?'请使用 HTTPS 或 Android 应用。':'Use HTTPS or the Android app.'):c.storageHint}</p>{(unsupported||insecure)&&<Button asChild className="primary-button guest-download"><a href="https://github.com/simiooo/pinelink/releases/tag/v0.1.0-preview.13">{zh?'Android 应用':'Android app'}</a></Button>}<MotionButton className={unsupported||insecure?'guest-startup-retry':'primary-button'} onClick={() => { setError(''); setRetry(value => value + 1) }}>{c.retry}</MotionButton></section>
+  }
   return <VisitorHome runtime={runtime} onNotifications={onNotifications} />
 }
 type Panel = 'connect' | 'pair' | 'waiting' | 'send' | 'job' | 'files' | 'notifications' | 'rename' | 'remove' | 'account-job' | 'account-request' | null

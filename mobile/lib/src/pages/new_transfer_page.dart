@@ -19,6 +19,7 @@ class NewTransferPage extends StatefulWidget {
 
 class _NewTransferPageState extends State<NewTransferPage> {
   PlatformFile? _file;
+  int _fileSize = 0;
   bool _preparing = false;
   late Future<List<TransferTask>> _tasks = widget.api.getTasks(
     widget.api.currentOwner,
@@ -40,9 +41,11 @@ class _NewTransferPageState extends State<NewTransferPage> {
 
   Future<void> _choose() async {
     final api = widget.api;
-    final result = await FilePicker.platform.pickFiles(withData: false);
+    final result = await FilePicker.pickFile();
     if (!mounted || widget.api != api || result == null) return;
-    setState(() => _file = result.files.first);
+    final length = await result.length();
+    if (!mounted || widget.api != api || length == null) return;
+    setState(() { _file = result; _fileSize = length; });
   }
 
   @override
@@ -50,7 +53,7 @@ class _NewTransferPageState extends State<NewTransferPage> {
     if (_preparing && _file != null) {
       return SendPreparationPage(
         name: _file!.name,
-        size: _file!.size,
+        size: _fileSize,
         filePath: _file!.path ?? _file!.name,
       );
     }
@@ -103,7 +106,7 @@ class _NewTransferPageState extends State<NewTransferPage> {
               Text(
                 _file == null
                     ? tr(context, 'dropHint')
-                    : '${formatBytes(_file!.size, i18nLocale(context))} · ${tr(context, 'fileReady')}',
+                    : '${formatBytes(_fileSize, i18nLocale(context))} · ${tr(context, 'fileReady')}',
                 style: const TextStyle(
                   fontSize: 12,
                   color: PinelinkColors.muted,

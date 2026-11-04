@@ -27,6 +27,8 @@ designs/**/memory-draft.json
 designs/**/memory-*.json
 mobile/android/key.properties
 mobile/android/*.jks
+mobile/android/*.keystore
+mobile/android/*.p12
 mobile/test/failures/
 mobile/web/drift_worker.js*
 mobile/web/sqlite3.wasm

@@ -1,0 +1,9 @@
+{
+  "component": "libsodium",
+  "version": "1.0.22",
+  "license": "ISC",
+  "source": "https://github.com/jedisct1/libsodium",
+  "archive_source": "sodium 4.1.2+1/3rdparty/libsodium-1.0.22-stable.tar.gz",
+  "archive_sha256": "5d829f95ea7be72eedf373b197f01df765171da80619b1291692d3f854e10e46",
+  "runtime_network_download": false
+}

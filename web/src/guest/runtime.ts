@@ -1,5 +1,5 @@
 import { API_URL } from '../api/client'
-import { base64, digest, utf8 } from '../data/crypto'
+import { assertCryptoContext, base64, digest, utf8 } from '../data/crypto'
 import type { DeviceProfile } from '../data/crypto'
 import { GuestStore } from './store'
 import type { GuestJob } from './store'
@@ -42,6 +42,7 @@ export class GuestRuntime {
   private channel?: BroadcastChannel
   private constructor(readonly server: string, readonly store: GuestStore, readonly profile: DeviceProfile) {}
   static async open(server = API_URL,localOnly=false) {
+    assertCryptoContext()
     const absolute = new URL(server, location.href).href.replace(/\/$/, '')
     const store = new GuestStore('pinelink-visitor:' + await digest(utf8.encode(absolute)))
     try {

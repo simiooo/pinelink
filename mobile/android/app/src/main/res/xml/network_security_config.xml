@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <!-- Signed, file-free LAN signalling only; sockets are pinned to an NSD
+         private address. No broad cleartext exception for centre traffic. -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">pinelink.local</domain>
+    </domain-config>
+</network-security-config>

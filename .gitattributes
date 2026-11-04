@@ -6,3 +6,6 @@
 *.ttf binary
 *.bat text eol=crlf
 *.sh text eol=lf
+# Verbatim upstream notices retain their original whitespace.
+third_party/webrtc-android-150.7871.04/NOTICE.md -whitespace
+mobile/assets/licenses/WebRTC-NOTICES.txt -whitespace

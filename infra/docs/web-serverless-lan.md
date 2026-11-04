@@ -29,7 +29,9 @@ pinelink local-web --web-dir web
 
 浏览器没有通用的任意 Bonjour/mDNS 扫描接口。此处用双方显式交换的签名连接包发现目标，WebRTC 再在本地选择可达的 host/prflx 候选；浏览器内部 ICE 的 mDNS 名称解析不等于应用能够枚举局域网设备。
 
-原生 CLI 的 `lan discover/serve/pair/send/accept` 复用已有 Bonjour、本地 TLS、短期邀请与 SQLite 权威日志，见[原生离线契约](offline-local-delivery.md)。Flutter 界面适配另行交付，不能以 CLI 或浏览器测试代替 Android 实机能力。Web 本地协议目前只支持浏览器间收发；与原生 TLS 数据面的互操作需要原生适配或明确的局域网 HTTPS 桥接，不能混称已完成。
+Flutter/Android 已接入本页相同的 RTC 本地协议，支持附近设备发现，并可与 Web 交换签名连接包后收发。见[原生离线指南](native-serverless-lan.md)。原生 CLI 的 `lan discover/serve/pair/send/accept` 仍复用已有 Bonjour、本地 TLS、短期邀请与 SQLite 权威日志，见[原生离线契约](offline-local-delivery.md)；它的旧 TLS 数据面不与 Web/Flutter 混称互通。
+
+浏览器必须在 HTTPS 或 localhost 安全上下文中提供 Ed25519、X25519、WebRTC 和持久化能力。旧浏览器缺少签名算法时会提示更新浏览器，并提供 Android 应用入口；不会降低身份密钥的保护方式或把算法缺失误报成存储权限故障。
 
 AP 客户端隔离、访客 Wi-Fi、VPN、操作系统防火墙或浏览器的局域网权限都可能阻止对端候选互通。允许本地网络访问并使用可互通的网络后，重新连接。此离线路径不会静默改为云中继。
 

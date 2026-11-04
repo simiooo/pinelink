@@ -17,11 +17,16 @@ class TransferGraph extends StatefulWidget {
     required this.statusLabel,
     required this.detailsLabel,
     required this.onDetails,
+    this.localIcon = Icons.computer_outlined,
+    this.peerIcon = Icons.smartphone_outlined,
+    this.peerDisconnected = false,
   });
   final double value;
   final bool running, completed, cloud, incoming;
   final String localLabel, peerLabel, statusLabel, detailsLabel;
   final VoidCallback onDetails;
+  final IconData localIcon, peerIcon;
+  final bool peerDisconnected;
   @override
   State<TransferGraph> createState() => _TransferGraphState();
 }
@@ -110,6 +115,7 @@ class _TransferGraphState extends State<TransferGraph>
         double size,
         String label, {
         bool receipt = false,
+        bool disconnected = false,
       }) => SizedBox(
         width: math.min(240, box.maxWidth),
         child: Column(
@@ -131,21 +137,23 @@ class _TransferGraphState extends State<TransferGraph>
                     color: const Color(0xFF101010),
                   ),
                 ),
-                if (receipt)
-                  const Positioned(
+                if (receipt || disconnected)
+                  Positioned(
                     right: 0,
                     bottom: 0,
                     child: DecoratedBox(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
                       child: Padding(
                         padding: EdgeInsets.all(3),
                         child: Icon(
-                          Icons.check,
+                          disconnected ? Icons.wifi_off_outlined : Icons.check,
                           size: 14,
-                          color: Color(0xFF0866FF),
+                          color: disconnected
+                              ? const Color(0xFF737373)
+                              : const Color(0xFF0866FF),
                         ),
                       ),
                     ),
@@ -163,6 +171,8 @@ class _TransferGraphState extends State<TransferGraph>
         ),
       );
       return Semantics(
+        container: true,
+        explicitChildNodes: true,
         label: widget.statusLabel,
         value: '${(_value * 100).round()}%',
         child: SizedBox(
@@ -187,17 +197,16 @@ class _TransferGraphState extends State<TransferGraph>
               Positioned(
                 top: small ? 36 : 32,
                 child: node(
-                  widget.cloud
-                      ? Icons.cloud_outlined
-                      : Icons.smartphone_outlined,
+                  widget.cloud ? Icons.cloud_outlined : widget.peerIcon,
                   peerSize,
                   widget.peerLabel,
+                  disconnected: widget.peerDisconnected,
                 ),
               ),
               Positioned(
                 top: 248,
                 child: node(
-                  Icons.computer_outlined,
+                  widget.localIcon,
                   localSize,
                   widget.localLabel,
                   receipt: widget.completed && widget.incoming,
@@ -208,8 +217,11 @@ class _TransferGraphState extends State<TransferGraph>
                 width: math.max(48, box.maxWidth * .4),
                 height: 116,
                 child: Semantics(
+                  container: true,
+                  excludeSemantics: true,
                   button: true,
                   label: widget.detailsLabel,
+                  onTap: widget.onDetails,
                   child: TextButton(
                     onPressed: widget.onDetails,
                     style: TextButton.styleFrom(

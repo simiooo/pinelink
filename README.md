@@ -12,7 +12,9 @@ Web 访客模式支持无需注册的一次性设备连接与独立接收确认�
 
 Web/PWA 新增独立的本地连接：双方交换二维码或签名连接包、核对号码并确认，无中心、外部 DNS、STUN/TURN 时仍可配对和加密收发。暂停、断链重连、持久化确认量与签名回执由接收设备负责；桌面本地启动包解决首次未缓存网页的离线启动。浏览器不能通用扫描 Bonjour，采用显式交换发现目标，详见[无中心服务的 Web 局域网收发](infra/docs/web-serverless-lan.md)。
 
-账号模式和 Flutter 的完整文件数据面、原生离线发现的界面适配，以及新版节点图的其余界面仍在实施。Web 本地连接暂不与原生 CLI 的 TLS 数据面互操作；已有原生 CLI 离线能力不能冒充 Android 界面交付。实际部署版本以交付记录为准。
+Flutter/Android 已补充无中心的附近设备发现、双向核对配对、加密文件直传、暂停与重开恢复、本机历史和系统文件保存；同一套本地协议与 Web/PWA 互通。Android 使用独立本地身份，无需等待账号或中心响应。安装包与签名说明见[原生离线使用指南](infra/docs/native-serverless-lan.md)。
+
+账号模式及 Flutter 的联网云端文件数据面、新本地日志的中心回传，以及新版节点图的其余界面仍在实施。Web/Flutter 本地连接暂不与原生 CLI 的旧 TLS 数据面互操作。iOS 保留共享实现与权限声明，本次不分发 iOS 包，也不将 Android 测试当作 iOS 验证。
 
 Web/Flutter 的账号预览已接入 Google 首次授权自动建号、邮箱与密码注册/登录、邮件验证码及短链恢复。Google 入口独立，不要求另填邮箱；服务端确定账号后才登记该账号的设备密钥。部署方式与身份边界见[账号服务](infra/docs/accounts.md)，已验证的运行范围见[账号验收记录](designs/27-account-password/runtime-evidence.json)。
 

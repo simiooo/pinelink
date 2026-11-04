@@ -1,0 +1,184 @@
+{
+  "version": 35,
+  "issue": "SIM-958",
+  "primary": "#0866FF",
+  "font": "Nunito",
+  "frames": [
+    {
+      "key": "mobile-home",
+      "name": "Android / home",
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-searching",
+      "name": "Android / searching",
+      "x": 470,
+      "y": 0,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-nearby",
+      "name": "Android / nearby",
+      "x": 940,
+      "y": 0,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-entry",
+      "name": "Android / entry",
+      "x": 1410,
+      "y": 0,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-show",
+      "name": "Android / show",
+      "x": 0,
+      "y": 940,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-reply",
+      "name": "Android / reply",
+      "x": 470,
+      "y": 940,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-verify",
+      "name": "Android / verify",
+      "x": 940,
+      "y": 940,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-waiting",
+      "name": "Android / waiting",
+      "x": 1410,
+      "y": 940,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-enter",
+      "name": "Android / enter",
+      "x": 0,
+      "y": 1880,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-camera",
+      "name": "Android / camera",
+      "x": 470,
+      "y": 1880,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-expired",
+      "name": "Android / expired",
+      "x": 940,
+      "y": 1880,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-receive",
+      "name": "Android / receive",
+      "x": 1410,
+      "y": 1880,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-transfer",
+      "name": "Android / transfer",
+      "x": 0,
+      "y": 2820,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-details",
+      "name": "Android / details",
+      "x": 470,
+      "y": 2820,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-reconnect",
+      "name": "Android / reconnect",
+      "x": 940,
+      "y": 2820,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-complete",
+      "name": "Android / complete",
+      "x": 1410,
+      "y": 2820,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-history",
+      "name": "Android / history",
+      "x": 0,
+      "y": 3760,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-unavailable",
+      "name": "Android / unavailable",
+      "x": 470,
+      "y": 3760,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-permission",
+      "name": "Android / permission",
+      "x": 940,
+      "y": 3760,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "launcher",
+      "name": "Android / launcher",
+      "x": 1410,
+      "y": 3760,
+      "width": 512,
+      "height": 512
+    },
+    {
+      "key": "mobile-browser-update",
+      "name": "Web / browser update / mobile",
+      "x": 0,
+      "y": 4700,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "desktop-browser-update",
+      "name": "Web / browser update / desktop",
+      "x": 470,
+      "y": 4700,
+      "width": 1120,
+      "height": 760
+    }
+  ]
+}

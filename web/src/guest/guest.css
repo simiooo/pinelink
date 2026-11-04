@@ -84,7 +84,13 @@
 .guest-error { position: absolute; bottom: 64px; left: 50%; transform: translateX(-50%); max-width: min(100%,480px); display: flex; align-items: center; gap: 12px; background: white; border: 1px solid #e5e5e5; border-radius: 16px; padding: 8px 8px 8px 16px; font-size: 13px; }
 .guest-inline-error { color: #404040; font-size: 13px; line-height: 20px; margin: 24px 0 0; }
 .guest-storage { width: min(100%,400px); margin: 64px auto; text-align: left; }.guest-storage h1 { font-size: 24px; margin: 0 0 12px; }.guest-storage p { color: #737373; margin: 0 0 32px; }
+.guest-download, .guest-startup-retry { display: flex; width: 192px; min-height: 48px; justify-content: center; align-items: center; border-radius: 24px; }
+.guest-startup-retry { margin-top: 12px; color: #737373; background: transparent; border: 0; }
+.guest-download { transition: background-color 120ms, transform 100ms; }
+.guest-download:active { transform: scale(.97); }
+@media(prefers-reduced-motion:reduce) { .guest-download { transition: none; }.guest-download:active { transform: none; } }
 @media(max-width:639px) {
+  .page-content:has(.guest-storage) { padding-inline: 20px; }
   .app-shell:has(.guest-page) .topbar { height: 72px; padding-inline: 20px; }
   .page-content:has(.guest-page) { padding: 0 20px max(20px,env(safe-area-inset-bottom)); }
   .guest-stage { height: calc(100dvh - 156px); min-height: 420px; }
