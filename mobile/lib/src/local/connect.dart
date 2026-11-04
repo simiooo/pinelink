@@ -449,17 +449,19 @@ class _LocalScannerState extends State<LocalScanner>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    // The OS permission dialog changes lifecycle before the camera is ready.
+    if (!camera.value.hasCameraPermission) return;
     if (state == AppLifecycleState.resumed && !used) {
-      unawaited(camera.start());
-    } else {
-      unawaited(camera.stop());
+      unawaited(camera.start().catchError((Object _) {}));
+    } else if (state == AppLifecycleState.inactive) {
+      unawaited(camera.stop().catchError((Object _) {}));
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    unawaited(camera.dispose());
+    unawaited(camera.dispose().catchError((Object _) {}));
     super.dispose();
   }
 
@@ -491,7 +493,7 @@ class _LocalScannerState extends State<LocalScanner>
             .firstOrNull;
         if (!used && code != null) {
           used = true;
-          unawaited(camera.stop());
+          unawaited(camera.stop().catchError((Object _) {}));
           Navigator.pop(context, code);
         }
       },

@@ -171,6 +171,8 @@ class _TransferGraphState extends State<TransferGraph>
         ),
       );
       return Semantics(
+        container: true,
+        explicitChildNodes: true,
         label: widget.statusLabel,
         value: '${(_value * 100).round()}%',
         child: SizedBox(
@@ -215,8 +217,11 @@ class _TransferGraphState extends State<TransferGraph>
                 width: math.max(48, box.maxWidth * .4),
                 height: 116,
                 child: Semantics(
+                  container: true,
+                  excludeSemantics: true,
                   button: true,
                   label: widget.detailsLabel,
+                  onTap: widget.onDetails,
                   child: TextButton(
                     onPressed: widget.onDetails,
                     style: TextButton.styleFrom(
