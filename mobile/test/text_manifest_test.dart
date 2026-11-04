@@ -49,4 +49,17 @@ void main() {
       throwsStateError,
     );
   });
+  test(
+    'decodes exact text including a leading BOM and rejects invalid UTF-8',
+    () {
+      final body = '\ufeff标题\n  spaced  \n';
+      expect(decodeText(Uint8List.fromList(utf8.encode(body))), body);
+      expect(() => decodeText(Uint8List(0)), throwsStateError);
+      expect(() => decodeText(Uint8List(textByteLimit + 1)), throwsStateError);
+      expect(
+        () => decodeText(Uint8List.fromList([0xc3, 0x28])),
+        throwsStateError,
+      );
+    },
+  );
 }

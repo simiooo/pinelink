@@ -10,6 +10,18 @@ import '../data/identity.dart';
 const wireChunkSize = 65536;
 const fileSuite = 'DARE20-AGE-X25519-v1';
 const textByteLimit = 256 * 1024;
+String decodeText(Uint8List bytes) {
+  if (bytes.isEmpty || bytes.length > textByteLimit) {
+    throw StateError('TEXT_SIZE_INVALID');
+  }
+  try {
+    // A leading marker prevents Dart's UTF-8 decoder from consuming a BOM.
+    return utf8.decode([0, ...bytes], allowMalformed: false).substring(1);
+  } on FormatException {
+    throw StateError('TEXT_UTF8_INVALID');
+  }
+}
+
 Future<Map<String, dynamic>> prepareFileWorker(
   (Uint8List, String, String) input,
 ) => prepareLocalFile(input.$1, input.$2, input.$3);
@@ -187,25 +199,44 @@ Future<Uint8List> decryptDare(Uint8List input, Map<String, dynamic> m) async {
 Future<Map<String, dynamic>> prepareLocalFile(
   Uint8List bytes,
   String name,
-  String recipient,
-) async {
+  String recipient, {
+  String? senderRecipient,
+  String? sensitivity,
+}) async {
+  if (sensitivity != null) {
+    if (!['NORMAL', 'SENSITIVE'].contains(sensitivity)) {
+      throw StateError('FILE_MANIFEST_INVALID');
+    }
+    decodeText(bytes);
+  }
   final key = randomBytes(32),
       manifest = <String, dynamic>{
         'suite': fileSuite,
         'data_key': base64Encode(key),
         'plaintext_root': await digest(bytes),
         'plaintext_size': bytes.length,
-        'file_name': safeFileName(name),
+        'file_name': sensitivity == null ? safeFileName(name) : 'Text',
+        if (sensitivity != null) ...{
+          'content_version': 1,
+          'content_kind': 'TEXT',
+          'sensitivity': sensitivity,
+        },
       };
+  validateManifest(manifest);
   final cipher = await encryptDare(bytes, key);
   final encrypted = await AgeEncrypter(
     recipients: [X25519Recipient.parse(recipient)],
   ).encrypt(Uint8List.fromList(utf8.encode(jsonEncode(manifest))));
+  final senderManifest = senderRecipient == null
+      ? null
+      : await AgeEncrypter(recipients: [X25519Recipient.parse(senderRecipient)])
+            .encrypt(Uint8List.fromList(utf8.encode(jsonEncode(manifest))));
   return {
     'cipher': cipher,
     'root': await digest(cipher),
     'plainRoot': manifest['plaintext_root'],
     'manifest': base64Encode(encrypted),
+    if (senderManifest != null) 'senderManifest': base64Encode(senderManifest),
     'name': manifest['file_name'],
   };
 }

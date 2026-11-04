@@ -51,6 +51,30 @@ void main() {
     );
   });
   test(
+    'sensitive text retains an encrypted sender envelope and exact bytes',
+    () async {
+      const text = '\ufeff标题\n  保留空格  \n';
+      final source = Uint8List.fromList(utf8.encode(text));
+      final prepared = await prepareLocalFile(
+        source,
+        'private-name.txt',
+        identity.encryptionKey,
+        senderRecipient: identity.encryptionKey,
+        sensitivity: 'SENSITIVE',
+      );
+      expect(prepared['name'], 'Text');
+      final recipient = await identity.decrypt(prepared['manifest']);
+      final sender = await identity.decrypt(prepared['senderManifest']);
+      expect(recipient, sender);
+      expect(recipient['content_kind'], 'TEXT');
+      expect(recipient['sensitivity'], 'SENSITIVE');
+      expect(
+        decodeText(await decryptDare(prepared['cipher'], recipient)),
+        text,
+      );
+    },
+  );
+  test(
     'an empty source remains an empty blob when reading the wire chunk',
     () async {
       final store = LocalStore(db);
