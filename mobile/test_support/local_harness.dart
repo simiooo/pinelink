@@ -79,6 +79,18 @@ Future<void> main() async {
             List.generate(v['size'], (i) => (i * 29 + 7) & 255),
           );
           result = await r.send(bytes, v['name'], peer);
+        case '/send-text':
+          final peer = r.peers.firstWhere((p) => p['root'] == v['root']);
+          result = await r.sendText(
+            Uint8List.fromList(utf8.encode(v['value'])),
+            peer,
+            v['sensitivity'],
+          );
+        case '/text':
+          final value = await r.text(v['id']);
+          result = value == null
+              ? null
+              : {'value': value.value, 'sensitive': value.sensitive};
         case '/plain':
           final plain = await r.plaintext(v['id']);
           result = plain == null ? null : base64Encode(plain);

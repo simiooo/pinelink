@@ -1,4 +1,4 @@
-.pinelink-motion-surface:has(.conversation-panel) { height: min(760px, calc(100dvh - 64px)); overflow: hidden; }
+.pinelink-motion-surface[data-slot]:has(.conversation-panel) { display: flex; flex-direction: column; height: min(760px, calc(100dvh - 64px)); overflow: hidden; }
 .guest-surface-body:has(.conversation-panel) { display: flex; flex: 1; min-height: 0; }
 .conversation-list { display: flex; flex: 1; flex-direction: column; gap: 24px; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 .conversation-panel { display: flex; flex: 1; flex-direction: column; gap: 24px; min-width: 0; min-height: 0; }

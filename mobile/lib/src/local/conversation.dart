@@ -162,6 +162,11 @@ class _LocalConversationState extends State<LocalConversation> {
                       children: [
                         TextButton(
                           onPressed: () => setState(() => sensitive = false),
+                          style: TextButton.styleFrom(
+                            foregroundColor: !sensitive
+                                ? const Color(0xff101010)
+                                : const Color(0xff737373),
+                          ),
                           child: Text(
                             lc(context, 'Text', '文本'),
                             style: TextStyle(
@@ -173,6 +178,11 @@ class _LocalConversationState extends State<LocalConversation> {
                         ),
                         TextButton(
                           onPressed: () => setState(() => sensitive = true),
+                          style: TextButton.styleFrom(
+                            foregroundColor: sensitive
+                                ? const Color(0xff101010)
+                                : const Color(0xff737373),
+                          ),
                           child: Text(
                             lc(context, 'Sensitive', '敏感信息'),
                             style: TextStyle(
@@ -193,7 +203,9 @@ class _LocalConversationState extends State<LocalConversation> {
                             maxLines: 5,
                             decoration: InputDecoration(
                               hintText: lc(context, 'Write a message', '输入文字'),
-                              border: const OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
                             ),
                           ),
                         ),
@@ -281,8 +293,9 @@ class _TextMessageState extends State<_TextMessage> {
             child: TextButton(
               onPressed: widget.onJob,
               child: Text(
-                snapshot.hasError ||
-                        localTerminal(widget.job['state']?['state'])
+                snapshot.connectionState == ConnectionState.done &&
+                        (snapshot.hasError ||
+                            localTerminal(widget.job['state']?['state']))
                     ? lc(context, 'Unavailable', '不可用')
                     : lc(context, 'Waiting', '等待中'),
               ),
