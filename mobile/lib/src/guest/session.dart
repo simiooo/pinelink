@@ -176,21 +176,36 @@ class GuestSession {
     if (!['GET', 'POST', 'DELETE'].contains(method)) {
       throw StateError('GUEST_METHOD_INVALID');
     }
-    final body = value == null ? '' : jsonEncode(value),
-        timestamp = ((DateTime.now().millisecondsSinceEpoch + _offset) ~/ 1000)
-            .toString();
+    final body = value == null ? '' : jsonEncode(value);
+    return _send(method, path, body, await signedHeaders(method, path, body));
+  }
+
+  Future<Map<String, String>> signedHeaders(
+    String method,
+    String path, [
+    String body = '',
+  ]) async {
+    if (_closed || _token == null || _owner == null) {
+      throw StateError('GUEST_EXPIRED');
+    }
+    if (!path.startsWith('/v1/') || path.contains('#') || path.contains('\n')) {
+      throw StateError('GUEST_PATH_INVALID');
+    }
+    final timestamp =
+        ((DateTime.now().millisecondsSinceEpoch + _offset) ~/ 1000).toString();
     final signature = await identity.sign(
       utf8.encode(
         '$method\n$path\n$timestamp\n${await digest(utf8.encode(body))}',
       ),
     );
-    return _send(method, path, body, {
+    return {
+      'X-Pinelink-Surface': 'app',
       'X-Pinelink-Owner': _owner!,
       'X-Pinelink-Device': identity.device,
       'X-Pinelink-Timestamp': timestamp,
       'X-Pinelink-Signature': signature,
       'X-Pinelink-Guest-Session': _token!,
-    });
+    };
   }
 
   void close() {

@@ -8,6 +8,7 @@ import 'package:pinelink_mobile/src/data/database.dart';
 import 'package:pinelink_mobile/src/data/identity.dart';
 import 'package:pinelink_mobile/src/guest/connections.dart';
 import 'package:pinelink_mobile/src/guest/runtime.dart';
+import 'package:pinelink_mobile/src/guest/relay.dart';
 
 class _Vault implements IdentityVault {
   final values = <String, String>{};
@@ -73,13 +74,23 @@ void main() {
         );
         expect(pending['content_kind'], 'TEXT');
         expect(pending['encrypted_manifest'], isNull);
+        final stored = await GuestRelay(sessionA).upload(
+          transfer['id'] as String,
+          (await runtimeA.store.bytes(jobId, 'source'))!,
+        );
+        expect(stored['completion']['stored'], isTrue);
+        expect(stored['completion']['delivered'], isFalse);
+        final latest = await sessionB.request(
+          'GET',
+          '/v1/transfers/${transfer['id']}',
+        );
         await sessionB.request(
           'POST',
           '/v1/transfers/${transfer['id']}/reject',
           {
             'owner_id': sessionB.owner,
             'device_id': runtimeB.identity.device,
-            'expected_version': transfer['version'],
+            'expected_version': latest['version'],
           },
         );
         await a.remove(peer['pair_id']);
