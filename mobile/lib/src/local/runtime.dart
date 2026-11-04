@@ -1033,7 +1033,18 @@ class NativeLocalRuntime extends LocalController {
             );
           })()
           .catchError((Object e) async {
-            if (_closed) return;
+            // An expired/changed writer lease is retryable. In particular, a
+            // restart at the final ACK must not turn valid bytes into FAILED
+            // if the previous owner's lease expires between the two attempts.
+            if (_closed ||
+                e is StateError &&
+                    const {
+                      'LOCAL_OTHER_WINDOW',
+                      'LOCAL_CONNECTION_LOST',
+                      'FILE_JOB_CHANGED',
+                    }.contains(e.message)) {
+              return;
+            }
             await _task(id, () async {
               final job = await store.job(id);
               if (job == null ||
