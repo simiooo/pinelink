@@ -8,6 +8,7 @@ import { decodeFileFrame, decryptDare, encodeFileFrame, hashBlob, openManifest, 
 import { setGuestHistoryAvailable, setGuestWorkPending } from './continuity'
 import { DirectLink, DirectUnavailable, fallbackSignal } from './direct'
 import type { DirectProof } from './direct'
+import { LocalRuntime } from '../local/runtime'
 
 export class GuestError extends Error { constructor(public code: string, public status = 0) { super(code) } }
 type Snapshot = { ready: boolean; connected: boolean; busy: boolean; offline: boolean; error?: string; checkedAt?: number; connections: GuestConnections; jobs: GuestJob[]; invite?: GuestInvite }
@@ -25,6 +26,7 @@ const wait = (ms: number, signal?: AbortSignal) => new Promise<void>((resolve, r
 })
 
 export class GuestRuntime {
+  local!: LocalRuntime
   private snapshot: Snapshot = { ready: false, connected: false, busy: false, offline: navigator.onLine === false, connections: emptyConnections(), jobs: [] }
   private listeners = new Set<() => void>()
   private lease?: GuestLease
@@ -39,20 +41,21 @@ export class GuestRuntime {
   private timer?: ReturnType<typeof setTimeout>
   private channel?: BroadcastChannel
   private constructor(readonly server: string, readonly store: GuestStore, readonly profile: DeviceProfile) {}
-  static async open(server = API_URL) {
+  static async open(server = API_URL,localOnly=false) {
     const absolute = new URL(server, location.href).href.replace(/\/$/, '')
     const store = new GuestStore('pinelink-visitor:' + await digest(utf8.encode(absolute)))
     try {
       const runtime = new GuestRuntime(absolute, store, await store.profile())
+      runtime.local = await LocalRuntime.open(store, () => runtime.changed())
       runtime.lease = await store.leases.get('self')
       // Persisted route history is not a live PeerConnection after reopening.
-      await store.jobs.filter(job => activeJob(job) && job.transport?.state === 'direct').modify(job => { job.transport = { state: 'connecting', proof: job.transport?.proof } })
+      await store.jobs.filter(job => job.authority !== 'LOCAL_DEVICE' && activeJob(job) && job.transport?.state === 'direct').modify(job => { job.transport = { state: 'connecting', proof: job.transport?.proof } })
       await runtime.refreshLocal()
       runtime.snapshot = { ...runtime.snapshot, ready: true, connected: !!runtime.lease }
       if (typeof BroadcastChannel !== 'undefined') { runtime.channel = new BroadcastChannel(store.name); runtime.channel.onmessage = () => { void runtime.refreshLocal().catch(() => undefined) } }
       window.addEventListener('online', runtime.wake); window.addEventListener('offline', runtime.wake)
       document.addEventListener('visibilitychange', runtime.visibility)
-      if (runtime.lease) void runtime.ensureSession().then(() => runtime.poll()).catch(error => runtime.noteError(error))
+      if (runtime.lease&&!localOnly) void runtime.ensureSession().then(() => runtime.poll()).catch(error => runtime.noteError(error))
       return runtime
     } catch (error) { store.close(); throw error }
   }
@@ -64,8 +67,8 @@ export class GuestRuntime {
   private wake = () => { this.emit({ offline: navigator.onLine === false }); if (navigator.onLine !== false && this.lease) void this.ensureSession().then(() => this.poll()).catch(error => this.noteError(error)) }
   private visibility = () => { if (!document.hidden) this.wake() }
   private async refreshLocal() {
-    const jobs = (await this.store.jobs.toArray()).sort((a, b) => b.created - a.created)
-    const peers = (await this.store.guestPeers.toArray()).filter(peer => Date.parse(peer.expires_at) > this.now())
+    const jobs = (await this.store.jobs.toArray()).sort((a, b) => b.created - a.created).map(job=>job.authority==='LOCAL_DEVICE'&&activeJob(job)&&!this.local.reachable(job.peer.root)?{...job,peer:{...job.peer,online:false},phase:job.phase==='waiting'?'waiting' as const:'paused' as const,local:{...job.local!,disconnected:true}}:job)
+    const peers = [...(await this.store.guestPeers.toArray()).filter(peer => Date.parse(peer.expires_at) > this.now()), ...(await this.store.localPeers.toArray()).map(peer=>({...peer,online:this.local.reachable(peer.root)}))]
     this.lifetime.signal.throwIfAborted()
     setGuestHistoryAvailable(jobs.length > 0)
     setGuestWorkPending(jobs.filter(activeJob).length)
@@ -143,6 +146,7 @@ export class GuestRuntime {
     return this.command('candidate:' + candidate, async () => { await this.request('POST', `/v1/guest/candidates/${encodeURIComponent(candidate)}/${approve ? 'approve' : 'decline'}`, {}); await this.poll() })
   }
   async renamePeer(pair: string, name: string) {
+    if(pair.startsWith('local:'))return this.local.rename(pair,name)
     const value = name.trim()
     if (!value || Array.from(value).length > 64 || /[\u0000-\u001f\u007f]/.test(value)) throw new GuestError('DEVICE_NAME_INVALID')
     return this.exclusive('peer:' + pair, async () => {
@@ -153,6 +157,7 @@ export class GuestRuntime {
     })
   }
   async removePeer(pair: string) {
+    if(pair.startsWith('local:'))return this.local.remove(pair)
     return this.command('remove:' + pair, () => this.exclusive('peer:' + pair, async () => {
       if (navigator.onLine === false) throw new GuestError('CONNECTION_OFFLINE')
       await this.ensureSession()
@@ -166,6 +171,7 @@ export class GuestRuntime {
     }))
   }
   async send(file: File, peer: GuestPeer, maxBytes: number) {
+    if(peer.authority==='LOCAL_DEVICE')return this.command('send',async()=>{this.emit({busy:true,error:undefined});try{return await this.local.send(file,peer,64<<20)}finally{this.emit({busy:false})}})
     return this.command('send', async () => {
       if (file.size > maxBytes) throw new GuestError('FILE_TOO_LARGE')
       if (this.snapshot.jobs.filter(activeJob).length >= 2) throw new GuestError('GUEST_LIMIT_REACHED')
@@ -181,6 +187,7 @@ export class GuestRuntime {
     })
   }
   async accept(id: string) {
+    if(id.startsWith('local:'))return this.local.action(id,'accept')
     return this.command('accept:' + id, async () => {
       const job = await this.store.jobs.get(id); if (!job?.transfer) return
       const transfer = await this.respondTransfer(job, 'accept')
@@ -188,6 +195,7 @@ export class GuestRuntime {
     })
   }
   async reject(id: string) {
+    if(id.startsWith('local:'))return this.local.action(id,'reject')
     return this.command('reject:' + id, async () => {
       const job = await this.store.jobs.get(id); if (!job?.transfer) return
       const transfer = await this.respondTransfer(job, 'reject')
@@ -208,7 +216,7 @@ export class GuestRuntime {
     throw new GuestError('STATE_CONFLICT')
   }
   private startJob(job: GuestJob) {
-    if (this.stopped || this.workers.has(job.id) || !activeJob(job) || job.phase === 'paused' || (job.retryAt ?? 0) > Date.now() || (job.direction === 'send' && job.snapshot?.completion.stored) || (job.direction === 'receive' && job.transfer?.state === 'PENDING' && (job.directAttempted || hasSpool(job)))) return
+    if (job.authority==='LOCAL_DEVICE' || this.stopped || this.workers.has(job.id) || !activeJob(job) || job.phase === 'paused' || (job.retryAt ?? 0) > Date.now() || (job.direction === 'send' && job.snapshot?.completion.stored) || (job.direction === 'receive' && job.transfer?.state === 'PENDING' && (job.directAttempted || hasSpool(job)))) return
     const controller = new AbortController(); this.workers.set(job.id, controller)
     const work = () => this.exclusive('job:' + job.id, async () => {
       const current = await this.store.jobs.get(job.id)
@@ -472,6 +480,7 @@ export class GuestRuntime {
     if (current && (current.phase === 'stopped' || current.phase === 'complete' && current.direction === 'send' && current.transport?.state === 'cloud' || current.direction === 'receive' && (current.phase === 'paused' || ['connecting', 'direct'].includes(current.transport?.state ?? '') && hasSpool(current)))) this.workers.get(id)?.abort()
   }
   async control(id: string, action: 'pause' | 'resume' | 'cancel') {
+    if(id.startsWith('local:'))return this.local.action(id,action)
     return this.command('control:' + action + ':' + id, async () => {
       const job = await this.store.jobs.get(id); if (!job?.transfer) return
       let controlRevision = job.controlRevision ?? 0
@@ -502,7 +511,7 @@ export class GuestRuntime {
       await this.changed(); await this.poll()
     })
   }
-  async retry(id: string) { await this.ensureSession(); const job = await this.store.jobs.get(id); if (!job) return; await this.store.jobs.update(id, { error: undefined, retryAt: 0, failures: 0 }); this.startJob({ ...job, retryAt: 0 }); await this.poll() }
+  async retry(id: string) { if(id.startsWith('local:'))return this.local.action(id,'resume'); await this.ensureSession(); const job = await this.store.jobs.get(id); if (!job) return; await this.store.jobs.update(id, { error: undefined, retryAt: 0, failures: 0 }); this.startJob({ ...job, retryAt: 0 }); await this.poll() }
   async dismiss(id: string) { await this.store.jobs.update(id, { dismissed: true }); await this.changed() }
   async download(id: string) {
     const job = await this.store.jobs.get(id); if (!job?.plain) throw new Error('FILE_SOURCE_MISSING')
@@ -521,7 +530,7 @@ export class GuestRuntime {
         await this.store.guestPeers.clear()
         await this.store.guestPeers.bulkPut(connections.peers.filter(peer => !removed.has(peer.pair_id)).map(peer => ({ ...peer, local_name: local.get(peer.pair_id) })))
       }))
-      connections.peers = await this.store.guestPeers.toArray()
+      connections.peers = [...await this.store.guestPeers.toArray(),...(await this.store.localPeers.toArray()).map(peer=>({...peer,online:this.local.reachable(peer.root)}))]
       this.emit({ connections, offline: false, error: undefined, checkedAt: this.now(), invite: this.snapshot.invite ? { ...this.snapshot.invite, consumed: connections.invites.find(i => i.id === this.snapshot.invite!.id)?.consumed ?? true } : undefined })
       for (const transfer of transfers.transfers ?? []) {
         const own = await this.store.jobs.where('transfer.id').equals(transfer.id).first()
@@ -551,9 +560,9 @@ export class GuestRuntime {
   private async finishClose() {
     this.stopped = true; this.lifetime.abort(); clearTimeout(this.timer); for (const worker of this.workers.values()) worker.abort()
     window.removeEventListener('online', this.wake); window.removeEventListener('offline', this.wake); document.removeEventListener('visibilitychange', this.visibility); this.channel?.close()
-    await Promise.allSettled([...this.workerTasks, ...this.commands.values(), ...(this.polling ? [this.polling] : []), ...(this.enrollment ? [this.enrollment] : [])]); this.store.close(); setGuestWorkPending(0)
+    await Promise.allSettled([...this.workerTasks, ...this.commands.values(), ...(this.polling ? [this.polling] : []), ...(this.enrollment ? [this.enrollment] : []),this.local.close()]); this.store.close(); setGuestWorkPending(0)
   }
 }
 let runtime: Promise<GuestRuntime> | undefined
-export const getGuestRuntime = () => runtime ??= GuestRuntime.open().catch(error => { runtime = undefined; throw error })
+export const getGuestRuntime = (localOnly=false) => runtime ??= GuestRuntime.open(undefined,localOnly).catch(error => { runtime = undefined; throw error })
 export async function closeGuestRuntime() { const current = runtime; runtime = undefined; if (current) await current.then(value => value.close()).catch(() => undefined) }

@@ -33,17 +33,19 @@ async function bootstrap() {
     let logoutBlocked = false
     try { await completePendingLogout() } catch { logoutBlocked = true }
     const state = await prepareAuth(logoutBlocked)
-    if (state.capabilities.guests) await getGuestRuntime().catch(() => undefined)
+    if (state.capabilities.guests) await getGuestRuntime(state.capabilities.local_only).catch(() => undefined)
     const managed = state.capabilities.enabled
     dataAccess.managed = managed
     const account = state.session?.account ?? state.offlineAccount
     const localOnly = managed && !state.session
     if (managed && account) { IDENTITY.owner = account.id; IDENTITY.scope = account.id }
+    if(!state.capabilities.local_only || managed){
     const pin = localOnly ? '' : await loadServerPin(API_URL, import.meta.env.VITE_PINELINK_HISTORY_KEY ?? '', import.meta.env.VITE_PINELINK_SERVICE_PROFILE === 'runtime')
     if (disposed) return
     runtime = await initializeClient(API_URL, IDENTITY.owner, managed && account ? '' : import.meta.env.VITE_PINELINK_DEVICE ?? '', pin, IDENTITY.scope, { localOnly, csrf: state.session?.csrf, onUnauthorized: () => sessionExpired(state.session?.csrf ?? '') })
     if (state.session && runtime.profile.device !== state.session.device_id) { runtime = undefined; await closeClient(); await signOut(); return }
     IDENTITY.device = runtime.profile.device
+    }
   } catch { /* Existing request error states handle unavailable local storage. */ }
   if (disposed) return
   root = createRoot(document.getElementById('root')!)

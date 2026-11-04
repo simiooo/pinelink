@@ -73,6 +73,7 @@ for path,entry in lock['packages'].items():
 
 notices('source','shadcn-ui-components','4.23.0',ROOT/'web/src/components/ui','MIT')
 notices('font','Noto Sans SC','a85815a42757',ROOT/'mobile/assets/fonts/noto-sans-sc','OFL-1.1')
+notices('font','Nunito','Variable',ROOT/'web/public/fonts','OFL-1.1')
 
 config=ROOT/'mobile/.dart_tool/package_config.json'
 if config.is_file():
