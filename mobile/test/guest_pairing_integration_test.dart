@@ -91,6 +91,19 @@ void main() {
         await runtimeB.respond(file['id'], true);
         await runtimeB.receive(file['id']);
         expect(await runtimeB.plaintext(file['id']), payload);
+        final emptyId = await runtimeA.offer(
+          Uint8List(0),
+          'empty.bin',
+          Map<String, dynamic>.from(peer),
+        );
+        await runtimeA.upload(emptyId);
+        await runtimeB.syncIncoming();
+        final empty = (await runtimeB.store.jobs()).firstWhere(
+          (j) => j['name'] == 'empty.bin',
+        );
+        await runtimeB.respond(empty['id'], true);
+        await runtimeB.receive(empty['id']);
+        expect(await runtimeB.plaintext(empty['id']), isEmpty);
         final stored = (await runtimeA.store.job(jobId))!['progress'];
         expect(stored['completion']['stored'], isTrue);
         expect(stored['completion']['delivered'], isFalse);
