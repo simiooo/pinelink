@@ -8,6 +8,7 @@ import 'connections.dart';
 import '../local/file_crypto.dart';
 import 'session.dart';
 import 'store.dart';
+import 'relay.dart';
 
 /// Native visitor storage and keys are separate from account and LAN stores.
 class NativeGuestRuntime {
@@ -139,6 +140,95 @@ class NativeGuestRuntime {
       'state': transfer['state'],
       'transfer': transfer,
     });
+  }
+
+  /// Synchronize incoming offers only from currently authorized peers.
+  Future<void> syncIncoming() async {
+    await session.ensureSession();
+    final peers = (await connections.list())['peers'] as List? ?? [];
+    final transfers =
+        (await session.request('GET', '/v1/transfers'))['transfers'] as List? ??
+        [];
+    final jobs = await store.jobs();
+    for (final item in transfers) {
+      if (item is! Map<String, dynamic> ||
+          item['recipient_owner_id'] != session.owner ||
+          item['recipient_device_id'] != identity.device ||
+          jobs.any((j) => (j['transfer'] as Map?)?['id'] == item['id'])) {
+        continue;
+      }
+      final matching = peers.where(
+        (p) =>
+            p is Map &&
+            p['owner_id'] == item['sender_owner_id'] &&
+            p['device_id'] == item['sender_device_id'],
+      );
+      if (matching.isEmpty ||
+          item['id'] is! String ||
+          item['size_bytes'] is! int ||
+          item['file_name'] is! String) {
+        continue;
+      }
+      final peer = Map<String, dynamic>.from(matching.first as Map);
+      await store.create({
+        'id': item['id'],
+        'created': DateTime.now().millisecondsSinceEpoch,
+        'direction': 'receive',
+        'state': item['state'],
+        'peer': peer,
+        'name': safeFileName(item['file_name']),
+        'plainSize': item['size_bytes'],
+        'received': 0,
+        'transfer': item,
+        if (item['content_kind'] == 'TEXT') 'contentKind': 'TEXT',
+      });
+    }
+  }
+
+  Future<void> respond(String id, bool accept) async {
+    await session.ensureSession();
+    final job = await store.job(id);
+    if (job == null ||
+        job['direction'] != 'receive' ||
+        job['state'] != 'PENDING') {
+      throw StateError('GUEST_JOB_CHANGED');
+    }
+    final original = job['transfer'] as GuestMap;
+    final current = await session.request(
+      'GET',
+      '/v1/transfers/${original['id']}',
+    );
+    for (final key in [
+      'content_root',
+      'size_bytes',
+      'content_kind',
+      'file_name',
+      'sender_owner_id',
+      'sender_device_id',
+      'recipient_owner_id',
+      'recipient_device_id',
+    ]) {
+      if (current[key] != original[key]) throw StateError('FILE_JOB_CHANGED');
+    }
+    final transfer = await session.request(
+      'POST',
+      '/v1/transfers/${original['id']}/${accept ? 'accept' : 'reject'}',
+      {
+        'owner_id': session.owner,
+        'device_id': identity.device,
+        'expected_version': current['version'],
+        if (accept && current['content_kind'] == 'TEXT')
+          'accept_content_kind': 'TEXT',
+      },
+    );
+    await store.update(id, job['localRevision'], {
+      'state': transfer['state'],
+      'transfer': transfer,
+    });
+  }
+
+  Future<void> receive(String id) async {
+    await GuestRelay(session).receive(store, id);
   }
 
   Future<void> close() async {

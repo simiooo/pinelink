@@ -81,31 +81,19 @@ void main() {
         );
         expect(stored['completion']['stored'], isTrue);
         expect(stored['completion']['delivered'], isFalse);
-        final latest = await sessionB.request(
-          'GET',
-          '/v1/transfers/${transfer['id']}',
-        );
-        final accepted = await sessionB.request(
-          'POST',
-          '/v1/transfers/${transfer['id']}/accept',
-          {
-            'owner_id': sessionB.owner,
-            'device_id': runtimeB.identity.device,
-            'expected_version': latest['version'],
-            'accept_content_kind': 'TEXT',
-          },
-        );
-        await runtimeB.store.create({
-          'id': 'incoming',
-          'direction': 'receive',
-          'state': 'ACCEPTED',
-          'transfer': accepted,
-        });
-        await GuestRelay(sessionB).receive(runtimeB.store, 'incoming');
-        final received = (await runtimeB.store.job('incoming'))!;
+        await runtimeB.syncIncoming();
+        final incoming = (await runtimeB.store.jobs()).single;
+        expect(incoming['state'], 'PENDING');
+        await expectLater(runtimeB.receive(incoming['id']), throwsStateError);
+        await runtimeB.respond(incoming['id'], true);
+        await runtimeB.receive(incoming['id']);
+        final received = (await runtimeB.store.job(incoming['id']))!;
         expect(received['state'], 'COMPLETED');
         final manifest = await runtimeB.identity.decrypt(received['manifest']);
-        final cipher = (await runtimeB.store.bytes('incoming', 'received'))!;
+        final cipher = (await runtimeB.store.bytes(
+          incoming['id'],
+          'received',
+        ))!;
         expect(await decryptDare(cipher, manifest), raw);
         final delivered = await sessionA.request(
           'GET',
