@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <application
-        android:label="Pinelink"
+        android:label="${appLabel}"
         android:name="${applicationName}"
         android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="false"

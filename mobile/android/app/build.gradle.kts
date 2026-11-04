@@ -5,6 +5,8 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val stagingBuild = System.getenv("PINELINK_ANDROID_STAGING") == "1"
+
 android {
     namespace = "top.sqmem.pinelink"
     compileSdk = flutter.compileSdkVersion
@@ -16,13 +18,14 @@ android {
     }
 
     defaultConfig {
-        applicationId = "top.sqmem.pinelink"
+        applicationId = if (stagingBuild) "top.sqmem.pinelink.staging" else "top.sqmem.pinelink"
+        manifestPlaceholders["appLabel"] = if (stagingBuild) "Pinelink Staging" else "Pinelink"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        versionName = flutter.versionName + if (stagingBuild) "-staging" else ""
     }
 
     signingConfigs {
