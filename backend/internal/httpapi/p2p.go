@@ -42,6 +42,9 @@ func (a *API) createP2P(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) addP2PSignal(w http.ResponseWriter, r *http.Request) {
+	if !a.guestSignalRate(w, r, false) {
+		return
+	}
 	var req service.P2PSignalRequest
 	if !readRequest(w, r, &req) {
 		return
@@ -55,8 +58,31 @@ func (a *API) addP2PSignal(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) p2pSignals(w http.ResponseWriter, r *http.Request) {
+	if !a.guestSignalRate(w, r, true) {
+		return
+	}
 	signals, err := a.service.Signals(r.Context(), r.PathValue("id"), r.URL.Query().Get("owner_id"), r.URL.Query().Get("device_id"), parseInt64(r.URL.Query().Get("after")))
 	respond(w, signals, err)
+}
+
+func (a *API) guestSignalRate(w http.ResponseWriter, r *http.Request, read bool) bool {
+	i, ok := auth.FromContext(r.Context())
+	if !ok || i.GuestSessionID == "" {
+		return true
+	}
+	kind, limit := "write", 60
+	if read {
+		kind, limit = "read", 600
+	}
+	if err := a.service.Accounts().Rate(r.Context(), "guest-signal-"+kind+"/"+i.OwnerID, limit, time.Minute); err != nil {
+		authFailure(w, err)
+		return false
+	}
+	if err := a.service.Accounts().Rate(r.Context(), "guest-signal-ip-"+kind+"/"+i.ResourceIP, limit*4, time.Minute); err != nil {
+		authFailure(w, err)
+		return false
+	}
+	return true
 }
 
 func (a *API) p2pProgress(w http.ResponseWriter, r *http.Request) {
@@ -77,5 +103,20 @@ func (a *API) completeP2P(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	transfer, err := a.service.CompleteP2P(r.Context(), r.PathValue("id"), req)
-	respond(w, transfer, err)
+	if err != nil {
+		respond(w, transfer, err)
+		return
+	}
+	// Keep the established top-level transfer fields for native clients. A
+	// browser can commit the receipt and its authoritative route/ledger together
+	// without briefly rendering a completed file with an older polling snapshot.
+	progress, projectionErr := a.service.GetP2PProgress(r.Context(), transfer.ID, req.OwnerID, req.DeviceID)
+	if projectionErr != nil {
+		respond(w, transfer, nil)
+		return
+	}
+	respond(w, struct {
+		service.Transfer
+		Progress service.P2PProgressSnapshot `json:"progress"`
+	}{transfer, progress}, nil)
 }

@@ -11,7 +11,9 @@ const checks=[],errors=[],contexts=[]
 const mark=s=>{checks.push(s);console.log(s)}
 const until=async(work,timeout=60000)=>{const end=Date.now()+timeout;while(Date.now()<end){const result=await work();if(result)return result;await new Promise(r=>setTimeout(r,150))}throw Error('workspace condition timeout')}
 const close=async page=>{await page.getByRole('button',{name:'Close',exact:true}).click();await page.locator('[role=dialog]').waitFor({state:'detached'})}
-const fresh=async(width=1280)=>{const context=await browser.newContext({locale:'en-US',viewport:{width,height:900},reducedMotion:'reduce'});contexts.push(context);const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto(origin);await page.locator('.guest-page').waitFor();return{page,context}}
+// Exercise navigation during the unsupported-RTC cloud fallback. Actual RTC and
+// network failures run separately in direct.mjs with two browser namespaces.
+const fresh=async(width=1280)=>{const context=await browser.newContext({locale:'en-US',viewport:{width,height:900},reducedMotion:'reduce'});await context.addInitScript(()=>{globalThis.RTCPeerConnection=undefined});contexts.push(context);const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto(origin);await page.locator('.guest-page').waitFor();return{page,context}}
 const codeFor=async page=>{await page.locator('.workspace-add-device').click();return until(async()=>{const value=await page.getByTestId('connection-code').textContent();return value?.match(/^[0-9A-Z]{4} [0-9A-Z]{4}$/)?value:null})}
 const join=async(page,code)=>{await page.locator('.workspace-add-device').click();await page.getByRole('tab',{name:'Enter code',exact:true}).click();await page.getByLabel('Connection code',{exact:true}).fill(code);await page.getByRole('button',{name:'Connect',exact:true}).click()}
 try{

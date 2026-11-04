@@ -256,6 +256,9 @@ func hasFileGrant(ctx context.Context, tx interface {
 }
 
 func releaseTransferResources(ctx context.Context, tx pgx.Tx, tr Transfer) error {
+	if err := releaseBrowserSignals(ctx, tx, tr.ID); err != nil {
+		return err
+	}
 	for _, query := range []string{
 		`UPDATE file_access_grants SET revoked_at=COALESCE(revoked_at,now()) WHERE transfer_id=$1`,
 		`UPDATE upload_sessions SET state=CASE WHEN $2='EXPIRED' THEN 'EXPIRED' ELSE 'CANCELLED' END WHERE transfer_id=$1 AND state IN ('OPEN','SEALED')`,

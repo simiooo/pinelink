@@ -117,7 +117,7 @@ func run() error {
 	})
 	probeMux.HandleFunc("GET /state", func(w http.ResponseWriter, r *http.Request) {
 		v := map[string]int64{}
-		for _, table := range []string{"accounts", "guest_identities", "guest_sessions", "guest_pair_grants", "transfer_requests", "delivery_receipts"} {
+		for _, table := range []string{"accounts", "guest_identities", "guest_sessions", "guest_pair_grants", "transfer_requests", "delivery_receipts", "relay_spools", "upload_chunks"} {
 			var n int64
 			if e := pool.QueryRow(r.Context(), `SELECT count(*) FROM `+table).Scan(&n); e != nil {
 				http.Error(w, "fixture query failed", 500)
@@ -125,6 +125,7 @@ func run() error {
 			}
 			v[table] = n
 		}
+		v["blob_puts"], v["blob_put_bytes"], v["blob_gets"] = blobs.puts.Load(), blobs.putBytes.Load(), blobs.gets.Load()
 		_ = json.NewEncoder(w).Encode(v)
 	})
 	probeMux.HandleFunc("POST /delay", func(w http.ResponseWriter, r *http.Request) {

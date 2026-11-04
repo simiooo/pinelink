@@ -8,6 +8,7 @@ import { MotionSurface } from '../motion/surface'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { Input } from '../components/ui/input'
 import { useGuestCopy, guestErrorText } from './copy'
+import { displayedRoute } from './route'
 import { DeviceGlyph, GuestGraph } from './Graph'
 import { getGuestRuntime } from './runtime'
 import type { GuestRuntime } from './runtime'
@@ -137,7 +138,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
           <div className="guest-file-row"><FileText size={40} strokeWidth={1.3} /><span>{selectedJob.name}</span></div>
           {fromFiles && <MotionTooltip label={c.backFiles}><MotionButton icon className="guest-icon-button workspace-back" aria-label={c.backFiles} onClick={() => setPanel('files')}><ArrowLeft size={20} /></MotionButton></MotionTooltip>}
           <div className="guest-job-meta"><span>{guestJobStatus(selectedJob, c)}</span><span>{formatBytes(selectedJob.plainSize, locale)}</span></div>
-          {selectedJob.snapshot && selectedJob.phase !== 'complete' && <dl className="guest-progress-detail"><div><dt>{c.received}</dt><dd>{formatBytes(selectedJob.snapshot.delivery.acknowledged_bytes, locale)} / {formatBytes(selectedJob.snapshot.delivery.total_bytes, locale)}</dd></div><div><dt>{c.upload}</dt><dd>{selectedJob.snapshot.completion.stored ? c.stored : formatBytes(selectedJob.snapshot.spool.acknowledged_bytes, locale)}</dd></div></dl>}
+          {selectedJob.snapshot && <dl className="guest-progress-detail"><div><dt>{c.connection}</dt><dd>{displayedRoute(selectedJob) === 'direct' ? c.direct : displayedRoute(selectedJob) === 'relay' ? c.cloud : displayedRoute(selectedJob) === 'switching' ? c.switching : c.connecting}</dd></div>{selectedJob.phase !== 'complete' && <><div><dt>{c.received}</dt><dd>{formatBytes(selectedJob.snapshot.delivery.acknowledged_bytes, locale)} / {formatBytes(selectedJob.snapshot.delivery.total_bytes, locale)}</dd></div>{displayedRoute(selectedJob) === 'relay' && <div><dt>{c.upload}</dt><dd>{selectedJob.snapshot.completion.stored ? c.stored : formatBytes(selectedJob.snapshot.spool.acknowledged_bytes, locale)}</dd></div>}</>}</dl>}
           {selectedJob.transfer?.state === 'PENDING' && selectedJob.direction === 'receive' && selectedJob.phase === 'waiting' ? <><MotionButton className="primary-button guest-wide" onClick={() => perform(async () => { await runtime.accept(selectedJob.id); setPanel(null) })}>{c.receive}</MotionButton><MotionButton className="auth-text-button guest-wide" onClick={() => perform(async () => { await runtime.reject(selectedJob.id); setPanel(null) })}>{c.decline}</MotionButton></> : <>
             {selectedJob.phase === 'complete' && selectedJob.plain && <MotionButton className="primary-button guest-wide" onClick={() => perform(() => runtime.download(selectedJob.id))}><ArrowDownToLine size={18} />{c.download}</MotionButton>}
             <div className="guest-job-controls">

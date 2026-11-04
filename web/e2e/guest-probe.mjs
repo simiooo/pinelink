@@ -4,7 +4,7 @@ export const visitorState=page=>page.evaluate(async()=>{
  const get=(table,key)=>new Promise((resolve,reject)=>{const r=db.transaction(table).objectStore(table).get(key);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})
  const all=table=>new Promise((resolve,reject)=>{const r=db.transaction(table).objectStore(table).getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})
  const lease=await get('leases','self'),profile=await get('profiles','self'),jobs=await all('jobs'),peers=await all('guestPeers');db.close()
- return {owner:lease?.owner_id,device:profile?.device,jobs:jobs.map(j=>({id:j.id,name:j.name,phase:j.phase,peer:j.peer,transfer:j.transfer,snapshot:j.snapshot,hasPlain:!!j.plain})),peers}
+ return {owner:lease?.owner_id,device:profile?.device,jobs:jobs.map(j=>({id:j.id,name:j.name,phase:j.phase,peer:j.peer,transfer:j.transfer,snapshot:j.snapshot,received:j.received,transport:j.transport,directAttempted:j.directAttempted,error:j.error,failures:j.failures,hasPlain:!!j.plain})),peers}
 })
 export const visitorRequest=(page,method,path,input)=>page.evaluate(async({method,path,input})=>{
  const name=(await indexedDB.databases()).find(d=>d.name?.startsWith('pinelink-visitor:')).name;const db=await new Promise(resolve=>{const r=indexedDB.open(name);r.onsuccess=()=>resolve(r.result)})

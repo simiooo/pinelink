@@ -10,5 +10,6 @@ export type ProgressSnapshot = {
   spool: { state: string; acknowledged_bytes: number; total_bytes: number }
   completion: { delivered: boolean; stored: boolean }
   capabilities: { pause: boolean; resume: boolean; cancel: boolean; restore: boolean }
+  route?: { kind: string; epoch: number }
 }
 export type PreparedFile = { cipher: Blob; root: string; recipientManifest: string; senderManifest: string; name: string; plainSize: number }

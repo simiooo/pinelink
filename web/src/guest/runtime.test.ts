@@ -158,6 +158,37 @@ it('single-flights enrollment and discards a response arriving after close', asy
   const reopened = new GuestStore(name)
   try { expect((await reopened.profile()).root).toBe(root); expect(await reopened.leases.get('self')).toBeUndefined() } finally { reopened.close() }
 })
+it('an older route snapshot cannot reverse an already committed cloud fallback', async () => {
+  const r = await runtime(), entered = deferred<void>(), late = deferred<Response>()
+  const transfer: GuestTransfer = { id: crypto.randomUUID(), state: 'ACCEPTED', version: 2, file_name: 'file.bin', size_bytes: 100, content_root: '0'.repeat(64), encryption_suite: 'DARE20-AGE-X25519-v1', sender_owner_id: 'guest-fixture', sender_device_id: r.profile.device, recipient_owner_id: 'guest-peer', recipient_device_id: 'peer', expires_at: '2099-01-01T00:00:00Z', received_bytes: 50 }
+  const snapshot: ProgressSnapshot = { transfer_id: transfer.id, state: 'ACCEPTED', state_version: 2, control_revision: 1, progress_revision: 1, route: { kind: 'DIRECT', epoch: 1 }, delivery: { state: 'RUNNING', acknowledged_bytes: 50, total_bytes: 100, revision: 1 }, spool: { state: 'NOT_REQUIRED', acknowledged_bytes: 0, total_bytes: 100 }, completion: { delivered: false, stored: false }, capabilities: { pause: false, resume: false, cancel: true, restore: false } }
+  const job: GuestJob = { id: transfer.id, created: 0, direction: 'send', transfer, snapshot, phase: 'running', name: 'file.bin', plainSize: 68, received: 0, retryAt: Date.now() + 3600000, peer: { pair_id: 'pair', owner_id: 'guest-peer', device_id: 'peer', device_name: 'Peer', encryption_key: r.profile.encryptionKey, signing_key: r.profile.signingKey, expires_at: transfer.expires_at } }
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+    if (url.endsWith('/challenge')) return challenge()
+    if (url.endsWith('/enroll')) return response(enrollment(r))
+    if (url.endsWith('/connections')) return response({ invites: [], candidates: [], peers: [] })
+    if (url.endsWith('/transfers')) return response({ transfers: [transfer] })
+    entered.resolve(); return late.promise
+  }))
+  await r.ensureSession(); await r.store.jobs.add(job)
+  const poll = r.poll(); await entered.promise
+  await r.store.jobs.update(job.id, { snapshot: { ...snapshot, route: { kind: 'RELAY', epoch: 2 }, spool: { state: 'SPOOLING', acknowledged_bytes: 25, total_bytes: 100 } } })
+  late.resolve(response(snapshot)); await poll
+  expect((await r.store.jobs.get(job.id))?.snapshot?.route).toEqual({ kind: 'RELAY', epoch: 2 })
+  expect((await r.store.jobs.get(job.id))?.snapshot?.delivery.acknowledged_bytes).toBe(50)
+})
+it('a frame hash completing after pause cannot commit a late local chunk', async () => {
+  const r = await runtime(), late = deferred<ArrayBuffer>(), bytes = new Uint8Array(16), signal = new AbortController()
+  const job = { id: 'paused-frame', direction: 'receive', transfer: { size_bytes: 16 }, received: 0 } as GuestJob
+  await r.store.jobs.add(job)
+  const checksum = await crypto.subtle.digest('SHA-256', bytes), hash = vi.spyOn(crypto.subtle, 'digest').mockReturnValueOnce(late.promise)
+  const storing = r.store.storeFrame(job.id, 0, bytes, signal.signal)
+  await vi.waitFor(() => expect(hash).toHaveBeenCalled())
+  signal.abort(new Error('paused')); late.resolve(checksum)
+  await expect(storing).rejects.toThrow('paused')
+  expect(await r.store.chunks.count()).toBe(0)
+  expect((await r.store.jobs.get(job.id))?.received).toBe(0)
+})
 it('refreshes a version advanced by cloud sealing, but never retries consent for changed content', async () => {
   const r = await runtime(), versions: number[] = [], transfer: GuestTransfer = { id: crypto.randomUUID(), state: 'PENDING', version: 1, file_name: 'file.bin', size_bytes: 100, content_root: '0'.repeat(64), encryption_suite: 'DARE20-AGE-X25519-v1', sender_owner_id: 'guest-peer', sender_device_id: 'peer-device', recipient_owner_id: 'guest-fixture', recipient_device_id: r.profile.device, expires_at: new Date(Date.now() + 600000).toISOString(), received_bytes: 0 }
   const job: GuestJob = { id: transfer.id, created: Date.now(), direction: 'receive', name: 'file.bin', plainSize: 68, received: 0, phase: 'waiting', transfer, peer: { pair_id: 'pair', owner_id: 'guest-peer', device_id: 'peer-device', device_name: 'Peer', encryption_key: r.profile.encryptionKey, signing_key: r.profile.signingKey, expires_at: transfer.expires_at } }
@@ -172,4 +203,27 @@ it('refreshes a version advanced by cloud sealing, but never retries consent for
   expect(versions).toEqual([2, 3]); expect((await r.store.jobs.get(job.id))?.phase).toBe('stopped')
   await r.store.jobs.put(job); replaced = true
   await expect(r.reject(job.id)).rejects.toThrow('FILE_JOB_CHANGED'); expect(versions).toEqual([2, 3])
+})
+it('publishes the completed file and its authoritative delivery projection in the same local commit', async () => {
+  vi.stubGlobal('Blob', NodeBlob)
+  const r = await runtime(), id = crypto.randomUUID(), root = await digest(new Uint8Array())
+  const transfer: GuestTransfer = { id, state: 'ACCEPTED', version: 2, file_name: 'empty.txt', size_bytes: 0, content_root: root, encryption_suite: 'DARE20-AGE-X25519-v1', sender_owner_id: 'guest-peer', sender_device_id: 'peer', recipient_owner_id: 'guest-fixture', recipient_device_id: r.profile.device, expires_at: '2099-01-01T00:00:00Z', received_bytes: 0 }
+  const snapshot: ProgressSnapshot = { transfer_id: id, state: 'ACCEPTED', state_version: 2, control_revision: 1, progress_revision: 0, route: { kind: 'DIRECT', epoch: 1 }, delivery: { state: 'VERIFYING', acknowledged_bytes: 0, total_bytes: 0, revision: 0 }, spool: { state: 'NOT_REQUIRED', acknowledged_bytes: 0, total_bytes: 0 }, completion: { delivered: false, stored: false }, capabilities: { pause: false, resume: false, cancel: false, restore: false } }
+  const complete: ProgressSnapshot = { ...snapshot, state: 'COMPLETED', state_version: 3, control_revision: 2, delivery: { ...snapshot.delivery, state: 'DELIVERED' }, completion: { delivered: true, stored: false } }
+  vi.stubGlobal('fetch', vi.fn(async (url: string, options?: RequestInit) => {
+    if (url.endsWith('/challenge')) return challenge()
+    if (url.endsWith('/enroll')) return response(enrollment(r))
+    if (url.endsWith('/complete')) return response({ ...transfer, state: 'COMPLETED', version: 3, progress: complete })
+    if (url.endsWith('/progress')) return response(options?.method === 'POST' ? { status: 'recorded' } : snapshot)
+    return response(transfer)
+  }))
+  await r.ensureSession()
+  await r.store.jobs.add({ id, created: 0, direction: 'receive', name: 'empty.txt', plainSize: 0, received: 0, phase: 'running', transfer, snapshot, peer: { pair_id: 'pair', owner_id: 'guest-peer', device_id: 'peer', device_name: 'Peer', encryption_key: r.profile.encryptionKey, signing_key: r.profile.signingKey, expires_at: transfer.expires_at } })
+  await r.store.storeFrame(id, 0, new Uint8Array())
+  const observed: (ProgressSnapshot | undefined)[] = []
+  r.subscribe(() => { const job = r.getSnapshot().jobs.find(j => j.id === id); if (job?.phase === 'complete') observed.push(job.snapshot) })
+  const verifier = r as unknown as { verifyAndFinish(id: string, manifest: { suite: string; data_key: string; plaintext_root: string; plaintext_size: number; file_name: string }, signal: AbortSignal): Promise<void> }
+  await verifier.verifyAndFinish(id, { suite: transfer.encryption_suite, data_key: btoa(String.fromCharCode(...new Uint8Array(32))), plaintext_root: root, plaintext_size: 0, file_name: 'empty.txt' }, new AbortController().signal)
+  expect(observed.length).toBeGreaterThan(0)
+  for (const value of observed) expect(value).toMatchObject({ state: 'COMPLETED', route: { kind: 'DIRECT', epoch: 1 }, completion: { delivered: true, stored: false } })
 })

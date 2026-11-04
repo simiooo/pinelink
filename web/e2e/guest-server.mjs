@@ -2,8 +2,8 @@ import { createServer, request } from 'node:http'
 import { connect } from 'node:net'
 import { readFile } from 'node:fs/promises'
 import { resolve, extname } from 'node:path'
-export async function startGuestWebServer() {
- const root=resolve('dist'),origin='http://localhost:5184',base='http://127.0.0.1:8084'
+export async function startGuestWebServer({apiBase=process.env.PINELINK_BROWSER_API_BASE??'http://127.0.0.1:8084'}={}) {
+ const root=resolve('dist'),origin='http://localhost:5184',base=apiBase.replace(/\/$/,''),upstreamURL=new URL(base)
  const server=createServer(async(req,res)=>{
   res.setHeader('Cache-Control','no-store');res.setHeader('Referrer-Policy','no-referrer')
   const url=new URL(req.url,origin)
@@ -13,7 +13,7 @@ export async function startGuestWebServer() {
  })
  server.on('upgrade',(req,socket,head)=>{
   if(!req.url.startsWith('/api/v1/p2p/')){socket.destroy();return}
-  const upstream=connect(8084,'127.0.0.1',()=>{const headers=[];for(let i=0;i<req.rawHeaders.length;i+=2)headers.push(req.rawHeaders[i]+': '+req.rawHeaders[i+1]);upstream.write('GET '+req.url.slice(4)+' HTTP/1.1\r\n'+headers.join('\r\n')+'\r\n\r\n');if(head.length)upstream.write(head);socket.pipe(upstream);upstream.pipe(socket)})
+  const upstream=connect(Number(upstreamURL.port||80),upstreamURL.hostname,()=>{const headers=[];for(let i=0;i<req.rawHeaders.length;i+=2)headers.push(req.rawHeaders[i]+': '+req.rawHeaders[i+1]);upstream.write('GET '+req.url.slice(4)+' HTTP/1.1\r\n'+headers.join('\r\n')+'\r\n\r\n');if(head.length)upstream.write(head);socket.pipe(upstream);upstream.pipe(socket)})
   socket.on('error',()=>upstream.destroy());upstream.on('error',()=>socket.destroy());socket.on('close',()=>upstream.destroy())
  })
  await new Promise(r=>server.listen(5184,'0.0.0.0',r))
