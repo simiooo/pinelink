@@ -76,12 +76,12 @@ export class LocalSession {
   }
   async createOffer() {
     this.attach(this.pc.createDataChannel(label, { ordered: true, protocol: label }))
-    this.offer = await makePackage(this.profile, identity(this.profile, this.name), 'offer', this.id, await this.description('offer')); return this.offer
+    this.offer = await makePackage(this.profile, { ...identity(this.profile, this.name), capabilities: ['text-v1'] }, 'offer', this.id, await this.description('offer')); return this.offer
   }
   async createAnswer(offer: ConnectionPackage) {
     this.offer = await validatePackage(offer); this.peer = offer.peer
     await this.pc.setRemoteDescription({ type: 'offer', sdp: offer.sdp })
-    this.answer = await makePackage(this.profile, identity(this.profile, this.name), 'answer', this.id, await this.description('answer'), await packageHash(offer)); return this.answer
+    this.answer = await makePackage(this.profile, { ...identity(this.profile, this.name), capabilities: ['text-v1'] }, 'answer', this.id, await this.description('answer'), await packageHash(offer)); return this.answer
   }
   async setAnswer(answer: ConnectionPackage) {
     await validatePackage(answer)

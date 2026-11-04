@@ -11,6 +11,7 @@ import '../motion/transfer_graph.dart';
 import '../pages/account_page.dart';
 import 'connect.dart';
 import 'controller.dart';
+import 'conversation.dart';
 import 'copy.dart';
 import 'picker.dart';
 
@@ -261,7 +262,13 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
   void _files([String? root]) {
     Navigator.of(context).push<void>(
       MaterialPageRoute(
-        builder: (_) => LocalFiles(controller: r, root: root),
+        builder: (_) => root == null
+            ? LocalFiles(controller: r)
+            : LocalConversation(
+                controller: r,
+                root: root,
+                onJob: (context, id) => unawaited(showLocalJob(context, r, id)),
+              ),
       ),
     );
   }
@@ -727,7 +734,9 @@ class _LocalJobState extends State<_LocalJob> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      job['name'],
+                      job['contentKind'] == 'TEXT'
+                          ? lc(context, 'Text', '文本')
+                          : job['name'],
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -778,7 +787,9 @@ class _LocalJobState extends State<_LocalJob> {
               ],
             ),
             const SizedBox(height: 24),
-            if (done && job['direction'] == 'receive')
+            if (done &&
+                job['direction'] == 'receive' &&
+                job['contentKind'] != 'TEXT')
               MotionButton.primary(
                 onPressed: busy
                     ? null

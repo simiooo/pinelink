@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pinelink_mobile/src/local/controller.dart';
+import 'package:pinelink_mobile/src/local/conversation.dart';
 import 'package:pinelink_mobile/src/local/shell.dart';
 import 'package:pinelink_mobile/src/theme/tokens.dart';
 import 'package:pinelink_mobile/src/motion/motion.dart';
@@ -82,7 +83,67 @@ class _Local extends LocalController {
   Future<void> close() async {}
 }
 
+class _TextLocal extends _Local {
+  String? sentText;
+  String? sentSensitivity;
+  @override
+  bool supportsText(String root) => true;
+  @override
+  Future<String> sendText(
+    Uint8List bytes,
+    LocalMap peer,
+    String sensitivity,
+  ) async {
+    sentText = String.fromCharCodes(bytes);
+    sentSensitivity = sensitivity;
+    return 'new-text';
+  }
+
+  @override
+  Future<({String value, bool sensitive})?> text(String id) async =>
+      (value: '# Private\n\n**secret**', sensitive: true);
+}
+
 void main() {
+  testWidgets(
+    'device conversation hides sensitive Markdown and sends only after a tap',
+    (tester) async {
+      final r = _TextLocal();
+      r.jobs = [
+        {
+          'id': 'text',
+          'created': 1,
+          'direction': 'receive',
+          'peer': {'root': 'peer'},
+          'contentKind': 'TEXT',
+        },
+      ];
+      await tester.pumpWidget(
+        MaterialApp(
+          home: LocalConversation(
+            controller: r,
+            root: 'peer',
+            onJob: (_, _) {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Private'), findsNothing);
+      await tester.tap(find.byTooltip('Reveal'));
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Private', findRichText: true),
+        findsOneWidget,
+      );
+      await tester.tap(find.text('Sensitive').last);
+      await tester.enterText(find.byType(TextField), 'hello');
+      expect(r.sentText, isNull);
+      await tester.tap(find.byTooltip('Send'));
+      await tester.pumpAndSettle();
+      expect(r.sentText, 'hello');
+      expect(r.sentSensitivity, 'SENSITIVE');
+    },
+  );
   Future<void> app(WidgetTester tester, _Local controller) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;

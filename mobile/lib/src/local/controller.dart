@@ -23,6 +23,7 @@ abstract class LocalController extends ChangeNotifier {
   String? get discoveryError;
   bool get discovering;
   bool reachable(String root);
+  bool supportsText(String root) => false;
   Future<void> discover();
   Future<void> openSettings() async {}
   Future<void> connectNearby(String id);
@@ -31,6 +32,9 @@ abstract class LocalController extends ChangeNotifier {
   Future<void> confirm();
   Future<void> cancelPairing();
   Future<String> send(Uint8List bytes, String name, LocalMap peer);
+  Future<String> sendText(Uint8List bytes, LocalMap peer, String sensitivity) =>
+      Future.error(StateError('TEXT_UNSUPPORTED'));
+  Future<({String value, bool sensitive})?> text(String id) async => null;
   Future<void> action(String id, String action);
   Future<Uint8List?> plaintext(String id);
   Future<void> rename(String root, String name);

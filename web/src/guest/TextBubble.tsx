@@ -34,6 +34,6 @@ export function TextBubble({ id, value, sensitive, labels, direction = 'receive'
       {sensitive && <MotionTooltip label={revealed ? labels.hide : labels.reveal}><MotionButton icon className="guest-icon-button" aria-label={revealed ? labels.hide : labels.reveal} onClick={() => setRevealedId(revealed ? undefined : id)}>{revealed ? <EyeOff size={18} /> : <Eye size={18} />}</MotionButton></MotionTooltip>}
       <MotionTooltip label={labels.copy}><MotionButton icon className="guest-icon-button" aria-label={labels.copy} onClick={copy}>{notice?.id === id && notice.text === labels.copied ? <Check size={18} /> : <Copy size={18} />}</MotionButton></MotionTooltip>
     </div>
-    {notice?.id === id && <span className="conversation-copy-status" role="status">{notice.text}</span>}
+    {notice?.id === id && <span className={notice.text === labels.copied ? 'conversation-copy-status conversation-copy-status--success' : 'conversation-copy-status'} role="status">{notice.text}</span>}
   </div>
 }

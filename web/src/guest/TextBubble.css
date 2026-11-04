@@ -18,3 +18,4 @@
 .conversation-text-actions { display: flex; align-items: center; gap: 0; }
 .conversation-message--send .conversation-text-actions { justify-content: flex-end; }
 .conversation-copy-status { display: block; color: #737373; font-size: 12px; line-height: 18px; }
+.conversation-copy-status--success { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

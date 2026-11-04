@@ -48,6 +48,7 @@ export class LocalRuntime {
     this.serial.set(id, result); this.mutations.add(result); void result.finally(() => { this.mutations.delete(result); if (this.serial.get(id) === result) this.serial.delete(id) }).catch(() => undefined); return result
   }
   reachable(root?: string) { return !!root && !!this.links.get(root)?.isReady() }
+  supportsText(root?: string) { const link = root ? this.links.get(root) : undefined; return !!link?.isReady() && !!link.peer?.capabilities?.includes('text-v1') }
   private peer(link: LocalSession): GuestPeer {
     const p = link.peer!; return { pair_id: 'local:' + p.root, owner_id: p.root, root: p.root, device_id: p.device, device_name: p.name, signing_key: p.signing_key, encryption_key: p.encryption_key, expires_at: '9999-01-01T00:00:00Z', authority: 'LOCAL_DEVICE', online: link.isReady() }
   }

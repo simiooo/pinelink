@@ -218,7 +218,10 @@ class LocalSession {
         'type': type,
         'id': id,
         'nonce': base64UrlEncode(randomBytes(32)).replaceAll('=', ''),
-        'peer': publicIdentity(identity, name),
+        'peer': {
+          ...publicIdentity(identity, name),
+          'capabilities': ['text-v1'],
+        },
         'sdp': sdp,
         'reply': reply,
       });

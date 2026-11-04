@@ -1,7 +1,18 @@
-.conversation-list { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.pinelink-motion-surface:has(.conversation-panel) { height: min(760px, calc(100dvh - 64px)); overflow: hidden; }
+.guest-surface-body:has(.conversation-panel) { display: flex; flex: 1; min-height: 0; }
+.conversation-list { display: flex; flex: 1; flex-direction: column; gap: 24px; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.conversation-panel { display: flex; flex: 1; flex-direction: column; gap: 24px; min-width: 0; min-height: 0; }
+.conversation-composer { flex: none; }
 .conversation-row { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0; }
 .conversation-row--send { align-items: flex-end; }
-.conversation-file { display: flex; align-items: center; gap: 12px; max-width: 80%; padding: 12px 16px; border: 1px solid #e4e4e7; border-radius: 16px; background: #f4f4f5; text-align: left; }
+.conversation-file { display: flex; align-items: center; gap: 12px; min-height: 48px; max-width: 80%; padding: 12px 16px; border: 1px solid #e4e4e7; border-radius: 16px; background: #f4f4f5; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.conversation-file:focus-visible { outline: 2px solid #0866ff; outline-offset: 2px; }
 .conversation-file > span { display: flex; flex-direction: column; min-width: 0; gap: 4px; }
 .conversation-file strong { overflow-wrap: anywhere; font-size: 14px; }
 .conversation-file small, .conversation-file-status, .conversation-pending { color: #737373; font-size: 12px; }
+.conversation-status-button { appearance: none; border: 0; padding: 0 4px; min-height: 32px; color: #737373; background: transparent; font: inherit; font-size: 12px; cursor: pointer; }
+.conversation-status-button:focus-visible { outline: 2px solid #0866ff; outline-offset: 2px; }
+@media (max-width: 639px) {
+  .pinelink-motion-surface[data-slot]:has(.conversation-panel) { inset: 0; width: 100%; height: 100dvh; max-height: 100dvh; border: 0; border-radius: 0; padding-top: max(20px, env(safe-area-inset-top)); box-shadow: none; }
+  .pinelink-motion-surface:has(.conversation-panel) .sheet-drag-target { display: none; }
+}

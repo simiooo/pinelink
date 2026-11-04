@@ -23,6 +23,9 @@ import { AccountRequest, AccountTaskDetails, FilesCollection, guestJobStatus, us
 import './guest.css'
 import { LocalConnect } from '../local/Connect'
 import { localError, useLocalCopy } from '../local/copy'
+import { Conversation } from './Conversation'
+import { TextComposer } from './TextComposer'
+import type { TextSensitivity } from './TextComposer'
 
 const linkKey = 'pinelink:guest-link'
 export function captureGuestLink() {
@@ -58,6 +61,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
   const [tab, setTab] = useState(pendingLink() ? 'enter' : 'show'), [code, setCode] = useState(''), [token, setToken] = useState(pendingLink)
   const [error, setError] = useState<string>(), [copied, setCopied] = useState(false), [qr, setQr] = useState(''), [dragging, setDragging] = useState(false), [now, setNow] = useState(Date.now())
   const [file, setFile] = useState<File>(), [selectedPeer, setSelectedPeer] = useState<GuestPeer>(), [jobId, setJobId] = useState<string>()
+  const [message, setMessage] = useState(''), [sensitivity, setSensitivity] = useState<TextSensitivity>('NORMAL')
   const [candidateId, setCandidateId] = useState<string>(), [joining, setJoining] = useState<{ id: string; invite: string; expires: number }>(), seen = useRef(new Set<string>(state.jobs.filter(job => job.phase === 'complete').map(job => 'done:' + job.id))), input = useRef<HTMLInputElement>(null), dragDepth = useRef(0)
   const active = state.jobs.find(job => !job.dismissed && !['complete', 'stopped'].includes(job.phase))
   const selectedJob = state.jobs.find(job => job.id === jobId) ?? active
@@ -73,6 +77,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
   const peerBusy = state.jobs.find(job => job.peer.pair_id === selectedPeer?.pair_id && !['complete', 'stopped'].includes(job.phase) && (!job.transfer || Date.parse(job.transfer.expires_at) > (job.authority==='LOCAL_DEVICE'?Date.now():now)))
   const close = () => { setPanel(null); setError(undefined); if (pathname !== '/') void navigate({ to: '/', replace: true }) }
   const openFiles = (peer?: GuestPeer, value: FileFilter = 'all') => { setError(undefined); setFilePeer(peer); setFilter(value); setPanel('files'); void navigate({ to: '/files' }) }
+  useEffect(() => { setMessage(''); setSensitivity('NORMAL') }, [filePeer?.pair_id])
   useEffect(() => { setPanel(routePanel(pathname)); setError(undefined); if (['/tasks', '/history', '/local-files'].includes(pathname)) { setFilter(routeFilter(pathname)); setFilePeer(undefined) } }, [pathname])
   useEffect(() => { onNotifications?.(notificationCount) }, [onNotifications, notificationCount])
   const perform = async (task: () => Promise<unknown>) => { setError(undefined); try { await task() } catch (e) { setError(e instanceof Error ? e.message : 'GUEST_UNAVAILABLE') } }
@@ -87,6 +92,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
     if (incoming && (!panel || panel === 'connect')) { seen.current.add(incoming.id); setCandidateId(incoming.id); setPanel('pair'); return }
     const pending = state.jobs.find(job => job.direction === 'receive' && job.phase === 'waiting' && job.transfer?.state === 'PENDING' && Date.parse(job.transfer.expires_at) > (job.authority==='LOCAL_DEVICE'?Date.now():now) && !seen.current.has(job.id))
     if (pending && !panel) { seen.current.add(pending.id); setJobId(pending.id); setFromFiles(false); setPanel('job'); return }
+    if (panel === 'files') for (const job of state.jobs) if (job.phase === 'complete') seen.current.add('done:' + job.id)
     const completed = state.jobs.find(job => job.phase === 'complete' && !seen.current.has('done:' + job.id))
     if (completed && (!panel || panel === 'job' && completed.id === jobId)) { seen.current.add('done:' + completed.id); setJobId(completed.id); setPanel('job') }
     if (panel === 'waiting' && joining) {
@@ -147,7 +153,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
           <MotionButton className="primary-button guest-wide" busy={state.busy} disabled={!selectedPeer} onClick={() => perform(async () => { if (!selectedPeer) return; const id = await runtime.send(file, selectedPeer, maxBytes); setJobId(id); setFile(undefined); setPanel(null) })}>{state.busy ? c.preparing : c.send}</MotionButton>
         </div>}
         {visualPanel === 'job' && selectedJob && <div className="guest-job-detail">
-          <div className="guest-file-row"><FileText size={40} strokeWidth={1.3} /><span>{selectedJob.name}</span></div>
+          <div className="guest-file-row"><FileText size={40} strokeWidth={1.3} /><span>{selectedJob.payloadKind === 'TEXT' ? locale === 'zh-CN' ? '文本' : 'Text' : selectedJob.name}</span></div>
           {fromFiles && <MotionTooltip label={c.backFiles}><MotionButton icon className="guest-icon-button workspace-back" aria-label={c.backFiles} onClick={() => setPanel('files')}><ArrowLeft size={20} /></MotionButton></MotionTooltip>}
           <div className="guest-job-meta"><span>{guestJobStatus(selectedJob, c)}</span><span>{formatBytes(selectedJob.plainSize, locale)}</span></div>
           {selectedJob.snapshot && <dl className="guest-progress-detail"><div><dt>{c.connection}</dt><dd>{selectedJob.authority==='LOCAL_DEVICE'?lc.local:displayedRoute(selectedJob) === 'direct' ? c.direct : displayedRoute(selectedJob) === 'relay' ? c.cloud : displayedRoute(selectedJob) === 'switching' ? c.switching : c.connecting}</dd></div>{selectedJob.phase !== 'complete' && <><div><dt>{c.received}</dt><dd>{formatBytes(selectedJob.snapshot.delivery.acknowledged_bytes, locale)} / {formatBytes(selectedJob.snapshot.delivery.total_bytes, locale)}</dd></div>{displayedRoute(selectedJob) === 'relay' && <div><dt>{c.upload}</dt><dd>{selectedJob.snapshot.completion.stored ? c.stored : formatBytes(selectedJob.snapshot.spool.acknowledged_bytes, locale)}</dd></div>}</>}</dl>}
@@ -163,7 +169,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
             {['complete', 'stopped'].includes(selectedJob.phase) && <MotionButton className="secondary-button guest-wide" onClick={() => { close(); void perform(() => runtime.dismiss(selectedJob.id)) }}>{c.another}</MotionButton>}
           </>}
         </div>}
-        {visualPanel === 'files' && <FilesCollection jobs={filePeer ? state.jobs.filter(job => job.peer.pair_id === filePeer.pair_id) : state.jobs} records={filePeer ? accountRecords.filter(record => record.peer === filePeer.device_id) : accountRecords} filter={filter} onFilter={setFilter} onJob={openJob} onRecord={record => { setRecordId(record.id); setPanel('account-job') }} error={account.ready && account.records.isError} loading={account.ready && account.records.isPending} />}
+        {visualPanel === 'files' && (filePeer ? <div className="conversation-panel"><Conversation jobs={state.jobs.filter(job => job.peer.pair_id === filePeer.pair_id)} records={accountRecords.filter(record => record.peer === filePeer.device_id)} profile={filePeer.authority === 'LOCAL_DEVICE' ? runtime.local.profile : runtime.profile} locale={locale} onJob={openJob} onRecord={record => { setRecordId(record.id); setPanel('account-job') }} labels={locale === 'zh-CN' ? { copy: '复制', copied: '已复制', copyFailed: '请选择文字复制', sensitive: '敏感信息', reveal: '显示', hide: '隐藏', unavailable: '不可用', waiting: '等待中', sent: '已发送', received: '已接收', stored: '已存储', file: '文件' } : { copy: 'Copy', copied: 'Copied', copyFailed: 'Select text to copy', sensitive: 'Sensitive', reveal: 'Reveal', hide: 'Hide', unavailable: 'Unavailable', waiting: 'Waiting', sent: 'Sent', received: 'Received', stored: 'Stored', file: 'File' }} /><TextComposer value={message} sensitivity={sensitivity} supported={filePeer.authority !== 'LOCAL_DEVICE' || runtime.local.supportsText(filePeer.root)} busy={state.busy} onValue={setMessage} onSensitivity={setSensitivity} onSend={() => perform(async () => { await runtime.send(new File([message], 'Text', { type: 'text/plain;charset=utf-8' }), filePeer, maxBytes, { sensitivity }); setMessage(current => current === message ? '' : current) })} onSendFile={() => { setFile(new File([message], 'message.txt', { type: 'text/plain;charset=utf-8' })); setSelectedPeer(filePeer); setPanel('send') }} labels={locale === 'zh-CN' ? { text: '文本', sensitive: '敏感信息', input: '输入文字', send: '发送', tooLong: '文字过长', invalidText: '文字格式无效', unsupported: '设备不支持文本', sendFile: '作为文件发送', sensitiveFileWarning: '文件可以被保存和显示。', confirm: '确认', cancel: '取消' } : { text: 'Text', sensitive: 'Sensitive', input: 'Write a message', send: 'Send', tooLong: 'Text is too long', invalidText: 'Invalid text', unsupported: 'Device does not support text', sendFile: 'Send as file', sensitiveFileWarning: 'The file can be saved and displayed.', confirm: 'Confirm', cancel: 'Cancel' }} /></div> : <FilesCollection jobs={state.jobs.filter(job => job.payloadKind !== 'TEXT')} records={accountRecords} filter={filter} onFilter={setFilter} onJob={openJob} onRecord={record => { setRecordId(record.id); setPanel('account-job') }} error={account.ready && account.records.isError} loading={account.ready && account.records.isPending} />)}
         {visualPanel === 'account-job' && selectedRecord && <><MotionTooltip label={c.backFiles}><MotionButton icon className="guest-icon-button" aria-label={c.backFiles} onClick={() => setPanel('files')}><ArrowLeft size={20} /></MotionButton></MotionTooltip><AccountTaskDetails record={selectedRecord} queryKey={account.recordKey} reader={account.reader} /></>}
         {visualPanel === 'account-request' && selectedRequest && <AccountRequest request={selectedRequest} onDone={() => openFiles(undefined, 'active')} reader={account.reader} />}
         {visualPanel === 'notifications' && <div className="workspace-notifications-list">

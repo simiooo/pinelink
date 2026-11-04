@@ -468,10 +468,11 @@ export class GuestRuntime {
     const result = await this.request<GuestTransfer & { progress?: ProgressSnapshot }>('POST', `/v1/p2p/${current.id}/complete`, this.action(current), signal)
     const { progress: projection, ...completed } = result
     const fresh = projection ?? await this.request<ProgressSnapshot>('GET', `/v1/p2p/${current.id}/progress`, undefined, signal).catch(() => undefined)
-    await this.store.transaction('rw', this.store.jobs, async () => {
+    await this.store.transaction('rw', this.store.jobs, this.store.chunks, async () => {
       const newest = await this.store.jobs.get(id); if (!newest) return
       const snapshot = fresh?.transfer_id === completed.id && fresh.completion.delivered && (fresh.state_version >= (newest.snapshot?.state_version ?? 0)) && (fresh.route?.epoch ?? 0) >= (newest.snapshot?.route?.epoch ?? 0) ? fresh : newest.snapshot
       await this.store.jobs.update(id, { transfer: completed.version >= (newest.transfer?.version ?? 0) ? completed : newest.transfer, snapshot, phase: 'complete', error: undefined })
+      if (newest.payloadKind === 'TEXT' && newest.text) await this.store.chunks.where('job').equals(id).delete()
     }); await this.changed()
   }
   private async applyProgress(id: string, snapshot: ProgressSnapshot) {
@@ -551,7 +552,7 @@ export class GuestRuntime {
         }
         if (!job) continue
         const id = job.id
-        await this.store.transaction('rw', this.store.jobs, async () => { const current = await this.store.jobs.get(id); if (current && transfer.version >= (current.transfer?.version ?? 0)) await this.store.jobs.update(id, { transfer }) })
+        await this.store.transaction('rw', this.store.jobs, async () => { const current = await this.store.jobs.get(id); if (current && transfer.content_kind !== current.payloadKind) throw new Error('FILE_JOB_CHANGED'); if (current && transfer.version >= (current.transfer?.version ?? 0)) await this.store.jobs.update(id, { transfer }) })
         const snap = await this.request<ProgressSnapshot>('GET', `/v1/p2p/${transfer.id}/progress`)
         await this.applyProgress(job.id, snap)
       }

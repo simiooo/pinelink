@@ -169,6 +169,11 @@ func (s *Service) RespondTransfer(ctx context.Context, id, action string, req Tr
 	if action == "accept" && transfer.ContentKind != nil && req.AcceptContentKind != *transfer.ContentKind {
 		return Transfer{}, fmt.Errorf("%w: text consent required", ErrInvalid)
 	}
+	if action == "accept" && transfer.ContentKind != nil {
+		if _, err := tx.Exec(ctx, `SELECT set_config('pinelink.text_consent','1',true)`); err != nil {
+			return Transfer{}, err
+		}
+	}
 	if transfer.Version != req.ExpectedVersion {
 		return Transfer{}, &StateConflictError{Resource: "transfer", Current: presentTransfer(transfer, req.OwnerID, req.DeviceID)}
 	}

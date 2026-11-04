@@ -5,7 +5,7 @@ import { MotionProvider } from '../motion/react'
 import type { GuestJob } from './store'
 import { Conversation } from './Conversation'
 
-const labels = { copy: 'Copy', copied: 'Copied', copyFailed: 'Copy failed', sensitive: 'Sensitive', reveal: 'Reveal', hide: 'Hide', unavailable: 'Unavailable', waiting: 'Waiting', sent: 'Sent', received: 'Received' }
+const labels = { copy: 'Copy', copied: 'Copied', copyFailed: 'Copy failed', sensitive: 'Sensitive', reveal: 'Reveal', hide: 'Hide', unavailable: 'Unavailable', waiting: 'Waiting', sent: 'Sent', received: 'Received', stored: 'Stored', file: 'File' }
 afterEach(cleanup)
 it('shows file messages in chronological order and opens their existing details', () => {
   const jobs = [

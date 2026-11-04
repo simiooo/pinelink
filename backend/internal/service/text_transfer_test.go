@@ -34,6 +34,9 @@ func TestTextTransferRequiresTypedConsent(t *testing.T) {
 	if err != nil || stillPending.State != "PENDING" || len(stillPending.EncryptedManifest) != 0 {
 		t.Fatal("failed consent changed transfer", err)
 	}
+	if _, err = s.db.Exec(t.Context(), `UPDATE transfer_requests SET state='ACCEPTED' WHERE id=$1`, created.ID); err == nil {
+		t.Fatal("database allowed an old server to bypass typed consent")
+	}
 	action.AcceptContentKind = "TEXT"
 	accepted, err := s.RespondTransfer(cb, created.ID, "accept", action)
 	if err != nil || accepted.State != "ACCEPTED" || len(accepted.EncryptedManifest) == 0 {

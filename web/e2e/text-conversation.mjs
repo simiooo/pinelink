@@ -1,0 +1,33 @@
+import { chromium } from 'playwright-core'
+import { mkdir, writeFile } from 'node:fs/promises'
+import assert from 'node:assert/strict'
+import { startGuestWebServer } from './guest-server.mjs'
+
+const server = await startGuestWebServer(), origin = 'http://localhost:5184'
+const browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
+const errors = [], contexts = []
+const until = async (fn, ms = 120000) => { const end = Date.now() + ms; while (Date.now() < end) { const value = await fn(); if (value) return value; await new Promise(r => setTimeout(r, 300)) } throw Error('timed out') }
+const fresh = async width => { const context = await browser.newContext({ locale: 'en-US', viewport: { width, height: 844 } }); contexts.push(context); await context.addInitScript(() => Object.defineProperty(window, 'RTCPeerConnection', { value: undefined, configurable: true })); const page = await context.newPage(); page.on('pageerror', e => errors.push(e.message)); await page.goto(origin); await page.getByRole('button', { name: 'Connect a device', exact: true }).first().waitFor(); return { context, page } }
+const jobs = page => page.evaluate(async () => { const name = (await indexedDB.databases()).find(d => d.name?.startsWith('pinelink-visitor:'))?.name; if (!name) return []; const db = await new Promise((ok, no) => { const r = indexedDB.open(name); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error) }); const rows = await new Promise((ok, no) => { const r = db.transaction('jobs').objectStore('jobs').getAll(); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error) }); db.close(); return rows.map(j => ({ kind: j.payloadKind, phase: j.phase, plain: !!j.plain, encrypted: !!j.text, state: j.transfer?.state })) })
+const openConversation = async page => { await page.locator('.guest-peer .guest-node').first().click(); await page.locator('.guest-node-actions').getByRole('button', { name: 'Files', exact: true }).click(); await page.getByRole('textbox', { name: 'Write a message' }).waitFor() }
+try {
+  const a = await fresh(390), b = await fresh(320)
+  await a.page.getByRole('button', { name: 'Connect a device', exact: true }).first().click()
+  const code = await until(async () => { const v = await a.page.getByTestId('connection-code').textContent(); return v?.match(/[0-9A-Z]{4} [0-9A-Z]{4}/) ? v : null })
+  await b.page.getByRole('button', { name: 'Connect a device', exact: true }).first().click(); await b.page.getByRole('tab', { name: 'Enter code', exact: true }).click(); await b.page.getByLabel('Connection code').fill(code); await b.page.getByRole('button', { name: 'Connect', exact: true }).click()
+  await a.page.getByRole('heading', { name: 'Connect this device?', exact: true }).waitFor(); await a.page.getByRole('button', { name: 'Connect', exact: true }).click(); await until(async () => !(await b.page.getByRole('dialog').count()))
+  await a.page.locator('.guest-peer .guest-node').first().waitFor(); await openConversation(a.page)
+  await a.page.getByRole('button', { name: 'Sensitive', exact: true }).click(); const raw = '# Project\n\n**secret**  spaces'; await a.page.getByRole('textbox', { name: 'Write a message' }).fill(raw); await a.page.getByRole('button', { name: 'Send', exact: true }).click()
+  await b.page.getByRole('button', { name: 'Receive', exact: true }).waitFor(); let pending = (await jobs(b.page)).find(j => j.kind === 'TEXT'); assert.equal(pending.state, 'PENDING'); assert.equal(pending.encrypted, false)
+  await b.page.getByRole('button', { name: 'Receive', exact: true }).click(); await until(async () => (await jobs(b.page)).some(j => j.kind === 'TEXT' && j.phase === 'complete' && j.encrypted && !j.plain)); await until(async () => (await jobs(a.page)).some(j => j.kind === 'TEXT' && j.phase === 'complete'))
+  const dialog = b.page.getByRole('dialog'); if (await dialog.count()) { await dialog.getByRole('button', { name: 'Close', exact: true }).click(); await dialog.waitFor({ state: 'detached' }) }
+  await openConversation(b.page); assert.equal(await b.page.getByText('secret', { exact: true }).count(), 0); await b.page.getByRole('button', { name: 'Reveal', exact: true }).click(); await b.page.getByRole('heading', { name: 'Project', exact: true }).waitFor(); assert.equal(await b.page.locator('strong').filter({ hasText: 'secret' }).count(), 1)
+  await b.context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin }); await b.page.getByRole('button', { name: 'Copy', exact: true }).click(); assert.equal(await b.page.evaluate(() => navigator.clipboard.readText()), raw)
+  for (const page of [a.page, b.page]) { const surface = page.getByRole('dialog'); await surface.getByRole('button', { name: 'Close', exact: true }).click(); await surface.waitFor({ state: 'detached' }) }
+  await a.page.locator('input[type=file]').setInputFiles({ name: 'notes.txt', mimeType: 'text/plain', buffer: Buffer.from('a file') }); await a.page.getByRole('button', { name: 'Send', exact: true }).click(); await b.page.getByRole('button', { name: 'Receive', exact: true }).waitFor(); await b.page.getByRole('button', { name: 'Receive', exact: true }).click(); await until(async () => (await jobs(b.page)).some(j => j.kind === undefined && j.phase === 'complete' && j.plain)); await until(async () => (await jobs(a.page)).some(j => j.kind === undefined && j.phase === 'complete'))
+  const finished = b.page.getByRole('dialog'); if (await finished.count()) { await finished.getByRole('button', { name: 'Close', exact: true }).click(); await finished.waitFor({ state: 'detached' }) }
+  await openConversation(b.page); await b.page.getByRole('button', { name: /notes\.txt/ }).waitFor(); await b.page.getByRole('button', { name: 'Reveal', exact: true }).waitFor()
+  await mkdir('e2e-output/text-conversation', { recursive: true }); await b.page.screenshot({ path: 'e2e-output/text-conversation/mobile.png' }); assert.deepEqual(errors, [])
+  await writeFile('e2e-output/text-conversation/result.json', JSON.stringify({ passed: true, checks: ['two explicit paired devices', 'typed receive consent', 'durable encrypted sensitive history', 'Markdown and explicit reveal', 'raw clipboard copy', 'mixed file and text history', 'delivery receipt'] }, null, 2))
+  console.log('text conversation: passed')
+} finally { await browser.close(); server.closeAllConnections(); await new Promise(r => server.close(r)) }

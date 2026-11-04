@@ -141,6 +141,13 @@ class NativeLocalRuntime extends LocalController {
   @override
   bool reachable(String root) => _links[root]?.ready == true;
   @override
+  bool supportsText(String root) {
+    final link = _links[root];
+    return link?.ready == true &&
+        (link?.peer?['capabilities'] as List? ?? []).contains('text-v1');
+  }
+
+  @override
   Future<void> discover() => discovery.start();
   Future<Map<String, Json>> inspectRoutes() async {
     final result = <String, Json>{};
@@ -447,6 +454,7 @@ class NativeLocalRuntime extends LocalController {
   Future<String> send(Uint8List bytes, String name, Json peer) =>
       _send(bytes, name, peer);
 
+  @override
   Future<String> sendText(Uint8List bytes, Json peer, String sensitivity) =>
       _send(bytes, 'Text', peer, sensitivity);
 
@@ -1231,6 +1239,27 @@ class NativeLocalRuntime extends LocalController {
 
   @override
   Future<Uint8List?> plaintext(String id) => store.readBytes(id, 'plain');
+  @override
+  Future<({String value, bool sensitive})?> text(String id) async {
+    final job = await store.job(id);
+    final envelope = job?['textManifest'];
+    final cipher = await store.readBytes(id, 'text');
+    if (job?['contentKind'] != 'TEXT' ||
+        envelope is! String ||
+        cipher == null) {
+      return null;
+    }
+    final manifest = await identity.decrypt(envelope);
+    validateManifest(manifest);
+    if (manifest['content_kind'] != 'TEXT') {
+      throw StateError('FILE_MANIFEST_INVALID');
+    }
+    return (
+      value: decodeText(await decryptDare(cipher, manifest)),
+      sensitive: manifest['sensitivity'] == 'SENSITIVE',
+    );
+  }
+
   @override
   Future<void> rename(String root, String name) async {
     final n = name.trim();
