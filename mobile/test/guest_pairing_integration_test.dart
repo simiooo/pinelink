@@ -1,11 +1,13 @@
 import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pinelink_mobile/src/data/database.dart';
 import 'package:pinelink_mobile/src/data/identity.dart';
 import 'package:pinelink_mobile/src/guest/connections.dart';
-import 'package:pinelink_mobile/src/guest/session.dart';
+import 'package:pinelink_mobile/src/guest/runtime.dart';
 
 class _Vault implements IdentityVault {
   final values = <String, String>{};
@@ -29,28 +31,17 @@ void main() {
           dbB = ClientDatabase.testing(NativeDatabase.memory()),
           vaultA = _Vault(),
           vaultB = _Vault();
-      final identityA = await LocalIdentity.load(
-            dbA,
-            vaultA,
-            'native-guest-a',
-            '',
-          ),
-          identityB = await LocalIdentity.load(
-            dbB,
-            vaultB,
-            'native-guest-b',
-            '',
-          );
-      final sessionA = await GuestSession.open(
+      final runtimeA = await NativeGuestRuntime.open(
             server: server!,
-            identity: identityA,
             vault: vaultA,
+            database: dbA,
           ),
-          sessionB = await GuestSession.open(
+          runtimeB = await NativeGuestRuntime.open(
             server: server,
-            identity: identityB,
             vault: vaultB,
+            database: dbB,
           );
+      final sessionA = runtimeA.session, sessionB = runtimeB.session;
       try {
         await sessionA.ensureSession(deviceName: 'Android A');
         await sessionB.ensureSession(deviceName: 'Android B');
@@ -63,15 +54,40 @@ void main() {
         expect((await a.list())['peers'], hasLength(1));
         expect((await b.list())['peers'], hasLength(1));
         final peer = ((await a.list())['peers'] as List).single;
-        expect(peer['device_id'], identityB.device);
+        expect(peer['device_id'], runtimeB.identity.device);
+        final raw = Uint8List.fromList(utf8.encode('private text'));
+        final jobId = await runtimeA.offer(
+          raw,
+          'secret.txt',
+          Map<String, dynamic>.from(peer),
+          sensitivity: 'SENSITIVE',
+        );
+        final job = (await runtimeA.store.job(jobId))!;
+        expect(job['name'], 'Text');
+        expect(job['state'], 'PENDING');
+        expect(await runtimeA.store.bytes(jobId, 'source'), isNot(raw));
+        final transfer = job['transfer'] as Map<String, dynamic>;
+        final pending = await sessionB.request(
+          'GET',
+          '/v1/transfers/${transfer['id']}',
+        );
+        expect(pending['content_kind'], 'TEXT');
+        expect(pending['encrypted_manifest'], isNull);
+        await sessionB.request(
+          'POST',
+          '/v1/transfers/${transfer['id']}/reject',
+          {
+            'owner_id': sessionB.owner,
+            'device_id': runtimeB.identity.device,
+            'expected_version': transfer['version'],
+          },
+        );
         await a.remove(peer['pair_id']);
         expect((await a.list())['peers'], isEmpty);
         expect((await b.list())['peers'], isEmpty);
       } finally {
-        sessionA.close();
-        sessionB.close();
-        await dbA.close();
-        await dbB.close();
+        await runtimeA.close();
+        await runtimeB.close();
       }
     },
     skip: server == null ? 'requires isolated native guest test API' : false,

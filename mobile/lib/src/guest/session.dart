@@ -51,6 +51,7 @@ class GuestSession {
   int _offset = 0;
   Future<void>? _enrollment;
   bool _closed = false;
+  String get owner => _owner ?? (throw StateError('GUEST_EXPIRED'));
 
   Future<Map<String, dynamic>> _send(
     String method,
@@ -98,9 +99,13 @@ class GuestSession {
     return decoded;
   }
 
-  Future<void> ensureSession({String deviceName = 'Android'}) =>
-      _enrollment ??= _enroll(deviceName)
-          .whenComplete(() => _enrollment = null);
+  Future<void> ensureSession({String deviceName = 'Android'}) {
+    if (_closed) return Future.error(StateError('GUEST_CLOSED'));
+    if (_token != null) return Future.value();
+    return _enrollment ??= _enroll(deviceName)
+        .whenComplete(() => _enrollment = null);
+  }
+
   Future<void> _enroll(String deviceName) async {
     final stored = await vault.read('$namespace.guest-session');
     final previous = stored == null
