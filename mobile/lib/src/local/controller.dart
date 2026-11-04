@@ -17,6 +17,7 @@ String localPeerName(LocalMap peer) =>
 
 abstract class LocalController extends ChangeNotifier {
   bool get smartConnection => false;
+  bool get accountActive => false;
   List<LocalMap> get peers;
   List<LocalMap> get jobs;
   List<LocalMap> get nearby;

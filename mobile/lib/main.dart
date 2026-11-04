@@ -48,6 +48,7 @@ class _LocalBootstrap extends StatefulWidget {
 class _LocalBootstrapState extends State<_LocalBootstrap> {
   late Future<LocalController?> opening = openLocalController(
     server: widget.auth.server,
+    auth: widget.auth,
   );
   @override
   Widget build(BuildContext context) => FutureBuilder<LocalController?>(
@@ -77,6 +78,7 @@ class _LocalBootstrapState extends State<_LocalBootstrap> {
                         onPressed: () => setState(() {
                           opening = openLocalController(
                             server: widget.auth.server,
+                            auth: widget.auth,
                           );
                         }),
                         child: const Text('Try again'),

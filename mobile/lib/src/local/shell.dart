@@ -143,7 +143,7 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.devices_outlined),
-              title: Text(localPeerName(peer)),
+              title: Text(deviceDisplayName(context, peer)),
               onTap: () {
                 Navigator.pop(context);
                 unawaited(_send(peer));
@@ -189,7 +189,7 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
   }
 
   Future<void> _rename(LocalMap peer) async {
-    final input = TextEditingController(text: localPeerName(peer));
+    final input = TextEditingController(text: deviceDisplayName(context, peer));
     try {
       final name = await showMotionSurface<String>(
         context,
@@ -229,7 +229,7 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(localPeerName(peer)),
+          Text(deviceDisplayName(context, peer)),
           const SizedBox(height: 24),
           MotionButton.primary(
             onPressed: () => Navigator.pop(context, true),
@@ -304,7 +304,7 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                subtitle: Text(localPeerName(job['peer'])),
+                subtitle: Text(deviceDisplayName(context, job['peer'])),
                 onTap: () {
                   Navigator.pop(context);
                   unawaited(showLocalJob(this.context, r, job['id']));
@@ -421,8 +421,7 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
                                     : (confirmed ? 1 : 0);
                               }
 
-                              final graph =
-                                  selected['authority'] == 'GUEST_SERVICE'
+                              final graph = serviceAuthority(selected)
                                   ? CloudTransferGraph(
                                       key: const ValueKey(
                                         'native-cloud-transfer-graph',
@@ -448,7 +447,8 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
                                         'This device',
                                         '本机',
                                       ),
-                                      peerLabel: localPeerName(
+                                      peerLabel: deviceDisplayName(
+                                        context,
                                         r.peers
                                                 .where(
                                                   (p) =>
@@ -519,7 +519,8 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
                                         'This device',
                                         '本机',
                                       ),
-                                      peerLabel: localPeerName(
+                                      peerLabel: deviceDisplayName(
+                                        context,
                                         r.peers
                                                 .where(
                                                   (p) =>
@@ -615,17 +616,49 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
                                   right: 0,
                                   child: Column(
                                     children: [
-                                      Container(
-                                        width: 80,
-                                        height: 80,
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Color(0xFFF5F5F5),
-                                        ),
-                                        child: const Icon(
-                                          Icons.smartphone_outlined,
-                                          size: 40,
-                                        ),
+                                      Stack(
+                                        clipBehavior: Clip.none,
+                                        children: [
+                                          Container(
+                                            width: 80,
+                                            height: 80,
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color(0xFFF5F5F5),
+                                            ),
+                                            child: const Icon(
+                                              Icons.smartphone_outlined,
+                                              size: 40,
+                                            ),
+                                          ),
+                                          if (r.accountActive)
+                                            Positioned(
+                                              right: -4,
+                                              top: -4,
+                                              child: Tooltip(
+                                                message: lc(
+                                                  context,
+                                                  'Account device',
+                                                  '账号设备',
+                                                ),
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(
+                                                    3,
+                                                  ),
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                        color: Colors.white,
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                  child: const Icon(
+                                                    Icons.how_to_reg_outlined,
+                                                    size: 14,
+                                                    color: Color(0xff0866ff),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
                                       ),
                                       const SizedBox(height: 12),
                                       Text(
@@ -635,15 +668,18 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
                                     ],
                                   ),
                                 ),
-                                if (_openDevice != null)
+                                if (_openDevice != null &&
+                                    r.peers.any(
+                                      (peer) =>
+                                          peer['root'] == _openDevice!['root'],
+                                    ))
                                   Positioned.fill(
                                     child: _DeviceActions(
                                       key: ValueKey(_openDevice!['root']),
                                       peer: _openDevice!,
                                       anchor: _deviceAnchor,
                                       reconnect:
-                                          _openDevice!['authority'] !=
-                                              'GUEST_SERVICE' &&
+                                          !serviceAuthority(_openDevice!) &&
                                           !r.reachable(_openDevice!['root']),
                                       onClose: () =>
                                           setState(() => _openDevice = null),
@@ -690,7 +726,7 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
 
 IconData peerIcon(LocalMap peer) =>
     RegExp(
-      r'Android|iPhone|phone|Pixel',
+      r'Android|iPhone|phone|Pixel|flutter-',
       caseSensitive: false,
     ).hasMatch(peer['name'] ?? '')
     ? Icons.smartphone_outlined
@@ -814,7 +850,7 @@ class _DeviceNode extends StatelessWidget {
   Widget build(BuildContext context) => Semantics(
     button: true,
     label:
-        '${localPeerName(peer)}, ${online ? lc(context, 'Connected', '已连接') : lc(context, 'Disconnected', '未连接')}',
+        '${deviceDisplayName(context, peer)}, ${online ? lc(context, 'Connected', '已连接') : lc(context, 'Disconnected', '未连接')}',
     child: InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(24),
@@ -842,8 +878,11 @@ class _DeviceNode extends StatelessWidget {
                   right: -2,
                   bottom: -2,
                   child: Tooltip(
-                    message: peer['authority'] == 'GUEST_SERVICE'
-                        ? lc(context, 'Connected device', '已连接设备')
+                    message: serviceAuthority(peer)
+                        ? ((peer['owner_id'] as String?)?.startsWith('acct-') ==
+                                  true
+                              ? lc(context, 'Account device', '账号设备')
+                              : lc(context, 'Visitor device', '访客设备'))
                         : lc(context, 'Paired locally', '已在本地配对'),
                     child: Container(
                       padding: const EdgeInsets.all(3),
@@ -852,10 +891,22 @@ class _DeviceNode extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        Icons.verified_user_outlined,
+                        serviceAuthority(peer)
+                            ? ((peer['owner_id'] as String?)?.startsWith(
+                                        'acct-',
+                                      ) ==
+                                      true
+                                  ? Icons.how_to_reg_outlined
+                                  : Icons.person_outline)
+                            : Icons.verified_user_outlined,
                         size: 12,
                         color: online
-                            ? const Color(0xFF111111)
+                            ? ((peer['owner_id'] as String?)?.startsWith(
+                                        'acct-',
+                                      ) ==
+                                      true
+                                  ? const Color(0xff0866ff)
+                                  : const Color(0xFF111111))
                             : const Color(0xFFA3A3A3),
                       ),
                     ),
@@ -865,7 +916,7 @@ class _DeviceNode extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              localPeerName(peer),
+              deviceDisplayName(context, peer),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 12),
@@ -889,7 +940,7 @@ Future<void> showLocalJob(BuildContext context, LocalController r, String id) =>
           return Text(
             job == null
                 ? lc(context, 'Transfer', '传输')
-                : localPeerName(job['peer']),
+                : deviceDisplayName(context, job['peer']),
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
           );
         },
@@ -1001,7 +1052,7 @@ class _LocalJobState extends State<_LocalJob> {
               child: Text(lc(context, 'Decline', '拒绝')),
             ),
           ] else ...[
-            if (job['authority'] == 'GUEST_SERVICE') ...[
+            if (serviceAuthority(job)) ...[
               Row(
                 children: [
                   Expanded(child: Text(lc(context, 'Cloud copy', '云端暂存'))),
@@ -1060,8 +1111,7 @@ class _LocalJobState extends State<_LocalJob> {
                   ),
                   const SizedBox(width: 16),
                   if (s?['state'] == 'ACCEPTED' &&
-                      (job['authority'] != 'GUEST_SERVICE' ||
-                          job['direction'] == 'receive'))
+                      (!serviceAuthority(job) || job['direction'] == 'receive'))
                     IconButton(
                       tooltip: paused
                           ? lc(context, 'Resume', '继续')
@@ -1188,7 +1238,9 @@ class _LocalFilesState extends State<LocalFiles> {
       return Scaffold(
         appBar: AppBar(
           title: Text(
-            peer == null ? lc(context, 'Files', '文件') : localPeerName(peer),
+            peer == null
+                ? lc(context, 'Files', '文件')
+                : deviceDisplayName(context, peer),
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
           ),
         ),

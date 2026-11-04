@@ -15,6 +15,8 @@ class GuestSession {
     required this.vault,
     required this.namespace,
     required this.deviceName,
+    this.accountCurrent,
+    this.accountHeaders = const {},
     http.Client? client,
   }) : client = client ?? http.Client() {
     final uri = Uri.parse(server);
@@ -46,11 +48,47 @@ class GuestSession {
     client: client,
     deviceName: deviceName,
   );
+
+  /// Uses an already enrolled account identity without creating a visitor lease.
+  /// [current] must reject a changed, expired or signed-out account session.
+  static GuestSession account({
+    required String server,
+    required LocalIdentity identity,
+    required IdentityVault vault,
+    required String namespace,
+    required String owner,
+    required Map<String, String> headers,
+    required bool Function() current,
+    int offset = 0,
+    String deviceName = 'Android',
+    http.Client? client,
+  }) {
+    if (!owner.startsWith('acct-') || identity.device.isEmpty) {
+      throw StateError('ACCOUNT_IDENTITY_INVALID');
+    }
+    final session = GuestSession._(
+      server: server,
+      identity: identity,
+      vault: vault,
+      namespace: namespace,
+      deviceName: deviceName,
+      accountCurrent: current,
+      accountHeaders: Map.unmodifiable(headers),
+      client: client,
+    );
+    session._owner = owner;
+    session._token = headers['X-Pinelink-Session'];
+    session._offset = offset;
+    return session;
+  }
+
   final String server, namespace;
   final String deviceName;
   final LocalIdentity identity;
   final IdentityVault vault;
   final http.Client client;
+  final bool Function()? accountCurrent;
+  final Map<String, String> accountHeaders;
   String? _token, _owner;
   int _offset = 0;
   Future<void>? _enrollment;
@@ -91,6 +129,9 @@ class GuestSession {
       bytes.add(chunk);
     }
     if (_closed) throw StateError('GUEST_CLOSED');
+    if (accountCurrent != null && !accountCurrent!()) {
+      throw StateError('ACCOUNT_SIGN_IN_REQUIRED');
+    }
     final decoded = jsonDecode(utf8.decode(bytes.takeBytes()));
     if (decoded is! Map<String, dynamic>) {
       throw StateError('GUEST_RESPONSE_INVALID');
@@ -105,6 +146,12 @@ class GuestSession {
 
   Future<void> ensureSession({String? deviceName}) {
     if (_closed) return Future.error(StateError('GUEST_CLOSED'));
+    if (accountCurrent != null) {
+      if (!accountCurrent!() || _token == null || _token!.isEmpty) {
+        return Future.error(StateError('ACCOUNT_SIGN_IN_REQUIRED'));
+      }
+      return Future.value();
+    }
     if (_token != null) return Future.value();
     return _enrollment ??= _enroll(deviceName ?? this.deviceName)
         .whenComplete(() => _enrollment = null);
@@ -176,6 +223,7 @@ class GuestSession {
     String path, [
     Map<String, dynamic>? value,
   ]) async {
+    if (accountCurrent != null) await ensureSession();
     if (_token == null || _owner == null) throw StateError('GUEST_EXPIRED');
     if (!['GET', 'POST', 'DELETE'].contains(method)) {
       throw StateError('GUEST_METHOD_INVALID');
@@ -192,7 +240,11 @@ class GuestSession {
     } on StateError catch (error) {
       // An expired lease is rejected by the authentication middleware before
       // the operation runs. Renew once; do not replay other failures.
-      if (error.message != 'GUEST_EXPIRED' || _closed) rethrow;
+      if (accountCurrent != null ||
+          error.message != 'GUEST_EXPIRED' ||
+          _closed) {
+        rethrow;
+      }
       if (_token == attemptedToken) _token = null;
       await ensureSession();
       return _send(method, path, body, await signedHeaders(method, path, body));
@@ -204,6 +256,9 @@ class GuestSession {
     String path, [
     String body = '',
   ]) async {
+    if (accountCurrent != null && !accountCurrent!()) {
+      throw StateError('ACCOUNT_SIGN_IN_REQUIRED');
+    }
     if (_closed || _token == null || _owner == null) {
       throw StateError('GUEST_EXPIRED');
     }
@@ -217,13 +272,19 @@ class GuestSession {
         '$method\n$path\n$timestamp\n${await digest(utf8.encode(body))}',
       ),
     );
+    if (accountCurrent != null && !accountCurrent!()) {
+      throw StateError('ACCOUNT_SIGN_IN_REQUIRED');
+    }
     return {
       'X-Pinelink-Surface': 'app',
       'X-Pinelink-Owner': _owner!,
       'X-Pinelink-Device': identity.device,
       'X-Pinelink-Timestamp': timestamp,
       'X-Pinelink-Signature': signature,
-      'X-Pinelink-Guest-Session': _token!,
+      if (accountCurrent == null) 'X-Pinelink-Guest-Session': _token!,
+      if (accountCurrent != null) 'X-Pinelink-Session': _token!,
+      if (accountCurrent != null && accountHeaders['X-Pinelink-CSRF'] != null)
+        'X-Pinelink-CSRF': accountHeaders['X-Pinelink-CSRF']!,
     };
   }
 

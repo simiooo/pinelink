@@ -87,6 +87,11 @@ class _Local extends LocalController {
 class _TextLocal extends _Local {
   String? sentText;
   String? sentSensitivity;
+  void setPeers(List<LocalMap> value) {
+    peers = value;
+    notifyListeners();
+  }
+
   @override
   bool supportsText(String root) => true;
   @override
@@ -106,6 +111,57 @@ class _TextLocal extends _Local {
 }
 
 void main() {
+  testWidgets(
+    'account sign-out hides its conversation and clears an unsent draft',
+    (tester) async {
+      final r = _TextLocal();
+      r.peers = [
+        {'root': 'account:peer', 'name': 'Account device'},
+      ];
+      r.jobs = [
+        {
+          'id': 'account-job:text',
+          'created': 1,
+          'direction': 'receive',
+          'peer': {'root': 'account:peer'},
+          'contentKind': 'TEXT',
+        },
+      ];
+      await tester.pumpWidget(
+        MaterialApp(
+          home: LocalConversation(
+            controller: r,
+            root: 'account:peer',
+            onJob: (_, _) {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Reveal'));
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Private', findRichText: true),
+        findsOneWidget,
+      );
+      await tester.enterText(find.byType(TextField), 'private draft');
+      await tester.tap(find.byType(Switch));
+      await tester.pump();
+      r.setPeers([]);
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Private', findRichText: true), findsNothing);
+      expect(find.text('private draft'), findsNothing);
+      r.setPeers([
+        {'root': 'account:peer', 'name': 'Account device'},
+      ]);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        isEmpty,
+      );
+      expect(tester.widget<Switch>(find.byType(Switch)).value, isFalse);
+    },
+  );
+
   testWidgets(
     'device conversation hides sensitive Markdown and sends only after a tap',
     (tester) async {

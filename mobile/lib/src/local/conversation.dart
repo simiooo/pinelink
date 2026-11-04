@@ -26,7 +26,7 @@ class LocalConversation extends StatefulWidget {
 
 class _LocalConversationState extends State<LocalConversation> {
   final input = TextEditingController();
-  bool sensitive = false, busy = false;
+  bool sensitive = false, busy = false, clearPending = false;
   PlatformFile? attachment;
   @override
   void dispose() {
@@ -127,6 +127,23 @@ class _LocalConversationState extends State<LocalConversation> {
     builder: (context, _) {
       final r = widget.controller,
           peer = r.peers.where((p) => p['root'] == widget.root).firstOrNull;
+      if (widget.root.startsWith('account:') && peer == null) {
+        if (!clearPending) {
+          clearPending = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            clearPending = false;
+            input.clear();
+            if (attachment != null || sensitive) {
+              setState(() {
+                attachment = null;
+                sensitive = false;
+              });
+            }
+          });
+        }
+        return Scaffold(appBar: AppBar());
+      }
       final jobs =
           r.jobs.where((j) => j['peer']['root'] == widget.root).toList()..sort(
             (a, b) => (a['created'] as int).compareTo(b['created'] as int),
@@ -134,7 +151,9 @@ class _LocalConversationState extends State<LocalConversation> {
       return Scaffold(
         appBar: AppBar(
           title: Text(
-            peer == null ? lc(context, 'Device', '设备') : localPeerName(peer),
+            peer == null
+                ? lc(context, 'Device', '设备')
+                : deviceDisplayName(context, peer),
           ),
         ),
         body: SafeArea(

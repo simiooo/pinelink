@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 
 import 'dart:typed_data';
+import 'dart:convert';
 
 import '../data/database.dart';
 import '../data/identity.dart';
@@ -57,7 +58,8 @@ class NativeGuestRuntime {
     try {
       await db.transaction(() async {
         final marker = await db.metadata('guest-service');
-        if (marker != null && marker['scope'] != namespace ||
+        if (await db.metadata('account-service') != null ||
+            marker != null && marker['scope'] != namespace ||
             marker == null && await db.metadata('profile') != null) {
           throw StateError('GUEST_STORE_MISMATCH');
         }
@@ -72,6 +74,65 @@ class NativeGuestRuntime {
         vault: secureVault,
         client: client,
         deviceName: deviceName,
+      );
+      final store = NativeGuestStore(db);
+      await store.initialize();
+      return NativeGuestRuntime._(db, identity, session, store);
+    } catch (_) {
+      await db.close();
+      rethrow;
+    }
+  }
+
+  /// Account conversations have their own ciphertext store and use the
+  /// already enrolled account identity, never a visitor identity or lease.
+  static Future<NativeGuestRuntime> openAccount({
+    required String server,
+    required String owner,
+    required LocalIdentity identity,
+    required Map<String, String> headers,
+    required bool Function() current,
+    int offset = 0,
+    IdentityVault? vault,
+    ClientDatabase? database,
+    http.Client? client,
+    String deviceName = 'Android',
+  }) async {
+    final address = Uri.base
+        .resolve(server)
+        .toString()
+        .replaceAll(RegExp(r'/$'), '');
+    if (!owner.startsWith('acct-') || identity.device.isEmpty) {
+      throw StateError('ACCOUNT_IDENTITY_INVALID');
+    }
+    final namespace =
+        'pinelink-native-account-chat-${await digest(utf8.encode('$address\n$owner\n${identity.device}'))}';
+    final db = database ?? ClientDatabase(namespace),
+        secureVault = vault ?? PlatformVault();
+    try {
+      await db.transaction(() async {
+        final marker = await db.metadata('account-service');
+        if (marker != null && marker['scope'] != namespace ||
+            marker == null &&
+                (await db.metadata('profile') != null ||
+                    await db.metadata('guest-service') != null)) {
+          throw StateError('ACCOUNT_STORE_MISMATCH');
+        }
+        if (marker == null) {
+          await db.putMetadata('account-service', {'scope': namespace});
+        }
+      });
+      final session = GuestSession.account(
+        server: address,
+        identity: identity,
+        vault: secureVault,
+        namespace: namespace,
+        owner: owner,
+        headers: headers,
+        current: current,
+        offset: offset,
+        deviceName: deviceName,
+        client: client,
       );
       final store = NativeGuestStore(db);
       await store.initialize();

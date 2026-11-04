@@ -2,6 +2,28 @@ import 'package:flutter/widgets.dart';
 
 String lc(BuildContext context, String en, String zh) =>
     Localizations.localeOf(context).languageCode == 'zh' ? zh : en;
+bool serviceAuthority(Map<String, dynamic> value) =>
+    value['authority'] == 'GUEST_SERVICE' ||
+    value['authority'] == 'ACCOUNT_SERVICE';
+String deviceDisplayName(BuildContext context, Map<String, dynamic> peer) {
+  final name = peer['local_name'] ?? peer['name'] ?? 'Device';
+  final device = peer['device_id'];
+  if (name is! String ||
+      device is! String ||
+      name != device ||
+      (peer['owner_id'] as String?)?.startsWith('acct-') != true ||
+      !RegExp(
+        r'^(web|flutter)-[0-9a-f-]{36}$',
+        caseSensitive: false,
+      ).hasMatch(device)) {
+    return name.toString();
+  }
+  final kind = device.startsWith('flutter-')
+      ? lc(context, 'Mobile device', '移动设备')
+      : lc(context, 'Browser', '浏览器');
+  return '$kind · ${device.substring(device.length - 4).toUpperCase()}';
+}
+
 String localError(BuildContext c, Object error) {
   final code = error is StateError ? error.message.toString() : '$error';
   if (code.contains('NETWORK_UNAVAILABLE')) {
@@ -45,7 +67,7 @@ String jobStatus(BuildContext c, Map<String, dynamic> job, bool connected) {
   if (job['intent'] == 'cancel') return lc(c, 'Cancelling', '正在取消');
   if (job['expired'] == true) return lc(c, 'Expired', '已过期');
   final s = job['state'] as Map?;
-  if (job['authority'] == 'GUEST_SERVICE' &&
+  if (serviceAuthority(job) &&
       job['direction'] == 'send' &&
       s?['state'] == 'PENDING' &&
       ((job['progress'] as Map?)?['completion'] as Map?)?['stored'] == true) {

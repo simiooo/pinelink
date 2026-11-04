@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'dart:math';
 
+import '../auth/controller.dart';
 import '../data/database.dart';
 import '../data/identity.dart';
 import '../data/wire.dart' as wire;
@@ -21,7 +22,10 @@ import 'protocol.dart';
 import 'session.dart';
 import 'store.dart';
 
-Future<LocalController?> openLocalController({String? server}) async {
+Future<LocalController?> openLocalController({
+  String? server,
+  AccountController? auth,
+}) async {
   await initializeLocalCrypto();
   final db = ClientDatabase('pinelink-native-local-v1');
   NativeLocalRuntime? local;
@@ -54,7 +58,7 @@ Future<LocalController?> openLocalController({String? server}) async {
     );
     try {
       final guest = await NativeGuestCoordinator.open(guestRuntime);
-      return CompositeController(local, guest, server);
+      return CompositeController(local, guest, server, auth: auth);
     } catch (_) {
       await guestRuntime.close();
       rethrow;
