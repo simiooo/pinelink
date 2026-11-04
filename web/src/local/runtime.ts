@@ -58,8 +58,9 @@ export class LocalRuntime {
     })
     try {
       await this.store.transaction('rw', this.store.localLeases, async () => { const row = await this.store.localLeases.get(root); if (!navigator.locks&&row && row.owner !== this.owner && row.until > Date.now()) throw new Error('LOCAL_OTHER_TAB'); await this.store.localLeases.put({ id: root, owner: this.owner, until: Date.now() + 15000,session:link.id }) })
+      link.signal.throwIfAborted()
       this.releases.set(link, release)
-    } catch (e) { release(); throw e }
+    } catch (e) { release();await this.store.transaction('rw',this.store.localLeases,async()=>{const row=await this.store.localLeases.get(root);if(row?.owner===this.owner&&row.session===link.id)await this.store.localLeases.delete(root)}).catch(()=>undefined);throw e }
   }
   private async assertLease(root: string) { const lease = await this.store.localLeases.get(root); if (lease?.owner !== this.owner) throw new Error('LOCAL_OTHER_TAB');await this.store.localLeases.update(root,{until:Date.now()+15000}) }
   private async controlLease<T>(root:string,work:()=>Promise<T>):Promise<T>{

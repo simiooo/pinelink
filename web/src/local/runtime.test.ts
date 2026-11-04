@@ -1,5 +1,6 @@
 import 'fake-indexeddb/auto'
 import {webcrypto} from 'node:crypto'
+import {Blob as NodeBlob} from 'node:buffer'
 import {afterEach,expect,it,vi} from 'vitest'
 import {newProfile} from '../data/crypto'
 import type {DeviceProfile} from '../data/crypto'
@@ -7,7 +8,7 @@ import {GuestStore} from '../guest/store'
 import type {GuestJob} from '../guest/store'
 import {suite} from '../guest/crypto'
 import {LocalRuntime} from './runtime'
-import {signed} from './protocol'
+import {signed,makePackage,identity,encodePackage} from './protocol'
 const stores:GuestStore[]=[],runtimes:LocalRuntime[]=[]
 const open=async()=>{vi.stubGlobal('crypto',webcrypto);vi.stubGlobal('fetch',vi.fn(()=>{throw Error('Center must not be used')}));const s=new GuestStore('local-test:'+crypto.randomUUID());stores.push(s);const r=await LocalRuntime.open(s,async()=>{});runtimes.push(r);return r}
 afterEach(async()=>{for(const r of runtimes.splice(0))await r.close();for(const s of stores.splice(0)){s.close();await s.delete()};vi.unstubAllGlobals()})
@@ -32,4 +33,16 @@ it('a disconnected sender records a desired pause without inventing a receiver a
 })
 it('an active tab lease fences conflicting receiver mutations',async()=>{
  const r=await open(),j=await job(r,'receive',await newProfile());await r.store.localLeases.put({id:j.peer.root!,owner:'other-tab',until:Date.now()+15000});await expect(r.action(j.id,'cancel')).rejects.toThrow('LOCAL_OTHER_TAB');expect((await r.store.jobs.get(j.id))?.phase).toBe('running');expect(await r.store.localJournal.count()).toBe(0)
+})
+it('closing during the lease commit releases the browser lock and its own reservation',async()=>{
+ const r=await open(),peer=await newProfile();let held=0
+ vi.stubGlobal('Blob',NodeBlob)
+ vi.stubGlobal('navigator',{locks:{request:async(_name:string,_options:unknown,work:(lock:object)=>Promise<void>)=>{held++;try{return await work({})}finally{held--}}}})
+ vi.stubGlobal('RTCPeerConnection',class{close(){}})
+ const sdp='v=0\r\nm=application 9 UDP/DTLS/SCTP webrtc-datachannel\r\na=ice-ufrag:abc\r\na=ice-pwd:abcdefghijklmnopqrstuv\r\na=fingerprint:sha-256 '+Array(32).fill('AB').join(':')+'\r\n'
+ const packet=await encodePackage(await makePackage(peer,identity(peer,'Peer'),'offer',crypto.randomUUID(),sdp))
+ r.store.localLeases.hook('creating',()=>{void r.close()})
+ await expect(r.join(packet)).rejects.toThrow()
+ await new Promise(resolve=>setTimeout(resolve,0))
+ expect(held).toBe(0);expect(await r.store.localLeases.count()).toBe(0);expect(await r.store.localPeers.count()).toBe(0)
 })
