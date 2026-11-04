@@ -90,7 +90,7 @@ func (s *Service) GetRecipientPublicKey(ctx context.Context, ownerID, deviceID s
 		return RecipientPublicKey{}, ErrInvalid
 	}
 	i, ok := auth.FromContext(ctx)
-	if strings.HasPrefix(ownerID, "guest-") || strings.HasPrefix(i.OwnerID, "guest-") {
+	if strings.HasPrefix(ownerID, "guest-") || strings.HasPrefix(i.OwnerID, "guest-") || (i.SessionID != "" && i.OwnerID != ownerID) {
 		if !ok || !i.HasSession() {
 			return RecipientPublicKey{}, ErrUnauthorized
 		}

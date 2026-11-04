@@ -10,7 +10,7 @@ import (
 
 func (s *Service) authorizeGuestTransfer(ctx context.Context, tx pgx.Tx, req P2PCreateRequest) error {
 	if !strings.HasPrefix(req.SenderOwnerID, "guest-") && !strings.HasPrefix(req.RecipientOwnerID, "guest-") {
-		return nil
+		return s.authorizeAccountTransfer(ctx, tx, req)
 	}
 	i, ok := auth.FromContext(ctx)
 	if !ok || !i.HasSession() || s.accounts == nil || !s.accounts.GuestsEnabled() || i.OwnerID != req.SenderOwnerID || i.DeviceID != req.SenderDeviceID {
