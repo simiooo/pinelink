@@ -92,6 +92,11 @@ jobs:
           flutter-version: ${{ steps.sdk.outputs.version }}
           channel: stable
           cache: true
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: flutter config --jdk-dir="$JAVA_HOME"
       - run: flutter pub get
         working-directory: mobile
       - run: flutter analyze
