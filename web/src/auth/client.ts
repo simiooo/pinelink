@@ -41,7 +41,8 @@ export async function prepareAuth(logoutBlocked = false) {
   capabilities = cached<Capabilities>(prefix + ':capabilities') ?? capabilities
   offlineAccount = logoutBlocked ? undefined : cached<Account>(prefix)
   try {
-    if(navigator.onLine===false)throw new Error('LOCAL_ONLY')
+    // Loopback resources remain reachable when the OS reports no network.
+    if(navigator.onLine===false&&!['localhost','127.0.0.1','[::1]'].includes(new URL(API_URL,location.href).hostname))throw new Error('LOCAL_ONLY')
     capabilities = await authFetch<Capabilities>('/v1/auth/capabilities'); save(prefix + ':capabilities', capabilities)
     if (capabilities.enabled && !logoutBlocked) {
       try { session = await authFetch<Session>('/v1/auth/session'); offlineAccount = session.account; save(prefix, offlineAccount) }
