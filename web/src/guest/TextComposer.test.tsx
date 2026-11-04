@@ -3,14 +3,24 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { MotionProvider } from '../motion/react'
 import { TextComposer } from './TextComposer'
 import { textByteLimit } from './crypto'
-const labels = { text: 'Text', sensitive: 'Sensitive', input: 'Message', send: 'Send', tooLong: 'Too long', invalidText: 'Invalid text', unsupported: 'Unsupported', sendFile: 'Send as file', sensitiveFileWarning: 'File contents can be saved and displayed.', confirm: 'Confirm', cancel: 'Cancel' }
-const renderComposer = (value: string, supported = true, sensitivity: 'NORMAL' | 'SENSITIVE' = 'NORMAL', onSend = vi.fn(), onSendFile = vi.fn()) => <MotionProvider><TextComposer value={value} sensitivity={sensitivity} supported={supported} labels={labels} onValue={() => {}} onSensitivity={() => {}} onSend={onSend} onSendFile={onSendFile}/></MotionProvider>
+const labels = { sensitive: 'Sensitive', input: 'Message', send: 'Send', attach: 'Attach file', removeAttachment: 'Remove attachment', tooLong: 'Too long', invalidText: 'Invalid text', unsupported: 'Unsupported', sendFile: 'Send as file', sensitiveFileWarning: 'File contents can be saved and displayed.', confirm: 'Confirm', cancel: 'Cancel' }
+const renderComposer = (value: string, supported = true, sensitivity: 'NORMAL' | 'SENSITIVE' = 'NORMAL', onSend = vi.fn(), onSendFile = vi.fn()) => <MotionProvider><TextComposer value={value} sensitivity={sensitivity} supported={supported} labels={labels} onValue={() => {}} onSensitivity={() => {}} onAttachment={() => {}} onSend={onSend} onSendFile={onSendFile}/></MotionProvider>
 afterEach(cleanup)
 it('counts UTF-8 bytes, rejects invalid Unicode and keeps the original input', () => {
   const send = vi.fn(), { rerender } = render(renderComposer('é'.repeat(textByteLimit / 2), true, 'NORMAL', send))
   expect(screen.getByRole('button', { name: 'Send' })).toBeEnabled(); fireEvent.click(screen.getByRole('button', { name: 'Send' })); expect(send).toHaveBeenCalledOnce()
   rerender(renderComposer('é'.repeat(textByteLimit / 2 + 1))); expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled(); expect(screen.getByText('Too long')).toBeInTheDocument()
   rerender(renderComposer('\ud800')); expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled(); expect(screen.getByText('Invalid text')).toBeInTheDocument()
+})
+it('uses one sensitivity switch and allows a file to be staged, removed, and sent alongside text', () => {
+  const toggle = vi.fn(), attach = vi.fn(), send = vi.fn(), file = new File(['contents'], 'notes.txt')
+  const ui = (attachment?: File, sensitivity: 'NORMAL' | 'SENSITIVE' = 'NORMAL') => <MotionProvider><TextComposer value="hello" sensitivity={sensitivity} supported attachment={attachment} labels={labels} onValue={() => {}} onSensitivity={toggle} onAttachment={attach} onSend={send} onSendFile={() => {}} /></MotionProvider>
+  const { rerender } = render(ui())
+  const control = screen.getByRole('switch', { name: 'Sensitive' })
+  expect(control).not.toBeChecked(); fireEvent.click(control); expect(toggle).toHaveBeenCalledWith('SENSITIVE')
+  rerender(ui(file, 'SENSITIVE')); expect(screen.getByRole('switch', { name: 'Sensitive' })).toBeChecked()
+  expect(screen.getByText('notes.txt')).toBeInTheDocument(); fireEvent.click(screen.getByRole('button', { name: 'Send' })); expect(send).toHaveBeenCalledWith(true)
+  fireEvent.click(screen.getByRole('button', { name: 'Remove attachment' })); expect(attach).toHaveBeenCalledWith(undefined)
 })
 it('does not send to an unsupported client and requires explicit consent before sensitive file fallback', () => {
   const send = vi.fn(), fallback = vi.fn(), { rerender } = render(renderComposer('secret', false, 'SENSITIVE', send, fallback))

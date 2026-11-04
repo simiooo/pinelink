@@ -5,6 +5,8 @@ import { formatBytes } from '../format'
 import type { Locale } from '../i18n'
 import type { TaskRecord } from '../api/taskRecords'
 import { MotionButton } from '../motion/components'
+import { Message, MessageContent, MessageFooter } from '../components/ui/message'
+import { Bubble, BubbleContent } from '../components/ui/bubble'
 import { TextBubble } from './TextBubble'
 import type { TextBubbleLabels } from './TextBubble'
 import { readStoredText } from './text-storage'
@@ -12,6 +14,9 @@ import type { GuestJob } from './store'
 import './Conversation.css'
 
 type Labels = TextBubbleLabels & { unavailable: string; waiting: string; sent: string; received: string; stored: string; file: string }
+function FileItem({ direction, name, size, status, onClick, locale }: { direction: 'send' | 'receive'; name: string; size: number; status: string; onClick: () => void; locale: Locale }) {
+  return <Message align={direction === 'send' ? 'end' : 'start'} className={`conversation-row conversation-row--${direction}`}><MessageContent className="conversation-file-content"><Bubble className="conversation-file-bubble"><BubbleContent asChild><button type="button" className="conversation-file" onClick={onClick}><FileText size={22} /><span><strong>{name}</strong><small>{formatBytes(size, locale)}</small></span></button></BubbleContent></Bubble><MessageFooter className="conversation-file-status">{status}</MessageFooter></MessageContent></Message>
+}
 function TextItem({ job, profile, labels, onJob }: { job: GuestJob; profile: DeviceProfile; labels: Labels; onJob: (job: GuestJob) => void }) {
   const [content, setContent] = useState<{ value: string; sensitivity: 'NORMAL' | 'SENSITIVE'; id: string; manifest: string; profile: DeviceProfile }>()
   const [failed, setFailed] = useState(false)
@@ -33,10 +38,10 @@ export function Conversation({ jobs, records = [], profile, labels, locale, onJo
     {items.map(item => {
       if (item.kind === 'record') {
         const record = item.record, direction = record.kind === 'UPLOAD' ? 'send' : 'receive'
-        return <div className={`conversation-row conversation-row--${direction}`} key={'account:' + record.id}><button type="button" className="conversation-file" onClick={() => onRecord?.(record)}><FileText size={22} /><span><strong>{record.fileName || labels.file}</strong><small>{formatBytes(record.total_bytes, locale)}</small></span></button><span className="conversation-file-status">{record.deliveredByDevice ? labels.sent : record.state === 'COMPLETED' ? direction === 'receive' ? labels.received : labels.stored : ['FAILED','CANCELLED'].includes(record.state) ? labels.unavailable : labels.waiting}</span></div>
+        return <FileItem key={'account:' + record.id} direction={direction} name={record.fileName || labels.file} size={record.total_bytes} status={record.deliveredByDevice ? labels.sent : record.state === 'COMPLETED' ? direction === 'receive' ? labels.received : labels.stored : ['FAILED','CANCELLED'].includes(record.state) ? labels.unavailable : labels.waiting} onClick={() => onRecord?.(record)} locale={locale} />
       }
       const job = item.job
-      return job.payloadKind === 'TEXT' ? <TextItem key={job.id} job={job} profile={profile} labels={labels} onJob={onJob} /> : <div className={`conversation-row conversation-row--${job.direction}`} key={job.id}><button type="button" className="conversation-file" onClick={() => onJob(job)}><FileText size={22} /><span><strong>{job.name}</strong><small>{formatBytes(job.plainSize, locale)}</small></span></button><span className="conversation-file-status">{job.phase === 'complete' ? job.direction === 'send' ? labels.sent : labels.received : job.phase === 'stopped' || job.error ? labels.unavailable : labels.waiting}</span></div>
+      return job.payloadKind === 'TEXT' ? <TextItem key={job.id} job={job} profile={profile} labels={labels} onJob={onJob} /> : <FileItem key={job.id} direction={job.direction} name={job.name} size={job.plainSize} status={job.phase === 'complete' ? job.direction === 'send' ? labels.sent : labels.received : job.phase === 'stopped' || job.error ? labels.unavailable : labels.waiting} onClick={() => onJob(job)} locale={locale} />
     })}
   </div>
 }

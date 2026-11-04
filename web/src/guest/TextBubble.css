@@ -1,5 +1,8 @@
 .conversation-message { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; max-width: 100%; }
 .conversation-message--send { align-items: flex-end; }
+.conversation-message [data-slot="message-content"] { display: flex; flex-direction: column; align-items: flex-start; }
+.conversation-message--send [data-slot="message-content"] { align-items: flex-end; }
+.conversation-text [data-slot="bubble-content"] { max-width: 100%; overflow: visible; }
 .conversation-text { min-width: 0; max-width: min(80%, 40rem); padding: 12px 16px; border-radius: 16px; background: #f4f4f5; overflow-wrap: anywhere; }
 .conversation-sensitive { display: block; margin-bottom: 8px; color: #737373; font-size: 13px; font-weight: 700; }
 .conversation-masked { min-height: 24px; letter-spacing: 2px; }

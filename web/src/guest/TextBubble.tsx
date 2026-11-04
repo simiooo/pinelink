@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import Markdown from 'react-markdown'
 import { Check, Copy, Eye, EyeOff } from 'lucide-react'
 import { MotionButton, MotionTooltip } from '../motion/components'
+import { Message, MessageContent, MessageFooter } from '../components/ui/message'
+import { Bubble, BubbleContent } from '../components/ui/bubble'
 import './TextBubble.css'
 
 export type TextBubbleLabels = { copy: string; copied: string; copyFailed: string; sensitive: string; reveal: string; hide: string }
@@ -19,8 +21,8 @@ export function TextBubble({ id, value, sensitive, labels, direction = 'receive'
     } catch { setNotice({ id, text: labels.copyFailed }) }
   }
   const shown = !sensitive || revealed
-  return <div className={`conversation-message conversation-message--${direction}`}>
-    <div className="conversation-text">
+  return <Message align={direction === 'send' ? 'end' : 'start'} className={`conversation-message conversation-message--${direction}`}><MessageContent>
+    <Bubble className="conversation-text"><BubbleContent>
     {sensitive && <span className="conversation-sensitive">{labels.sensitive}</span>}
     {shown ? <div className="conversation-markdown"><Markdown skipHtml disallowedElements={['img']} components={{
       a: ({ href, children }) => {
@@ -29,11 +31,11 @@ export function TextBubble({ id, value, sensitive, labels, direction = 'receive'
         return safe ? <a href={safe} target="_blank" rel="noopener noreferrer">{children}</a> : <span>{children}</span>
       },
     }}>{value}</Markdown></div> : <div className="conversation-masked" aria-label={labels.sensitive}>••••••••••••</div>}
-    </div>
-    <div className="conversation-text-actions">
+    </BubbleContent></Bubble>
+    <MessageFooter className="conversation-text-actions">
       {sensitive && <MotionTooltip label={revealed ? labels.hide : labels.reveal}><MotionButton icon className="guest-icon-button" aria-label={revealed ? labels.hide : labels.reveal} onClick={() => setRevealedId(revealed ? undefined : id)}>{revealed ? <EyeOff size={18} /> : <Eye size={18} />}</MotionButton></MotionTooltip>}
       <MotionTooltip label={labels.copy}><MotionButton icon className="guest-icon-button" aria-label={labels.copy} onClick={copy}>{notice?.id === id && notice.text === labels.copied ? <Check size={18} /> : <Copy size={18} />}</MotionButton></MotionTooltip>
-    </div>
+    </MessageFooter>
     {notice?.id === id && <span className={notice.text === labels.copied ? 'conversation-copy-status conversation-copy-status--success' : 'conversation-copy-status'} role="status">{notice.text}</span>}
-  </div>
+  </MessageContent></Message>
 }
