@@ -9,6 +9,7 @@ import '../data/identity.dart';
 
 const wireChunkSize = 65536;
 const fileSuite = 'DARE20-AGE-X25519-v1';
+const textByteLimit = 256 * 1024;
 Future<Map<String, dynamic>> prepareFileWorker(
   (Uint8List, String, String) input,
 ) => prepareLocalFile(input.$1, input.$2, input.$3);
@@ -98,6 +99,22 @@ void validateManifest(Map<String, dynamic> m) {
       m['plaintext_size'] > (64 << 20) ||
       m['file_name'] is! String ||
       m['file_name'].length > 1024) {
+    throw StateError('FILE_MANIFEST_INVALID');
+  }
+  final kind = m['content_kind'];
+  if (kind == null) {
+    if (m.containsKey('content_kind') ||
+        m.containsKey('content_version') ||
+        m.containsKey('sensitivity')) {
+      throw StateError('FILE_MANIFEST_INVALID');
+    }
+  } else if (m['content_version'] != 1 ||
+      !['FILE', 'TEXT'].contains(kind) ||
+      (kind == 'TEXT'
+          ? !['NORMAL', 'SENSITIVE'].contains(m['sensitivity']) ||
+                m['plaintext_size'] == 0 ||
+                m['plaintext_size'] > textByteLimit
+          : m.containsKey('sensitivity'))) {
     throw StateError('FILE_MANIFEST_INVALID');
   }
 }
