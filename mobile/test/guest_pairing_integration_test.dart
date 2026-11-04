@@ -100,6 +100,8 @@ void main() {
           '/v1/p2p/${transfer['id']}/progress',
         );
         expect(delivered['completion']['delivered'], isTrue);
+        await runtimeA.syncIncoming();
+        expect((await runtimeA.store.job(jobId))!['state'], 'COMPLETED');
         // Simulate a crash after the server receipt and before the local
         // completion transaction. Recovery must re-verify local ciphertext.
         await runtimeB.store.update(incoming['id'], received['localRevision'], {

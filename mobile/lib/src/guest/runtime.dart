@@ -151,10 +151,50 @@ class NativeGuestRuntime {
         [];
     final jobs = await store.jobs();
     for (final item in transfers) {
-      if (item is! Map<String, dynamic> ||
-          item['recipient_owner_id'] != session.owner ||
+      if (item is! Map<String, dynamic>) continue;
+      final existing = jobs
+          .where((j) => (j['transfer'] as Map?)?['id'] == item['id'])
+          .firstOrNull;
+      if (existing != null) {
+        final original = existing['transfer'] as Map;
+        for (final key in [
+          'content_root',
+          'size_bytes',
+          'content_kind',
+          'file_name',
+          'sender_owner_id',
+          'sender_device_id',
+          'recipient_owner_id',
+          'recipient_device_id',
+        ]) {
+          if (item[key] != original[key]) throw StateError('FILE_JOB_CHANGED');
+        }
+        if ((item['version'] as int) >= (original['version'] as int)) {
+          final terminal = [
+            'REJECTED',
+            'CANCELLED',
+            'EXPIRED',
+            'FAILED',
+          ].contains(item['state']);
+          final progress = await session.request(
+            'GET',
+            '/v1/p2p/${item['id']}/progress',
+          );
+          final latest = await store.job(existing['id']);
+          if (latest != null) {
+            await store.update(existing['id'], latest['localRevision'], {
+              'transfer': item,
+              'progress': progress,
+              if (terminal || existing['direction'] == 'send')
+                'state': item['state'],
+            });
+          }
+        }
+        continue;
+      }
+      if (item['recipient_owner_id'] != session.owner ||
           item['recipient_device_id'] != identity.device ||
-          jobs.any((j) => (j['transfer'] as Map?)?['id'] == item['id'])) {
+          !['PENDING', 'ACCEPTED'].contains(item['state'])) {
         continue;
       }
       final matching = peers.where(
