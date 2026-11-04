@@ -185,6 +185,11 @@ class _SmartConnectState extends State<SmartConnect> {
                         ),
                       ),
                       child: TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: view == tab
+                              ? const Color(0xff101010)
+                              : const Color(0xff737373),
+                        ),
                         onPressed: () => setState(() => view = tab),
                         child: Text(
                           tab == 'show'
@@ -240,6 +245,9 @@ class _SmartConnectState extends State<SmartConnect> {
               ),
               const SizedBox(height: 16),
               TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xff52525b),
+                ),
                 onPressed: busy
                     ? null
                     : () => run(() async {
@@ -248,6 +256,9 @@ class _SmartConnectState extends State<SmartConnect> {
                 child: Text(lc(context, 'Connect without internet', '离线连接')),
               ),
               TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xff52525b),
+                ),
                 onPressed: () => setState(() => nearby = true),
                 child: Text(lc(context, 'Nearby devices', '附近设备')),
               ),
@@ -262,6 +273,9 @@ class _SmartConnectState extends State<SmartConnect> {
                 child: Text(lc(context, 'Show code', '显示连接码')),
               ),
               TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xff52525b),
+                ),
                 onPressed: () => setState(() => nearby = true),
                 child: Text(lc(context, 'Nearby devices', '附近设备')),
               ),
