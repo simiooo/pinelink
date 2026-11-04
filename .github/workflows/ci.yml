@@ -102,3 +102,5 @@ jobs:
       - run: flutter build web --release --no-web-resources-cdn --no-wasm-dry-run
         working-directory: mobile
       - run: python3 infra/scripts/flutter-offline-shell.py mobile/build/web
+      - run: flutter build apk --debug --target-platform=android-arm64
+        working-directory: mobile

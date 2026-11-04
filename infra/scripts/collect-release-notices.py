@@ -74,6 +74,10 @@ for path,entry in lock['packages'].items():
 notices('source','shadcn-ui-components','4.23.0',ROOT/'web/src/components/ui','MIT')
 notices('font','Noto Sans SC','a85815a42757',ROOT/'mobile/assets/fonts/noto-sans-sc','OFL-1.1')
 notices('font','Nunito','Variable',ROOT/'web/public/fonts','OFL-1.1')
+if (ROOT/'third_party/libsodium-1.0.22').is_dir():
+    notices('native','libsodium','1.0.22',ROOT/'third_party/libsodium-1.0.22','ISC')
+if (ROOT/'third_party/webrtc-android-150.7871.04').is_dir():
+    notices('native','Android WebRTC and bundled dependencies','150.7871.04',ROOT/'third_party/webrtc-android-150.7871.04','BSD and third-party notices')
 
 config=ROOT/'mobile/.dart_tool/package_config.json'
 if config.is_file():

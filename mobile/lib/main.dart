@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pinelink_mobile/src/auth/controller.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,6 +9,9 @@ import 'package:pinelink_mobile/src/components/app_shell.dart';
 import 'package:pinelink_mobile/src/i18n/controller.dart';
 import 'package:pinelink_mobile/src/theme/tokens.dart';
 import 'package:pinelink_mobile/src/motion/motion.dart';
+import 'package:pinelink_mobile/src/local/controller.dart';
+import 'package:pinelink_mobile/src/local/platform.dart';
+import 'package:pinelink_mobile/src/local/shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,14 +28,71 @@ Future<void> main() async {
         .toString()
         .replaceAll(RegExp(r'/$'), ''),
   );
-  runApp(_AccountBootstrap(i18n: i18n, auth: auth, loading: auth.load()));
+  if (kIsWeb) {
+    runApp(_AccountBootstrap(i18n: i18n, auth: auth, loading: auth.load()));
+  } else {
+    // Local discovery/keys/SQLite never wait for DNS, auth, or a centre lease.
+    unawaited(auth.load().catchError((Object _) {}));
+    runApp(_LocalBootstrap(i18n: i18n, auth: auth));
+  }
+}
+
+class _LocalBootstrap extends StatefulWidget {
+  const _LocalBootstrap({required this.i18n, required this.auth});
+  final I18nController i18n;
+  final AccountController auth;
+  @override
+  State<_LocalBootstrap> createState() => _LocalBootstrapState();
+}
+
+class _LocalBootstrapState extends State<_LocalBootstrap> {
+  late Future<LocalController?> opening = openLocalController();
+  @override
+  Widget build(BuildContext context) => FutureBuilder<LocalController?>(
+    future: opening,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return PinelinkApp(
+          i18n: widget.i18n,
+          auth: widget.auth,
+          local: snapshot.data,
+        );
+      }
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: pinelinkTheme(),
+        home: Scaffold(
+          body: Center(
+            child: snapshot.hasError
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.lock_outline, size: 40),
+                      const SizedBox(height: 24),
+                      const Text('Local storage unavailable'),
+                      const SizedBox(height: 24),
+                      MotionButton(
+                        onPressed: () => setState(() {
+                          opening = openLocalController();
+                        }),
+                        child: const Text('Try again'),
+                      ),
+                    ],
+                  )
+                : const MotionSpinner(size: 24),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 class PinelinkApp extends StatefulWidget {
-  const PinelinkApp({super.key, this.i18n, this.api, this.auth});
+  const PinelinkApp({super.key, this.i18n, this.api, this.auth, this.local});
   final I18nController? i18n;
   final PinelinkApi? api;
   final AccountController? auth;
+  final LocalController? local;
 
   @override
   State<PinelinkApp> createState() => _PinelinkAppState();
@@ -108,6 +171,7 @@ class _PinelinkAppState extends State<PinelinkApp> {
     widget.auth?.removeListener(_accountChanged);
     if (widget.i18n == null) _i18n.dispose();
     if (widget.api == null) _api.dispose();
+    unawaited(widget.local?.close());
     super.dispose();
   }
 
@@ -128,7 +192,9 @@ class _PinelinkAppState extends State<PinelinkApp> {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: widget.auth == null
+          home: widget.local != null
+              ? LocalShell(controller: widget.local!, auth: widget.auth)
+              : widget.auth == null
               ? PinelinkShell(api: _api)
               : AccountScope(
                   controller: widget.auth!,

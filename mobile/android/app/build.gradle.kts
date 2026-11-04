@@ -6,22 +6,17 @@ plugins {
 }
 
 android {
-    namespace = "com.example.pinelink_mobile"
+    namespace = "top.sqmem.pinelink"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.pinelink_mobile"
+        applicationId = "top.sqmem.pinelink"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -30,12 +25,40 @@ android {
         versionName = flutter.versionName
     }
 
-    buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+    signingConfigs {
+        getByName("debug") {
+            val debugKey = System.getenv("PINELINK_ANDROID_DEBUG_KEYSTORE")
+            if (debugKey != null) {
+                storeFile = file(debugKey)
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
         }
+        create("privateRelease") {
+            val keyPath = System.getenv("PINELINK_ANDROID_KEYSTORE")
+            if (keyPath != null) {
+                storeFile = file(keyPath)
+                storePassword = System.getenv("PINELINK_ANDROID_STORE_PASSWORD")
+                keyAlias = System.getenv("PINELINK_ANDROID_KEY_ALIAS")
+                keyPassword = System.getenv("PINELINK_ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+        }
+        release {
+            // Private signing material is supplied by the release environment.
+            signingConfig = signingConfigs.getByName("privateRelease")
+        }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 

@@ -6,8 +6,15 @@ Future<T?> showMotionSurface<T>(
   BuildContext context, {
   required String title,
   required WidgetBuilder builder,
+  WidgetBuilder? titleBuilder,
+  double horizontalPadding = 24,
 }) {
-  final content = _SurfaceContent(title: title, builder: builder);
+  final content = _SurfaceContent(
+    title: title,
+    builder: builder,
+    titleBuilder: titleBuilder,
+    horizontalPadding: horizontalPadding,
+  );
   if (MediaQuery.sizeOf(context).width < 640) {
     return showModalBottomSheet<T>(
       context: context,
@@ -56,9 +63,16 @@ Future<T?> showMotionSurface<T>(
 }
 
 class _SurfaceContent extends StatelessWidget {
-  const _SurfaceContent({required this.title, required this.builder});
+  const _SurfaceContent({
+    required this.title,
+    required this.builder,
+    this.titleBuilder,
+    required this.horizontalPadding,
+  });
   final String title;
   final WidgetBuilder builder;
+  final WidgetBuilder? titleBuilder;
+  final double horizontalPadding;
   @override
   Widget build(BuildContext context) => SafeArea(
     top: false,
@@ -68,9 +82,9 @@ class _SurfaceContent extends StatelessWidget {
       ),
       child: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(
-          24,
+          horizontalPadding,
           16,
-          24,
+          horizontalPadding,
           24 + MediaQuery.viewInsetsOf(context).bottom,
         ),
         child: Column(
@@ -80,14 +94,16 @@ class _SurfaceContent extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontFamily: 'Nunito',
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  child: titleBuilder == null
+                      ? Text(
+                          title,
+                          style: const TextStyle(
+                            fontFamily: 'Nunito',
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )
+                      : Builder(builder: titleBuilder!),
                 ),
                 IconButton(
                   tooltip: MaterialLocalizations.of(context).closeButtonTooltip,

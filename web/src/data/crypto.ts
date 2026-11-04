@@ -29,9 +29,19 @@ export type DeviceProfile = {
   id: string; root: string; device: string; stream: string; signingKey: string; encryptionKey: string
   signingPrivate: CryptoKey; encryptionPrivate: CryptoKey
 }
+export function assertCryptoContext() {
+  if (globalThis.isSecureContext === false || !globalThis.crypto?.subtle) throw new Error('BROWSER_CONTEXT_UNAVAILABLE')
+}
 export async function newProfile(device?: string): Promise<DeviceProfile> {
-  const sign = await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']) as CryptoKeyPair
-  const age = await crypto.subtle.generateKey('X25519', false, ['deriveBits']) as CryptoKeyPair
+  assertCryptoContext()
+  let sign: CryptoKeyPair, age: CryptoKeyPair
+  try {
+    sign = await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']) as CryptoKeyPair
+    age = await crypto.subtle.generateKey('X25519', false, ['deriveBits']) as CryptoKeyPair
+  } catch (error) {
+    if (error && typeof error === 'object' && 'name' in error && error.name === 'NotSupportedError') throw new Error('BROWSER_CRYPTO_UNAVAILABLE', { cause: error })
+    throw error
+  }
   const signingKey = base64(new Uint8Array(await crypto.subtle.exportKey('raw', sign.publicKey)))
   return { id: 'self', root: await rootOf(signingKey), device: device || `web-${crypto.randomUUID()}`, stream: crypto.randomUUID(), signingKey,
     encryptionKey: await identityToRecipient(age.privateKey), signingPrivate: sign.privateKey, encryptionPrivate: age.privateKey }
