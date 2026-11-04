@@ -42,6 +42,25 @@ test('files filter active, saved and expired records without discarding their st
   fireEvent.mouseDown(screen.getByRole('tab', { name: '本机' }), { button: 0, ctrlKey: false }); expect(screen.getByRole('button', { name: /Saved.pdf/ })).toBeInTheDocument(); expect(screen.queryByRole('button', { name: /Active.zip/ })).not.toBeInTheDocument()
   fireEvent.mouseDown(screen.getByRole('tab', { name: '异常' }), { button: 0, ctrlKey: false }); expect(screen.getByRole('button', { name: /Expired.zip/ })).toBeInTheDocument(); expect(screen.queryByRole('button', { name: /Saved.pdf/ })).not.toBeInTheDocument()
 })
+test('sent filter shows completed outgoing records without treating stored uploads as delivery', async () => {
+  visitor.state.jobs = [{ ...job('complete', 'Sent.txt'), id: 'sent' }, { ...job('complete', 'Received.txt'), id: 'received', direction: 'receive', plain: new Blob(['x']) }, { ...job('waiting', 'Waiting.txt'), id: 'waiting' }]
+  visitor.emit()
+  const task = { id: 'stored-task', kind: 'UPLOAD', reference_id: 'stored-entry', state: 'COMPLETED', progress_bytes: 100, total_bytes: 100, version: 2, updated_at: '2026-11-03T16:00:00Z' }
+  vi.stubGlobal('fetch', vi.fn(async (url: RequestInfo | URL) => ({ ok: true, json: async () => url.toString().includes('/v1/transfers') ? { transfers: [{ id: 'stored-transfer', entry_id: 'stored-entry', file_name: 'Cloud.pdf', state: 'PENDING', sender_owner_id: 'dev-owner', sender_device_id: 'dev-device' }] } : { tasks: [task] } })))
+  render(<App initialEntries={['/local-files']} />); await screen.findByRole('heading', { name: '文件' })
+  fireEvent.mouseDown(screen.getByRole('tab', { name: '已发送' }), { button: 0, ctrlKey: false })
+  expect(screen.getByRole('button', { name: /Sent.txt.*已发送.*已送达/ })).toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: /Received.txt|Waiting.txt|Cloud.pdf/ })).not.toBeInTheDocument()
+})
+test('account sent status requires a completed transfer from the current device', async () => {
+  const tasks = ['mine', 'other'].map(id => ({ id, kind: 'UPLOAD', reference_id: id, state: 'COMPLETED', progress_bytes: 1, total_bytes: 1, version: 1, updated_at: '2026-11-03T16:00:00Z' }))
+  const transfers = [{ id: 'a', entry_id: 'mine', file_name: 'Mine.pdf', state: 'COMPLETED', sender_owner_id: 'dev-owner', sender_device_id: 'dev-device' }, { id: 'b', entry_id: 'other', file_name: 'Other.pdf', state: 'COMPLETED', sender_owner_id: 'dev-owner', sender_device_id: 'other-device' }]
+  vi.stubGlobal('fetch', vi.fn(async (url: RequestInfo | URL) => ({ ok: true, json: async () => url.toString().includes('/v1/transfers') ? { transfers } : { tasks } })))
+  render(<App initialEntries={['/files']} />); await screen.findByRole('button', { name: /Mine.pdf/ })
+  fireEvent.mouseDown(screen.getByRole('tab', { name: '已发送' }), { button: 0, ctrlKey: false })
+  expect(screen.getByRole('button', { name: /Mine.pdf.*已发送.*已送达/ })).toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: /Other.pdf/ })).not.toBeInTheDocument()
+})
 test('all devices appear and editing a local name leaves other devices intact', async () => {
   visitor.state.connections.peers = Array.from({ length: 5 }, (_, i) => ({ ...peer, pair_id: 'pair-' + i, device_name: 'Device ' + i }))
   visitor.emit()

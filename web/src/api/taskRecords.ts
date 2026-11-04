@@ -3,7 +3,7 @@ import { ApiError, getFile, getPull, getTasks, getTransfers, IDENTITY } from './
 import type { Task } from './client'
 import { ClientRuntime, DataError } from '../data/runtime'
 
-export type TaskRecord = Task & { fileName: string; encryptedMetadata: boolean; peer?: string }
+export type TaskRecord = Task & { fileName: string; encryptedMetadata: boolean; peer?: string; deliveredByDevice?: boolean }
 
 export function useTaskRecords(includeDeleted = false, enabled = true, source?: { runtime?: ClientRuntime; owner: string; device: string }) {
   const owner = source?.owner ?? IDENTITY.owner, device = source?.device ?? IDENTITY.device, runtime = source?.runtime
@@ -26,7 +26,8 @@ export function useTaskRecords(includeDeleted = false, enabled = true, source?: 
             if (!(error instanceof ApiError && error.status === 404)) throw error
           }
         }
-        return { ...task, fileName: fileName === 'encrypted' ? '' : fileName ?? '', encryptedMetadata: fileName === 'encrypted', peer: task.kind === 'DOWNLOAD' ? transfer?.sender_device_id : transfer?.recipient_device_id }
+        const deliveredByDevice = task.kind === 'UPLOAD' && task.state === 'COMPLETED' && transfers.some(item => (item.id === task.reference_id || item.entry_id === task.reference_id) && item.sender_owner_id === owner && item.sender_device_id === device && item.state === 'COMPLETED')
+        return { ...task, fileName: fileName === 'encrypted' ? '' : fileName ?? '', encryptedMetadata: fileName === 'encrypted', peer: task.kind === 'DOWNLOAD' ? transfer?.sender_device_id : transfer?.recipient_device_id, deliveredByDevice }
       }))
     },
     refetchInterval: 3000,
