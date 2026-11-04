@@ -62,7 +62,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
   const [error, setError] = useState<string>(), [copied, setCopied] = useState(false), [qr, setQr] = useState(''), [dragging, setDragging] = useState(false), [now, setNow] = useState(Date.now())
   const [file, setFile] = useState<File>(), [selectedPeer, setSelectedPeer] = useState<GuestPeer>(), [jobId, setJobId] = useState<string>()
   const [message, setMessage] = useState(''), [sensitivity, setSensitivity] = useState<TextSensitivity>('NORMAL'), [attachmentDraft, setAttachmentDraft] = useState<{ peer: string; file: File }>()
-  const attachment = attachmentDraft?.peer === filePeer?.pair_id ? attachmentDraft.file : undefined
+  const attachment = attachmentDraft && filePeer && attachmentDraft.peer === filePeer.pair_id ? attachmentDraft.file : undefined
   const [candidateId, setCandidateId] = useState<string>(), [joining, setJoining] = useState<{ id: string; invite: string; expires: number }>(), seen = useRef(new Set<string>(state.jobs.filter(job => job.phase === 'complete').map(job => 'done:' + job.id))), input = useRef<HTMLInputElement>(null), dragDepth = useRef(0)
   const active = state.jobs.find(job => !job.dismissed && !['complete', 'stopped'].includes(job.phase))
   const selectedJob = state.jobs.find(job => job.id === jobId) ?? active
