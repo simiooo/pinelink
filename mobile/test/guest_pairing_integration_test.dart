@@ -227,4 +227,52 @@ void main() {
     },
     skip: server == null ? 'requires isolated native guest test API' : false,
   );
+
+  test(
+    'recipient can retrieve a sealed cloud copy after the sender exits',
+    () async {
+      final sender = await NativeGuestRuntime.open(
+        server: server!,
+        vault: _Vault(),
+        database: ClientDatabase.testing(NativeDatabase.memory()),
+      );
+      final recipient = await NativeGuestRuntime.open(
+        server: server,
+        vault: _Vault(),
+        database: ClientDatabase.testing(NativeDatabase.memory()),
+      );
+      try {
+        await sender.session.ensureSession();
+        await recipient.session.ensureSession();
+        final invite = await sender.connections.invite();
+        final candidate = await recipient.connections.join(invite['code']);
+        await sender.connections.respond(candidate['id'], true);
+        final peer =
+            ((await sender.connections.list())['peers'] as List).single
+                as Map<String, dynamic>;
+        final payload = Uint8List.fromList(
+          List.generate(65537, (index) => index % 251),
+        );
+        final id = await sender.offer(payload, 'sender-exits.bin', peer);
+        await sender.upload(id);
+        final stored = await sender.store.job(id);
+        expect((stored?['progress'] as Map?)?['completion']?['stored'], isTrue);
+        expect(
+          (stored?['progress'] as Map?)?['completion']?['delivered'],
+          isFalse,
+        );
+        await sender.close();
+        await recipient.syncIncoming();
+        final incoming = (await recipient.store.jobs()).single;
+        expect(incoming['state'], 'PENDING');
+        await recipient.respond(incoming['id'], true);
+        await recipient.receive(incoming['id']);
+        expect(await recipient.plaintext(incoming['id']), payload);
+      } finally {
+        await sender.close();
+        await recipient.close();
+      }
+    },
+    skip: server == null ? 'requires isolated native guest test API' : false,
+  );
 }
