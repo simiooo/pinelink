@@ -6,7 +6,8 @@ import type { DeviceProfile } from '../data/crypto'
 
 export const suite = 'DARE20-AGE-X25519-v1'
 export const wireChunkSize = 65536
-export type FileManifest = { suite: string; data_key: string; plaintext_root: string; plaintext_size: number; file_name: string }
+export type FileManifest = { suite: string; data_key: string; plaintext_root: string; plaintext_size: number; file_name: string; content_version?: 1; content_kind?: 'FILE' | 'TEXT'; sensitivity?: 'NORMAL' | 'SENSITIVE' }
+export const textByteLimit = 256 * 1024
 export const cipherSize = (size: number) => size + Math.ceil(size / wireChunkSize) * 32
 export const safeFileName = (name: string) => name.replace(/[\\/<>:"|?*\u0000-\u001f\u007f]/g, '_').replace(/^\.+$/, '_').slice(0, 180) || 'File'
 export async function hashBlob(blob: Blob) {
@@ -59,6 +60,13 @@ export function validateManifest(value: unknown): asserts value is FileManifest 
   if (!value || typeof value !== 'object') throw new Error('FILE_MANIFEST_INVALID')
   const v = value as FileManifest
   if (v.suite !== suite || typeof v.data_key !== 'string' || unbase64(v.data_key).length !== 32 || !/^[a-f0-9]{64}$/.test(v.plaintext_root) || !Number.isSafeInteger(v.plaintext_size) || v.plaintext_size < 0 || v.plaintext_size > (1 << 30) || typeof v.file_name !== 'string' || v.file_name.length > 1024) throw new Error('FILE_MANIFEST_INVALID')
+  if (v.content_kind === undefined) {
+    if (v.content_version !== undefined || v.sensitivity !== undefined) throw new Error('FILE_MANIFEST_INVALID')
+  } else if (v.content_version !== 1 || (v.content_kind !== 'FILE' && v.content_kind !== 'TEXT') || (v.content_kind === 'TEXT' ? !['NORMAL', 'SENSITIVE'].includes(v.sensitivity ?? '') || v.plaintext_size === 0 || v.plaintext_size > textByteLimit : v.sensitivity !== undefined)) throw new Error('FILE_MANIFEST_INVALID')
+}
+export function decodeText(bytes: Uint8Array) {
+  if (!bytes.length || bytes.length > textByteLimit) throw new Error('TEXT_SIZE_INVALID')
+  try { return new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes) } catch { throw new Error('TEXT_UTF8_INVALID') }
 }
 export async function sealManifest(recipient: string, manifest: FileManifest) {
   const encrypter = new Encrypter(); encrypter.addRecipient(recipient)
@@ -67,9 +75,14 @@ export async function sealManifest(recipient: string, manifest: FileManifest) {
 export async function openManifest(profile: DeviceProfile, envelope: string) {
   const manifest = await decrypt(profile, envelope); validateManifest(manifest); return manifest
 }
-export async function prepareFile(file: File, recipients: { sender: string; receiver: string }) {
+export async function prepareFile(file: File, recipients: { sender: string; receiver: string }, text?: { sensitivity: 'NORMAL' | 'SENSITIVE' }) {
   const key = crypto.getRandomValues(new Uint8Array(32))
-  const manifest: FileManifest = { suite, data_key: base64(key), plaintext_root: await hashBlob(file), plaintext_size: file.size, file_name: safeFileName(file.name) }
+  if (text) {
+    if (!file.size || file.size > textByteLimit) throw new Error('TEXT_SIZE_INVALID')
+    decodeText(new Uint8Array(await file.arrayBuffer()))
+  }
+  const manifest: FileManifest = { suite, data_key: base64(key), plaintext_root: await hashBlob(file), plaintext_size: file.size, file_name: text ? 'Text' : safeFileName(file.name), ...(text ? { content_version: 1, content_kind: 'TEXT', sensitivity: text.sensitivity } : {}) }
+  validateManifest(manifest)
   const cipher = await encryptDare(file, key)
   const [recipientManifest, senderManifest, root] = await Promise.all([sealManifest(recipients.receiver, manifest), sealManifest(recipients.sender, manifest), hashBlob(cipher)])
   return { cipher, root, recipientManifest, senderManifest, name: manifest.file_name, plainSize: file.size }
