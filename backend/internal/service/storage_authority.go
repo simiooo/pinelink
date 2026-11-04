@@ -341,7 +341,7 @@ func presentTransfer(tr Transfer, ownerID, deviceID string) Transfer {
 func transferEvent(tr Transfer) map[string]any {
 	return map[string]any{"id": tr.ID, "entry_id": tr.EntryID, "state": tr.State, "version": tr.Version, "delivery_mode": tr.DeliveryMode,
 		"sender_owner_id": tr.SenderOwnerID, "sender_device_id": tr.SenderDeviceID, "recipient_owner_id": tr.RecipientOwnerID, "recipient_device_id": tr.RecipientDeviceID,
-		"file_name": tr.FileName, "size_bytes": tr.SizeBytes, "expires_at": tr.ExpiresAt, "received_bytes": tr.ReceivedBytes}
+		"file_name": tr.FileName, "size_bytes": tr.SizeBytes, "content_kind": tr.ContentKind, "expires_at": tr.ExpiresAt, "received_bytes": tr.ReceivedBytes}
 }
 
 type rowQuery interface {

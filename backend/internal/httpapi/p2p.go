@@ -11,6 +11,7 @@ import (
 
 func (a *API) registerP2P(mux *http.ServeMux) {
 	mux.HandleFunc("POST /v1/p2p", a.createP2P)
+	mux.HandleFunc("POST /v1/p2p/text", a.createP2P)
 	mux.HandleFunc("POST /v1/p2p/{id}/signals", a.addP2PSignal)
 	mux.HandleFunc("GET /v1/p2p/{id}/signals", a.p2pSignals)
 	mux.HandleFunc("POST /v1/p2p/{id}/progress", a.p2pProgress)
@@ -35,6 +36,14 @@ func (a *API) createP2P(w http.ResponseWriter, r *http.Request) {
 	}
 	var req service.P2PCreateRequest
 	if !readRequest(w, r, &req) {
+		return
+	}
+	// A distinct endpoint fails closed on older servers which ignore unknown
+	// request fields. It cannot silently create a legacy file transfer.
+	if r.URL.Path == "/v1/p2p/text" {
+		req.ContentKind = "TEXT"
+	} else if req.ContentKind != "" {
+		writeError(w, service.ErrInvalid)
 		return
 	}
 	transfer, err := a.service.CreateP2P(r.Context(), req)

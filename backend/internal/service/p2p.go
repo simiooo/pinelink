@@ -25,6 +25,7 @@ type P2PCreateRequest struct {
 	EncryptionSuite         string `json:"encryption_suite"`
 	EncryptedManifest       []byte `json:"encrypted_manifest"`
 	SenderEncryptedManifest []byte `json:"sender_encrypted_manifest"`
+	ContentKind             string `json:"content_kind,omitempty"`
 }
 
 type P2PSignal struct {
@@ -66,6 +67,9 @@ func (s *Service) CreateP2P(ctx context.Context, req P2PCreateRequest) (Transfer
 		!validIdentity(req.FileName) || req.SizeBytes < 0 || !validSHA256(req.ContentRoot) || len(req.EncryptedManifest) == 0 || len(req.SenderEncryptedManifest) == 0 {
 		return Transfer{}, fmt.Errorf("%w: invalid P2P metadata", ErrInvalid)
 	}
+	if req.ContentKind != "" && (req.ContentKind != "TEXT" || req.FileName != "Text" || req.SizeBytes < 33 || req.SizeBytes > (256<<10)+4*32) {
+		return Transfer{}, fmt.Errorf("%w: invalid content kind", ErrInvalid)
+	}
 	tx, err := s.beginAccountTx(ctx)
 	if err != nil {
 		return Transfer{}, err
@@ -80,7 +84,7 @@ func (s *Service) CreateP2P(ctx context.Context, req P2PCreateRequest) (Transfer
 		}
 		old, e := scanTransfer(tx.QueryRow(ctx, `SELECT `+transferColumns+` FROM transfer_requests WHERE sender_owner_id=$1 AND sender_device_id=$2 AND client_request_id=$3`, req.SenderOwnerID, req.SenderDeviceID, req.ClientRequestID))
 		if e == nil {
-			if old.RecipientOwnerID != req.RecipientOwnerID || old.RecipientDeviceID != req.RecipientDeviceID || old.ContentRoot == nil || *old.ContentRoot != req.ContentRoot || old.SizeBytes == nil || *old.SizeBytes != req.SizeBytes || !bytes.Equal(old.EncryptedManifest, req.EncryptedManifest) || !bytes.Equal(old.SenderEncryptedManifest, req.SenderEncryptedManifest) {
+			if old.RecipientOwnerID != req.RecipientOwnerID || old.RecipientDeviceID != req.RecipientDeviceID || old.ContentRoot == nil || *old.ContentRoot != req.ContentRoot || old.SizeBytes == nil || *old.SizeBytes != req.SizeBytes || (old.ContentKind == nil && req.ContentKind != "") || (old.ContentKind != nil && *old.ContentKind != req.ContentKind) || !bytes.Equal(old.EncryptedManifest, req.EncryptedManifest) || !bytes.Equal(old.SenderEncryptedManifest, req.SenderEncryptedManifest) {
 				return Transfer{}, ErrConflict
 			}
 			return presentTransfer(old, req.SenderOwnerID, req.SenderDeviceID), tx.Commit(ctx)
@@ -96,12 +100,15 @@ func (s *Service) CreateP2P(ctx context.Context, req P2PCreateRequest) (Transfer
 		SenderDeviceID: req.SenderDeviceID, RecipientOwnerID: req.RecipientOwnerID, RecipientDeviceID: req.RecipientDeviceID,
 		State: "PENDING", Version: 1, FileName: &req.FileName, SizeBytes: &req.SizeBytes, ContentRoot: &req.ContentRoot,
 		EncryptionSuite: &req.EncryptionSuite, EncryptedManifest: req.EncryptedManifest, SenderEncryptedManifest: req.SenderEncryptedManifest, ExpiresAt: s.now().Add(10 * time.Minute)}
+	if req.ContentKind != "" {
+		transfer.ContentKind = &req.ContentKind
+	}
 	if _, err := tx.Exec(ctx, `
 		INSERT INTO transfer_requests (id, delivery_mode, sender_owner_id, sender_device_id,
-			recipient_owner_id, recipient_device_id, expires_at, file_name, size_bytes, content_root, encryption_suite, encrypted_manifest, sender_encrypted_manifest,guest_pair_id,client_request_id)
-		VALUES ($1,'ONLINE',$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NULLIF($13,'')::uuid,NULLIF($14,'')::uuid)
+			recipient_owner_id, recipient_device_id, expires_at, file_name, size_bytes, content_root, encryption_suite, encrypted_manifest, sender_encrypted_manifest,guest_pair_id,client_request_id,content_kind)
+		VALUES ($1,'ONLINE',$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NULLIF($13,'')::uuid,NULLIF($14,'')::uuid,NULLIF($15,''))
 	`, transfer.ID, req.SenderOwnerID, req.SenderDeviceID, req.RecipientOwnerID, req.RecipientDeviceID,
-		transfer.ExpiresAt, req.FileName, req.SizeBytes, req.ContentRoot, req.EncryptionSuite, req.EncryptedManifest, req.SenderEncryptedManifest, req.GuestPairID, req.ClientRequestID); err != nil {
+		transfer.ExpiresAt, req.FileName, req.SizeBytes, req.ContentRoot, req.EncryptionSuite, req.EncryptedManifest, req.SenderEncryptedManifest, req.GuestPairID, req.ClientRequestID, req.ContentKind); err != nil {
 		return Transfer{}, err
 	}
 	if err := addEvent(ctx, tx, "TRANSFER_REQUESTED", transfer.ID, 1, transfer); err != nil {

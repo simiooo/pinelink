@@ -17,7 +17,7 @@ const transferColumns = `id, entry_id, delivery_mode, sender_owner_id, sender_de
 	COALESCE(transfer_requests.file_name, (SELECT file_name FROM file_entries WHERE id=transfer_requests.entry_id)),
 	COALESCE(transfer_requests.size_bytes, (SELECT size_bytes FROM file_versions WHERE id=(SELECT version_id FROM file_entries WHERE id=transfer_requests.entry_id))), content_root,
 	encryption_suite, encrypted_manifest, sender_encrypted_manifest, received_bytes,
-	progress_revision, progress_sampled_at, active_route, route_epoch, revocation_epoch`
+	progress_revision, progress_sampled_at, active_route, route_epoch, revocation_epoch, content_kind`
 
 func (s *Service) CreateTransfer(ctx context.Context, req TransferCreateRequest) (Transfer, error) {
 	if strings.HasPrefix(req.SenderOwnerID, "guest-") || strings.HasPrefix(req.RecipientOwnerID, "guest-") {
@@ -161,7 +161,13 @@ func (s *Service) RespondTransfer(ctx context.Context, id, action string, req Tr
 		return Transfer{}, fmt.Errorf("%w: unknown transfer action", ErrInvalid)
 	}
 	if transfer.State == desired {
+		if action == "accept" && transfer.ContentKind != nil && req.AcceptContentKind != *transfer.ContentKind {
+			return Transfer{}, fmt.Errorf("%w: text consent required", ErrInvalid)
+		}
 		return presentTransfer(transfer, req.OwnerID, req.DeviceID), tx.Commit(ctx)
+	}
+	if action == "accept" && transfer.ContentKind != nil && req.AcceptContentKind != *transfer.ContentKind {
+		return Transfer{}, fmt.Errorf("%w: text consent required", ErrInvalid)
 	}
 	if transfer.Version != req.ExpectedVersion {
 		return Transfer{}, &StateConflictError{Resource: "transfer", Current: presentTransfer(transfer, req.OwnerID, req.DeviceID)}
@@ -284,6 +290,6 @@ func scanTransfer(row rowScanner) (Transfer, error) {
 		&transfer.CreatedAt, &transfer.UpdatedAt, &transfer.RespondedAt, &transfer.ExpiresAt,
 		&transfer.FileName, &transfer.SizeBytes, &transfer.ContentRoot, &transfer.EncryptionSuite,
 		&transfer.EncryptedManifest, &transfer.SenderEncryptedManifest, &transfer.ReceivedBytes,
-		&transfer.ProgressRevision, &transfer.ProgressSampledAt, &transfer.ActiveRoute, &transfer.RouteEpoch, &transfer.RevocationEpoch)
+		&transfer.ProgressRevision, &transfer.ProgressSampledAt, &transfer.ActiveRoute, &transfer.RouteEpoch, &transfer.RevocationEpoch, &transfer.ContentKind)
 	return transfer, err
 }

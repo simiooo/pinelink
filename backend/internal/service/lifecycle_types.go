@@ -31,6 +31,7 @@ type Transfer struct {
 	SizeBytes               *int64     `json:"size_bytes,omitempty"`
 	ContentRoot             *string    `json:"content_root,omitempty"`
 	EncryptionSuite         *string    `json:"encryption_suite,omitempty"`
+	ContentKind             *string    `json:"content_kind,omitempty"`
 	EncryptedManifest       []byte     `json:"encrypted_manifest,omitempty"`
 	SenderEncryptedManifest []byte     `json:"sender_encrypted_manifest,omitempty"`
 	ReceivedBytes           int64      `json:"received_bytes"`
@@ -51,10 +52,11 @@ type TransferCreateRequest struct {
 }
 
 type TransferActionRequest struct {
-	OwnerID         string `json:"owner_id"`
-	DeviceID        string `json:"device_id"`
-	ExpectedVersion int64  `json:"expected_version"`
-	Reason          string `json:"reason,omitempty"`
+	OwnerID           string `json:"owner_id"`
+	DeviceID          string `json:"device_id"`
+	ExpectedVersion   int64  `json:"expected_version"`
+	Reason            string `json:"reason,omitempty"`
+	AcceptContentKind string `json:"accept_content_kind,omitempty"`
 }
 
 type TransferList struct {

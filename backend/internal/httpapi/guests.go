@@ -180,7 +180,7 @@ func (a *API) registerGuests(mux *http.ServeMux) {
 func guestRouteAllowed(r *http.Request) bool {
 	p := r.URL.Path
 	switch p {
-	case "/v1/guest/challenge", "/v1/guest/enroll", "/v1/guest/invites", "/v1/guest/join", "/v1/p2p":
+	case "/v1/guest/challenge", "/v1/guest/enroll", "/v1/guest/invites", "/v1/guest/join", "/v1/p2p", "/v1/p2p/text":
 		return r.Method == http.MethodPost
 	case "/v1/guest/session", "/v1/guest/connections", "/v1/transfers", "/v1/tasks":
 		return r.Method == http.MethodGet

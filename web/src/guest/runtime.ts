@@ -4,7 +4,7 @@ import type { DeviceProfile } from '../data/crypto'
 import { GuestStore } from './store'
 import type { GuestJob } from './store'
 import type { GuestLease, GuestConnections, GuestInvite, GuestCandidate, GuestPeer, GuestTransfer, ProgressSnapshot } from './types'
-import { decodeFileFrame, decryptDare, encodeFileFrame, hashBlob, openManifest, prepareFile, safeFileName, suite, wireChunkSize } from './crypto'
+import { decodeFileFrame, decodeText, decryptDare, encodeFileFrame, hashBlob, openManifest, prepareFile, safeFileName, suite, wireChunkSize } from './crypto'
 import { setGuestHistoryAvailable, setGuestWorkPending } from './continuity'
 import { DirectLink, DirectUnavailable, fallbackSignal } from './direct'
 import type { DirectProof } from './direct'
@@ -171,17 +171,17 @@ export class GuestRuntime {
       }); await this.changed(); await this.poll()
     }))
   }
-  async send(file: File, peer: GuestPeer, maxBytes: number) {
-    if(peer.authority==='LOCAL_DEVICE')return this.command('send',async()=>{this.emit({busy:true,error:undefined});try{return await this.local.send(file,peer,64<<20)}finally{this.emit({busy:false})}})
+  async send(file: File, peer: GuestPeer, maxBytes: number, text?: { sensitivity: 'NORMAL' | 'SENSITIVE' }) {
+    if(peer.authority==='LOCAL_DEVICE')return this.command('send',async()=>{this.emit({busy:true,error:undefined});try{return await this.local.send(file,peer,64<<20,text)}finally{this.emit({busy:false})}})
     return this.command('send', async () => {
       if (file.size > maxBytes) throw new GuestError('FILE_TOO_LARGE')
       if (this.snapshot.jobs.filter(activeJob).length >= 2) throw new GuestError('GUEST_LIMIT_REACHED')
       this.emit({ busy: true, error: undefined })
       try {
         await this.ensureSession()
-        const prepared = await prepareFile(file, { sender: this.profile.encryptionKey, receiver: peer.encryption_key })
+        const prepared = await prepareFile(file, { sender: this.profile.encryptionKey, receiver: peer.encryption_key }, text)
         this.lifetime.signal.throwIfAborted()
-        const job: GuestJob = { id: crypto.randomUUID(), created: Date.now(), direction: 'send', peer, prepared, received: 0, name: prepared.name, plainSize: file.size, phase: 'preparing' }
+        const job: GuestJob = { id: crypto.randomUUID(), created: Date.now(), direction: 'send', peer, prepared, ...(text ? { payloadKind: 'TEXT', text: { cipher: prepared.cipher, manifest: prepared.senderManifest } } : {}), received: 0, name: prepared.name, plainSize: file.size, phase: 'preparing' }
         // Persist the immutable encrypted attempt before creating a network-side offer.
         await this.store.jobs.add(job); await this.changed(); this.startJob(job); return job.id
       } finally { this.emit({ busy: false }) }
@@ -210,8 +210,8 @@ export class GuestRuntime {
       const current = await this.request<GuestTransfer>('GET', `/v1/transfers/${original.id}`)
       // Attaching a sealed cloud entry advances the aggregate version while
       // preserving the exact content the user confirmed. Never retry a new file.
-      if (current.content_root !== original.content_root || current.size_bytes !== original.size_bytes || current.file_name !== original.file_name || current.encryption_suite !== original.encryption_suite || current.sender_owner_id !== original.sender_owner_id || current.sender_device_id !== original.sender_device_id || current.recipient_owner_id !== original.recipient_owner_id || current.recipient_device_id !== original.recipient_device_id) throw new GuestError('FILE_JOB_CHANGED')
-      try { return await this.request<GuestTransfer>('POST', `/v1/transfers/${current.id}/${action}`, this.action(current)) }
+      if (current.content_root !== original.content_root || current.size_bytes !== original.size_bytes || current.file_name !== original.file_name || current.encryption_suite !== original.encryption_suite || current.content_kind !== original.content_kind || current.sender_owner_id !== original.sender_owner_id || current.sender_device_id !== original.sender_device_id || current.recipient_owner_id !== original.recipient_owner_id || current.recipient_device_id !== original.recipient_device_id) throw new GuestError('FILE_JOB_CHANGED')
+      try { return await this.request<GuestTransfer>('POST', `/v1/transfers/${current.id}/${action}`, { ...this.action(current), ...(action === 'accept' && current.content_kind === 'TEXT' ? { accept_content_kind: 'TEXT' } : {}) }) }
       catch (error) { if (attempt !== 0 || !(error instanceof GuestError) || error.code !== 'STATE_CONFLICT') throw error }
     }
     throw new GuestError('STATE_CONFLICT')
@@ -240,7 +240,8 @@ export class GuestRuntime {
     let transfer = job.transfer
     if (!transfer) {
       const p = job.prepared
-      transfer = await this.request<GuestTransfer>('POST', '/v1/p2p', { sender_owner_id: this.lease!.owner_id, sender_device_id: this.profile.device, recipient_owner_id: job.peer.owner_id, recipient_device_id: job.peer.device_id, guest_pair_id: job.peer.pair_id, client_request_id: job.id, file_name: p.name, size_bytes: p.cipher.size, content_root: p.root, encryption_suite: suite, encrypted_manifest: p.recipientManifest, sender_encrypted_manifest: p.senderManifest }, signal)
+      transfer = await this.request<GuestTransfer>('POST', job.payloadKind === 'TEXT' ? '/v1/p2p/text' : '/v1/p2p', { sender_owner_id: this.lease!.owner_id, sender_device_id: this.profile.device, recipient_owner_id: job.peer.owner_id, recipient_device_id: job.peer.device_id, guest_pair_id: job.peer.pair_id, client_request_id: job.id, file_name: p.name, size_bytes: p.cipher.size, content_root: p.root, encryption_suite: suite, encrypted_manifest: p.recipientManifest, sender_encrypted_manifest: p.senderManifest }, signal)
+      if (transfer.content_kind !== job.payloadKind) throw new Error('FILE_JOB_CHANGED')
       await this.store.jobs.update(job.id, { transfer, phase: 'waiting', error: undefined }); await this.changed()
     }
     const progress = await this.request<ProgressSnapshot>('GET', `/v1/p2p/${transfer.id}/progress`, undefined, signal)
@@ -387,9 +388,10 @@ export class GuestRuntime {
     // The server intentionally withholds the recipient key envelope until file
     // consent. Transport negotiation needs neither that envelope nor file data.
     const current = await this.request<GuestTransfer>('GET', `/v1/transfers/${job.transfer!.id}`, undefined, signal)
-    if (current.content_root !== job.transfer!.content_root || current.size_bytes !== job.transfer!.size_bytes) throw new Error('FILE_JOB_CHANGED')
+    if (current.content_root !== job.transfer!.content_root || current.size_bytes !== job.transfer!.size_bytes || current.content_kind !== job.payloadKind) throw new Error('FILE_JOB_CHANGED')
     if (!current.encrypted_manifest || !['ACCEPTED', 'COMPLETED'].includes(current.state)) throw new Error('FILE_MANIFEST_MISSING')
     const manifest = await openManifest(this.profile, current.encrypted_manifest); signal.throwIfAborted()
+    if ((manifest.content_kind === 'TEXT') !== (job.payloadKind === 'TEXT')) throw new Error('FILE_MANIFEST_INVALID')
     await this.store.transaction('rw', this.store.jobs, async () => {
       const newest = await this.store.jobs.get(job.id); signal.throwIfAborted()
       if (!newest || !activeJob(newest) || newest.phase === 'paused') throw new DOMException('Transfer stopped', 'AbortError')
@@ -454,7 +456,11 @@ export class GuestRuntime {
     const cipher = await this.store.receivedCipher(job)
     if (await hashBlob(cipher) !== job.transfer.content_root) throw new Error('FILE_CHECKSUM_MISMATCH')
     const plain = await decryptDare(cipher, manifest); signal.throwIfAborted()
-    await this.store.jobs.update(id, { plain, name: safeFileName(manifest.file_name), plainSize: manifest.plaintext_size })
+    if (job.payloadKind === 'TEXT') {
+      decodeText(new Uint8Array(await plain.arrayBuffer()))
+      if (!job.transfer.encrypted_manifest) throw new Error('FILE_MANIFEST_MISSING')
+      await this.store.jobs.update(id, { text: { cipher, manifest: job.transfer.encrypted_manifest }, name: safeFileName(manifest.file_name), plainSize: manifest.plaintext_size })
+    } else await this.store.jobs.update(id, { plain, name: safeFileName(manifest.file_name), plainSize: manifest.plaintext_size })
     const snapshot = await this.request<ProgressSnapshot>('GET', `/v1/p2p/${job.transfer.id}/progress`, undefined, signal)
     const route = selected ?? { kind: snapshot.route?.kind === 'DIRECT' ? 'DIRECT' : 'RELAY', epoch: Math.max(1, snapshot.route?.epoch ?? 0) }
     await this.reportReceived(job, job.transfer.size_bytes, route, signal)
@@ -539,7 +545,7 @@ export class GuestRuntime {
         if (!job && transfer.recipient_owner_id === this.lease!.owner_id) {
           const peer = connections.peers.find(p => p.owner_id === transfer.sender_owner_id && p.device_id === transfer.sender_device_id)
           if (!peer) continue
-          job = { id: transfer.id, created: Date.parse(transfer.created_at ?? '') || this.now(), direction: 'receive', peer, transfer, received: 0, name: safeFileName(transfer.file_name), plainSize: Math.max(0, transfer.size_bytes - Math.ceil(transfer.size_bytes / (wireChunkSize + 32)) * 32), phase: transfer.state === 'PENDING' ? 'waiting' : 'running' }
+          job = { id: transfer.id, created: Date.parse(transfer.created_at ?? '') || this.now(), direction: 'receive', peer, transfer, ...(transfer.content_kind === 'TEXT' ? { payloadKind: 'TEXT' } : {}), received: 0, name: safeFileName(transfer.file_name), plainSize: Math.max(0, transfer.size_bytes - Math.ceil(transfer.size_bytes / (wireChunkSize + 32)) * 32), phase: transfer.state === 'PENDING' ? 'waiting' : 'running' }
           const candidate = job
           await this.store.transaction('rw', this.store.jobs, async () => { if (!await this.store.jobs.get(candidate.id)) await this.store.jobs.add(candidate) })
         }
