@@ -181,10 +181,13 @@ class GuestRelay {
         }
         final start = index * wireChunkSize,
             end = min(ciphertext.length, start + wireChunkSize);
-        socket.add(
-          await fileFrame(index, Uint8List.sublistView(ciphertext, start, end)),
+        final frame = await fileFrame(
+          index,
+          Uint8List.sublistView(ciphertext, start, end),
         );
-        await Future<void>.delayed(const Duration(milliseconds: 2));
+        await socket
+            .addStream(Stream.value(frame))
+            .timeout(const Duration(seconds: 15));
       }
       final deadline = DateTime.now().add(const Duration(minutes: 2));
       while (DateTime.now().isBefore(deadline)) {

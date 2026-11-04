@@ -177,7 +177,22 @@ class GuestSession {
       throw StateError('GUEST_METHOD_INVALID');
     }
     final body = value == null ? '' : jsonEncode(value);
-    return _send(method, path, body, await signedHeaders(method, path, body));
+    final attemptedToken = _token;
+    try {
+      return await _send(
+        method,
+        path,
+        body,
+        await signedHeaders(method, path, body),
+      );
+    } on StateError catch (error) {
+      // An expired lease is rejected by the authentication middleware before
+      // the operation runs. Renew once; do not replay other failures.
+      if (error.message != 'GUEST_EXPIRED' || _closed) rethrow;
+      if (_token == attemptedToken) _token = null;
+      await ensureSession();
+      return _send(method, path, body, await signedHeaders(method, path, body));
+    }
   }
 
   Future<Map<String, String>> signedHeaders(
