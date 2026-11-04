@@ -3,6 +3,7 @@ import { webcrypto } from 'node:crypto'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { newProfile } from '../data/crypto'
 import { decodeText, decryptDare, openManifest, prepareFile, suite, textByteLimit, validateManifest } from './crypto'
+import { readStoredText } from './text-storage'
 
 const base = { suite, data_key: btoa(String.fromCharCode(...new Uint8Array(32))), plaintext_root: 'a'.repeat(64), plaintext_size: 1, file_name: 'Text' }
 afterEach(() => vi.unstubAllGlobals())
@@ -29,5 +30,9 @@ describe('versioned text payload boundaries', () => {
     expect(manifest).toMatchObject({ content_version: 1, content_kind: 'TEXT', sensitivity: 'SENSITIVE', file_name: 'Text' })
     expect(own).toEqual(manifest)
     expect(decodeText(new Uint8Array(await (await decryptDare(prepared.cipher, manifest)).arrayBuffer()))).toBe(body)
+    expect(await readStoredText(sender, { cipher: prepared.cipher, manifest: prepared.senderManifest })).toEqual({ value: body, sensitivity: 'SENSITIVE' })
+    expect(await readStoredText(receiver, { cipher: prepared.cipher, manifest: prepared.recipientManifest })).toEqual({ value: body, sensitivity: 'SENSITIVE' })
+    await expect(readStoredText(await newProfile(), { cipher: prepared.cipher, manifest: prepared.recipientManifest })).rejects.toThrow()
+    await expect(readStoredText(receiver, { cipher: prepared.cipher.slice(0, -1), manifest: prepared.recipientManifest })).rejects.toThrow()
   })
 })
