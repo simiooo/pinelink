@@ -9,6 +9,7 @@ import 'package:pinelink_mobile/src/data/identity.dart';
 import 'package:pinelink_mobile/src/guest/connections.dart';
 import 'package:pinelink_mobile/src/guest/runtime.dart';
 import 'package:pinelink_mobile/src/guest/relay.dart';
+import 'package:pinelink_mobile/src/local/file_crypto.dart';
 
 class _Vault implements IdentityVault {
   final values = <String, String>{};
@@ -84,15 +85,33 @@ void main() {
           'GET',
           '/v1/transfers/${transfer['id']}',
         );
-        await sessionB.request(
+        final accepted = await sessionB.request(
           'POST',
-          '/v1/transfers/${transfer['id']}/reject',
+          '/v1/transfers/${transfer['id']}/accept',
           {
             'owner_id': sessionB.owner,
             'device_id': runtimeB.identity.device,
             'expected_version': latest['version'],
+            'accept_content_kind': 'TEXT',
           },
         );
+        await runtimeB.store.create({
+          'id': 'incoming',
+          'direction': 'receive',
+          'state': 'ACCEPTED',
+          'transfer': accepted,
+        });
+        await GuestRelay(sessionB).receive(runtimeB.store, 'incoming');
+        final received = (await runtimeB.store.job('incoming'))!;
+        expect(received['state'], 'COMPLETED');
+        final manifest = await runtimeB.identity.decrypt(received['manifest']);
+        final cipher = (await runtimeB.store.bytes('incoming', 'received'))!;
+        expect(await decryptDare(cipher, manifest), raw);
+        final delivered = await sessionA.request(
+          'GET',
+          '/v1/p2p/${transfer['id']}/progress',
+        );
+        expect(delivered['completion']['delivered'], isTrue);
         await a.remove(peer['pair_id']);
         expect((await a.list())['peers'], isEmpty);
         expect((await b.list())['peers'], isEmpty);
