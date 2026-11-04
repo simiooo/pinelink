@@ -8,6 +8,7 @@ import 'package:pinelink_mobile/src/data/database.dart';
 import 'package:pinelink_mobile/src/data/identity.dart';
 import 'package:pinelink_mobile/src/data/wire.dart' as wire;
 import 'package:pinelink_mobile/src/guest/session.dart';
+import 'package:pinelink_mobile/src/guest/runtime.dart';
 
 class _Vault implements IdentityVault {
   final data = <String, String>{};
@@ -21,6 +22,35 @@ class _Vault implements IdentityVault {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  test('native visitor keys are separate per service and cannot reuse an account database', () async {
+    final vault = _Vault(),
+        aDb = ClientDatabase.testing(NativeDatabase.memory()),
+        bDb = ClientDatabase.testing(NativeDatabase.memory());
+    final a = await NativeGuestRuntime.open(
+      server: 'https://service-a.example/api',
+      vault: vault,
+      database: aDb,
+    );
+    final b = await NativeGuestRuntime.open(
+      server: 'https://service-b.example/api',
+      vault: vault,
+      database: bDb,
+    );
+    expect(a.identity.root, isNot(b.identity.root));
+    expect(a.session.namespace, isNot(b.session.namespace));
+    await a.close();
+    await b.close();
+    final accountDb = ClientDatabase.testing(NativeDatabase.memory());
+    await LocalIdentity.load(accountDb, vault, 'account', '');
+    await expectLater(
+      NativeGuestRuntime.open(
+        server: 'https://service-a.example/api',
+        vault: vault,
+        database: accountDb,
+      ),
+      throwsStateError,
+    );
+  });
   test('native enrollment and requests sign exact bytes and keep the token in a service-scoped vault', () async {
     final db = ClientDatabase.testing(NativeDatabase.memory()),
         vault = _Vault();
