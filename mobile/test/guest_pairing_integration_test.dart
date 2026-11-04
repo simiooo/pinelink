@@ -100,6 +100,17 @@ void main() {
           '/v1/p2p/${transfer['id']}/progress',
         );
         expect(delivered['completion']['delivered'], isTrue);
+        // Simulate a crash after the server receipt and before the local
+        // completion transaction. Recovery must re-verify local ciphertext.
+        await runtimeB.store.update(incoming['id'], received['localRevision'], {
+          'state': 'ACCEPTED',
+        });
+        await runtimeB.receive(incoming['id']);
+        expect(
+          (await runtimeB.store.job(incoming['id']))!['state'],
+          'COMPLETED',
+        );
+        await runtimeA.upload(jobId);
         await a.remove(peer['pair_id']);
         expect((await a.list())['peers'], isEmpty);
         expect((await b.list())['peers'], isEmpty);

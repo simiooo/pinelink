@@ -35,7 +35,7 @@ class GuestRelay {
         current['size_bytes'] != size ||
         current['content_kind'] != transfer['content_kind'] ||
         current['encrypted_manifest'] is! String ||
-        current['state'] != 'ACCEPTED') {
+        !['ACCEPTED', 'COMPLETED'].contains(current['state'])) {
       throw StateError('FILE_JOB_CHANGED');
     }
     final manifest = await session.identity.decrypt(
@@ -46,6 +46,34 @@ class GuestRelay {
         (current['content_kind'] == 'TEXT')) {
       throw StateError('FILE_MANIFEST_INVALID');
     }
+    Future<Map<String, dynamic>> finish() async {
+      final cipher = await store.bytes(jobId, 'received');
+      if (cipher == null ||
+          cipher.length != size ||
+          await digest(cipher) != current['content_root']) {
+        throw StateError('FILE_CHECKSUM_INVALID');
+      }
+      final plain = await decryptDare(cipher, manifest);
+      if (current['content_kind'] == 'TEXT') decodeText(plain);
+      final fresh = await session.request('GET', '/v1/transfers/$id');
+      final completed = fresh['state'] == 'COMPLETED'
+          ? fresh
+          : await session.request('POST', '/v1/p2p/$id/complete', {
+              'owner_id': session.owner,
+              'device_id': session.identity.device,
+              'expected_version': fresh['version'],
+            });
+      job = await store.job(jobId);
+      if (job == null) throw StateError('GUEST_JOB_CHANGED');
+      await store.update(jobId, job!['localRevision'], {
+        'state': 'COMPLETED',
+        'transfer': completed,
+        'manifest': current['encrypted_manifest'],
+      });
+      return completed;
+    }
+
+    if (current['state'] == 'COMPLETED') return finish();
     final snapshot = await session.request('GET', '/v1/p2p/$id/progress');
     final route = snapshot['route'] as Map?;
     final epoch = max(
@@ -102,7 +130,7 @@ class GuestRelay {
         final received = min(size, (index + 1) * wireChunkSize);
         await store.update(
           jobId,
-          job['localRevision'],
+          job!['localRevision'],
           {'received': received},
           index: index,
           chunk: bytes,
@@ -110,32 +138,7 @@ class GuestRelay {
         await report(received);
         expected++;
         if (received == size) {
-          final cipher = await store.bytes(jobId, 'received');
-          if (cipher == null ||
-              cipher.length != size ||
-              await digest(cipher) != current['content_root']) {
-            throw StateError('FILE_CHECKSUM_INVALID');
-          }
-          final plain = await decryptDare(cipher, manifest);
-          if (current['content_kind'] == 'TEXT') decodeText(plain);
-          final fresh = await session.request('GET', '/v1/transfers/$id');
-          final completed = await session.request(
-            'POST',
-            '/v1/p2p/$id/complete',
-            {
-              'owner_id': session.owner,
-              'device_id': session.identity.device,
-              'expected_version': fresh['version'],
-            },
-          );
-          job = await store.job(jobId);
-          if (job == null) throw StateError('GUEST_JOB_CHANGED');
-          await store.update(jobId, job['localRevision'], {
-            'state': 'COMPLETED',
-            'transfer': completed,
-            'manifest': current['encrypted_manifest'],
-          });
-          return completed;
+          return await finish();
         }
       }
       throw StateError('TRANSFER_INTERRUPTED');
@@ -145,6 +148,12 @@ class GuestRelay {
   }
 
   Future<Map<String, dynamic>> upload(String id, Uint8List ciphertext) async {
+    final initial = await session.request('GET', '/v1/p2p/$id/progress');
+    final completion = initial['completion'];
+    if (completion is Map &&
+        (completion['stored'] == true || completion['delivered'] == true)) {
+      return initial;
+    }
     final signals = await session.request('GET', '/v1/p2p/$id/signals?after=0');
     final items = signals['signals'] as List? ?? [];
     if (!items.any(
