@@ -4,6 +4,7 @@ import type { PreparedFile, GuestLease, GuestPeer, GuestTransfer, ProgressSnapsh
 import { digest } from '../data/crypto'
 import { wireChunkSize } from './crypto'
 import type { DirectProof } from './direct'
+import type { LocalState } from '../local/protocol'
 
 export type GuestJob = {
   id: string; created: number; direction: 'send' | 'receive'; peer: GuestPeer; transfer?: GuestTransfer
@@ -11,6 +12,8 @@ export type GuestJob = {
   phase: 'preparing' | 'waiting' | 'running' | 'paused' | 'verifying' | 'complete' | 'stopped'; error?: string; dismissed?: boolean; retryAt?: number; failures?: number; controlRevision?: number
   directAttempted?: boolean
   transport?: { state: 'connecting' | 'direct' | 'switching' | 'cloud'; proof?: DirectProof }
+  authority?: 'LOCAL_DEVICE'
+  local?: { expires: number; state?: LocalState; manifest?: string; plainRoot?: string; intent?: 'pause' | 'cancel'; disconnected?: boolean }
 }
 export class GuestStore extends LocalStore {
   leases!: Table<GuestLease, string>
@@ -18,10 +21,15 @@ export class GuestStore extends LocalStore {
   chunks!: Table<{ job: string; index: number; bytes: Blob; hash: string }, [string, number]>
   guestPeers!: Table<GuestPeer, string>
   peerRemovals!: Table<{ pair: string; expires: number }, string>
+  localPeers!: Table<GuestPeer, string>
+  localUsed!: Table<{ id: string; expires: number }, string>
+  localLeases!: Table<{ id: string; owner: string; until: number; session?:string }, string>
+  localJournal!: Table<{ sequence?: number; event_id: string; authority: 'LOCAL_DEVICE'; authority_device_id: string; transfer: string; snapshot: LocalState; uploaded: number }, number>
   constructor(name: string) {
     super(name)
     this.version(3).stores({ leases: 'id', jobs: 'id,created,transfer.id,direction', chunks: '[job+index],job' })
     this.version(4).stores({ guestPeers: 'pair_id', peerRemovals: 'pair,expires' })
+    this.version(5).stores({ localPeers: 'pair_id,root', localUsed: 'id,expires', localLeases: 'id,until', localJournal: '++sequence,&event_id,transfer,uploaded' })
   }
   async storeFrame(id: string, index: number, bytes: Uint8Array, signal?: AbortSignal) {
     const hash = await digest(bytes)

@@ -8,7 +8,7 @@ import { guestWorkPending } from '../guest/continuity'
 
 export type Account = { id: string; email: string; name: string; methods: string[] }
 export type Session = { account: Account; device_id: string; expires_at: string; csrf: string }
-export type Capabilities = { enabled: boolean; required: boolean; google?: boolean; password?: boolean; email?: boolean; guests?: boolean; guest_max_file_bytes?: number }
+export type Capabilities = { enabled: boolean; required: boolean; google?: boolean; password?: boolean; email?: boolean; guests?: boolean; guest_max_file_bytes?: number; local_only?: boolean }
 export type Challenge = { id: string; purpose: 'signup' | 'reset'; generation: number; expires_at: string; resend_at: string; delivery_state: string }
 export type Pending = { id: string; privateKey: CryptoKey; verifier: string; expires: number; email?: string; challenge?: Challenge; resetGrant?: string }
 class AuthStore extends Dexie {
@@ -41,12 +41,14 @@ export async function prepareAuth(logoutBlocked = false) {
   capabilities = cached<Capabilities>(prefix + ':capabilities') ?? capabilities
   offlineAccount = logoutBlocked ? undefined : cached<Account>(prefix)
   try {
+    // Loopback resources remain reachable when the OS reports no network.
+    if(navigator.onLine===false&&!['localhost','127.0.0.1','[::1]'].includes(new URL(API_URL,location.href).hostname))throw new Error('LOCAL_ONLY')
     capabilities = await authFetch<Capabilities>('/v1/auth/capabilities'); save(prefix + ':capabilities', capabilities)
     if (capabilities.enabled && !logoutBlocked) {
       try { session = await authFetch<Session>('/v1/auth/session'); offlineAccount = session.account; save(prefix, offlineAccount) }
       catch (error) { if (!(error instanceof AuthError) || error.status >= 500) throw error; session = undefined }
     }
-  } catch { session = undefined }
+  } catch { session = undefined;capabilities={...capabilities,guests:true,local_only:true} }
   // This private journal has no replication/outbox path. Erase expired proofs.
   await Promise.all([store.pending.where('expires').below(Date.now()).delete(), store.links.where('expires').below(Date.now()).delete()]).catch(() => undefined)
   if (/^\/a\/[A-Za-z0-9_-]{22}$/.test(location.pathname)) {

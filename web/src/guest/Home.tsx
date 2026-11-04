@@ -20,6 +20,8 @@ import { routeFilter, routePanel } from './navigation'
 import type { FileFilter } from './navigation'
 import { AccountRequest, AccountTaskDetails, FilesCollection, guestJobStatus, useAccountWorkspace } from './Files'
 import './guest.css'
+import { LocalConnect } from '../local/Connect'
+import { localError, useLocalCopy } from '../local/copy'
 
 const linkKey = 'pinelink:guest-link'
 export function captureGuestLink() {
@@ -38,7 +40,8 @@ export function GuestHome({ onNotifications }: { onNotifications?: (count: numbe
 }
 type Panel = 'connect' | 'pair' | 'waiting' | 'send' | 'job' | 'files' | 'notifications' | 'rename' | 'remove' | 'account-job' | 'account-request' | null
 function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNotifications?: (count: number) => void }) {
-  const c = useGuestCopy(), { t, locale } = useI18n(), state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot)
+  const c = useGuestCopy(), lc=useLocalCopy(), { t, locale } = useI18n(), state = useSyncExternalStore(runtime.subscribe, runtime.getSnapshot)
+  const [localMode,setLocalMode]=useState(false)
   const pathname = useRouterState({ select: state => state.location.pathname }), navigate = useNavigate()
   const [panel, setPanel] = useState<Panel>(routePanel(pathname)), [filter, setFilter] = useState<FileFilter>(routeFilter(pathname)), [filePeer, setFilePeer] = useState<GuestPeer>()
   const [name, setName] = useState(''), [savingPeer, setSavingPeer] = useState(false), [recordId, setRecordId] = useState<string>(), [requestId, setRequestId] = useState<string>(), [fromFiles, setFromFiles] = useState(false)
@@ -55,14 +58,14 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
   const selectedJob = state.jobs.find(job => job.id === jobId) ?? active
   const candidate = state.connections.candidates.find(item => item.id === candidateId)
   const maxBytes = authState().capabilities.guest_max_file_bytes ?? (64 << 20)
-  const peers = state.offline || now - (state.checkedAt ?? 0) > 15000 ? state.connections.peers.map(peer => ({ ...peer, online: false })) : state.connections.peers
-  const errorText = guestErrorText(error ?? state.error, c), invite = state.invite
+  const peers = state.offline || now - (state.checkedAt ?? 0) > 15000 ? state.connections.peers.map(peer => peer.authority==='LOCAL_DEVICE'?peer:({ ...peer, online: false })) : state.connections.peers
+  const errorText = localError(error,lc) || guestErrorText(error ?? (localMode||active?.authority==='LOCAL_DEVICE'?undefined:state.error), c), invite = state.invite
   const expired = !!invite && (Date.parse(invite.expires_at) <= now || invite.consumed)
   const inviteURL = invite?.token ? new URL('/connect#' + invite.token, location.origin).href : ''
   const pairRequests = state.connections.candidates.filter(item => item.incoming && item.status === 'WAITING' && Date.parse(item.expires_at) > now)
-  const fileRequests = state.jobs.filter(job => job.direction === 'receive' && job.phase === 'waiting' && job.transfer?.state === 'PENDING' && Date.parse(job.transfer.expires_at) > now)
+  const fileRequests = state.jobs.filter(job => job.direction === 'receive' && job.phase === 'waiting' && job.transfer?.state === 'PENDING' && Date.parse(job.transfer.expires_at) > (job.authority==='LOCAL_DEVICE'?Date.now():now))
   const notificationCount = pairRequests.length + fileRequests.length + requests.length
-  const peerBusy = state.jobs.find(job => job.peer.pair_id === selectedPeer?.pair_id && !['complete', 'stopped'].includes(job.phase) && (!job.transfer || Date.parse(job.transfer.expires_at) > now))
+  const peerBusy = state.jobs.find(job => job.peer.pair_id === selectedPeer?.pair_id && !['complete', 'stopped'].includes(job.phase) && (!job.transfer || Date.parse(job.transfer.expires_at) > (job.authority==='LOCAL_DEVICE'?Date.now():now)))
   const close = () => { setPanel(null); setError(undefined); if (pathname !== '/') void navigate({ to: '/', replace: true }) }
   const openFiles = (peer?: GuestPeer, value: FileFilter = 'all') => { setError(undefined); setFilePeer(peer); setFilter(value); setPanel('files'); void navigate({ to: '/files' }) }
   useEffect(() => { setPanel(routePanel(pathname)); setError(undefined); if (['/tasks', '/history', '/local-files'].includes(pathname)) { setFilter(routeFilter(pathname)); setFilePeer(undefined) } }, [pathname])
@@ -77,7 +80,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
   useEffect(() => {
     const incoming = state.connections.candidates.find(item => item.incoming && item.status === 'WAITING' && !seen.current.has(item.id))
     if (incoming && (!panel || panel === 'connect')) { seen.current.add(incoming.id); setCandidateId(incoming.id); setPanel('pair'); return }
-    const pending = state.jobs.find(job => job.direction === 'receive' && job.phase === 'waiting' && job.transfer?.state === 'PENDING' && Date.parse(job.transfer.expires_at) > now && !seen.current.has(job.id))
+    const pending = state.jobs.find(job => job.direction === 'receive' && job.phase === 'waiting' && job.transfer?.state === 'PENDING' && Date.parse(job.transfer.expires_at) > (job.authority==='LOCAL_DEVICE'?Date.now():now) && !seen.current.has(job.id))
     if (pending && !panel) { seen.current.add(pending.id); setJobId(pending.id); setFromFiles(false); setPanel('job'); return }
     const completed = state.jobs.find(job => job.phase === 'complete' && !seen.current.has('done:' + job.id))
     if (completed && (!panel || panel === 'job' && completed.id === jobId)) { seen.current.add('done:' + completed.id); setJobId(completed.id); setPanel('job') }
@@ -87,7 +90,8 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
       else if (joining.expires <= now) { setError('EXPIRED'); setTab('enter'); setPanel('connect') }
     }
   }, [state.connections, state.jobs, panel, joining, now, jobId])
-  const connect = () => { setPanel('connect'); setTab('show'); void perform(() => runtime.connect()) }
+  const connect = () => { if(runtime.local.getSnapshot().phase==='connected')runtime.local.cancelPairing();const local=state.offline||!!authState().capabilities.local_only&&(!authState().capabilities.enabled||!state.checkedAt||now-state.checkedAt>15000);setLocalMode(local);setPanel('connect');setTab('show');if(!local)void perform(()=>runtime.connect()) }
+  const reconnect=(peer:GuestPeer)=>{setLocalMode(true);setPanel('connect');void perform(()=>runtime.local.invite(peer.root))}
   const openJob = (job?: GuestJob) => { if (job) { setFromFiles(panel === 'files'); setJobId(job.id); setPanel('job') } }
   const choose = (chosen?: File, peer?: GuestPeer) => {
     if (!chosen) { if (peer) setSelectedPeer(peer); input.current?.click(); return }
@@ -101,10 +105,10 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
     onDragLeave={() => { if (--dragDepth.current <= 0) { dragDepth.current = 0; setDragging(false) } }}
     onDrop={event => { event.preventDefault(); dragDepth.current = 0; setDragging(false); if (event.dataTransfer.files.length === 1) choose(event.dataTransfer.files[0]); else setError('ONE_FILE_ONLY') }}>
     <input ref={input} type="file" hidden aria-label={c.file} onChange={event => { choose(event.target.files?.[0]); event.target.value = '' }} />
-    <GuestGraph peers={peers} job={active} onConnect={connect} onPeer={peer => { setSelectedPeer(peer); if (file) setPanel('send'); else choose(undefined, peer) }} onDetails={() => openJob(active)} dragging={dragging} localDevice={runtime.profile.device} onFiles={peer => openFiles(peer, peer ? 'all' : 'saved')} onRename={peer => { setSelectedPeer(peer); setName(peer.local_name || peer.device_name); setError(undefined); setPanel('rename') }} onRemove={peer => { setSelectedPeer(peer); setError(undefined); setPanel('remove') }} onFileDrop={(file, peer) => { dragDepth.current = 0; setDragging(false); choose(file, peer) }} />
+    <GuestGraph peers={peers} job={active} onConnect={connect} onPeer={peer => { if(peer.authority==='LOCAL_DEVICE'&&!peer.online){reconnect(peer);return};setSelectedPeer(peer); if (file) setPanel('send'); else choose(undefined, peer) }} onDetails={() => openJob(active)} dragging={dragging} localDevice={runtime.profile.device} onFiles={peer => openFiles(peer, peer ? 'all' : 'saved')} onRename={peer => { setSelectedPeer(peer); setName(peer.local_name || peer.device_name); setError(undefined); setPanel('rename') }} onRemove={peer => { setSelectedPeer(peer); setError(undefined); setPanel('remove') }} onFileDrop={(file, peer) => { dragDepth.current = 0; setDragging(false); choose(file, peer) }} />
     {dragging && <div className="guest-drop-label" role="status">{c.file}</div>}
     <footer className="guest-footer"><MotionTooltip label={c.files}><MotionButton icon className="guest-icon-button" aria-label={c.files} onClick={() => openFiles()}><FolderOpen size={23} /></MotionButton></MotionTooltip>
-      {state.offline && <span className="guest-offline" role="status">{c.offline}</span>}
+      {state.offline && <span className="guest-offline" role="status">{lc.noInternet}</span>}
       <MotionTooltip label={c.connect}><MotionButton icon className="guest-icon-button workspace-add-device" aria-label={c.connect} onClick={connect}><Plus size={24} /></MotionButton></MotionTooltip>
       <MotionTooltip label={c.file}><MotionButton icon className="guest-icon-button" aria-label={c.file} onClick={() => choose()} disabled={state.busy}><FilePlus2 size={23} /></MotionButton></MotionTooltip>
     </footer>
@@ -112,6 +116,8 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
     <MotionSurface open={!!panel} onClose={close} title={title} closeLabel={c.close}>
       <div className="guest-surface-body">
         {visualPanel === 'connect' && <div className="guest-connect">
+          <Tabs value={localMode?'local':'online'} onValueChange={value=>{setLocalMode(value==='local');setError(undefined);if(value==='online')void perform(()=>runtime.connect())}}><TabsList variant="line" className="guest-tabs"><TabsTrigger value="online" disabled={!!authState().capabilities.local_only&&!authState().capabilities.enabled}>{lc.online}</TabsTrigger><TabsTrigger value="local">{lc.local}</TabsTrigger></TabsList></Tabs>
+          {localMode?<LocalConnect runtime={runtime.local} onConnected={close}/>:<>
           <Tabs value={tab} onValueChange={value => { setTab(value); setError(undefined); if (value === 'show') void perform(() => runtime.connect()) }}>
             <TabsList variant="line" className="guest-tabs"><TabsTrigger value="show">{c.showCode}</TabsTrigger><TabsTrigger value="enter">{c.enterCode}</TabsTrigger></TabsList>
             <TabsContent value="show"><div className="guest-code-view">
@@ -126,6 +132,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
               <MotionButton type="submit" className="primary-button guest-wide" disabled={!token && code.replace(/[ -]/g, '').length !== 8} busy={state.busy}>{c.connectAction}</MotionButton>
             </form></TabsContent>
           </Tabs>
+          </>}
         </div>}
         {visualPanel === 'pair' && candidate && <div className="guest-pair"><div className="guest-preview-icon"><DeviceGlyph name={candidate.device_name} /></div><div className="guest-file-copy"><h3>{candidate.device_name}</h3><span className="guest-muted">{c.device} · {candidate.device_id.slice(-4).toUpperCase()}</span></div><MotionButton className="primary-button guest-wide" onClick={() => perform(async () => { await runtime.respondCandidate(candidate.id, true); setPanel(null) })}>{c.connectAction}</MotionButton><MotionButton className="auth-text-button guest-wide" onClick={() => perform(async () => { await runtime.respondCandidate(candidate.id, false); setPanel(null) })}>{c.decline}</MotionButton></div>}
         {visualPanel === 'waiting' && <div className="guest-waiting"><Clock3 size={30} /><p>{c.keepOpen}</p><MotionButton className="secondary-button guest-wide" onClick={() => setPanel(null)}>{c.done}</MotionButton></div>}
@@ -138,14 +145,15 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
           <div className="guest-file-row"><FileText size={40} strokeWidth={1.3} /><span>{selectedJob.name}</span></div>
           {fromFiles && <MotionTooltip label={c.backFiles}><MotionButton icon className="guest-icon-button workspace-back" aria-label={c.backFiles} onClick={() => setPanel('files')}><ArrowLeft size={20} /></MotionButton></MotionTooltip>}
           <div className="guest-job-meta"><span>{guestJobStatus(selectedJob, c)}</span><span>{formatBytes(selectedJob.plainSize, locale)}</span></div>
-          {selectedJob.snapshot && <dl className="guest-progress-detail"><div><dt>{c.connection}</dt><dd>{displayedRoute(selectedJob) === 'direct' ? c.direct : displayedRoute(selectedJob) === 'relay' ? c.cloud : displayedRoute(selectedJob) === 'switching' ? c.switching : c.connecting}</dd></div>{selectedJob.phase !== 'complete' && <><div><dt>{c.received}</dt><dd>{formatBytes(selectedJob.snapshot.delivery.acknowledged_bytes, locale)} / {formatBytes(selectedJob.snapshot.delivery.total_bytes, locale)}</dd></div>{displayedRoute(selectedJob) === 'relay' && <div><dt>{c.upload}</dt><dd>{selectedJob.snapshot.completion.stored ? c.stored : formatBytes(selectedJob.snapshot.spool.acknowledged_bytes, locale)}</dd></div>}</>}</dl>}
+          {selectedJob.snapshot && <dl className="guest-progress-detail"><div><dt>{c.connection}</dt><dd>{selectedJob.authority==='LOCAL_DEVICE'?lc.local:displayedRoute(selectedJob) === 'direct' ? c.direct : displayedRoute(selectedJob) === 'relay' ? c.cloud : displayedRoute(selectedJob) === 'switching' ? c.switching : c.connecting}</dd></div>{selectedJob.phase !== 'complete' && <><div><dt>{c.received}</dt><dd>{formatBytes(selectedJob.snapshot.delivery.acknowledged_bytes, locale)} / {formatBytes(selectedJob.snapshot.delivery.total_bytes, locale)}</dd></div>{displayedRoute(selectedJob) === 'relay' && <div><dt>{c.upload}</dt><dd>{selectedJob.snapshot.completion.stored ? c.stored : formatBytes(selectedJob.snapshot.spool.acknowledged_bytes, locale)}</dd></div>}</>}</dl>}
           {selectedJob.transfer?.state === 'PENDING' && selectedJob.direction === 'receive' && selectedJob.phase === 'waiting' ? <><MotionButton className="primary-button guest-wide" onClick={() => perform(async () => { await runtime.accept(selectedJob.id); setPanel(null) })}>{c.receive}</MotionButton><MotionButton className="auth-text-button guest-wide" onClick={() => perform(async () => { await runtime.reject(selectedJob.id); setPanel(null) })}>{c.decline}</MotionButton></> : <>
             {selectedJob.phase === 'complete' && selectedJob.plain && <MotionButton className="primary-button guest-wide" onClick={() => perform(() => runtime.download(selectedJob.id))}><ArrowDownToLine size={18} />{c.download}</MotionButton>}
             <div className="guest-job-controls">
               {selectedJob.snapshot?.capabilities.pause && <MotionTooltip label={c.pause}><MotionButton icon className="guest-icon-button" aria-label={c.pause} onClick={() => perform(() => runtime.control(selectedJob.id, 'pause'))}><Pause size={21} /></MotionButton></MotionTooltip>}
-              {selectedJob.snapshot?.capabilities.resume && <MotionTooltip label={c.resume}><MotionButton icon className="guest-icon-button" aria-label={c.resume} onClick={() => perform(() => runtime.control(selectedJob.id, 'resume'))}><Play size={21} /></MotionButton></MotionTooltip>}
+              {selectedJob.snapshot?.capabilities.resume && !(selectedJob.authority==='LOCAL_DEVICE'&&!runtime.local.reachable(selectedJob.peer.root)) && <MotionTooltip label={c.resume}><MotionButton icon className="guest-icon-button" aria-label={c.resume} onClick={() => perform(() => runtime.control(selectedJob.id, 'resume'))}><Play size={21} /></MotionButton></MotionTooltip>}
               {selectedJob.snapshot?.capabilities.cancel && <MotionTooltip label={c.cancel}><MotionButton icon className="guest-icon-button" aria-label={c.cancel} onClick={() => perform(() => runtime.control(selectedJob.id, 'cancel'))}><X size={21} /></MotionButton></MotionTooltip>}
-              {selectedJob.error && selectedJob.phase !== 'stopped' && <MotionTooltip label={c.retry}><MotionButton icon className="guest-icon-button" aria-label={c.retry} onClick={() => perform(() => runtime.retry(selectedJob.id))}><RefreshCw size={21} /></MotionButton></MotionTooltip>}
+              {selectedJob.authority==='LOCAL_DEVICE'&&!runtime.local.reachable(selectedJob.peer.root)&&!['complete','stopped'].includes(selectedJob.phase)&&<MotionButton className="primary-button guest-wide" onClick={()=>reconnect(selectedJob.peer)}>{lc.reconnect}</MotionButton>}
+              {selectedJob.error && selectedJob.authority!=='LOCAL_DEVICE' && selectedJob.phase !== 'stopped' && <MotionTooltip label={c.retry}><MotionButton icon className="guest-icon-button" aria-label={c.retry} onClick={() => perform(() => runtime.retry(selectedJob.id))}><RefreshCw size={21} /></MotionButton></MotionTooltip>}
             </div>
             {['complete', 'stopped'].includes(selectedJob.phase) && <MotionButton className="secondary-button guest-wide" onClick={() => { close(); void perform(() => runtime.dismiss(selectedJob.id)) }}>{c.another}</MotionButton>}
           </>}
@@ -161,7 +169,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: GuestRuntime; onNo
           {account.ready && account.notifications.isError && <p role="alert" className="guest-inline-error">{c.accountNotificationsError}</p>}
         </div>}
         {visualPanel === 'rename' && selectedPeer && <form className="workspace-rename" onSubmit={event => { event.preventDefault(); if (savingPeer) return; setSavingPeer(true); void perform(async () => { try { await runtime.renamePeer(selectedPeer.pair_id, name); close() } finally { setSavingPeer(false) } }) }}><label>{c.nameLabel}<Input value={name} maxLength={128} onChange={event => setName(event.target.value)} autoComplete="off" /></label><MotionButton className="primary-button guest-wide" type="submit" busy={savingPeer} disabled={!name.trim()}>{c.save}</MotionButton></form>}
-        {visualPanel === 'remove' && selectedPeer && <div className="workspace-remove"><p className="guest-muted">{peerBusy ? c.connectionBusy : state.offline ? c.removeOffline : c.removeHint}</p>{peerBusy ? <MotionButton className="primary-button guest-wide" onClick={() => openJob(peerBusy)}>{c.viewTransfer}</MotionButton> : <MotionButton className="primary-button guest-wide" disabled={state.offline} busy={savingPeer} onClick={() => { if (savingPeer) return; setSavingPeer(true); void perform(async () => { try { await runtime.removePeer(selectedPeer.pair_id); setSelectedPeer(undefined); close() } finally { setSavingPeer(false) } }) }}>{c.remove}</MotionButton>}</div>}
+        {visualPanel === 'remove' && selectedPeer && <div className="workspace-remove"><p className="guest-muted">{peerBusy ? c.connectionBusy : state.offline && selectedPeer.authority!=='LOCAL_DEVICE' ? c.removeOffline : c.removeHint}</p>{peerBusy ? <MotionButton className="primary-button guest-wide" onClick={() => openJob(peerBusy)}>{c.viewTransfer}</MotionButton> : <MotionButton className="primary-button guest-wide" disabled={state.offline&&selectedPeer.authority!=='LOCAL_DEVICE'} busy={savingPeer} onClick={() => { if (savingPeer) return; setSavingPeer(true); void perform(async () => { try { await runtime.removePeer(selectedPeer.pair_id); setSelectedPeer(undefined); close() } finally { setSavingPeer(false) } }) }}>{c.remove}</MotionButton>}</div>}
         {errorText && <p className="guest-inline-error" role="alert">{errorText}</p>}
       </div>
     </MotionSurface>

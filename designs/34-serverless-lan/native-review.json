@@ -1,0 +1,156 @@
+{
+  "issue": "SIM-955",
+  "version": 34,
+  "document": "tab-13",
+  "page": "1585797759:3945",
+  "frames": [
+    {
+      "key": "desktop-entry",
+      "result": {
+        "id": "1585797759:3946",
+        "name": "desktop / entry",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "desktop-show",
+      "result": {
+        "id": "1585797759:3984",
+        "name": "desktop / show",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "desktop-verify",
+      "result": {
+        "id": "1585797759:4367",
+        "name": "desktop / verify",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "desktop-transfer",
+      "result": {
+        "id": "1585797759:4402",
+        "name": "desktop / transfer",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-entry",
+      "result": {
+        "id": "1585797759:4437",
+        "name": "mobile / entry",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-show",
+      "result": {
+        "id": "1585797759:4476",
+        "name": "mobile / show",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-enter",
+      "result": {
+        "id": "1585797759:4860",
+        "name": "mobile / enter",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-reply",
+      "result": {
+        "id": "1585797759:4900",
+        "name": "mobile / reply",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-verify",
+      "result": {
+        "id": "1585797759:5284",
+        "name": "mobile / verify",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-waiting",
+      "result": {
+        "id": "1585797759:5320",
+        "name": "mobile / waiting",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-expired",
+      "result": {
+        "id": "1585797759:5359",
+        "name": "mobile / expired",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-camera",
+      "result": {
+        "id": "1585797759:5398",
+        "name": "mobile / camera",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-transfer",
+      "result": {
+        "id": "1585797759:5439",
+        "name": "mobile / transfer",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-details",
+      "result": {
+        "id": "1585797759:5474",
+        "name": "mobile / details",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-reconnect",
+      "result": {
+        "id": "1585797759:5526",
+        "name": "mobile / reconnect",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-complete",
+      "result": {
+        "id": "1585797759:5564",
+        "name": "mobile / complete",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-history",
+      "result": {
+        "id": "1585797759:5600",
+        "name": "mobile / history",
+        "type": "FRAME"
+      }
+    },
+    {
+      "key": "mobile-package",
+      "result": {
+        "id": "1585797759:5697",
+        "name": "mobile / package fallback",
+        "type": "FRAME"
+      }
+    }
+  ],
+  "exportedFrames": 18,
+  "textNodes": 118,
+  "faithful": true,
+  "savedReopened": true
+}

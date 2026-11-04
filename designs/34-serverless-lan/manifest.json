@@ -1,0 +1,152 @@
+{
+  "version": 34,
+  "issue": "SIM-955",
+  "primary": "#0866FF",
+  "font": "Nunito",
+  "frames": [
+    {
+      "key": "desktop-entry",
+      "name": "desktop / entry",
+      "x": 0,
+      "y": 0,
+      "width": 1360,
+      "height": 900
+    },
+    {
+      "key": "desktop-show",
+      "name": "desktop / show",
+      "x": 1440,
+      "y": 0,
+      "width": 1360,
+      "height": 900
+    },
+    {
+      "key": "desktop-verify",
+      "name": "desktop / verify",
+      "x": 2880,
+      "y": 0,
+      "width": 1360,
+      "height": 900
+    },
+    {
+      "key": "desktop-transfer",
+      "name": "desktop / transfer",
+      "x": 0,
+      "y": 1000,
+      "width": 1360,
+      "height": 900
+    },
+    {
+      "key": "mobile-entry",
+      "name": "mobile / entry",
+      "x": 1440,
+      "y": 1000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-show",
+      "name": "mobile / show",
+      "x": 2880,
+      "y": 1000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-enter",
+      "name": "mobile / enter",
+      "x": 0,
+      "y": 2000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-reply",
+      "name": "mobile / reply",
+      "x": 1440,
+      "y": 2000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-verify",
+      "name": "mobile / verify",
+      "x": 2880,
+      "y": 2000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-waiting",
+      "name": "mobile / waiting",
+      "x": 0,
+      "y": 3000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-expired",
+      "name": "mobile / expired",
+      "x": 1440,
+      "y": 3000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-camera",
+      "name": "mobile / camera",
+      "x": 2880,
+      "y": 3000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-transfer",
+      "name": "mobile / transfer",
+      "x": 0,
+      "y": 4000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-details",
+      "name": "mobile / details",
+      "x": 1440,
+      "y": 4000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-reconnect",
+      "name": "mobile / reconnect",
+      "x": 2880,
+      "y": 4000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-complete",
+      "name": "mobile / complete",
+      "x": 0,
+      "y": 5000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-history",
+      "name": "mobile / history",
+      "x": 1440,
+      "y": 5000,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "key": "mobile-package",
+      "name": "mobile / package fallback",
+      "x": 2880,
+      "y": 5000,
+      "width": 390,
+      "height": 844
+    }
+  ]
+}

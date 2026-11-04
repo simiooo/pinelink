@@ -1,0 +1,96 @@
+import {chromium,firefox} from 'playwright-core'
+import {mkdir,readFile,writeFile,rename} from 'node:fs/promises'
+import {createHash,randomBytes,randomUUID} from 'node:crypto'
+import assert from 'node:assert/strict'
+import jsQR from 'jsqr'
+import {PNG} from 'pngjs'
+
+const out=process.env.PINELINK_DIRECT_OUTPUT??'/output',origin=process.env.PINELINK_DIRECT_ORIGIN??'http://localhost:5184'
+await mkdir(out,{recursive:true})
+const configs=await Promise.all(['a','b'].map(async s=>JSON.parse(await readFile(out+'/'+s+'.json','utf8')))),browsers=await Promise.all(configs.map(c=>(c.kind==='firefox'?firefox:chromium).connect(c.endpoint)))
+const checks=[],errors=[],contexts=[],proofs=[]
+const full=(process.env.PINELINK_DIRECT_CASES??'full').split(',').includes('full')
+const delay=ms=>new Promise(r=>setTimeout(r,ms)),until=async(work,timeout=60000)=>{const end=Date.now()+timeout;while(Date.now()<end){const value=await work();if(value)return value;await delay(100)}throw Error('local browser condition timeout')}
+const mark=s=>{checks.push(s);console.log(s)}
+const network=async(blocked,action='offline')=>{const id=randomUUID(),file=out+'/network-request.json';await writeFile(file+'.tmp',JSON.stringify({id,blocked,action}));await rename(file+'.tmp',file);return until(async()=>{try{const x=JSON.parse(await readFile(out+'/network-result.json','utf8'));if(x.id!==id)return false;assert.ok(x.applied);return x}catch(e){if(e.code==='ENOENT')return false;throw e}},20000)}
+const localState=page=>page.evaluate(async()=>{
+ const name=(await indexedDB.databases()).find(d=>d.name?.startsWith('pinelink-visitor:'))?.name;if(!name)return null
+ const db=await new Promise((r,j)=>{const q=indexedDB.open(name);q.onsuccess=()=>r(q.result);q.onerror=()=>j(q.error)})
+ const get=(t,k)=>new Promise(r=>{const q=db.transaction(t).objectStore(t).get(k);q.onsuccess=()=>r(q.result)})
+ const all=t=>new Promise(r=>{const q=db.transaction(t).objectStore(t).getAll();q.onsuccess=()=>r(q.result)})
+ const profile=await get('profiles','local'),cloud=await get('profiles','self'),peers=await all('localPeers'),jobs=await all('jobs'),journal=await all('localJournal'),chunks=await all('chunks'),leases=await all('leases');db.close()
+ return {root:profile?.root,cloudRoot:cloud?.root,peers,jobs:jobs.map(j=>({id:j.id,authority:j.authority,name:j.name,phase:j.phase,received:j.received,local:j.local,snapshot:j.snapshot,transfer:j.transfer,transport:j.transport,hasPlain:!!j.plain,error:j.error})),journal,chunks:chunks.map(c=>({job:c.job,index:c.index,bytes:c.bytes.size})),leases:leases.length}
+})
+const fresh=async(slot,width)=>{console.log('Warm browser '+slot);const context=await browsers[slot].newContext({locale:'en-US',viewport:{width,height:900},acceptDownloads:true});contexts.push(context);const page=await context.newPage();page.on('pageerror',e=>{errors.push(e.message);console.log('Page error: '+e.message)});page.on('console',m=>{if(m.type()==='error')console.log('Console: '+m.text())});await page.goto(origin);console.log('Loaded '+slot);await page.locator('.guest-page').waitFor();console.log('Guest graph '+slot);await page.evaluate(async()=>{await Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>setTimeout(()=>reject(Error('PWA installation timed out')),25000))]);await new Promise(r=>setTimeout(r,300))});console.log('PWA ready '+slot);await page.reload();await page.locator('.guest-page').waitFor();return {context,page}}
+const close=async page=>{if(await page.locator('[role=dialog]').count()){await page.getByRole('button',{name:'Close',exact:true}).click();await page.locator('[role=dialog]').waitFor({state:'detached'})}}
+const details=async page=>{await close(page);await page.locator('.guest-peer .guest-node').first().click();await page.locator('.guest-job-detail').waitFor()}
+const localJob=async(page,id)=>(await localState(page)).jobs.find(j=>j.id===id)
+const gate=async(page,enabled)=>page.evaluate(enabled=>{
+ if(!window.__localSend){window.__localSend=RTCDataChannel.prototype.send;RTCDataChannel.prototype.send=function(value){if(typeof value!=='string'&&window.__localHold){const array=value instanceof ArrayBuffer?value:value.buffer;const offset=value instanceof ArrayBuffer?0:value.byteOffset;if(value.byteLength>=24&&new DataView(array,offset).getUint32(20)>=16){window.__localHeld=(window.__localHeld??0)+1;return}}return window.__localSend.call(this,value)}}
+ window.__localHold=enabled;window.__localHeld=0
+},enabled)
+const connectUI=async(page,enter=false)=>{await page.locator('.workspace-add-device').click();await page.getByRole('tab',{name:'Local',exact:true}).click();if(enter)await page.getByRole('button',{name:'Enter code',exact:true}).click()}
+const packet=page=>until(()=>page.getByTestId('local-package').getAttribute('data-value'))
+const join=async(page,value)=>{await page.getByLabel('Connection package',{exact:true}).fill(value);await page.getByRole('button',{name:'Continue',exact:true}).click()}
+const create=async page=>{const button=page.getByRole('button',{name:'Create connection',exact:true});if(await button.count())await button.click();else await page.getByRole('button',{name:'New code',exact:true}).click()}
+const pair=async(a,b,known=false)=>{
+ await close(a.page);await close(b.page)
+ await connectUI(a.page);await create(a.page);const offer=await packet(a.page)
+ if(!known){const image=a.page.locator('.local-code img');await image.waitFor();const pixels=PNG.sync.read(await image.screenshot());assert.equal(jsQR(new Uint8ClampedArray(pixels.data),pixels.width,pixels.height)?.data,offer);mark('Actual displayed QR pixels decode to the complete signed offer')}
+ await connectUI(b.page,true);await join(b.page,offer);const answer=await packet(b.page)
+ await a.page.getByRole('button',{name:'Enter reply',exact:true}).click();await join(a.page,answer)
+ if(known){await a.page.locator('[role=dialog]').waitFor({state:'detached'});await b.page.locator('[role=dialog]').waitFor({state:'detached'});return {offer,answer}}
+ await a.page.getByTestId('local-comparison').waitFor();await b.page.getByTestId('local-comparison').waitFor();assert.equal(await a.page.getByTestId('local-comparison').textContent(),await b.page.getByTestId('local-comparison').textContent())
+ assert.equal((await localState(a.page)).peers.length,0);assert.equal((await localState(b.page)).peers.length,0)
+ await a.page.getByRole('button',{name:'Codes match',exact:true}).click();await delay(250);assert.equal((await localState(a.page)).peers.length,0)
+ await b.page.getByRole('button',{name:'Codes match',exact:true}).click();await a.page.locator('[role=dialog]').waitFor({state:'detached'});await b.page.locator('[role=dialog]').waitFor({state:'detached'})
+ await until(async()=>(await localState(a.page)).peers.length===1&&(await localState(b.page)).peers.length===1)
+ return {offer,answer}
+}
+const send=async(a,bytes,name)=>{await a.page.locator('.guest-footer').getByRole('button',{name:'Choose a file',exact:true}).click();await a.page.locator('input[type=file]').setInputFiles({name,mimeType:'application/octet-stream',buffer:bytes});await a.page.getByRole('button',{name:'Send',exact:true}).click();return until(async()=>(await localState(a.page)).jobs.find(j=>j.name===name))}
+const save=async(page,bytes)=>{const [d]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Save file',exact:true}).click()]);const stream=await d.createReadStream(),hash=createHash('sha256');let size=0;for await(const chunk of stream){size+=chunk.length;hash.update(chunk)}assert.equal(size,bytes.length);assert.equal(hash.digest('hex'),createHash('sha256').update(bytes).digest('hex'))}
+const complete=async(a,b,job,bytes,minimum=bytes.length)=>{
+ await until(async()=>(await localJob(b.page,job.id))?.phase==='complete',120000);await save(b.page,bytes);await until(async()=>(await localJob(a.page,job.id))?.phase==='complete')
+ const receiver=await localJob(b.page,job.id),sender=await localJob(a.page,job.id)
+ assert.equal(receiver.snapshot.completion.stored,false);assert.equal(sender.local.state.receipt.plaintext_size,bytes.length);assert.equal(receiver.authority,'LOCAL_DEVICE');assert.equal(receiver.snapshot.route.kind,'DIRECT');assert.ok(['host','prflx'].includes(sender.transport.proof.local));assert.ok(['host','prflx'].includes(sender.transport.proof.remote));assert.ok(sender.transport.proof.sent>=minimum)
+ proofs.push({id:job.id,bytes:bytes.length,receipt:receiver.local.state.receipt,proof:sender.transport.proof});await close(a.page);await close(b.page)
+}
+const checkpointed=async(a,b,name)=>{
+ await close(a.page);await close(b.page);await gate(a.page,true);const bytes=randomBytes(8<<20),job=await send(a,bytes,name);await b.page.getByRole('button',{name:'Receive',exact:true}).click();await until(async()=>(await localJob(b.page,job.id))?.received>=(1<<20));await until(()=>a.page.evaluate(()=>window.__localHeld>0));return {job,bytes}
+}
+try{
+ const a=await fresh(0,1280),b=await fresh(1,390)
+ const before=[await localState(a.page),await localState(b.page)];assert.ok(before.every(s=>s.root!==s.cloudRoot&&s.leases===0))
+ const firewall=await network(true);await a.page.reload();await b.page.reload();await a.page.locator('.guest-page').waitFor();await b.page.locator('.guest-page').waitFor()
+ for(const {page} of [a,b])assert.equal(await page.evaluate(async()=>{try{return(await fetch('/api/v1/auth/capabilities',{cache:'no-store',signal:AbortSignal.timeout(2000)})).ok}catch{return false}}),false)
+ mark('Kernel denies public/API/DNS and origin HTTP; cached PWA boots on both devices without a guest registration')
+ const initial=await pair(a,b);mark('Signed offline packages match on both displays; one-sided confirmation does not create trust; two-sided confirmation pairs locally')
+ for(const bytes of [randomBytes((full?16:1)<<20),Buffer.alloc(0)]){
+  const name=bytes.length?'offline-'+(full?'sixteen':'one')+'-MiB.bin':'offline-empty.bin',job=await send(a,bytes,name)
+  await b.page.getByRole('button',{name:'Receive',exact:true}).waitFor();assert.equal((await localState(b.page)).chunks.filter(c=>c.job===job.id).length,0)
+  await b.page.getByRole('button',{name:'Receive',exact:true}).click();await complete(a,b,job,bytes)
+  mark(name+': no pre-consent frame; independent local authority, verified saved SHA and signed receipt; no cloud copy')
+ }
+ if(full){
+  const rejected=await send(a,randomBytes(1<<20),'offline-declined.bin');await b.page.getByRole('button',{name:'Decline',exact:true}).click();await until(async()=>(await localJob(a.page,rejected.id))?.phase==='stopped');assert.equal((await localJob(b.page,rejected.id)).local.state.state,'REJECTED');assert.equal((await localState(b.page)).chunks.filter(c=>c.job===rejected.id).length,0);assert.equal((await localJob(b.page,rejected.id)).hasPlain,false);mark('Declining before consent creates no manifest, file chunk or completion receipt');await close(a.page);await close(b.page)
+  const paused=await checkpointed(a,b,'offline-pause-reopen.bin');await details(b.page);await b.page.getByRole('button',{name:'Pause',exact:true}).click();await until(async()=>(await localJob(a.page,paused.job.id))?.local.state.paused);const ack=(await localJob(b.page,paused.job.id)).received;await delay(400);assert.equal((await localJob(b.page,paused.job.id)).received,ack)
+  const tab=await b.context.newPage();await tab.goto(origin);await tab.locator('.guest-page').waitFor();await details(tab);await tab.getByRole('button',{name:'Cancel transfer',exact:true}).click();await tab.getByRole('alert').filter({hasText:'another Pinelink tab'}).waitFor();assert.equal((await localJob(b.page,paused.job.id)).local.state.paused,true);assert.equal((await localJob(b.page,paused.job.id)).local.state.state,'ACCEPTED');await tab.close();mark('Receiver pause freezes durable ACK; a second tab cannot cancel the owning tab’s transfer')
+  await b.page.reload();await b.page.locator('.guest-page').waitFor();await until(async()=>(await localJob(a.page,paused.job.id))?.local.disconnected);assert.equal((await localJob(b.page,paused.job.id)).received,ack);await gate(a.page,false);await pair(a,b,true);await details(b.page);await b.page.getByRole('button',{name:'Resume',exact:true}).click();await close(b.page);await complete(a,b,paused.job,paused.bytes,paused.bytes.length-ack);mark('Cached reload preserves identity, trust and ACK; explicit known-key reconnection resumes the same encrypted attempt')
+  const dropped=await checkpointed(a,b,'offline-link-drop.bin');const prefix=(await localJob(b.page,dropped.job.id)).received;await network(true,'peer');await gate(a.page,false);await until(async()=>(await localJob(a.page,dropped.job.id))?.local.disconnected&&(await localJob(b.page,dropped.job.id))?.local.disconnected,45000);await delay(500);assert.equal((await localJob(b.page,dropped.job.id)).received,prefix);await network(false,'peer');await pair(a,b,true);await details(b.page);await b.page.getByRole('button',{name:'Resume',exact:true}).click();await close(b.page);await complete(a,b,dropped.job,dropped.bytes,dropped.bytes.length-prefix);mark('Kernel peer outage stops both flows without a cloud fallback; restoring only LAN resumes the persisted prefix and verifies the file')
+  const cancelled=await checkpointed(a,b,'offline-cancel.bin');await details(b.page);await b.page.getByRole('button',{name:'Cancel transfer',exact:true}).click();await until(async()=>(await localJob(a.page,cancelled.job.id))?.local.state.state==='CANCELLED');assert.equal((await localJob(b.page,cancelled.job.id)).hasPlain,false);assert.equal((await localState(b.page)).chunks.filter(c=>c.job===cancelled.job.id).length,0);assert.equal((await localJob(b.page,cancelled.job.id)).local.state.receipt,undefined);await gate(a.page,false);await close(a.page);await close(b.page);mark('Mid-file cancellation is receiver-signed and atomically removes partial ciphertext without a receipt')
+  await b.page.evaluate(()=>{window.__receiptPending=false;window.__sign=crypto.subtle.sign.bind(crypto.subtle);crypto.subtle.sign=async(...args)=>{const bytes=args[2],text=new TextDecoder().decode(bytes);if(text.startsWith('pinelink-local-browser-receipt-v1\n')){window.__receiptPending=true;await new Promise(resolve=>window.__releaseReceipt=resolve)}return window.__sign(...args)}})
+  const race=await send(a,randomBytes(1<<20),'offline-cancel-at-verification.bin');await b.page.getByRole('button',{name:'Receive',exact:true}).click();await until(()=>b.page.evaluate(()=>window.__receiptPending));await details(b.page);await b.page.getByRole('button',{name:'Cancel transfer',exact:true}).click();await until(async()=>(await localJob(b.page,race.id))?.local.state.state==='CANCELLED');await b.page.evaluate(()=>{window.__releaseReceipt();crypto.subtle.sign=window.__sign});await delay(500);assert.equal((await localJob(b.page,race.id)).hasPlain,false);assert.equal((await localJob(b.page,race.id)).local.state.receipt,undefined);await until(async()=>(await localJob(a.page,race.id))?.local.state.state==='CANCELLED');await close(a.page);await close(b.page);mark('Cancel wins against an already-running receipt signature; the stale verification cannot commit plaintext or completion')
+  await connectUI(b.page,true);await join(b.page,initial.offer);await b.page.getByRole('alert').filter({hasText:'already been used'}).waitFor();await close(b.page);assert.equal((await localState(b.page)).peers.length,1);mark('Used signed invitation is rejected without adding or replacing trust')
+  await connectUI(b.page,true);await b.page.getByRole('button',{name:'Scan code',exact:true}).click();await b.page.getByRole('alert').filter({hasText:'Camera unavailable'}).waitFor();await b.page.getByLabel('Connection package',{exact:true}).waitFor();await close(b.page);mark('Camera denial/no device returns to usable manual package entry')
+  const pinned=(await localState(b.page)).peers[0].encryption_key
+  await a.page.evaluate(async()=>{const name=(await indexedDB.databases()).find(d=>d.name.startsWith('pinelink-visitor:')).name;const db=await new Promise(r=>{const q=indexedDB.open(name);q.onsuccess=()=>r(q.result)});await new Promise((resolve,reject)=>{const tx=db.transaction(['profiles','localPeers'],'readwrite'),q=tx.objectStore('profiles').get('local');q.onsuccess=()=>{const p=q.result;window.__originalAge=p.encryptionKey;const other=tx.objectStore('localPeers').getAll();other.onsuccess=()=>tx.objectStore('profiles').put({...p,encryptionKey:other.result[0].encryption_key})};tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close()})
+  await a.page.reload();await a.page.locator('.guest-page').waitFor();await connectUI(a.page);await create(a.page);const changed=await packet(a.page);await connectUI(b.page,true);await join(b.page,changed);const changedAnswer=await packet(b.page);await a.page.getByRole('button',{name:'Enter reply',exact:true}).click();await join(a.page,changedAnswer);await b.page.getByRole('alert').filter({hasText:'device key does not match'}).waitFor();assert.equal((await localState(b.page)).peers[0].encryption_key,pinned);await close(a.page);await close(b.page);mark('A validly signed invitation with a substituted encryption key cannot replace a pinned device')
+  await a.page.clock.install();await connectUI(a.page);await create(a.page);await packet(a.page);await a.page.getByRole('button',{name:'Enter reply',exact:true}).click();await join(a.page,initial.answer);await a.page.getByRole('alert').filter({hasText:'Code expired'}).waitFor();await a.page.clock.fastForward(121000);await a.page.locator('[data-local-phase=expired]').waitFor();await a.page.getByRole('button',{name:'New code',exact:true}).waitFor();await close(a.page);mark('An old answer cannot bind a fresh offer; the local invitation timer expires without a server clock')
+ }
+ await a.page.screenshot({path:out+'/offline-desktop.png'});await b.page.screenshot({path:out+'/offline-mobile.png'})
+ const done=await localState(b.page);assert.ok(done.journal.length>0);assert.ok(done.journal.every(e=>e.authority==='LOCAL_DEVICE'&&e.uploaded===0));assert.equal(done.leases,0)
+ await b.page.reload();await b.page.locator('.guest-page').waitFor();assert.equal((await localState(b.page)).root,before[1].root);assert.equal((await localState(b.page)).jobs.filter(j=>j.hasPlain).length,full?4:2)
+ mark('Offline reload retains local keys, paired trust, verified files, receipts and transactional local journal')
+ assert.deepEqual(errors,[]);await writeFile(out+'/verification.json',JSON.stringify({passed:true,checked_at:new Date().toISOString(),origin,checks,proofs,errors,firewall:firewall.firewall},null,2));console.log(JSON.stringify({passed:true,checks:checks.length}))
+}catch(e){for(let i=0;i<contexts.length;i++)for(const p of contexts[i].pages()){await p.screenshot({path:out+'/failure-'+i+'.png'}).catch(()=>{});await writeFile(out+'/failure-'+i+'-state.json',JSON.stringify({text:await p.locator('body').innerText(),state:await localState(p)},null,2)).catch(()=>{})};await writeFile(out+'/verification.json',JSON.stringify({passed:false,error:e.stack,checks,proofs,errors},null,2));throw e}
+finally{for(const c of contexts)await c.close().catch(()=>{});for(const b of browsers)await b.close().catch(()=>{})}

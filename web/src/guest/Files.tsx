@@ -26,6 +26,7 @@ export function useAccountWorkspace() {
 const taskActive = (record: TaskRecord) => ['QUEUED', 'RUNNING', 'PAUSED'].includes(record.state)
 const guestActive = (job: GuestJob) => !['complete', 'stopped'].includes(job.phase)
 export function guestJobStatus(job: GuestJob, c: ReturnType<typeof useGuestCopy>) {
+  if(job.local?.disconnected&&!['complete','stopped'].includes(job.phase))return c.waitingConnection
   return job.phase === 'complete' ? job.direction === 'receive' && job.plain ? c.saved : c.complete : job.phase === 'paused' ? c.paused : job.phase === 'verifying' ? c.verifying : job.phase === 'stopped' ? job.error === 'FILE_EXPIRED' || job.snapshot?.state === 'EXPIRED' ? c.fileExpired : c.stopped : job.phase === 'preparing' ? c.preparing : job.error ? c.unavailable : job.transfer?.state === 'PENDING' ? c.waitingFile : c.running
 }
 function FileTile({ name, status, Badge, onClick }: { name: string; status: string; Badge: LucideIcon; onClick: () => void }) {

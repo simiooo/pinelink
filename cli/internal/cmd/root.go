@@ -45,7 +45,7 @@ func Execute() error {
 		newTransferActionCommand(opts, "cancel"), newNotificationsCommand(opts),
 		newTransfersCommand(opts), newTasksCommand(opts), newDeviceCommand(opts),
 		newBroadcastCommand(opts), newFileActionCommand(opts, "promote"),
-		newLANCommand(opts),
+		newLANCommand(opts), newLocalWebCommand(),
 		newFileActionCommand(opts, "delete-file"), newQuotaCommand(opts), newP2PCommand(opts),
 	)
 	return root.Execute()

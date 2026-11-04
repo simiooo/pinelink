@@ -10,7 +10,9 @@
 
 Web 访客模式支持无需注册的一次性设备连接与独立接收确认。已配对浏览器优先尝试 WebRTC 直连，失败或中断后使用同一密文和接收账本回退云端；节点图按真实路径显示两个端点或设备—云端—设备，保留真实蓝灰进度、暂停、刷新恢复与本机文件保存。登录不改写在途访客身份。启用方式、资源限制和验证边界见[访客传输](infra/docs/guests.md)及[直连验证](infra/docs/web-direct-tests.md)。
 
-账号模式和 Flutter 的完整文件数据面、离线新增发送与写入队列，以及新版节点图的其余界面仍在实施。浏览器的配对、信令和进度服务仍须可达，完全断网的浏览器发现不能以在线局域网直连代替。实际部署版本以交付记录为准。
+Web/PWA 新增独立的本地连接：双方交换二维码或签名连接包、核对号码并确认，无中心、外部 DNS、STUN/TURN 时仍可配对和加密收发。暂停、断链重连、持久化确认量与签名回执由接收设备负责；桌面本地启动包解决首次未缓存网页的离线启动。浏览器不能通用扫描 Bonjour，采用显式交换发现目标，详见[无中心服务的 Web 局域网收发](infra/docs/web-serverless-lan.md)。
+
+账号模式和 Flutter 的完整文件数据面、原生离线发现的界面适配，以及新版节点图的其余界面仍在实施。Web 本地连接暂不与原生 CLI 的 TLS 数据面互操作；已有原生 CLI 离线能力不能冒充 Android 界面交付。实际部署版本以交付记录为准。
 
 Web/Flutter 的账号预览已接入 Google 首次授权自动建号、邮箱与密码注册/登录、邮件验证码及短链恢复。Google 入口独立，不要求另填邮箱；服务端确定账号后才登记该账号的设备密钥。部署方式与身份边界见[账号服务](infra/docs/accounts.md)，已验证的运行范围见[账号验收记录](designs/27-account-password/runtime-evidence.json)。
 
@@ -73,6 +75,7 @@ Releases 预览包附带源代码版本、SHA-256 校验文件和第三方许可
 - [离线局域网及本地配对](infra/docs/offline-local-delivery.md)
 - [本地持久化与三方增量同步](infra/docs/local-history-sync.md)
 - [Web 离线与 PWA](infra/docs/web-offline-pwa.md)
+- [Web 无中心服务的局域网连接与本地启动包](infra/docs/web-serverless-lan.md)
 - [已验收设计基线](designs/20-pinelink-direct-relay.fig)
 - [服务模式与离线补充稿](designs/23-pinelink-service-and-offline.fig)：仍待原生应用重开检查和产品验收。
 
