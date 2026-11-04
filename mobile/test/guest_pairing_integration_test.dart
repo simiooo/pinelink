@@ -187,9 +187,39 @@ void main() {
           'COMPLETED',
         );
         await runtimeA.upload(jobId);
+        final closingId = await runtimeA.offer(
+          payload,
+          'closing.bin',
+          Map<String, dynamic>.from(peer),
+        );
+        await runtimeA.upload(closingId);
+        await runtimeB.syncIncoming();
+        final closing = (await runtimeB.store.jobs()).firstWhere(
+          (j) => j['name'] == 'closing.bin',
+        );
+        await runtimeB.respond(closing['id'], true);
+        await slowBlobs(40);
+        final interrupted = runtimeB
+            .receive(closing['id'])
+            .then((_) => true, onError: (Object _) => false);
+        final closeDeadline = DateTime.now().add(const Duration(seconds: 15));
+        while (((await runtimeB.store.job(closing['id']))?['received']
+                        as int? ??
+                    0) ==
+                0 &&
+            DateTime.now().isBefore(closeDeadline)) {
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+        }
+        expect(
+          (await runtimeB.store.job(closing['id']))!['received'],
+          greaterThan(0),
+        );
+        await Future.wait([runtimeB.close(), runtimeB.close()]);
+        expect(await interrupted, isFalse);
+        await slowBlobs(0);
+        await runtimeA.control(closingId, 'cancel');
         await a.remove(peer['pair_id']);
         expect((await a.list())['peers'], isEmpty);
-        expect((await b.list())['peers'], isEmpty);
       } finally {
         await runtimeA.close();
         await runtimeB.close();

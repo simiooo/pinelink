@@ -22,6 +22,7 @@ class NativeGuestRuntime {
   late final GuestRelay relay = GuestRelay(session);
   final Set<Future<void>> _transfers = {};
   bool _closed = false;
+  Future<void>? _closing;
 
   Future<void> _transfer(Future<void> Function() work) {
     if (_closed) return Future.error(StateError('GUEST_CLOSED'));
@@ -428,8 +429,9 @@ class NativeGuestRuntime {
     return decryptDare(cipher, await identity.decrypt(job['manifest']));
   }
 
-  Future<void> close() async {
-    if (_closed) return;
+  Future<void> close() => _closing ??= _finishClose();
+
+  Future<void> _finishClose() async {
     _closed = true;
     await relay.close();
     await Future.wait(
