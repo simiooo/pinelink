@@ -83,3 +83,10 @@ it('keeps the verified delivery path distinct from an independent cloud backup',
   expect(container.querySelector('.guest-cloud')).not.toBeInTheDocument()
   expect(container.querySelector('[data-ledger=delivery]')).toHaveAttribute('data-blue', '1')
 })
+it('keeps a still incomplete cloud copy independent after confirmed delivery', () => {
+  const value = job(); value.phase = 'complete'; value.snapshot!.completion.delivered = true
+  value.snapshot!.completion.stored = false; value.snapshot!.spool = { state: 'SPOOLING', acknowledged_bytes: 58, total_bytes: 100 }
+  const { container } = render(view(value))
+  expect(container.querySelector('[data-ledger=delivery]')).toHaveAttribute('data-blue', '1')
+  expect(container.querySelector('[data-ledger=spool]')).toHaveAttribute('data-blue', '0.58')
+})
