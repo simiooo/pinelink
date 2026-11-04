@@ -99,6 +99,8 @@ class GuestRelay {
         'state': 'COMPLETED',
         'transfer': completed,
         'manifest': current['encrypted_manifest'],
+        'plainSize': manifest['plaintext_size'],
+        'name': safeFileName(manifest['file_name']),
       });
       return completed;
     }

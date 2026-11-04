@@ -23,7 +23,73 @@ class NativeGuestStore {
     await db.customStatement(
       'CREATE TABLE IF NOT EXISTS guest_chunks (job TEXT NOT NULL, kind TEXT NOT NULL, idx INTEGER NOT NULL, hash TEXT NOT NULL, bytes BLOB NOT NULL, PRIMARY KEY(job,kind,idx))',
     );
+    await db.customStatement(
+      'CREATE TABLE IF NOT EXISTS guest_peers (pair TEXT PRIMARY KEY, body TEXT NOT NULL)',
+    );
   }
+
+  Future<List<GuestMap>> peers() async {
+    final rows = await db.customSelect('SELECT body FROM guest_peers').get();
+    return rows
+        .map((row) => jsonDecode(row.read<String>('body')) as GuestMap)
+        .toList();
+  }
+
+  /// A successful authoritative roster replaces the cache atomically. An
+  /// unreachable service leaves the last roster and its local names intact.
+  Future<void> replacePeers(List<GuestMap> roster) => db.transaction(() async {
+    final previous = {for (final peer in await peers()) peer['pair_id']: peer};
+    final seen = <String>{};
+    final sanitized = <GuestMap>[];
+    for (final peer in roster) {
+      final pair = peer['pair_id'];
+      if (pair is! String ||
+          pair.isEmpty ||
+          !seen.add(pair) ||
+          peer['owner_id'] is! String ||
+          peer['device_id'] is! String ||
+          peer['device_name'] is! String ||
+          peer['encryption_key'] is! String ||
+          peer['signing_key'] is! String) {
+        throw StateError('GUEST_RESPONSE_INVALID');
+      }
+      final old = previous[pair];
+      if (old != null &&
+          [
+            'owner_id',
+            'device_id',
+            'encryption_key',
+            'signing_key',
+          ].any((key) => old[key] != peer[key])) {
+        throw StateError('GUEST_IDENTITY_CHANGED');
+      }
+      final saved = {...peer}..remove('local_name');
+      if (old?['local_name'] is String) {
+        saved['local_name'] = old!['local_name'];
+      }
+      sanitized.add(saved);
+    }
+    await db.customStatement('DELETE FROM guest_peers');
+    for (final peer in sanitized) {
+      await db.customStatement(
+        'INSERT INTO guest_peers(pair,body) VALUES(?,?)',
+        [peer['pair_id'], jsonEncode(peer)],
+      );
+    }
+  });
+
+  Future<void> renamePeer(String pair, String name) => db.transaction(() async {
+    final list = await peers();
+    final peer = list.where((p) => p['pair_id'] == pair).firstOrNull;
+    if (peer == null) throw StateError('GUEST_PEER_INVALID');
+    await db.customStatement('UPDATE guest_peers SET body=? WHERE pair=?', [
+      jsonEncode({...peer, 'local_name': name}),
+      pair,
+    ]);
+  });
+
+  Future<void> forgetPeer(String pair) =>
+      db.customStatement('DELETE FROM guest_peers WHERE pair=?', [pair]);
 
   Future<GuestMap?> job(String id) async {
     final rows = await db

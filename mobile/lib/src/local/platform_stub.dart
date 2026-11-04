@@ -1,3 +1,3 @@
 import 'controller.dart';
 
-Future<LocalController?> openLocalController() async => null;
+Future<LocalController?> openLocalController({String? server}) async => null;

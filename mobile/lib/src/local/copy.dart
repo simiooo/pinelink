@@ -45,8 +45,17 @@ String jobStatus(BuildContext c, Map<String, dynamic> job, bool connected) {
   if (job['intent'] == 'cancel') return lc(c, 'Cancelling', '正在取消');
   if (job['expired'] == true) return lc(c, 'Expired', '已过期');
   final s = job['state'] as Map?;
+  if (job['authority'] == 'GUEST_SERVICE' &&
+      job['direction'] == 'send' &&
+      s?['state'] == 'PENDING' &&
+      ((job['progress'] as Map?)?['completion'] as Map?)?['stored'] == true) {
+    return lc(c, 'Stored in cloud', '已暂存云端');
+  }
   return switch (s?['state']) {
-    'COMPLETED' => lc(c, 'Delivered', '已送达'),
+    'COMPLETED' =>
+      job['direction'] == 'send'
+          ? lc(c, 'Sent', '已发送')
+          : lc(c, 'Received', '已接收'),
     'REJECTED' => lc(c, 'Declined', '已拒绝'),
     'CANCELLED' => lc(c, 'Cancelled', '已取消'),
     'EXPIRED' => lc(c, 'Expired', '已过期'),

@@ -7,6 +7,7 @@ import '../auth/controller.dart';
 import '../i18n/controller.dart';
 import '../motion/motion.dart';
 import '../motion/surface.dart';
+import '../motion/cloud_transfer_graph.dart';
 import '../motion/transfer_graph.dart';
 import '../pages/account_page.dart';
 import 'connect.dart';
@@ -27,6 +28,11 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
   LocalController get r => widget.controller;
   bool _pairOpen = false, _foreground = true;
   String? _selected;
+  bool _showHome = false;
+  final GlobalKey _graphKey = GlobalKey();
+  final Map<String, GlobalKey> _nodeKeys = {};
+  LocalMap? _openDevice;
+  Offset _deviceAnchor = Offset.zero;
   @override
   void initState() {
     super.initState();
@@ -58,6 +64,7 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
           'reply',
           'verify',
           'waiting',
+          'online-request',
         ].contains(r.pairing['phase'])) {
       _pairOpen = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -110,6 +117,8 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
     if (mounted) {
       setState(() {
         _selected = id;
+        _showHome = false;
+        _openDevice = null;
       });
     }
   });
@@ -145,65 +154,38 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> _device(LocalMap peer) async {
-    await showMotionSurface<void>(
-      context,
-      title: localPeerName(peer),
-      horizontalPadding: 20,
-      builder: (context) => Wrap(
-        spacing: 24,
-        runSpacing: 24,
-        children: [
-          IconButton(
-            tooltip: lc(context, 'Send file', '发送文件'),
-            onPressed: r.reachable(peer['root'])
-                ? () {
-                    Navigator.pop(context);
-                    unawaited(_send(peer));
-                  }
-                : null,
-            icon: const Icon(Icons.arrow_upward),
-          ),
-          IconButton(
-            tooltip: lc(context, 'Files', '文件'),
-            onPressed: () {
-              Navigator.pop(context);
-              _files(peer['root']);
-            },
-            icon: const Icon(Icons.history),
-          ),
-          IconButton(
-            tooltip: lc(context, 'Reconnect', '重新连接'),
-            onPressed: () {
-              Navigator.pop(context);
-              unawaited(
-                _run(() async {
-                  await r.invite(peer['root']);
-                  await _pair();
-                }),
-              );
-            },
-            icon: const Icon(Icons.link),
-          ),
-          IconButton(
-            tooltip: lc(context, 'Rename', '修改备注'),
-            onPressed: () {
-              Navigator.pop(context);
-              unawaited(_rename(peer));
-            },
-            icon: const Icon(Icons.edit_outlined),
-          ),
-          IconButton(
-            tooltip: lc(context, 'Remove device', '移除设备'),
-            onPressed: () {
-              Navigator.pop(context);
-              unawaited(_remove(peer));
-            },
-            icon: const Icon(Icons.delete_outline),
-          ),
-        ],
-      ),
+  void _device(LocalMap peer) {
+    final root = peer['root'] as String;
+    final node = _nodeKeys[root]?.currentContext?.findRenderObject();
+    final graph = _graphKey.currentContext?.findRenderObject();
+    if (node is! RenderBox || graph is! RenderBox) return;
+    final center = node.localToGlobal(
+      node.size.center(Offset.zero),
+      ancestor: graph,
     );
+    setState(() {
+      _openDevice = peer;
+      _deviceAnchor = center;
+    });
+  }
+
+  void _deviceAction(LocalMap peer, String action) {
+    setState(() => _openDevice = null);
+    switch (action) {
+      case 'conversation':
+        _files(peer['root']);
+      case 'rename':
+        unawaited(_rename(peer));
+      case 'remove':
+        unawaited(_remove(peer));
+      case 'reconnect':
+        unawaited(
+          _run(() async {
+            await r.invite(peer['root']);
+            await _pair();
+          }),
+        );
+    }
   }
 
   Future<void> _rename(LocalMap peer) async {
@@ -288,7 +270,7 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
                   localActive(j),
             )
             .toList();
-        if (waiting.isEmpty) {
+        if (waiting.isEmpty && r.pairRequests.isEmpty) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 32),
             child: Text(
@@ -300,6 +282,19 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            for (final request in r.pairRequests)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.devices_outlined),
+                title: Text(
+                  request['device_name'] ?? lc(context, 'Device', '设备'),
+                ),
+                subtitle: Text(lc(context, 'Connection request', '连接请求')),
+                onTap: () {
+                  Navigator.pop(context);
+                  r.showPairRequest(request['id']);
+                },
+              ),
             for (final job in waiting)
               ListTile(
                 contentPadding: EdgeInsets.zero,
@@ -325,24 +320,39 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
     animation: r,
     builder: (context, _) {
       final active = r.jobs.where(localActive).toList(),
-          selected =
-              r.jobs.where((j) => j['id'] == _selected).firstOrNull ??
-              active.firstOrNull;
-      final count = r.jobs
-          .where(
-            (j) =>
-                j['direction'] == 'receive' &&
-                j['state']?['state'] == 'PENDING' &&
-                localActive(j),
-          )
-          .length;
+          selected = _showHome
+              ? null
+              : r.jobs.where((j) => j['id'] == _selected).firstOrNull ??
+                    active.firstOrNull;
+      final count =
+          r.jobs
+              .where(
+                (j) =>
+                    j['direction'] == 'receive' &&
+                    j['state']?['state'] == 'PENDING' &&
+                    localActive(j),
+              )
+              .length +
+          r.pairRequests.length;
       return Scaffold(
         appBar: AppBar(
           toolbarHeight: 72,
           titleSpacing: 20,
-          title: const Text(
-            'Pinelink',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+          title: TextButton(
+            onPressed: () => setState(() {
+              _selected = null;
+              _showHome = true;
+              _openDevice = null;
+            }),
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              alignment: Alignment.centerLeft,
+              foregroundColor: const Color(0xff101010),
+            ),
+            child: const Text(
+              'Pinelink',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+            ),
           ),
           actions: [
             IconButton(
@@ -368,17 +378,9 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
               tooltip: lc(context, 'More', '更多'),
               icon: const Icon(Icons.more_horiz),
               onSelected: (value) {
-                if (value == 'files') {
-                  _files();
-                } else {
-                  unawaited(PinelinkI18n.of(context)?.setPreference(value));
-                }
+                unawaited(PinelinkI18n.of(context)?.setPreference(value));
               },
               itemBuilder: (_) => [
-                PopupMenuItem(
-                  value: 'files',
-                  child: Text(lc(context, 'Files', '文件')),
-                ),
                 const PopupMenuItem(value: 'en-US', child: Text('English')),
                 const PopupMenuItem(value: 'zh-CN', child: Text('简体中文')),
               ],
@@ -405,50 +407,144 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
                               final total = selected['cipherSize'] as int,
                                   received = s?['received'] as int? ?? 0,
                                   done = s?['state'] == 'COMPLETED';
-                              final graph = TransferGraph(
-                                key: const ValueKey('native-transfer-graph'),
-                                value: total == 0
-                                    ? (done ? 1 : 0)
-                                    : received / total,
-                                running:
-                                    connected &&
-                                    localActive(selected) &&
-                                    s?['state'] == 'ACCEPTED' &&
-                                    s?['paused'] != true &&
-                                    selected['intent'] == null &&
-                                    selected['disconnected'] != true,
-                                completed: done,
-                                cloud: false,
-                                incoming: selected['direction'] == 'receive',
-                                localIcon: Icons.smartphone_outlined,
-                                peerIcon: peerIcon(selected['peer']),
-                                peerDisconnected:
-                                    !r.reachable(selected['peer']['root']) &&
-                                    !done,
-                                localLabel: lc(context, 'This device', '本机'),
-                                peerLabel: localPeerName(
-                                  r.peers
-                                          .where(
-                                            (p) =>
-                                                p['root'] ==
-                                                selected['peer']['root'],
-                                          )
-                                          .firstOrNull ??
-                                      selected['peer'],
-                                ),
-                                statusLabel: jobStatus(
-                                  context,
-                                  selected,
-                                  connected,
-                                ),
-                                detailsLabel: lc(
-                                  context,
-                                  'Transfer details',
-                                  '传输详情',
-                                ),
-                                onDetails: () =>
-                                    showLocalJob(context, r, selected['id']),
-                              );
+                              final progress = selected['progress'] as Map?,
+                                  spool = progress?['spool'] as Map?,
+                                  delivery = progress?['delivery'] as Map?;
+                              double fraction(Map? ledger, bool confirmed) {
+                                if (confirmed) return 1;
+                                final count =
+                                    ledger?['acknowledged_bytes'] as int? ?? 0;
+                                final maximum =
+                                    ledger?['total_bytes'] as int? ?? total;
+                                return maximum > 0
+                                    ? (count / maximum).clamp(0.0, 1.0)
+                                    : (confirmed ? 1 : 0);
+                              }
+
+                              final graph =
+                                  selected['authority'] == 'GUEST_SERVICE'
+                                  ? CloudTransferGraph(
+                                      key: const ValueKey(
+                                        'native-cloud-transfer-graph',
+                                      ),
+                                      spoolValue: fraction(
+                                        spool,
+                                        (progress?['completion']
+                                                as Map?)?['stored'] ==
+                                            true,
+                                      ),
+                                      deliveryValue: fraction(delivery, done),
+                                      spoolRunning:
+                                          connected && localActive(selected),
+                                      deliveryRunning:
+                                          connected &&
+                                          localActive(selected) &&
+                                          s?['paused'] != true,
+                                      completed: done,
+                                      incoming:
+                                          selected['direction'] == 'receive',
+                                      localLabel: lc(
+                                        context,
+                                        'This device',
+                                        '本机',
+                                      ),
+                                      peerLabel: localPeerName(
+                                        r.peers
+                                                .where(
+                                                  (p) =>
+                                                      p['root'] ==
+                                                      selected['peer']['root'],
+                                                )
+                                                .firstOrNull ??
+                                            selected['peer'],
+                                      ),
+                                      cloudLabel: lc(context, 'Cloud', '云端'),
+                                      spoolLabel: lc(
+                                        context,
+                                        'Cloud copy',
+                                        '云端暂存',
+                                      ),
+                                      deliveryLabel: lc(
+                                        context,
+                                        selected['direction'] == 'receive'
+                                            ? 'Received'
+                                            : 'Delivered',
+                                        selected['direction'] == 'receive'
+                                            ? '本机接收'
+                                            : '对方接收',
+                                      ),
+                                      detailsLabel: lc(
+                                        context,
+                                        'Transfer details',
+                                        '传输详情',
+                                      ),
+                                      localIcon: Icons.smartphone_outlined,
+                                      peerIcon: peerIcon(selected['peer']),
+                                      peerDisconnected:
+                                          !r.online(selected['peer']['root']) &&
+                                          !done,
+                                      onDetails: () => showLocalJob(
+                                        context,
+                                        r,
+                                        selected['id'],
+                                      ),
+                                    )
+                                  : TransferGraph(
+                                      key: const ValueKey(
+                                        'native-transfer-graph',
+                                      ),
+                                      value: total == 0
+                                          ? (done ? 1 : 0)
+                                          : received / total,
+                                      running:
+                                          connected &&
+                                          localActive(selected) &&
+                                          s?['state'] == 'ACCEPTED' &&
+                                          s?['paused'] != true &&
+                                          selected['intent'] == null &&
+                                          selected['disconnected'] != true,
+                                      completed: done,
+                                      cloud: false,
+                                      incoming:
+                                          selected['direction'] == 'receive',
+                                      localIcon: Icons.smartphone_outlined,
+                                      peerIcon: peerIcon(selected['peer']),
+                                      peerDisconnected:
+                                          !r.reachable(
+                                            selected['peer']['root'],
+                                          ) &&
+                                          !done,
+                                      localLabel: lc(
+                                        context,
+                                        'This device',
+                                        '本机',
+                                      ),
+                                      peerLabel: localPeerName(
+                                        r.peers
+                                                .where(
+                                                  (p) =>
+                                                      p['root'] ==
+                                                      selected['peer']['root'],
+                                                )
+                                                .firstOrNull ??
+                                            selected['peer'],
+                                      ),
+                                      statusLabel: jobStatus(
+                                        context,
+                                        selected,
+                                        connected,
+                                      ),
+                                      detailsLabel: lc(
+                                        context,
+                                        'Transfer details',
+                                        '传输详情',
+                                      ),
+                                      onDetails: () => showLocalJob(
+                                        context,
+                                        r,
+                                        selected['id'],
+                                      ),
+                                    );
                               return Center(
                                 child: SingleChildScrollView(child: graph),
                               );
@@ -456,6 +552,7 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
                           )
                         : LayoutBuilder(
                             builder: (context, box) => Stack(
+                              key: _graphKey,
                               children: [
                                 if (r.peers.isNotEmpty)
                                   Positioned.fill(
@@ -473,7 +570,12 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
                                                 width: (box.maxWidth - 24) / 2,
                                                 child: _DeviceNode(
                                                   peer: peer,
-                                                  online: r.reachable(
+                                                  iconKey: _nodeKeys
+                                                      .putIfAbsent(
+                                                        peer['root'],
+                                                        GlobalKey.new,
+                                                      ),
+                                                  online: r.online(
                                                     peer['root'],
                                                   ),
                                                   onTap: () => _device(peer),
@@ -533,6 +635,22 @@ class _LocalShellState extends State<LocalShell> with WidgetsBindingObserver {
                                     ],
                                   ),
                                 ),
+                                if (_openDevice != null)
+                                  Positioned.fill(
+                                    child: _DeviceActions(
+                                      key: ValueKey(_openDevice!['root']),
+                                      peer: _openDevice!,
+                                      anchor: _deviceAnchor,
+                                      reconnect:
+                                          _openDevice!['authority'] !=
+                                              'GUEST_SERVICE' &&
+                                          !r.reachable(_openDevice!['root']),
+                                      onClose: () =>
+                                          setState(() => _openDevice = null),
+                                      onAction: (action) =>
+                                          _deviceAction(_openDevice!, action),
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
@@ -578,13 +696,118 @@ IconData peerIcon(LocalMap peer) =>
     ? Icons.smartphone_outlined
     : Icons.computer_outlined;
 
+class _DeviceActions extends StatelessWidget {
+  const _DeviceActions({
+    super.key,
+    required this.peer,
+    required this.anchor,
+    required this.reconnect,
+    required this.onClose,
+    required this.onAction,
+  });
+  final LocalMap peer;
+  final Offset anchor;
+  final bool reconnect;
+  final VoidCallback onClose;
+  final void Function(String) onAction;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, box) {
+      final down = anchor.dy + 120 < box.maxHeight ? 92.0 : -92.0;
+      final side = anchor.dx < 80 ? 92.0 : -92.0;
+      Offset position(double dx, double dy) => Offset(
+        (anchor.dx + dx).clamp(26.0, box.maxWidth - 26),
+        (anchor.dy + dy).clamp(26.0, box.maxHeight - 26),
+      );
+      final actions =
+          <({String id, String label, IconData icon, Offset target})>[
+            (
+              id: 'conversation',
+              label: lc(context, 'Conversation', '聊天'),
+              icon: Icons.chat_bubble_outline,
+              target: position(side, 0),
+            ),
+            (
+              id: 'rename',
+              label: lc(context, 'Rename', '修改备注'),
+              icon: Icons.edit_outlined,
+              target: position(-48, down),
+            ),
+            (
+              id: 'remove',
+              label: lc(context, 'Remove device', '移除设备'),
+              icon: Icons.delete_outline,
+              target: position(48, down),
+            ),
+            if (reconnect)
+              (
+                id: 'reconnect',
+                label: lc(context, 'Reconnect', '重新连接'),
+                icon: Icons.link,
+                target: position(-side, 0),
+              ),
+          ];
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: Semantics(
+              label: lc(context, 'Close device actions', '关闭设备操作'),
+              button: true,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: onClose,
+              ),
+            ),
+          ),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: PinelinkMotion.reduced(context)
+                ? Duration.zero
+                : PinelinkMotion.quick,
+            curve: Curves.easeOutCubic,
+            builder: (context, value, _) => Stack(
+              children: [
+                for (final action in actions)
+                  Positioned(
+                    left:
+                        anchor.dx + (action.target.dx - anchor.dx) * value - 24,
+                    top:
+                        anchor.dy + (action.target.dy - anchor.dy) * value - 24,
+                    child: Opacity(
+                      opacity: value.clamp(0, 1),
+                      child: IconButton(
+                        tooltip: action.label,
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          side: const BorderSide(color: Color(0xffe4e4e7)),
+                          minimumSize: const Size(48, 48),
+                        ),
+                        onPressed: value < .5
+                            ? null
+                            : () => onAction(action.id),
+                        icon: Icon(action.icon, size: 21),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 class _DeviceNode extends StatelessWidget {
   const _DeviceNode({
     required this.peer,
+    required this.iconKey,
     required this.online,
     required this.onTap,
   });
   final LocalMap peer;
+  final GlobalKey iconKey;
   final bool online;
   final VoidCallback onTap;
   @override
@@ -605,6 +828,7 @@ class _DeviceNode extends StatelessWidget {
                 Opacity(
                   opacity: online ? 1 : .42,
                   child: Container(
+                    key: iconKey,
                     width: 56,
                     height: 56,
                     decoration: const BoxDecoration(
@@ -618,7 +842,9 @@ class _DeviceNode extends StatelessWidget {
                   right: -2,
                   bottom: -2,
                   child: Tooltip(
-                    message: lc(context, 'Paired locally', '已在本地配对'),
+                    message: peer['authority'] == 'GUEST_SERVICE'
+                        ? lc(context, 'Connected device', '已连接设备')
+                        : lc(context, 'Paired locally', '已在本地配对'),
                     child: Container(
                       padding: const EdgeInsets.all(3),
                       decoration: const BoxDecoration(
@@ -745,13 +971,14 @@ class _LocalJobState extends State<_LocalJob> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      localBytes(job['plainSize']),
-                      style: const TextStyle(
-                        color: Color(0xFF737373),
-                        fontSize: 13,
+                    if (job['plainSize'] is int)
+                      Text(
+                        localBytes(job['plainSize'] as int),
+                        style: const TextStyle(
+                          color: Color(0xFF737373),
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -774,6 +1001,21 @@ class _LocalJobState extends State<_LocalJob> {
               child: Text(lc(context, 'Decline', '拒绝')),
             ),
           ] else ...[
+            if (job['authority'] == 'GUEST_SERVICE') ...[
+              Row(
+                children: [
+                  Expanded(child: Text(lc(context, 'Cloud copy', '云端暂存'))),
+                  Text(
+                    '${localBytes(((job['progress'] as Map?)?['spool'] as Map?)?['acknowledged_bytes'] as int? ?? 0)} / ${localBytes(job['cipherSize'] as int)}',
+                    style: const TextStyle(
+                      color: Color(0xFF737373),
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+            ],
             Row(
               children: [
                 Expanded(child: Text(jobStatus(context, job, connected))),
@@ -817,7 +1059,9 @@ class _LocalJobState extends State<_LocalJob> {
                     icon: const Icon(Icons.close),
                   ),
                   const SizedBox(width: 16),
-                  if (s?['state'] == 'ACCEPTED')
+                  if (s?['state'] == 'ACCEPTED' &&
+                      (job['authority'] != 'GUEST_SERVICE' ||
+                          job['direction'] == 'receive'))
                     IconButton(
                       tooltip: paused
                           ? lc(context, 'Resume', '继续')

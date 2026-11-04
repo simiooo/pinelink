@@ -14,6 +14,7 @@ class GuestSession {
     required this.identity,
     required this.vault,
     required this.namespace,
+    required this.deviceName,
     http.Client? client,
   }) : client = client ?? http.Client() {
     final uri = Uri.parse(server);
@@ -36,14 +37,17 @@ class GuestSession {
     required LocalIdentity identity,
     required IdentityVault vault,
     http.Client? client,
+    String deviceName = 'Android',
   }) async => GuestSession._(
     server: server,
     identity: identity,
     vault: vault,
     namespace: await scopeFor(server),
     client: client,
+    deviceName: deviceName,
   );
   final String server, namespace;
+  final String deviceName;
   final LocalIdentity identity;
   final IdentityVault vault;
   final http.Client client;
@@ -99,10 +103,10 @@ class GuestSession {
     return decoded;
   }
 
-  Future<void> ensureSession({String deviceName = 'Android'}) {
+  Future<void> ensureSession({String? deviceName}) {
     if (_closed) return Future.error(StateError('GUEST_CLOSED'));
     if (_token != null) return Future.value();
-    return _enrollment ??= _enroll(deviceName)
+    return _enrollment ??= _enroll(deviceName ?? this.deviceName)
         .whenComplete(() => _enrollment = null);
   }
 

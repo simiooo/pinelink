@@ -16,20 +16,26 @@ String localPeerName(LocalMap peer) =>
     peer['local_name'] ?? peer['name'] ?? 'Device';
 
 abstract class LocalController extends ChangeNotifier {
+  bool get smartConnection => false;
   List<LocalMap> get peers;
   List<LocalMap> get jobs;
   List<LocalMap> get nearby;
+  List<LocalMap> get pairRequests => const [];
   LocalMap get pairing;
   String? get discoveryError;
   bool get discovering;
   bool reachable(String root);
+  bool online(String root) => reachable(root);
   bool supportsText(String root) => false;
   Future<void> discover();
   Future<void> openSettings() async {}
   Future<void> connectNearby(String id);
   Future<String?> invite([String? expected]);
+  Future<String?> inviteOffline() => invite();
   Future<String?> join(String code, [String? expected]);
   Future<void> confirm();
+  Future<void> declinePairing() => cancelPairing();
+  void showPairRequest(String id) {}
   Future<void> cancelPairing();
   Future<String> send(Uint8List bytes, String name, LocalMap peer);
   Future<String> sendText(Uint8List bytes, LocalMap peer, String sensitivity) =>

@@ -10,6 +10,9 @@ import 'dart:math';
 import '../data/database.dart';
 import '../data/identity.dart';
 import '../data/wire.dart' as wire;
+import '../guest/composite.dart';
+import '../guest/coordinator.dart';
+import '../guest/runtime.dart';
 import 'controller.dart';
 import 'discovery.dart';
 import 'file_crypto.dart';
@@ -18,9 +21,10 @@ import 'protocol.dart';
 import 'session.dart';
 import 'store.dart';
 
-Future<LocalController?> openLocalController() async {
+Future<LocalController?> openLocalController({String? server}) async {
   await initializeLocalCrypto();
   final db = ClientDatabase('pinelink-native-local-v1');
+  NativeLocalRuntime? local;
   try {
     final identity = await LocalIdentity.load(
       db,
@@ -42,9 +46,25 @@ Future<LocalController?> openLocalController() async {
         name = null;
       }
     }
-    return await NativeLocalRuntime.open(store, identity, name: name);
+    local = await NativeLocalRuntime.open(store, identity, name: name);
+    if (server == null) return local;
+    final guestRuntime = await NativeGuestRuntime.open(
+      server: server,
+      deviceName: local.deviceName,
+    );
+    try {
+      final guest = await NativeGuestCoordinator.open(guestRuntime);
+      return CompositeController(local, guest, server);
+    } catch (_) {
+      await guestRuntime.close();
+      rethrow;
+    }
   } catch (_) {
-    await db.close();
+    if (local == null) {
+      await db.close();
+    } else {
+      await local.close();
+    }
     rethrow;
   }
 }

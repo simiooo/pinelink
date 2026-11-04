@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pinelink_mobile/src/local/controller.dart';
 import 'package:pinelink_mobile/src/local/conversation.dart';
+import 'package:pinelink_mobile/src/local/connect.dart';
 import 'package:pinelink_mobile/src/local/shell.dart';
 import 'package:pinelink_mobile/src/theme/tokens.dart';
 import 'package:pinelink_mobile/src/motion/motion.dart';
@@ -135,13 +136,47 @@ void main() {
         find.textContaining('Private', findRichText: true),
         findsOneWidget,
       );
-      await tester.tap(find.text('Sensitive').last);
+      await tester.tap(find.byType(Switch));
       await tester.enterText(find.byType(TextField), 'hello');
+      await tester.pump();
       expect(r.sentText, isNull);
       await tester.tap(find.byTooltip('Send'));
       await tester.pumpAndSettle();
       expect(r.sentText, 'hello');
       expect(r.sentSensitivity, 'SENSITIVE');
+    },
+  );
+
+  testWidgets(
+    'smart connection presents one code or link input and keeps offline pairing',
+    (tester) async {
+      final r = _SmartLocal();
+      tester.view.physicalSize = const Size(320, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(child: LocalConnect(controller: r)),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('5V9A VDFJ'), findsOneWidget);
+      await tester.tap(find.text('Enter code'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'PL2:local-package');
+      await tester.tap(find.text('Connect'));
+      await tester.pumpAndSettle();
+      expect(r.joined, 'PL2:local-package');
+      await tester.tap(find.text('Show code'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Connect without internet'));
+      await tester.pumpAndSettle();
+      expect(r.offlineInvited, isTrue);
+      expect(find.text('Scan on the other device'), findsOneWidget);
+      expect(tester.takeException(), isNull);
     },
   );
   Future<void> app(WidgetTester tester, _Local controller) async {
@@ -182,6 +217,50 @@ void main() {
     },
   );
   testWidgets(
+    'device actions expand from the stationary node and open one conversation',
+    (tester) async {
+      final r = _Local()..jobs = [];
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: pinelinkTheme(),
+          home: MotionScope(child: LocalShell(controller: r)),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final node = find.byIcon(Icons.computer_outlined);
+      final before = tester.getCenter(node);
+      await tester.tap(node);
+      await tester.pump(const Duration(milliseconds: 30));
+      final early = tester.getCenter(find.byTooltip('Conversation'));
+      expect((early - before).distance, lessThan(90));
+      await tester.pumpAndSettle();
+      expect(tester.getCenter(node), before);
+      expect(find.byTooltip('Rename'), findsOneWidget);
+      expect(find.byTooltip('Remove device'), findsOneWidget);
+      await tester.tap(find.byTooltip('Conversation'));
+      await tester.pumpAndSettle();
+      expect(find.byType(LocalConversation), findsOneWidget);
+      expect(find.byTooltip('Attach file'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+  testWidgets('logo returns an active transfer to the device graph', (
+    tester,
+  ) async {
+    final r = _Local();
+    await app(tester, r);
+    expect(find.byKey(const ValueKey('native-transfer-graph')), findsOneWidget);
+    await tester.tap(find.text('Pinelink'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('native-transfer-graph')), findsNothing);
+    expect(find.text('MacBook Pro'), findsOneWidget);
+    expect(r.jobs.single['state']['received'], 32768);
+  });
+  testWidgets(
     'incoming pair opens one surface and one confirmation becomes a waiting state',
     (tester) async {
       final r = _Local();
@@ -203,4 +282,72 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+  testWidgets(
+    'a dismissed online request remains reachable from notifications',
+    (tester) async {
+      final r = _SmartLocal();
+      r.jobs = [];
+      await app(tester, r);
+      r.request = {'id': 'candidate', 'device_name': 'Pixel 9'};
+      r.showPairRequest('candidate');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.text('Pixel 9'), findsWidgets);
+      expect(find.text('Connect'), findsOneWidget);
+      await tester.tap(find.byTooltip('Close'));
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.tap(find.byTooltip('Notifications'));
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.text('Connection request'), findsOneWidget);
+      await tester.tap(find.text('Pixel 9'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.text('Connect'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+}
+
+class _SmartLocal extends _Local {
+  String? joined;
+  bool offlineInvited = false;
+  LocalMap? request;
+  @override
+  bool get smartConnection => true;
+  @override
+  List<LocalMap> get pairRequests => request == null ? [] : [request!];
+  @override
+  void showPairRequest(String id) {
+    pairing = {
+      'phase': 'online-request',
+      'candidate': id,
+      'peer': request?['device_name'],
+    };
+    notifyListeners();
+  }
+
+  @override
+  Future<String?> invite([String? expected]) async {
+    pairing = {
+      'phase': 'online-show',
+      'value': 'https://example.test/connect#abcdefghijklmnopqrstuv',
+      'code': '5V9AVDFJ',
+    };
+    notifyListeners();
+    return pairing['value'];
+  }
+
+  @override
+  Future<String?> inviteOffline() async {
+    offlineInvited = true;
+    pairing = {'phase': 'show', 'value': 'PL2:local-package'};
+    notifyListeners();
+    return pairing['value'];
+  }
+
+  @override
+  Future<String?> join(String code, [String? expected]) async {
+    joined = code;
+    return null;
+  }
 }

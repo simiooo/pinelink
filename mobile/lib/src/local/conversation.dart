@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'controller.dart';
 import 'copy.dart';
 import 'file_crypto.dart';
+import 'picker.dart';
 
 class LocalConversation extends StatefulWidget {
   const LocalConversation({
@@ -25,6 +27,7 @@ class LocalConversation extends StatefulWidget {
 class _LocalConversationState extends State<LocalConversation> {
   final input = TextEditingController();
   bool sensitive = false, busy = false;
+  PlatformFile? attachment;
   @override
   void dispose() {
     input.dispose();
@@ -46,8 +49,28 @@ class _LocalConversationState extends State<LocalConversation> {
     return true;
   }
 
+  Future<void> pick() async {
+    if (busy) return;
+    setState(() => busy = true);
+    try {
+      final file = await FilePicker.pickFile();
+      if (mounted && file != null) setState(() => attachment = file);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(lc(context, 'Could not choose file', '无法选择文件')),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
   Future<void> send(LocalMap peer) async {
     final value = input.text;
+    final file = attachment;
     if (!validUnicode(value)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(lc(context, 'Invalid text', '文字格式无效'))),
@@ -55,15 +78,38 @@ class _LocalConversationState extends State<LocalConversation> {
       return;
     }
     final bytes = Uint8List.fromList(utf8.encode(value));
-    if (bytes.isEmpty || bytes.length > textByteLimit || busy) return;
+    if (busy || bytes.isEmpty && file == null) return;
+    if (bytes.length > textByteLimit) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(lc(context, 'Text is too long', '文字过长'))),
+      );
+      return;
+    }
+    if (bytes.isNotEmpty && !widget.controller.supportsText(widget.root)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(lc(context, 'Device does not support text', '设备不支持文本')),
+        ),
+      );
+      return;
+    }
     setState(() => busy = true);
     try {
-      await widget.controller.sendText(
-        bytes,
-        peer,
-        sensitive ? 'SENSITIVE' : 'NORMAL',
-      );
-      if (mounted && input.text == value) input.clear();
+      if (file != null) {
+        final data = await readLocalPick(file, 64 << 20);
+        await widget.controller.send(data, file.name, peer);
+        if (mounted && identical(attachment, file)) {
+          setState(() => attachment = null);
+        }
+      }
+      if (bytes.isNotEmpty) {
+        await widget.controller.sendText(
+          bytes,
+          peer,
+          sensitive ? 'SENSITIVE' : 'NORMAL',
+        );
+        if (mounted && input.text == value) input.clear();
+      }
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -136,8 +182,24 @@ class _LocalConversationState extends State<LocalConversation> {
                                       job['name'],
                                       overflow: TextOverflow.ellipsis,
                                     ),
+                                    if (job['plainSize'] is int)
+                                      Text(
+                                        localBytes(job['plainSize'] as int),
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Color(0xff737373),
+                                        ),
+                                      ),
                                     Text(
-                                      localBytes(job['plainSize']),
+                                      job['state']?['state'] == 'COMPLETED'
+                                          ? sent
+                                                ? lc(context, 'Sent', '已发送')
+                                                : lc(context, 'Received', '已接收')
+                                          : jobStatus(
+                                              context,
+                                              job,
+                                              r.reachable(widget.root),
+                                            ),
                                       style: const TextStyle(
                                         fontSize: 12,
                                         color: Color(0xff737373),
@@ -156,87 +218,103 @@ class _LocalConversationState extends State<LocalConversation> {
               ),
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        TextButton(
-                          onPressed: () => setState(() => sensitive = false),
-                          style: TextButton.styleFrom(
-                            foregroundColor: !sensitive
-                                ? const Color(0xff101010)
-                                : const Color(0xff737373),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xffe4e4e7)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (attachment != null)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xfff4f4f5),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Text(
-                            lc(context, 'Text', '文本'),
-                            style: TextStyle(
-                              fontWeight: !sensitive
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () => setState(() => sensitive = true),
-                          style: TextButton.styleFrom(
-                            foregroundColor: sensitive
-                                ? const Color(0xff101010)
-                                : const Color(0xff737373),
-                          ),
-                          child: Text(
-                            lc(context, 'Sensitive', '敏感信息'),
-                            style: TextStyle(
-                              fontWeight: sensitive
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: input,
-                            minLines: 1,
-                            maxLines: 5,
-                            decoration: InputDecoration(
-                              hintText: lc(context, 'Write a message', '输入文字'),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 12),
+                              const Icon(
+                                Icons.insert_drive_file_outlined,
+                                size: 18,
                               ),
-                            ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  attachment!.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: lc(
+                                  context,
+                                  'Remove attachment',
+                                  '移除附件',
+                                ),
+                                onPressed: busy
+                                    ? null
+                                    : () => setState(() => attachment = null),
+                                icon: const Icon(Icons.close, size: 18),
+                              ),
+                            ],
                           ),
                         ),
-                        IconButton(
-                          tooltip: lc(context, 'Send', '发送'),
-                          onPressed:
-                              peer != null &&
-                                  r.supportsText(widget.root) &&
-                                  !busy
-                              ? () => send(peer)
-                              : null,
-                          icon: const Icon(Icons.send_outlined),
-                        ),
-                      ],
-                    ),
-                    if (!r.supportsText(widget.root))
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          lc(
-                            context,
-                            'Device does not support text',
-                            '设备不支持文本',
-                          ),
-                          style: const TextStyle(
-                            color: Color(0xff737373),
-                            fontSize: 12,
-                          ),
+                      TextField(
+                        controller: input,
+                        minLines: 1,
+                        maxLines: 5,
+                        onChanged: (_) => setState(() {}),
+                        decoration: InputDecoration(
+                          hintText: lc(context, 'Write a message', '输入文字'),
+                          border: InputBorder.none,
                         ),
                       ),
-                  ],
+                      Row(
+                        children: [
+                          IconButton(
+                            tooltip: lc(context, 'Attach file', '添加文件'),
+                            onPressed:
+                                peer != null &&
+                                    r.reachable(widget.root) &&
+                                    !busy
+                                ? pick
+                                : null,
+                            icon: const Icon(Icons.attach_file),
+                          ),
+                          Semantics(
+                            label: lc(context, 'Sensitive', '敏感信息'),
+                            child: Switch(
+                              value: sensitive,
+                              onChanged: busy
+                                  ? null
+                                  : (value) =>
+                                        setState(() => sensitive = value),
+                            ),
+                          ),
+                          Text(
+                            lc(context, 'Sensitive', '敏感信息'),
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          const Spacer(),
+                          IconButton.filled(
+                            tooltip: lc(context, 'Send', '发送'),
+                            onPressed:
+                                peer != null &&
+                                    r.reachable(widget.root) &&
+                                    !busy &&
+                                    (attachment != null ||
+                                        input.text.isNotEmpty)
+                                ? () => send(peer)
+                                : null,
+                            icon: const Icon(Icons.arrow_upward),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

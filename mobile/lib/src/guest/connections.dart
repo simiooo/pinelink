@@ -8,10 +8,10 @@ class GuestConnections {
 
   Future<Map<String, dynamic>> list() =>
       session.request('GET', '/v1/guest/connections');
-  Future<Map<String, dynamic>> invite() => session.request(
+  Future<Map<String, dynamic>> invite([String? requestId]) => session.request(
     'POST',
     '/v1/guest/invites',
-    {'request_id': randomUuid()},
+    {'request_id': requestId ?? randomUuid()},
   );
   Future<Map<String, dynamic>> join(String value) {
     final input = value.trim();

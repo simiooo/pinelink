@@ -10,6 +10,13 @@ import 'session.dart';
 import 'store.dart';
 import 'relay.dart';
 
+/// The encrypted draft is durable, but the idempotent offer needs retrying.
+class GuestOfferPending implements Exception {
+  const GuestOfferPending(this.id, this.cause);
+  final String id;
+  final Object cause;
+}
+
 /// Native visitor storage and keys are separate from account and LAN stores.
 class NativeGuestRuntime {
   NativeGuestRuntime._(this.database, this.identity, this.session, this.store)
@@ -38,6 +45,7 @@ class NativeGuestRuntime {
     IdentityVault? vault,
     ClientDatabase? database,
     http.Client? client,
+    String deviceName = 'Android',
   }) async {
     final address = Uri.base
         .resolve(server)
@@ -63,6 +71,7 @@ class NativeGuestRuntime {
         identity: identity,
         vault: secureVault,
         client: client,
+        deviceName: deviceName,
       );
       final store = NativeGuestStore(db);
       await store.initialize();
@@ -113,7 +122,11 @@ class NativeGuestRuntime {
       if (sensitivity != null) 'contentKind': 'TEXT',
     };
     await store.create(job, prepared['cipher']);
-    await resumeOffer(id);
+    try {
+      await resumeOffer(id);
+    } catch (error) {
+      throw GuestOfferPending(id, error);
+    }
     return id;
   }
 
@@ -257,7 +270,8 @@ class NativeGuestRuntime {
         'state': item['state'],
         'peer': peer,
         'name': safeFileName(item['file_name']),
-        'plainSize': item['size_bytes'],
+        // The plaintext length is sealed in the manifest until consent.
+        'cipherSize': item['size_bytes'],
         'received': 0,
         'transfer': item,
         if (item['content_kind'] == 'TEXT') 'contentKind': 'TEXT',
