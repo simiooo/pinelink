@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { Link, Outlet, useNavigate, useRouterState } from '@tanstack/react-router'
-import { Bell, Ellipsis, FolderOpen, Network, UserRound } from 'lucide-react'
+import { Bell, Ellipsis, UserRound } from 'lucide-react'
 import { useAuthCopy } from '../auth/copy'
 import { authRevision, authState, subscribeAuth } from '../auth/client'
 import { useSyncExternalStore } from 'react'
@@ -51,9 +51,6 @@ export function AppShell() {
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild><MotionButton icon aria-label={t('more')}><Ellipsis size={24} /></MotionButton></DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={8} className="pinelink-menu">
-            <DropdownMenuItem onSelect={() => { if (guestWorkPending()) { if (account.session) window.open('/account','pinelink-account'); else openGuestSignIn() } else go('/account') }}><UserRound size={18} />{accountCopy.account}</DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => go('/')}><Network size={18} />{guestCopy.devices}</DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => go('/files')}><FolderOpen size={18} />{guestCopy.files}</DropdownMenuItem>
             <DropdownMenuItem onSelect={() => go('/settings')}>{t('settings')}</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuLabel>{t('language')}</DropdownMenuLabel>

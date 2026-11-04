@@ -28,6 +28,16 @@ test('home is the graph with persistent file, add-device and notification entrie
   fireEvent.click(screen.getByRole('button', { name: '关闭' })); await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
   expect(document.querySelector('.guest-network')).toBe(graph)
 })
+test('more menu keeps settings and language without duplicate workspace entries', async () => {
+  render(<App initialEntries={['/']} />)
+  await screen.findByRole('button', { name: '本机' })
+  fireEvent.keyDown(screen.getByRole('button', { name: '更多' }), { key: 'ArrowDown' })
+  expect(await screen.findByRole('menuitem', { name: '小窝与云仓' })).toBeInTheDocument()
+  expect(screen.getByRole('menuitemradio', { name: '中文' })).toBeInTheDocument()
+  expect(screen.queryByRole('menuitem', { name: /^(设备|文件|账号)$/ })).not.toBeInTheDocument()
+  fireEvent.keyDown(screen.getByRole('menu'), { key: 'Escape' })
+  expect(screen.getByRole('button', { name: '文件' })).toBeInTheDocument()
+})
 test('legacy task and local-file links enter filters in the same file surface', async () => {
   const { unmount } = render(<App initialEntries={['/tasks']} />)
   await screen.findByRole('heading', { name: '文件' }); expect(screen.getByRole('tab', { name: '进行中' })).toHaveAttribute('aria-selected', 'true')
