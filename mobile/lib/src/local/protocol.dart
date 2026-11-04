@@ -42,6 +42,18 @@ Future<void> validateIdentity(Json p) async {
       p['encryption_key'].length > 128) {
     bad('LOCAL_CODE_INVALID');
   }
+  if (p.containsKey('capabilities')) {
+    final capabilities = p['capabilities'];
+    if (capabilities is! List ||
+        capabilities.length > 16 ||
+        capabilities.any(
+          (value) =>
+              value is! String || !RegExp(r'^[a-z0-9-]{1,32}$').hasMatch(value),
+        ) ||
+        capabilities.toSet().length != capabilities.length) {
+      bad('LOCAL_CODE_INVALID');
+    }
+  }
   X25519Recipient.parse(p['encryption_key']);
 }
 

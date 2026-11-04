@@ -31,6 +31,25 @@ void main() {
     identity = await LocalIdentity.load(db, _Vault(), 'test', 'test-device');
   });
   tearDown(() => db.close());
+  test('bounds optional capabilities on signed peer identities', () async {
+    final peer = publicIdentity(identity, 'Phone');
+    await validateIdentity(peer);
+    await validateIdentity({
+      ...peer,
+      'capabilities': ['text-v1'],
+    });
+    await expectLater(
+      validateIdentity({
+        ...peer,
+        'capabilities': ['text-v1', 'text-v1'],
+      }),
+      throwsStateError,
+    );
+    await expectLater(
+      validateIdentity({...peer, 'capabilities': null}),
+      throwsStateError,
+    );
+  });
   test(
     'an empty source remains an empty blob when reading the wire chunk',
     () async {

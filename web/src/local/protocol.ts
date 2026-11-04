@@ -2,7 +2,7 @@ import { Encrypter } from 'age-encryption'
 import { base64, canonical, digest, nonce, rootOf, unbase64, utf8, verify } from '../data/crypto'
 import type { DeviceProfile } from '../data/crypto'
 
-export type LocalIdentity = { root: string; device: string; name: string; signing_key: string; encryption_key: string }
+export type LocalIdentity = { root: string; device: string; name: string; signing_key: string; encryption_key: string; capabilities?: string[] }
 export type Signed<T> = T & { signature: string }
 export type ConnectionPackage = Signed<{ v: 1; type: 'offer' | 'answer'; id: string; nonce: string; peer: LocalIdentity; sdp: string; reply: string }>
 export type LocalReceipt = Signed<{ v: 1; id: string; sender: string; recipient: string; root: string; plaintext_root: string; plaintext_size: number; delivered_at: string }>
@@ -23,6 +23,7 @@ function qrEncode(bytes:Uint8Array){let out='';for(let i=0;i<bytes.length;i+=2){
 function qrDecode(value:string){const out:number[]=[];if(value.length%3===1)throw new Error('LOCAL_CODE_INVALID');for(let i=0;i<value.length;i+=3){const count=Math.min(3,value.length-i),digits=[...value.slice(i,i+count)].map(c=>alphabet.indexOf(c));if(digits.some(d=>d<0))throw new Error('LOCAL_CODE_INVALID');const n=digits[0]+digits[1]*45+(count===3?digits[2]*2025:0);if(n>(count===3?65535:255))throw new Error('LOCAL_CODE_INVALID');if(count===3)out.push(n>>8,n&255);else out.push(n)}return new Uint8Array(out)}
 export async function validateIdentity(value: LocalIdentity) {
   if (!value || typeof value.name !== 'string' || !value.name.trim() || value.name.length > 64 || /[\u0000-\u001f\u007f]/.test(value.name) || typeof value.device !== 'string' || value.device.length > 96 || !/^[a-f0-9]{64}$/.test(value.root) || typeof value.signing_key !== 'string' || unbase64(value.signing_key).length !== 32 || await rootOf(value.signing_key) !== value.root || typeof value.encryption_key !== 'string' || value.encryption_key.length > 128) throw new Error('LOCAL_CODE_INVALID')
+  if (value.capabilities !== undefined && (!Array.isArray(value.capabilities) || value.capabilities.length > 16 || value.capabilities.some(capability => typeof capability !== 'string' || !/^[a-z0-9-]{1,32}$/.test(capability)) || new Set(value.capabilities).size !== value.capabilities.length)) throw new Error('LOCAL_CODE_INVALID')
   try { const e = new Encrypter(); e.addRecipient(value.encryption_key) } catch { throw new Error('LOCAL_CODE_INVALID') }
 }
 export async function validatePackage(value: ConnectionPackage) {

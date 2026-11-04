@@ -29,3 +29,11 @@ it('domain separates receipts, connection identities and control-state signature
  expect(await verified(p.signingKey,'state',receipt)).toBe(false)
  const tampered={...receipt,root:'b'.repeat(64)};expect(await verified(p.signingKey,'receipt',tampered)).toBe(false)
 })
+it('binds bounded peer capabilities to the signed connection without advertising them by default',async()=>{
+ setup();const p=await newProfile(),legacy=identity(p,'Laptop');expect(legacy.capabilities).toBeUndefined()
+ const offered=await makePackage(p,{...legacy,capabilities:['text-v1']},'offer',crypto.randomUUID(),sdp)
+ expect((await validatePackage(offered)).peer.capabilities).toEqual(['text-v1'])
+ await expect(validatePackage({...offered,peer:{...offered.peer,capabilities:[]}})).rejects.toThrow('LOCAL_CODE_INVALID')
+ const duplicate=await makePackage(p,{...legacy,capabilities:['text-v1','text-v1']},'offer',crypto.randomUUID(),sdp)
+ await expect(validatePackage(duplicate)).rejects.toThrow('LOCAL_CODE_INVALID')
+})
