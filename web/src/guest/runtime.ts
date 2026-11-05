@@ -147,6 +147,12 @@ export class GuestRuntime {
     }).finally(() => { this.enrollment = undefined })
     return this.enrollment
   }
+  async reconnect() {
+    try { await this.ensureSession(); await this.poll() }
+    catch (error) { this.noteError(error); throw error }
+    // poll publishes its failure instead of rejecting; keep retry callers truthful.
+    if (this.snapshot.error) throw new GuestError(this.snapshot.error)
+  }
   async request<T>(method: string, path: string, input?: unknown, signal?: AbortSignal): Promise<T> {
     this.lifetime.signal.throwIfAborted()
     const lease = this.lease ?? await this.store.leases.get('self')

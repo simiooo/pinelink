@@ -101,7 +101,9 @@ function VisitorHome({ runtime, onNotifications }: { runtime: WorkspaceRuntime; 
   useEffect(() => { setPanel(routePanel(pathname)); setError(undefined); if (['/tasks', '/history', '/local-files'].includes(pathname)) { setFilter(routeFilter(pathname)); setFilePeer(undefined) } }, [pathname])
   useEffect(() => { onNotifications?.(notificationCount) }, [onNotifications, notificationCount])
   const perform = async (task: () => Promise<unknown>) => { setError(undefined); try { await task() } catch (e) { setError(e instanceof Error ? e.message : 'GUEST_UNAVAILABLE') } }
-  const retryService = async () => { setError(undefined); try { await runtime.ensureSession(); await runtime.poll() } catch { setError('SERVICE_UNAVAILABLE') } }
+  // Connection feedback belongs to the live runtime. A second local error would
+  // survive successful background recovery and keep a healthy page looking offline.
+  const retryService = async () => { setError(undefined); await runtime.reconnect() }
   useEffect(() => { const timer = setInterval(() => setNow(runtime.now()), 1000); return () => clearInterval(timer) }, [runtime])
   useEffect(() => {
     let live = true; setQr('')

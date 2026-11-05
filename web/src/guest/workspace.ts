@@ -96,6 +96,15 @@ export class WorkspaceRuntime {
   async connect() { const runtime = await this.connectionRuntime(); this.source = runtime; this.refresh(); return runtime.connect() }
   async join(value: string) { const runtime = await this.connectionRuntime(); this.source = runtime; this.refresh(); return runtime.join(value) }
   async ensureSession() { return (await this.connectionRuntime()).ensureSession() }
+  async reconnect() {
+    // Signing in does not retire the visitor identity or its existing connections.
+    // Recover each channel independently, including an account that failed to open.
+    await Promise.allSettled([
+      this.guest.reconnect(),
+      (async () => { if (this.reader) { await this.setAccount(this.reader); await this.account?.reconnect() } })(),
+    ])
+    this.refresh()
+  }
   async poll() { await Promise.all([this.guest.poll(), ...(this.account ? [this.account.poll()] : [])]) }
   private peerRuntime(pair: string) { return this.account?.getSnapshot().connections.peers.some(peer => peer.pair_id === pair) ? this.account : this.guest }
   private jobRuntime(id: string) { return this.account?.getSnapshot().jobs.some(job => job.id === id) ? this.account : this.guest }

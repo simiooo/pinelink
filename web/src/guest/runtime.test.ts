@@ -18,6 +18,25 @@ const runtime = async () => { const r = await GuestRuntime.open('https://unit.in
 const enrollment = (r: GuestRuntime) => ({ guest: { owner_id: 'guest-fixture', device_id: r.profile.device, device_name: 'Test device', expires_at: new Date(Date.now() + 86400000).toISOString() }, csrf: 'test-csrf' })
 const challenge = () => response({ challenge: 'test-challenge', unix_time: Math.floor(Date.now() / 1000) })
 
+it('publishes a failed retry and clears it when the same identity reconnects successfully', async () => {
+  const r = await runtime(), root = r.profile.root
+  let fail = true
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+    if (fail) throw new TypeError('Failed to fetch')
+    if (url.endsWith('/challenge')) return challenge()
+    if (url.endsWith('/enroll')) return response(enrollment(r))
+    if (url.endsWith('/connections')) return response({ invites: [], candidates: [], peers: [] })
+    if (url.endsWith('/transfers')) return response({ transfers: [] })
+    throw Error('unexpected request')
+  }))
+  await expect(r.reconnect()).rejects.toThrow('Failed to fetch')
+  expect(r.getSnapshot().error).toBe('Failed to fetch')
+  fail = false; await r.reconnect()
+  expect(r.getSnapshot().error).toBeUndefined()
+  expect(r.getSnapshot().checkedAt).toBeGreaterThan(0)
+  expect(r.profile.root).toBe(root)
+})
+
 it('recovers a persisted visitor session after its first reopen request fails without another click or reload', async () => {
   const r = await runtime(), server = r.server, root = r.profile.root
   let fail = false, challenges = 0
