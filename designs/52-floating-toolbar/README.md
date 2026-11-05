@@ -1,6 +1,6 @@
 # Floating actions v52
 
-Four native OpenPencil frames were saved, reopened and visually reviewed before implementation: 390px mobile, 320px compact mobile, desktop and offline with a 34px safe area.
+Five native OpenPencil frames were saved, reopened and visually reviewed before implementation: 390px mobile, 320px compact mobile, desktop offline with a 34px safe area, and a compact update notice with reserved graph space.
 
 The three actions share a single horizontal capsule: Files, Connect a device, Choose a file. The centre action remains blue; all icons are 24px within equal 48px touch targets. The container is 168×64px with 8px padding and 4px gaps, 16px above the bottom safe area. It hugs its contents at every viewport width. Tooltips and accessible names remain available; it does not imply selected navigation destinations.
 
