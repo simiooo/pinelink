@@ -50,6 +50,8 @@ button:focus-visible, a:focus-visible, summary:focus-visible, .dropzone:focus-vi
 .topbar-actions { display: flex; align-items: center; gap: 16px; }
 .topbar .motion-button.icon-button { border-radius: 0; background: transparent; }
 .topbar .icon-button .action-face { border-radius: 50%; }
+.topbar .icon-button:focus-visible { outline: none; }
+.topbar .icon-button:focus-visible .action-face { outline: 2px solid var(--primary); outline-offset: 3px; }
 .topbar .auth-text-button { padding-inline: 0; }
 .topbar .auth-text-button .action-face { padding-inline: 8px; }
 .chip {
