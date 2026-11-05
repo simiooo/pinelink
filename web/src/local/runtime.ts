@@ -6,7 +6,7 @@ import { directDelay, fragmentFrame, FrameAssembler } from '../guest/direct'
 import type { GuestJob, GuestStore } from '../guest/store'
 import type { GuestPeer, GuestTransfer, ProgressSnapshot } from '../guest/types'
 import { decodePackage, encodePackage, isLocalID, localID, signed, verified } from './protocol'
-import type { LocalState, LocalReceipt } from './protocol'
+import type { LocalState, LocalReceipt, Rendezvous } from './protocol'
 import { LocalSession } from './session'
 
 type Pairing = { phase: 'idle' | 'preparing' | 'show' | 'reply' | 'verify' | 'waiting' | 'connected' | 'expired'; code?: string; peer?: string; value?: string; expected?: string; error?: string }
@@ -88,11 +88,11 @@ export class LocalRuntime {
     }, id)
     this.sessions.add(link); this.pending = link; return link
   }
-  async invite(expected?: string) {
+  async invite(expected?: string, rendezvous?: Rendezvous) {
     if (this.pending && !this.pending.isReady()) this.pending.close()
     this.update({ phase: 'preparing', error: undefined, value: undefined, code: undefined, expected })
     const link = this.create(false)
-    try { const value = await encodePackage(await link.createOffer()); link.signal.throwIfAborted(); this.update({ phase: 'show', value }); return value } catch (e) { link.close(); throw e }
+    try { const value = await encodePackage(await link.createOffer(rendezvous)); link.signal.throwIfAborted(); this.update({ phase: 'show', value }); return value } catch (e) { link.close(); throw e }
   }
   async join(code: string, expected?: string) {
     const packet = await decodePackage(code)

@@ -4,7 +4,8 @@ import type { DeviceProfile } from '../data/crypto'
 
 export type LocalIdentity = { root: string; device: string; name: string; signing_key: string; encryption_key: string; capabilities?: string[] }
 export type Signed<T> = T & { signature: string }
-export type ConnectionPackage = Signed<{ v: 1; type: 'offer' | 'answer'; id: string; nonce: string; peer: LocalIdentity; sdp: string; reply: string }>
+export type Rendezvous = { origin: string; token: string; expires_at: string }
+export type ConnectionPackage = Signed<{ v: 1; type: 'offer' | 'answer'; id: string; nonce: string; peer: LocalIdentity; sdp: string; reply: string; rendezvous?: Rendezvous }>
 export type LocalReceipt = Signed<{ v: 1; id: string; sender: string; recipient: string; root: string; plaintext_root: string; plaintext_size: number; delivered_at: string }>
 export type LocalState = Signed<{ id: string; sender: string; recipient: string; root: string; size: number; name: string; plain_size: number; content_kind?: 'TEXT'; state: 'PENDING' | 'ACCEPTED' | 'COMPLETED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED' | 'FAILED'; version: number; revision: number; received: number; paused: boolean; receipt?: LocalReceipt }>
 export const localID = (id: string) => 'local:' + id
@@ -15,7 +16,7 @@ export const signed = async <T extends object>(profile: DeviceProfile, domain: s
 export const verified = (key: string, domain: string, value: { signature: string }) => verify(key, proof(domain, value), value.signature)
 export const packageHash = (value: ConnectionPackage) => digest(utf8.encode(canonical(value)))
 export const identity = (profile: DeviceProfile, name: string): LocalIdentity => ({ root: profile.root, device: profile.device, name, signing_key: profile.signingKey, encryption_key: profile.encryptionKey })
-export const makePackage = (profile: DeviceProfile, peer: LocalIdentity, type: 'offer' | 'answer', id: string, sdp: string, reply = '') => signed(profile, 'connection', { v: 1 as const, type, id, nonce: nonce(), peer, sdp, reply })
+export const makePackage = (profile: DeviceProfile, peer: LocalIdentity, type: 'offer' | 'answer', id: string, sdp: string, reply = '', rendezvous?: Rendezvous) => signed(profile, 'connection', { v: 1 as const, type, id, nonce: nonce(), peer, sdp, reply, ...(rendezvous ? { rendezvous } : {}) })
 // QR alphanumeric mode stores a signed SDP package more densely than mixed-case
 // base64. The final colon protects an RFC 9285 trailing space from text trimming.
 const alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:'
@@ -29,6 +30,12 @@ export async function validateIdentity(value: LocalIdentity) {
 export async function validatePackage(value: ConnectionPackage) {
   if (!value || value.v !== 1 || !['offer', 'answer'].includes(value.type) || !uuid(value.id) || !/^[A-Za-z0-9_-]{43}$/.test(value.nonce) || typeof value.reply !== 'string' || (value.type === 'answer' ? !/^[a-f0-9]{64}$/.test(value.reply) : value.reply !== '') || typeof value.sdp !== 'string' || value.sdp.length > 16384 || value.sdp.split(/\r?\n/).filter(s => s.startsWith('m=')).length !== 1 || !/^m=application \d+ UDP\/DTLS\/SCTP webrtc-datachannel\r?$/m.test(value.sdp) || !/^a=fingerprint:sha-256 [0-9A-F:]+\r?$/im.test(value.sdp) || !/^a=ice-ufrag:.+$/m.test(value.sdp) || !/^a=ice-pwd:.+$/m.test(value.sdp)) throw new Error('LOCAL_CODE_INVALID')
   await validateIdentity(value.peer)
+  if (value.rendezvous !== undefined) {
+    const r = value.rendezvous
+    try {
+      if (value.type !== 'offer' || !r || typeof r.origin !== 'string' || r.origin.length > 256 || !/^https?:\/\//.test(r.origin) || new URL(r.origin).origin !== r.origin || typeof r.token !== 'string' || !/^[A-Za-z0-9_-]{22}$/.test(r.token) || typeof r.expires_at !== 'string' || r.expires_at.length > 32 || !Number.isFinite(Date.parse(r.expires_at))) throw new Error('LOCAL_CODE_INVALID')
+    } catch { throw new Error('LOCAL_CODE_INVALID') }
+  }
   if (!await verified(value.peer.signing_key, 'connection', value)) throw new Error('LOCAL_CODE_INVALID')
   return value
 }

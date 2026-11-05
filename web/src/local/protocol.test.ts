@@ -37,3 +37,14 @@ it('binds bounded peer capabilities to the signed connection without advertising
  const duplicate=await makePackage(p,{...legacy,capabilities:['text-v1','text-v1']},'offer',crypto.randomUUID(),sdp)
  await expect(validatePackage(duplicate)).rejects.toThrow('LOCAL_CODE_INVALID')
 })
+it('signs the service fallback together with the local identity and SDP',async()=>{
+ setup();const p=await newProfile(),rendezvous={origin:'https://pinelink.example',token:'a'.repeat(22),expires_at:'2099-01-01T00:00:00Z'}
+ const offer=await makePackage(p,identity(p,'Laptop'),'offer',crypto.randomUUID(),sdp,'',rendezvous)
+ expect((await decodePackage(await encodePackage(offer))).rendezvous).toEqual(rendezvous)
+ await expect(validatePackage({...offer,rendezvous:{...rendezvous,token:'b'.repeat(22)}})).rejects.toThrow('LOCAL_CODE_INVALID')
+ await expect(validatePackage({...offer,rendezvous:undefined})).rejects.toThrow('LOCAL_CODE_INVALID')
+ const bad=await makePackage(p,identity(p,'Laptop'),'offer',crypto.randomUUID(),sdp,'',{...rendezvous,origin:'https://['})
+ await expect(validatePackage(bad)).rejects.toThrow('LOCAL_CODE_INVALID')
+ const numeric={...offer,rendezvous:{...rendezvous,token:-1e20 as unknown as string}}
+ await expect(validatePackage(numeric)).rejects.toThrow('LOCAL_CODE_INVALID')
+})

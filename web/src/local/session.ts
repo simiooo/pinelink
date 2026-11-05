@@ -2,7 +2,7 @@ import type { DeviceProfile } from '../data/crypto'
 import { directDelay } from '../guest/direct'
 import type { DirectProof } from '../guest/direct'
 import { comparison, identity, makePackage, packageHash, signed, validatePackage, verified } from './protocol'
-import type { ConnectionPackage, LocalIdentity, Signed } from './protocol'
+import type { ConnectionPackage, LocalIdentity, Signed, Rendezvous } from './protocol'
 
 const label = 'pinelink-local-v1'
 type Control = Signed<{ session: string; sequence: number; payload: Record<string, unknown> }>
@@ -74,9 +74,9 @@ export class LocalSession {
     while (this.pc.iceGatheringState !== 'complete') await directDelay(25, signal)
     signal.throwIfAborted(); return this.pc.localDescription!.sdp
   }
-  async createOffer() {
+  async createOffer(rendezvous?: Rendezvous) {
     this.attach(this.pc.createDataChannel(label, { ordered: true, protocol: label }))
-    this.offer = await makePackage(this.profile, { ...identity(this.profile, this.name), capabilities: ['text-v1'] }, 'offer', this.id, await this.description('offer')); return this.offer
+    this.offer = await makePackage(this.profile, { ...identity(this.profile, this.name), capabilities: ['text-v1'] }, 'offer', this.id, await this.description('offer'), '', rendezvous); return this.offer
   }
   async createAnswer(offer: ConnectionPackage) {
     this.offer = await validatePackage(offer); this.peer = offer.peer
