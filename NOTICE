@@ -13,10 +13,15 @@ Licensed under the SIL Open Font License, Version 1.1.
 See designs/25-rounded-typography/fonts/OFL.txt.
 
 Google sign-in branding artwork in designs/26-account-onboarding,
-designs/27-account-password, web/public/assets and mobile/assets:
+designs/27-account-password, designs/57-google-button, web/public/assets and mobile/assets:
 Provided by Google for use under its Sign in with Google branding guidelines.
 Google trademarks and brand artwork are not relicensed under Apache-2.0.
 See https://developers.google.com/identity/branding-guidelines.
+
+Google Sans button font in web/src/assets/fonts/GoogleSans-Medium.woff2:
+Copyright 2025 The Google Sans Project Authors (https://github.com/googlefonts/googlesans)
+Provided as a character subset by Google Fonts under the SIL Open Font License,
+Version 1.1; see web/public/fonts/google-sans/OFL.txt.
 
 Bundled Nunito runtime fonts in web/src/assets/fonts and mobile/assets/fonts:
 Copyright 2014 The Nunito Project Authors (https://github.com/googlefonts/nunito)

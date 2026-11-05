@@ -6,6 +6,12 @@ import * as auth from './client'
 
 vi.mock('./client', async original => ({ ...await original<typeof import('./client')>(), authState: () => ({ capabilities: { enabled: true, google: true, email: true }, session: undefined }), login: vi.fn(), googleLogin: vi.fn(), startEmail: vi.fn() }))
 afterEach(() => { cleanup(); vi.resetAllMocks() })
+it('shows a localized Google action as visible text as well as its accessible name', async () => {
+  render(<App initialEntries={['/login']} localePreference="zh-CN" />)
+  const google = await screen.findByRole('button', { name: '使用 Google 继续' })
+  expect(google).toHaveTextContent('使用 Google 继续')
+  expect(google.closest('form')).toBeNull()
+})
 it('StrictMode mounts never start sign-in; Google works with the password form empty', async () => {
   render(<StrictMode><App initialEntries={['/login']} localePreference="en-US" /></StrictMode>)
   const google = await screen.findByRole('button', { name: /^Continue with Google$/ })

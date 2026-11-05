@@ -1,0 +1,22 @@
+{
+  "provider": "Google",
+  "brand_guidelines": "https://developers.google.com/identity/branding-guidelines",
+  "logo_source": "https://developers.google.com/static/identity/images/g-logo.png",
+  "logo_sha256": "d1ce9c2af0b10a7333abc99bc706f9a6a199e5b65bf3e3009624f076b8638e6a",
+  "logo_source_pixels": [
+    200,
+    204
+  ],
+  "logo_display_box": [
+    20,
+    20
+  ],
+  "logo_modified": false,
+  "font_stylesheet": "https://fonts.googleapis.com/css2?family=Google+Sans:wght@500&display=swap&text=Continue%20with%20Google",
+  "font_source": "https://fonts.gstatic.com/l/font?kit=4Ua_rENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iqcsih3SAyH6cAwhX9RFD48TE63OOYKtrw2IKlntSHKUGVdMOOlXqn9Ajhy&skey=c30756b8cf584a60&v=v76",
+  "font_sha256": "4309be9259fd2dde22139e8e3e20e6d4aa053f1a8f3920177293c20b4e162f3c",
+  "font_bytes": 2248,
+  "font_license": "SIL Open Font License 1.1",
+  "font_license_source": "https://github.com/google/fonts/blob/main/ofl/googlesans/OFL.txt",
+  "rights": "Google brand artwork remains governed by its branding guidelines, not Apache-2.0."
+}
