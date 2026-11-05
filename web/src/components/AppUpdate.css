@@ -5,3 +5,6 @@
 .app-update-close.icon-button { grid-column: 3; grid-row: 1; height: 44px; width: 44px; min-width: 44px; margin-inline: 0; background: transparent; }
 .app-update-close .action-face { min-height: 28px; height: 28px; width: 28px; background: #f5f5f5; }
 .pinelink-menu .app-build { padding-block: 8px; font-size: 12px; font-weight: 400; color: #737373; }
+.app-update-viewport { position: fixed; inset: 0; z-index: 80; margin: 0; padding: 0; pointer-events: none; list-style: none; }
+.app-update-viewport:focus { outline: none; }
+.app-update-notice { pointer-events: auto; }

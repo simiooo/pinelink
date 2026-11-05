@@ -88,7 +88,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px
 [data-slot="dialog-overlay"][data-state="closed"], [data-slot="sheet-overlay"][data-state="closed"] { pointer-events: none !important; }
 .pinelink-tooltip[data-slot] { max-width: 240px; border-radius: 8px; padding: 6px 10px; background: #101010; color: white; font-size: 12px; line-height: 20px; animation-duration: 120ms; }
 .pinelink-tooltip[data-state="closed"] { animation-duration: 80ms; }
-.pinelink-menu[data-slot] { min-width: 224px; border-radius: 20px; padding: 8px; background: white; border: 1px solid #E5E5E5; box-shadow: 0 8px 24px rgb(0 0 0 / 6%); animation-duration: 160ms; }
+.pinelink-menu[data-slot] { z-index: 90; min-width: 224px; border-radius: 20px; padding: 8px; background: white; border: 1px solid #E5E5E5; box-shadow: 0 8px 24px rgb(0 0 0 / 6%); animation-duration: 160ms; }
 .pinelink-menu[data-state="closed"] { animation-duration: 120ms; }
 .pinelink-menu [role="menuitem"], .pinelink-menu [role="menuitemradio"] { min-height: 48px; padding: 12px 16px; border-radius: 12px; font-family: inherit; font-size: 14px; line-height: 24px; }
 .pinelink-menu [role="menuitemradio"] { padding-left: 36px; }

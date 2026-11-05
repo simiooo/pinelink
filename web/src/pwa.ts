@@ -3,14 +3,18 @@ import { freezeForUpdate, releaseUpdate, safeToUpdate, updateFrozen } from './pw
 import { pendingUpdate, updateMessageSource } from './pwa/messages'
 export const appVersion = import.meta.env.VITE_PINELINK_VERSION || 'dev'
 type Status = 'idle' | 'checking' | 'latest' | 'offline' | 'error' | 'available' | 'busy' | 'legacy' | 'applying'
-let state: { status: Status; waiting: boolean; locked: boolean } = { status: 'idle', waiting: false, locked: false }
+let state: { status: Status; waiting: boolean; locked: boolean; notice: number; explicit: boolean } = { status: 'idle', waiting: false, locked: false, notice: 0, explicit: false }
 const listeners = new Set<() => void>()
-const update = (patch: Partial<typeof state>) => { state = { ...state, ...patch }; for (const listener of listeners) listener() }
+const update = (patch: Partial<typeof state>) => { state = { ...state, ...patch, notice: state.notice + (patch.status === undefined ? 0 : 1) }; for (const listener of listeners) listener() }
 export const pwaSnapshot = () => state
 export const subscribePwa = (listener: () => void) => { listeners.add(listener); return () => { listeners.delete(listener) } }
 let registration: ServiceWorkerRegistration | undefined, checkNow: (() => Promise<void>) | undefined
-export const dismissUpdateNotice = () => update({ status: 'idle' })
-export const checkAppUpdate = () => checkNow?.() ?? Promise.resolve()
+export const dismissUpdateNotice = (notice = state.notice) => { if (notice === state.notice && !state.locked) update({ status: 'idle', explicit: false }) }
+export const checkAppUpdate = () => {
+  if (checkNow) return checkNow()
+  update({ status: navigator.onLine === false ? 'offline' : 'error', explicit: true })
+  return Promise.resolve()
+}
 
 export async function applyAppUpdate() {
   if (!safeToUpdate()) { update({ status: 'busy' }); return }
@@ -29,7 +33,7 @@ export async function applyAppUpdate() {
 
 export function startPwa() {
   if (!import.meta.env.PROD || !('serviceWorker' in navigator)) return () => undefined
-  let disposed = false, lastCheck = 0, checking: Promise<void> | undefined, prepare: string | undefined, deadline: ReturnType<typeof setTimeout> | undefined
+  let disposed = false, lastCheck = 0, checking: Promise<void> | undefined, manualNotice: number | undefined, prepare: string | undefined, deadline: ReturnType<typeof setTimeout> | undefined
   const refreshWaiting = () => {
     if (disposed) return false
     if (pendingUpdate(registration)) { update({ status: 'available', waiting: true }); return true }
@@ -52,10 +56,13 @@ export function startPwa() {
   const changed = () => { if (prepare && updateFrozen()) { clearTimeout(deadline); location.reload() } else refreshWaiting() }
   const blockInteraction = (event: Event) => { if (updateFrozen()) { event.preventDefault(); event.stopImmediatePropagation() } }
   const check = (manual = false) => {
-    if (disposed || checking) return checking ?? Promise.resolve()
+    if (disposed || state.locked || state.status === 'applying') return Promise.resolve()
+    // A tap can join a background request, but it must still get its own feedback.
+    if (manual) { update({ status: 'checking', explicit: true }); manualNotice = state.notice }
+    if (checking) return checking
     if (!manual && (document.hidden || Date.now() - lastCheck < 60000)) return Promise.resolve()
     if (navigator.onLine === false) { if (!refreshWaiting() && manual) update({ status: 'offline' }); return Promise.resolve() }
-    lastCheck = Date.now(); if (manual) update({ status: 'checking' })
+    lastCheck = Date.now()
     checking = (async () => {
       try {
         registration ??= await navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' })
@@ -68,9 +75,10 @@ export function startPwa() {
         })
         if (disposed) return
         if (installing?.state === 'redundant' && !pendingUpdate(registration)) throw new Error('UPDATE_INSTALL_FAILED')
-        if (!refreshWaiting() && manual) update({ status: 'latest', waiting: false })
-      } catch { if (manual && !disposed) update({ status: navigator.onLine === false ? 'offline' : 'error' }) }
-    })().finally(() => { checking = undefined })
+        const requested = manualNotice === state.notice
+        if (!refreshWaiting() && requested) update({ status: 'latest', waiting: false })
+      } catch { if (!disposed && manualNotice === state.notice) update({ status: navigator.onLine === false ? 'offline' : 'error' }) }
+    })().finally(() => { checking = undefined; manualNotice = undefined })
     return checking
   }
   checkNow = () => check(true)

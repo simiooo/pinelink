@@ -4,6 +4,7 @@ import { applyAppUpdate, dismissUpdateNotice, pwaSnapshot, subscribePwa } from '
 import { safeToUpdate } from '../pwa/guard'
 import { useI18n } from '../i18n'
 import { MotionButton, MotionTooltip } from '../motion/components'
+import { Toast, ToastClose, ToastDescription, ToastProvider, ToastViewport } from './ui/toast'
 import './AppUpdate.css'
 
 export function useUpdateCopy() {
@@ -15,25 +16,34 @@ export function useUpdateCopy() {
   }
 }
 export function AppUpdate() {
-  const state = useSyncExternalStore(subscribePwa, pwaSnapshot), c = useUpdateCopy(), [page, setPage] = useState(() => ({ safe: safeToUpdate(), immersed: false }))
+  const state = useSyncExternalStore(subscribePwa, pwaSnapshot), c = useUpdateCopy(), [page, setPage] = useState(() => ({ safe: safeToUpdate(), dialog: false, selected: false }))
   useEffect(() => {
-    const refresh = () => { const next = { safe: safeToUpdate(), immersed: !!document.querySelector('[role=dialog],.guest-network[data-selected]') }; setPage(previous => previous.safe === next.safe && previous.immersed === next.immersed ? previous : next) }
+    const refresh = () => {
+      const next = { safe: safeToUpdate(), dialog: !!document.querySelector('[role=dialog]:not([data-state=closed]):not([aria-hidden=true]):not([hidden])'), selected: !!document.querySelector('.guest-network[data-selected]') }
+      setPage(previous => previous.safe === next.safe && previous.dialog === next.dialog && previous.selected === next.selected ? previous : next)
+    }
     let frame = 0
     const interacted = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(refresh) }
     const timer = setInterval(refresh, 500)
+    const observer = new MutationObserver(refresh)
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-selected', 'data-state', 'aria-hidden', 'hidden'] })
+    refresh()
     document.addEventListener('click', interacted); document.addEventListener('focusin', interacted)
-    return () => { clearInterval(timer); cancelAnimationFrame(frame); document.removeEventListener('click', interacted); document.removeEventListener('focusin', interacted) }
+    return () => { observer.disconnect(); clearInterval(timer); cancelAnimationFrame(frame); document.removeEventListener('click', interacted); document.removeEventListener('focusin', interacted) }
   }, [])
-  useEffect(() => {
-    if (!['latest', 'offline', 'error'].includes(state.status)) return
-    const timer = setTimeout(dismissUpdateNotice, 8000); return () => clearTimeout(timer)
-  }, [state.status])
   const safe = page.safe
-  if (state.status === 'idle' || page.immersed && !state.locked) return null
+  if (state.status === 'idle' || !state.locked && (page.dialog || page.selected && !state.explicit)) return null
   const text = state.status === 'available' ? safe ? c.available : c.busy : state.status === 'busy' ? safe ? c.other : c.busy : c[state.status]
-  return <aside className="app-update-notice" aria-label={c.check}>
-    <span role="status">{text}</span>
+  return <ToastProvider label={c.check} duration={8000}>
+    <Toast key={state.notice} className="app-update-notice" aria-label={c.check} open
+      duration={['latest', 'offline', 'error'].includes(state.status) ? 8000 : Infinity}
+      onOpenChange={open => { if (!open) dismissUpdateNotice(state.notice) }}
+      onEscapeKeyDown={event => { if (state.locked) event.preventDefault() }}
+      onSwipeEnd={event => { if (state.locked) event.preventDefault() }}>
+    <ToastDescription asChild><span>{text}</span></ToastDescription>
     {state.waiting && state.status !== 'applying' && <MotionButton className="primary-button app-update-action" disabled={!safe} onClick={() => void applyAppUpdate()}>{c.update}</MotionButton>}
-    {!state.locked && <MotionTooltip label={c.close}><MotionButton icon className="app-update-close" aria-label={c.close} onClick={dismissUpdateNotice}><X size={16} /></MotionButton></MotionTooltip>}
-  </aside>
+    {!state.locked && <MotionTooltip label={c.close}><ToastClose asChild><MotionButton icon className="app-update-close" aria-label={c.close}><X size={16} /></MotionButton></ToastClose></MotionTooltip>}
+    </Toast>
+    <ToastViewport className="app-update-viewport" label={c.check} />
+  </ToastProvider>
 }
