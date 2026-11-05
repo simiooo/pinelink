@@ -15,6 +15,7 @@ export type GuestJob = {
   payloadKind?: 'TEXT'; text?: StoredText
   transport?: { state: 'connecting' | 'direct' | 'switching' | 'cloud'; proof?: DirectProof }
   authority?: 'LOCAL_DEVICE' | 'ACCOUNT'
+  reconnectRequired?: boolean
   local?: { expires: number; state?: LocalState; manifest?: string; plainRoot?: string; intent?: 'pause' | 'cancel'; disconnected?: boolean }
 }
 export class GuestStore extends LocalStore {

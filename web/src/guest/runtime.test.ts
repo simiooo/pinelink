@@ -18,6 +18,70 @@ const runtime = async () => { const r = await GuestRuntime.open('https://unit.in
 const enrollment = (r: GuestRuntime) => ({ guest: { owner_id: 'guest-fixture', device_id: r.profile.device, device_name: 'Test device', expires_at: new Date(Date.now() + 86400000).toISOString() }, csrf: 'test-csrf' })
 const challenge = () => response({ challenge: 'test-challenge', unix_time: Math.floor(Date.now() / 1000) })
 
+it('recovers a stale lease for another device without rotating keys or deleting saved history', async () => {
+  const r = await runtime(), profile = r.profile
+  await r.store.leases.put({ id: 'self', owner_id: 'stale-owner', device_id: 'stale-device', device_name: 'Old device', csrf: 'stale-csrf', expires_at: '2099-01-01T00:00:00Z', offset: 0 })
+  await r.store.guestPeers.put({ pair_id: 'stale-pair', owner_id: 'other', device_id: 'other-device', device_name: 'Peer', local_name: 'My phone', signing_key: 'key', encryption_key: 'key', expires_at: '2099-01-01T00:00:00Z' })
+  await r.store.jobs.put({ id: 'saved', created: 1, phase: 'complete', direction: 'receive', name: 'Saved.pdf', received: 5, plainSize: 5, plain: new NodeBlob(['saved']), peer: (await r.store.guestPeers.get('stale-pair'))! })
+  await r.store.chunks.put({ job: 'partial', index: 0, bytes: new NodeBlob(['partial']), hash: 'retained' })
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+    if (url.endsWith('/challenge')) return challenge()
+    if (url.endsWith('/enroll')) return response(enrollment(r))
+    if (url.endsWith('/connections')) return response({ invites: [], candidates: [], peers: [] })
+    if (url.endsWith('/transfers')) return response({ transfers: [] })
+    throw Error('unexpected request')
+  }))
+  await r.reconnect()
+  expect(r.getSnapshot().error).toBeUndefined()
+  expect(await r.store.leases.get('self')).toMatchObject({ device_id: profile.device, owner_id: 'guest-fixture' })
+  expect(await r.store.leases.count()).toBe(2)
+  expect((await r.store.profile()).root).toBe(profile.root)
+  expect((await r.store.profile()).signingPrivate).toEqual(profile.signingPrivate)
+  expect((await r.store.jobs.get('saved'))?.plain?.size).toBe(5)
+  expect((await r.store.chunks.get(['partial', 0]))?.bytes.size).toBe(7)
+  expect(r.getSnapshot().connections.peers).toContainEqual(expect.objectContaining({ pair_id: 'stale-pair', local_name: 'My phone', reconnectRequired: true, online: false }))
+  await expect(r.send(new File(['x'], 'x'), r.getSnapshot().connections.peers[0], 100)).rejects.toThrow('CONNECTION_REPAIR_REQUIRED')
+  await expect(r.removePeer('stale-pair')).rejects.toThrow('CONNECTION_REPAIR_REQUIRED')
+  await r.ensureSession()
+  expect(await r.store.leases.count()).toBe(2)
+})
+
+it('never accepts another device, a changed owner of the same device or a lease bound to another signing identity', async () => {
+  for (const scenario of ['owner', 'device', 'signing-key']) {
+    const r = await runtime(), previous = { id: 'self', owner_id: 'guest-original', device_id: scenario === 'signing-key' ? 'stale-device' : r.profile.device, device_name: 'Original', csrf: 'original-csrf', expires_at: '2099-01-01T00:00:00Z', offset: 0, ...(scenario === 'signing-key' ? { profile_root: 'different-root' } : {}) }
+    await r.store.leases.put(previous)
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.endsWith('/challenge') ? challenge() : response({ ...enrollment(r), guest: { ...enrollment(r).guest, ...(scenario === 'device' ? { device_id: 'different-device' } : {}) } })))
+    await expect(r.ensureSession()).rejects.toThrow('GUEST_IDENTITY_CHANGED')
+    expect(await r.store.leases.get('self')).toEqual(previous)
+    expect(await r.store.leases.count()).toBe(1)
+  }
+})
+
+it('reconnects retained history only after the server confirms the same device and both peer keys', async () => {
+  const r = await runtime(), old = { pair_id: 'old-pair', owner_id: 'guest-other', device_id: 'other-device', device_name: 'Same name', local_name: 'My phone', signing_key: 'old-sign', encryption_key: 'old-encrypt', expires_at: '2099-01-01T00:00:00Z', reconnectRequired: true, online: false }
+  await r.store.guestPeers.put(old)
+  await r.store.jobs.put({ id: 'saved', created: 1, phase: 'complete', direction: 'receive', name: 'Saved.pdf', received: 5, plainSize: 5, plain: new NodeBlob(['saved']), peer: old, reconnectRequired: true })
+  let signing = 'wrong-sign'
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+    if (url.endsWith('/challenge')) return challenge()
+    if (url.endsWith('/enroll')) return response(enrollment(r))
+    if (url.endsWith('/connections')) return response({ invites: [], candidates: [], peers: [{ ...old, pair_id: 'confirmed-pair', signing_key: signing, reconnectRequired: undefined, local_name: undefined, online: true }] })
+    if (url.endsWith('/transfers')) return response({ transfers: [] })
+    throw Error('unexpected request')
+  }))
+  await r.reconnect()
+  expect(r.getSnapshot().connections.peers).toHaveLength(2)
+  expect((await r.store.jobs.get('saved'))?.peer.pair_id).toBe('old-pair')
+  signing = 'old-sign'; await r.poll()
+  expect(r.getSnapshot().connections.peers).toHaveLength(1)
+  expect(r.getSnapshot().connections.peers[0]).toMatchObject({ pair_id: 'confirmed-pair', local_name: 'My phone' })
+  expect((await r.store.jobs.get('saved'))?.peer.pair_id).toBe('confirmed-pair')
+  expect((await r.store.jobs.get('saved'))?.reconnectRequired).toBe(true)
+  expect((await r.store.guestPeers.get('old-pair'))?.replacedBy).toBe('confirmed-pair')
+  expect((await r.store.jobs.get('saved'))?.plain?.size).toBe(5)
+  await expect(r.retry('saved')).rejects.toThrow('CONNECTION_REPAIR_REQUIRED')
+})
+
 it('publishes a failed retry and clears it when the same identity reconnects successfully', async () => {
   const r = await runtime(), root = r.profile.root
   let fail = true

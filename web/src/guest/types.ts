@@ -1,5 +1,5 @@
-export type GuestLease = { id: string; owner_id: string; device_id: string; device_name: string; expires_at: string; csrf: string; offset: number }
-export type GuestPeer = { pair_id: string; owner_id: string; device_id: string; device_name: string; encryption_key: string; signing_key: string; expires_at: string; online?: boolean; invite_id?: string; local_name?: string; authority?: 'LOCAL_DEVICE' | 'ACCOUNT'; root?: string }
+export type GuestLease = { id: string; owner_id: string; device_id: string; device_name: string; expires_at: string; csrf: string; offset: number; profile_root?: string }
+export type GuestPeer = { pair_id: string; owner_id: string; device_id: string; device_name: string; encryption_key: string; signing_key: string; expires_at: string; online?: boolean; invite_id?: string; local_name?: string; authority?: 'LOCAL_DEVICE' | 'ACCOUNT'; root?: string; reconnectRequired?: boolean; replacedBy?: string }
 export type GuestInvite = { id: string; token?: string; code?: string; expires_at: string; consumed: boolean }
 export type GuestCandidate = { id: string; invite_id: string; device_name: string; device_id: string; status: string; incoming: boolean; expires_at: string; authority?: 'ACCOUNT' }
 export type GuestConnections = { invites: GuestInvite[]; candidates: GuestCandidate[]; peers: GuestPeer[] }

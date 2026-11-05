@@ -11,6 +11,18 @@ const job = (): GuestJob => ({ id: 'job', created: 0, direction: 'receive', peer
 const view = (value?: GuestJob) => <I18nProvider initialPreference="en-US"><MotionProvider><GuestGraph peers={[peer]} job={value} onConnect={() => {}} onConversation={() => {}} onDetails={() => {}} dragging={false} onFileDrop={() => {}} localDevice="self" /></MotionProvider></I18nProvider>
 afterEach(cleanup)
 
+it('keeps a retained connection visible and offers reconnect without pretending it can revoke the old grant', () => {
+  const reconnect = vi.fn(), stale = { ...peer, reconnectRequired: true, online: undefined }
+  render(<I18nProvider initialPreference="en-US"><MotionProvider><GuestGraph peers={[stale]} onConnect={() => {}} onReconnect={reconnect} onConversation={() => {}} onDetails={() => {}} dragging={false} onFileDrop={() => {}} localDevice="self" /></MotionProvider></I18nProvider>)
+  const node = screen.getByRole('button', { name: 'Peer phone' })
+  expect(node).toHaveAccessibleDescription('Connection interrupted')
+  fireEvent.click(node)
+  const actions = within(screen.getByRole('group', { name: 'Device actions' }))
+  expect(actions.queryByRole('button', { name: 'Remove connection' })).not.toBeInTheDocument()
+  fireEvent.click(actions.getByRole('button', { name: 'Reconnect' }))
+  expect(reconnect).toHaveBeenCalledWith(stale)
+})
+
 it('attributes an interruption only to the disconnected node and keeps unknown presence distinct', () => {
   const peers: GuestPeer[] = [{ ...peer, pair_id: 'live', device_name: 'Working phone', online: true }, { ...peer, pair_id: 'local', device_name: 'Local phone', authority: 'LOCAL_DEVICE', online: false }, { ...peer, pair_id: 'unknown', device_name: 'Unchecked phone', online: undefined }, peer]
   render(<I18nProvider initialPreference="en-US"><MotionProvider><GuestGraph peers={peers} onConnect={() => {}} onConversation={() => {}} onDetails={() => {}} dragging={false} onFileDrop={() => {}} localDevice="self" /></MotionProvider></I18nProvider>)

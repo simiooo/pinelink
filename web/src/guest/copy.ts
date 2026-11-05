@@ -32,6 +32,7 @@ export function guestErrorText(error: string | undefined, c: Copy) {
   if (error === 'DEVICE_NAME_INVALID') return c.nameInvalid
   if (error === 'CONNECTION_GONE') return c.connectionGone
   if (error === 'CONNECTION_BUSY') return c.connectionBusy
+  if (error === 'CONNECTION_REPAIR_REQUIRED') return c.disconnected
   if (navigator.onLine === false) return c.onlineOnly
   if (['NOT_FOUND', 'INVALID_REQUEST', 'EXPIRED'].includes(error)) return error === 'EXPIRED' ? c.expired : c.invalid
   if (error === 'FILE_TOO_LARGE') return c.tooLarge

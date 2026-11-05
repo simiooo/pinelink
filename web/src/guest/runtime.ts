@@ -15,6 +15,7 @@ import { LocalRuntime } from '../local/runtime'
 import { restoreTextHistory } from './restore-text'
 import { checkStoredKeys, connectionFault, connectionStage, requestStage } from './connection-diagnostics'
 import type { ConnectionFault, ConnectionStage } from './connection-diagnostics'
+import { reconcileGuestPeers, saveGuestLease } from './session-recovery'
 
 export class GuestError extends Error { constructor(public code: string, public status = 0) { super(code) } }
 type Snapshot = { ready: boolean; connected: boolean; busy: boolean; offline: boolean; error?: string; fault?: ConnectionFault; checkedAt?: number; connections: GuestConnections; jobs: GuestJob[]; invite?: GuestInvite }
@@ -61,7 +62,7 @@ export class GuestRuntime {
       // Persisted route history is not a live PeerConnection after reopening.
       await store.jobs.filter(job => job.authority !== 'LOCAL_DEVICE' && activeJob(job) && job.transport?.state === 'direct').modify(job => { job.transport = { state: 'connecting', proof: job.transport?.proof } })
       await runtime.refreshLocal()
-      runtime.snapshot = { ...runtime.snapshot, ready: true, connected: !!runtime.lease }
+      runtime.snapshot = { ...runtime.snapshot, ready: true, connected: !!runtime.lease && runtime.lease.device_id === runtime.profile.device }
       if (typeof BroadcastChannel !== 'undefined') { runtime.channel = new BroadcastChannel(store.name); runtime.channel.onmessage = () => { void runtime.refreshLocal().catch(() => undefined) } }
       window.addEventListener('online', runtime.wake); window.addEventListener('offline', runtime.wake)
       document.addEventListener('visibilitychange', runtime.visibility)
@@ -105,7 +106,7 @@ export class GuestRuntime {
   }
   private schedulePoll() {
     clearTimeout(this.timer)
-    if (this.stopped || navigator.onLine === false) return
+    if (this.stopped || navigator.onLine === false || this.snapshot.error === 'GUEST_IDENTITY_CHANGED') return
     const delay = this.snapshot.error ? Math.min(30000, 1000 * 2 ** Math.min(5, Math.max(0, this.failures - 1))) : document.hidden ? 4000 : 1000
     this.timer = setTimeout(() => { if (this.snapshot.error) void this.ensureSession().then(() => this.poll()).catch(error => this.noteError(error)); else void this.poll() }, delay)
   }
@@ -113,7 +114,7 @@ export class GuestRuntime {
   private visibility = () => { if (!document.hidden) this.wake() }
   private async refreshLocal() {
     const jobs = (await this.store.jobs.toArray()).sort((a, b) => b.created - a.created).map(job=>job.authority==='LOCAL_DEVICE'&&activeJob(job)&&!this.local.reachable(job.peer.root)?{...job,peer:{...job.peer,online:false},phase:job.phase==='waiting'?'waiting' as const:'paused' as const,local:{...job.local!,disconnected:true}}:job)
-    const peers = [...(await this.store.guestPeers.toArray()).filter(peer => Date.parse(peer.expires_at) > this.now()), ...(await this.store.localPeers.toArray()).map(peer=>({...peer,online:this.local.reachable(peer.root)}))]
+    const peers = [...(await this.store.guestPeers.toArray()).filter(peer => !peer.replacedBy && (peer.reconnectRequired || Date.parse(peer.expires_at) > this.now())), ...(await this.store.localPeers.toArray()).map(peer=>({...peer,online:this.local.reachable(peer.root)}))]
     this.lifetime.signal.throwIfAborted()
     if (!this.account) { setGuestHistoryAvailable(jobs.length > 0); setGuestWorkPending(jobs.filter(activeJob).length) }
     this.emit({ jobs, connections: { ...this.snapshot.connections, peers } })
@@ -156,10 +157,10 @@ export class GuestRuntime {
       const input = { challenge: challenge.challenge, device_id: this.profile.device, encryption_key: this.profile.encryptionKey, device_name: deviceName() }, body = JSON.stringify(input)
       const signature = base64(new Uint8Array(await this.trace('sign', async () => crypto.subtle.sign('Ed25519', this.profile.signingPrivate, utf8.encode('pinelink-guest-enroll-v1\nPOST\n/v1/guest/enroll\n' + await digest(utf8.encode(body)))), 'POST', '/v1/guest/enroll')))
       const result = await this.publicRequest<{ guest: Omit<GuestLease, 'id' | 'csrf' | 'offset'>; csrf: string }>('/v1/guest/enroll', input, { 'X-Pinelink-Signature': signature })
-      const previous = await this.store.leases.get('self')
-      if (previous && (previous.owner_id !== result.guest.owner_id || previous.device_id !== result.guest.device_id)) throw new Error('GUEST_IDENTITY_CHANGED')
-      this.lease = { ...result.guest, id: 'self', csrf: result.csrf, offset: challenge.unix_time * 1000 - Date.now() }
-      await this.store.leases.put(this.lease)
+      const lease = { ...result.guest, id: 'self', csrf: result.csrf, offset: challenge.unix_time * 1000 - Date.now() }
+      const detached = await saveGuestLease(this.store, this.profile, lease, this.lifetime.signal)
+      for (const id of detached) this.workers.get(id)?.abort()
+      this.lease = lease
       this.emit({ connected: true, error: undefined, offline: false })
     })).finally(() => { this.enrollment = undefined })
     return this.enrollment
@@ -226,6 +227,7 @@ export class GuestRuntime {
     return this.command('remove:' + pair, () => this.exclusive('peer:' + pair, async () => {
       if (navigator.onLine === false) throw new GuestError('CONNECTION_OFFLINE')
       await this.ensureSession()
+      if ((await this.store.guestPeers.get(pair))?.reconnectRequired) throw new GuestError('CONNECTION_REPAIR_REQUIRED')
       try { await this.request('DELETE', '/v1/guest/connections/' + encodeURIComponent(pair)) }
       catch (error) { if (error instanceof GuestError && error.status === 409) { await this.poll(); throw new GuestError('CONNECTION_BUSY', 409) }; throw error }
       await this.store.transaction('rw', this.store.guestPeers, this.store.peerRemovals, async () => {
@@ -243,6 +245,7 @@ export class GuestRuntime {
       this.emit({ busy: true, error: undefined })
       try {
         await this.ensureSession()
+        if (peer.reconnectRequired || (await this.store.guestPeers.get(peer.pair_id))?.reconnectRequired) throw new GuestError('CONNECTION_REPAIR_REQUIRED')
         const prepared = await prepareFile(file, { sender: this.profile.encryptionKey, receiver: peer.encryption_key }, text)
         this.lifetime.signal.throwIfAborted()
         const job: GuestJob = { id: crypto.randomUUID(), created: Date.now(), direction: 'send', peer, prepared, ...(text ? { payloadKind: 'TEXT', text: { cipher: prepared.cipher, manifest: prepared.senderManifest } } : {}), received: 0, name: prepared.name, plainSize: file.size, phase: 'preparing' }
@@ -255,6 +258,7 @@ export class GuestRuntime {
     if(id.startsWith('local:'))return this.local.action(id,'accept')
     return this.command('accept:' + id, async () => {
       const job = await this.store.jobs.get(id); if (!job?.transfer) return
+      await this.requireJobConnection(job)
       const transfer = await this.respondTransfer(job, 'accept')
       await this.store.jobs.update(id, { transfer, phase: 'running', error: undefined }); await this.changed(); this.startJob({ ...job, transfer, phase: 'running' })
     })
@@ -263,11 +267,15 @@ export class GuestRuntime {
     if(id.startsWith('local:'))return this.local.action(id,'reject')
     return this.command('reject:' + id, async () => {
       const job = await this.store.jobs.get(id); if (!job?.transfer) return
+      await this.requireJobConnection(job)
       const transfer = await this.respondTransfer(job, 'reject')
       this.workers.get(id)?.abort(); await this.store.jobs.update(id, { transfer, phase: 'stopped' }); await this.changed()
     })
   }
   private action(transfer: GuestTransfer) { return { owner_id: this.lease!.owner_id, device_id: this.profile.device, expected_version: transfer.version } }
+  private async requireJobConnection(job: GuestJob) {
+    if (job.reconnectRequired || job.peer.reconnectRequired || (await this.store.guestPeers.get(job.peer.pair_id))?.reconnectRequired) throw new GuestError('CONNECTION_REPAIR_REQUIRED')
+  }
   private async respondTransfer(job: GuestJob, action: 'accept' | 'reject' | 'cancel') {
     const original = job.transfer!
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -281,7 +289,7 @@ export class GuestRuntime {
     throw new GuestError('STATE_CONFLICT')
   }
   private startJob(job: GuestJob) {
-    if (job.authority==='LOCAL_DEVICE' || this.stopped || this.workers.has(job.id) || !activeJob(job) || job.phase === 'paused' || (job.retryAt ?? 0) > Date.now() || (job.direction === 'send' && job.snapshot?.completion.stored) || (job.direction === 'receive' && job.transfer?.state === 'PENDING' && (job.directAttempted || hasSpool(job)))) return
+    if (job.reconnectRequired || job.peer.reconnectRequired || job.authority==='LOCAL_DEVICE' || this.stopped || this.workers.has(job.id) || !activeJob(job) || job.phase === 'paused' || (job.retryAt ?? 0) > Date.now() || (job.direction === 'send' && job.snapshot?.completion.stored) || (job.direction === 'receive' && job.transfer?.state === 'PENDING' && (job.directAttempted || hasSpool(job)))) return
     const controller = new AbortController(); this.workers.set(job.id, controller)
     const work = () => this.exclusive('job:' + job.id, async () => {
       const current = await this.store.jobs.get(job.id)
@@ -555,6 +563,7 @@ export class GuestRuntime {
     if(id.startsWith('local:'))return this.local.action(id,action)
     return this.command('control:' + action + ':' + id, async () => {
       const job = await this.store.jobs.get(id); if (!job?.transfer) return
+      await this.requireJobConnection(job)
       let controlRevision = job.controlRevision ?? 0
       let updatedTransfer = job.transfer
       let changedTask: ControlledTask | undefined
@@ -583,7 +592,7 @@ export class GuestRuntime {
       await this.changed(); await this.poll()
     })
   }
-  async retry(id: string) { if(id.startsWith('local:'))return this.local.action(id,'resume'); await this.ensureSession(); const job = await this.store.jobs.get(id); if (!job) return; await this.store.jobs.update(id, { error: undefined, retryAt: 0, failures: 0 }); this.startJob({ ...job, retryAt: 0 }); await this.poll() }
+  async retry(id: string) { if(id.startsWith('local:'))return this.local.action(id,'resume'); await this.ensureSession(); const job = await this.store.jobs.get(id); if (!job) return; await this.requireJobConnection(job); await this.store.jobs.update(id, { error: undefined, retryAt: 0, failures: 0 }); this.startJob({ ...job, retryAt: 0 }); await this.poll() }
   async dismiss(id: string) { await this.store.jobs.update(id, { dismissed: true }); await this.changed() }
   async download(id: string) {
     const job = await this.store.jobs.get(id); if (!job?.plain) throw new Error('FILE_SOURCE_MISSING')
@@ -595,14 +604,8 @@ export class GuestRuntime {
     clearTimeout(this.timer)
     this.polling = (async () => {
       const [connections, transfers] = await Promise.all([this.request<GuestConnections>('GET', '/v1/guest/connections'), this.request<{ transfers: GuestTransfer[] | null }>('GET', '/v1/transfers')])
-      await this.exclusive('roster', () => this.store.transaction('rw', this.store.guestPeers, this.store.peerRemovals, async () => {
-        const local = new Map((await this.store.guestPeers.toArray()).map(peer => [peer.pair_id, peer.local_name]))
-        await this.store.peerRemovals.where('expires').below(this.now()).delete()
-        const removed = new Set(await this.store.peerRemovals.toCollection().primaryKeys())
-        await this.store.guestPeers.clear()
-        await this.store.guestPeers.bulkPut(connections.peers.filter(peer => !removed.has(peer.pair_id)).map(peer => ({ ...peer, local_name: local.get(peer.pair_id) })))
-      }))
-      connections.peers = [...await this.store.guestPeers.toArray(),...(await this.store.localPeers.toArray()).map(peer=>({...peer,online:this.local.reachable(peer.root)}))]
+      await this.exclusive('roster', () => this.store.transaction('rw', [this.store.guestPeers, this.store.peerRemovals, this.store.jobs], () => reconcileGuestPeers(this.store, connections.peers, this.now())))
+      connections.peers = [...(await this.store.guestPeers.toArray()).filter(peer => !peer.replacedBy),...(await this.store.localPeers.toArray()).map(peer=>({...peer,online:this.local.reachable(peer.root)}))]
       this.emit({ connections, offline: false, error: undefined, checkedAt: this.now(), invite: this.snapshot.invite ? { ...this.snapshot.invite, consumed: connections.invites.find(i => i.id === this.snapshot.invite!.id)?.consumed ?? true } : undefined })
       for (const transfer of transfers.transfers ?? []) {
         try {
