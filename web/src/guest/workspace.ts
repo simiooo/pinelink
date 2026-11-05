@@ -3,8 +3,10 @@ import type { ClientRuntime } from '../data/runtime'
 import { getGuestRuntime, GuestError, GuestRuntime } from './runtime'
 import type { GuestPeer } from './types'
 import { registerUpdateGuard } from '../pwa/guard'
+import { connectionFault } from './connection-diagnostics'
+import type { ConnectionFault } from './connection-diagnostics'
 
-type Snapshot = ReturnType<GuestRuntime['getSnapshot']>
+type Snapshot = ReturnType<GuestRuntime['getSnapshot']> & { faults?: ConnectionFault[] }
 
 // Visitor, account and local data retain their own stores and signing keys.
 // The wrapper only combines their views and routes each action back to its owner.
@@ -20,6 +22,7 @@ export class WorkspaceRuntime {
   private disposed = false
   private source?: GuestRuntime
   private accountError?: string
+  private accountFault?: ConnectionFault
   private listeners = new Set<() => void>()
   private snapshot: Snapshot
   private releaseUpdateGuard: () => void
@@ -40,6 +43,7 @@ export class WorkspaceRuntime {
   now = () => this.guest.now()
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener) } }
   getSnapshot = () => this.snapshot
+  async diagnostics() { return Promise.all([this.guest.diagnostics(), ...(this.account ? [this.account.diagnostics()] : [])]).then(channels => ({ channels, accountInitialization: this.accountFault })) }
 
   private refresh() {
     if (this.disposed) return
@@ -60,6 +64,7 @@ export class WorkspaceRuntime {
         jobs: [...guest.jobs, ...accountJobs].sort((a, b) => b.created - a.created),
       }
     }
+    this.snapshot = { ...this.snapshot, faults: [guest.error && guest.fault, account?.error && account.fault, this.accountError && this.accountFault].filter((fault): fault is ConnectionFault => !!fault) }
     for (const listener of this.listeners) listener()
   }
 
@@ -67,7 +72,7 @@ export class WorkspaceRuntime {
     const key = reader ? [reader.server, reader.owner, reader.profile.device, reader.access.localOnly ? 'offline' : reader.access.csrf].join('\n') : undefined
     if (this.readerKey === key && (!reader || this.account || this.opening)) { this.reader = reader; return this.opening }
     const generation = ++this.generation, previous = this.account
-    this.reader = reader; this.readerKey = key; this.account = undefined; this.accountError = undefined
+    this.reader = reader; this.readerKey = key; this.account = undefined; this.accountError = undefined; this.accountFault = undefined
     this.accountUnsubscribe?.(); this.accountUnsubscribe = undefined
     if (this.source === previous) this.source = undefined
     this.refresh()
@@ -80,7 +85,7 @@ export class WorkspaceRuntime {
       this.accountUnsubscribe = account.subscribe(() => this.refresh())
       this.refresh()
     }).catch(error => {
-      if (!this.disposed && generation === this.generation) { this.accountError = error instanceof Error ? error.message : 'ACCOUNT_UNAVAILABLE'; this.refresh() }
+      if (!this.disposed && generation === this.generation) { this.accountError = error instanceof Error ? error.message : 'ACCOUNT_UNAVAILABLE'; this.accountFault = connectionFault(error, { channel: 'account', stage: 'initialization' }); this.refresh() }
       throw error
     }).finally(() => { if (generation === this.generation) this.opening = undefined })
     this.opening = opening

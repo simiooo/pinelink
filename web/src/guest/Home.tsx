@@ -3,7 +3,7 @@ import { ArrowDownToLine, ArrowLeft, Clock3, FilePlus2, FileText, FolderOpen, Ne
 import { authFetch, authState } from '../auth/client'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import QRCode from 'qrcode'
-import { MotionButton, MotionReveal, MotionTooltip } from '../motion/components'
+import { MotionButton, MotionTooltip } from '../motion/components'
 import { MotionSurface } from '../motion/surface'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { Input } from '../components/ui/input'
@@ -12,6 +12,8 @@ import { useGuestCopy, guestErrorText } from './copy'
 import { displayedRoute } from './route'
 import { DeviceGlyph, GuestGraph } from './Graph'
 import { getWorkspaceRuntime, WorkspaceRuntime } from './workspace'
+import { ConnectionNotice } from './ConnectionNotice'
+import { connectionReason } from './connection-diagnostics'
 import type { GuestJob } from './store'
 import type { GuestPeer } from './types'
 import { useI18n } from '../i18n'
@@ -88,7 +90,8 @@ function VisitorHome({ runtime, onNotifications }: { runtime: WorkspaceRuntime; 
   const [graphChoice, setGraphChoice] = useState<{ key: string; route: boolean }>()
   const showRoute = !!active && (graphChoice?.key === graphKey ? graphChoice.route : peers.length <= 1)
   const graphJob = showRoute ? active : undefined
-  const errorText = localError(error,lc) || guestErrorText(error, c) || (panel === 'connect' && localMode || !state.error || state.offline ? '' : c.serviceUnavailable), invite = connectionInvite && state.invite?.id === connectionInvite.id ? state.invite : connectionInvite
+  const connectionFaults = state.faults?.length ? state.faults : state.fault ? [state.fault] : []
+  const errorText = localError(error,lc) || guestErrorText(error, c) || (panel === 'connect' && localMode || !state.error || state.offline ? '' : connectionReason(connectionFaults[0], locale === 'zh-CN')), invite = connectionInvite && state.invite?.id === connectionInvite.id ? state.invite : connectionInvite
   const expired = !!invite && (Date.parse(invite.expires_at) <= now || invite.consumed)
   const inviteURL = invite?.token ? new URL('/connect#' + invite.token, location.origin).href : ''
   const pairRequests = state.connections.candidates.filter(item => item.incoming && item.status === 'WAITING' && Date.parse(item.expires_at) > now)
@@ -192,7 +195,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: WorkspaceRuntime; 
         <MotionTooltip label={c.file}><MotionButton icon className="guest-icon-button" aria-label={c.file} onClick={() => choose()} disabled={state.busy}><FilePlus2 size={24} /></MotionButton></MotionTooltip>
       </div>
     </footer>
-    {errorText && !panel && <MotionReveal role="alert" className="guest-error" distance={0}><span>{errorText}</span><MotionButton icon className="guest-icon-button" aria-label={c.retry} onClick={retryService}><RefreshCw size={18} /></MotionButton></MotionReveal>}
+    <ConnectionNotice message={errorText} visible={!panel} faults={connectionFaults} retry={retryService} diagnostics={() => runtime.diagnostics()} />
     <MotionSurface open={!!panel} onClose={close} title={title} closeLabel={c.close}>
       <div className="guest-surface-body">
         {visualPanel === 'connect' && <div className="guest-connect">

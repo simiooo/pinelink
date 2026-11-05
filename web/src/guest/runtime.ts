@@ -13,9 +13,11 @@ import { DirectLink, DirectUnavailable, fallbackSignal } from './direct'
 import type { DirectProof } from './direct'
 import { LocalRuntime } from '../local/runtime'
 import { restoreTextHistory } from './restore-text'
+import { checkStoredKeys, connectionFault, connectionStage, requestStage } from './connection-diagnostics'
+import type { ConnectionFault, ConnectionStage } from './connection-diagnostics'
 
 export class GuestError extends Error { constructor(public code: string, public status = 0) { super(code) } }
-type Snapshot = { ready: boolean; connected: boolean; busy: boolean; offline: boolean; error?: string; checkedAt?: number; connections: GuestConnections; jobs: GuestJob[]; invite?: GuestInvite }
+type Snapshot = { ready: boolean; connected: boolean; busy: boolean; offline: boolean; error?: string; fault?: ConnectionFault; checkedAt?: number; connections: GuestConnections; jobs: GuestJob[]; invite?: GuestInvite }
 type ControlledTask = { version: number; state: string; progress_bytes: number; total_bytes: number; progress_revision: number }
 const emptyConnections = (): GuestConnections => ({ invites: [], candidates: [], peers: [] })
 const activeJob = (job: GuestJob) => !['complete', 'stopped'].includes(job.phase)
@@ -44,6 +46,7 @@ export class GuestRuntime {
   private closing?: Promise<void>
   private timer?: ReturnType<typeof setTimeout>
   private failures = 0
+  private lastFault?: ConnectionFault
   private channel?: BroadcastChannel
   private constructor(readonly server: string, readonly store: GuestStore, readonly profile: DeviceProfile, private readonly account?: { owner: string; csrf?: string; offset: number }) {}
   static async open(server = API_URL,localOnly=false) {
@@ -88,8 +91,18 @@ export class GuestRuntime {
   getSnapshot = () => this.snapshot
   now = () => Date.now() + (this.lease?.offset ?? 0)
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener) } }
-  private emit(patch: Partial<Snapshot> = {}) { if (this.stopped) return; this.snapshot = { ...this.snapshot, ...patch }; if (!this.account) setGuestWorkPending(this.snapshot.jobs.filter(activeJob).length + (this.snapshot.busy ? 1 : 0)); for (const listener of this.listeners) listener() }
-  private noteError(error: unknown) { if (this.stopped) return; this.failures++; this.emit({ offline: navigator.onLine === false, error: error instanceof Error ? error.message : 'GUEST_UNAVAILABLE' }); this.schedulePoll() }
+  private emit(patch: Partial<Snapshot> = {}) { if (this.stopped) return; this.snapshot = { ...this.snapshot, ...patch, ...('error' in patch && !patch.error ? { fault: undefined } : {}) }; if (!this.account) setGuestWorkPending(this.snapshot.jobs.filter(activeJob).length + (this.snapshot.busy ? 1 : 0)); for (const listener of this.listeners) listener() }
+  private trace<T>(stage: ConnectionStage, task: () => Promise<T>, method?: string, path?: string) { return connectionStage({ channel: this.account ? 'account' : 'visitor', stage, method, path }, task) }
+  private noteError(error: unknown) {
+    if (this.stopped) return
+    this.failures++; this.lastFault = connectionFault(error, { channel: this.account ? 'account' : 'visitor', stage: 'local-data' })
+    this.emit({ offline: navigator.onLine === false, error: error instanceof Error ? error.message : 'GUEST_UNAVAILABLE', fault: this.lastFault }); this.schedulePoll()
+  }
+  async diagnostics() {
+    const keys = await checkStoredKeys(this.profile)
+    const local = await Promise.all([this.store.jobs.count(), this.store.guestPeers.count()]).then(([jobs, peers]) => ({ jobs, peers, schema: this.store.verno })).catch(() => ({ unavailable: true }))
+    return { channel: this.account ? 'account' : 'visitor', publicFingerprint: /^[a-f0-9]{64}$/.test(this.profile.root) ? this.profile.root.slice(0, 12) : 'invalid', connected: this.snapshot.connected, activeFailure: this.snapshot.fault, lastFailure: this.lastFault, keys, local, lease: { present: !!this.lease, expired: this.lease ? Date.parse(this.lease.expires_at) <= this.now() : undefined, deviceMatches: this.lease ? this.lease.device_id === this.profile.device : undefined, finiteClockOffset: this.lease ? Number.isFinite(this.lease.offset) : undefined } }
+  }
   private schedulePoll() {
     clearTimeout(this.timer)
     if (this.stopped || navigator.onLine === false) return
@@ -117,34 +130,38 @@ export class GuestRuntime {
     const work = task().finally(() => { if (this.commands.get(key) === work) this.commands.delete(key) }); this.commands.set(key, work); return work
   }
   private async publicRequest<T>(path: string, input: unknown, headers: Record<string, string> = {}) {
+    return this.trace(requestStage(path), async () => {
     const response = await fetch(this.server + path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(input), credentials: 'include', cache: 'no-store', redirect: 'error', signal: AbortSignal.any([this.lifetime.signal, AbortSignal.timeout(15000)]) })
     const value = await response.json().catch(() => ({})) as T & { code?: string }
     this.lifetime.signal.throwIfAborted()
     if (!response.ok) throw new GuestError(value.code ?? 'GUEST_UNAVAILABLE', response.status)
     return value
+    }, 'POST', path)
   }
   async ensureSession() {
     if (this.account) {
+      const account = this.account
+      return this.trace('session', async () => {
       if (this.stopped) throw new Error('GUEST_CLOSED')
       const session = authState().session
-      if (!session || session.account.id !== this.account.owner || session.device_id !== this.profile.device || session.csrf !== this.account.csrf) throw new GuestError('ACCOUNT_SIGN_IN_REQUIRED', 401)
-      this.lease = { id: 'self', owner_id: session.account.id, device_id: session.device_id, device_name: deviceName(), expires_at: session.expires_at, csrf: session.csrf, offset: this.account.offset }
+      if (!session || session.account.id !== account.owner || session.device_id !== this.profile.device || session.csrf !== account.csrf) throw new GuestError('ACCOUNT_SIGN_IN_REQUIRED', 401)
+      this.lease = { id: 'self', owner_id: session.account.id, device_id: session.device_id, device_name: deviceName(), expires_at: session.expires_at, csrf: session.csrf, offset: account.offset }
       this.emit({ connected: true, error: undefined, offline: navigator.onLine === false })
-      return
+      })
     }
     if (this.enrollment) return this.enrollment
-    this.enrollment = this.exclusive('enroll', async () => {
+    this.enrollment = this.trace('session', () => this.exclusive('enroll', async () => {
       if (this.stopped) throw new Error('GUEST_CLOSED')
       const challenge = await this.publicRequest<{ challenge: string; unix_time: number }>('/v1/guest/challenge', { signing_key: this.profile.signingKey, client_kind: 'web', surface: 'web' })
       const input = { challenge: challenge.challenge, device_id: this.profile.device, encryption_key: this.profile.encryptionKey, device_name: deviceName() }, body = JSON.stringify(input)
-      const signature = base64(new Uint8Array(await crypto.subtle.sign('Ed25519', this.profile.signingPrivate, utf8.encode('pinelink-guest-enroll-v1\nPOST\n/v1/guest/enroll\n' + await digest(utf8.encode(body))))))
+      const signature = base64(new Uint8Array(await this.trace('sign', async () => crypto.subtle.sign('Ed25519', this.profile.signingPrivate, utf8.encode('pinelink-guest-enroll-v1\nPOST\n/v1/guest/enroll\n' + await digest(utf8.encode(body)))), 'POST', '/v1/guest/enroll')))
       const result = await this.publicRequest<{ guest: Omit<GuestLease, 'id' | 'csrf' | 'offset'>; csrf: string }>('/v1/guest/enroll', input, { 'X-Pinelink-Signature': signature })
       const previous = await this.store.leases.get('self')
       if (previous && (previous.owner_id !== result.guest.owner_id || previous.device_id !== result.guest.device_id)) throw new Error('GUEST_IDENTITY_CHANGED')
       this.lease = { ...result.guest, id: 'self', csrf: result.csrf, offset: challenge.unix_time * 1000 - Date.now() }
       await this.store.leases.put(this.lease)
       this.emit({ connected: true, error: undefined, offline: false })
-    }).finally(() => { this.enrollment = undefined })
+    })).finally(() => { this.enrollment = undefined })
     return this.enrollment
   }
   async reconnect() {
@@ -154,16 +171,18 @@ export class GuestRuntime {
     if (this.snapshot.error) throw new GuestError(this.snapshot.error)
   }
   async request<T>(method: string, path: string, input?: unknown, signal?: AbortSignal): Promise<T> {
+    return this.trace(requestStage(path), async () => {
     this.lifetime.signal.throwIfAborted()
     const lease = this.lease ?? await this.store.leases.get('self')
     if (!lease) throw new GuestError('GUEST_EXPIRED', 401)
     const body = input === undefined ? '' : JSON.stringify(input), timestamp = Math.floor((Date.now() + lease.offset) / 1000).toString()
-    const signature = base64(new Uint8Array(await crypto.subtle.sign('Ed25519', this.profile.signingPrivate, utf8.encode(`${method}\n${path}\n${timestamp}\n${await digest(utf8.encode(body))}`))))
+    const signature = base64(new Uint8Array(await this.trace('sign', async () => crypto.subtle.sign('Ed25519', this.profile.signingPrivate, utf8.encode(`${method}\n${path}\n${timestamp}\n${await digest(utf8.encode(body))}`)), method, path)))
     const response = await fetch(this.server + path, { method, body: method === 'GET' ? undefined : body, credentials: 'include', cache: 'no-store', redirect: 'error', signal: AbortSignal.any([this.lifetime.signal, AbortSignal.timeout(15000), ...(signal ? [signal] : [])]), headers: { 'Content-Type': 'application/json', 'X-Pinelink-Owner': lease.owner_id, 'X-Pinelink-Device': this.profile.device, 'X-Pinelink-Timestamp': timestamp, 'X-Pinelink-Signature': signature, 'X-Pinelink-CSRF': lease.csrf } })
     const value = await response.json().catch(() => ({})) as T & { code?: string }
     this.lifetime.signal.throwIfAborted(); signal?.throwIfAborted()
     if (!response.ok) throw new GuestError(response.status === 410 && /^\/v1\/(?:transfers|p2p|tasks)\//.test(path) ? 'FILE_EXPIRED' : value.code ?? 'GUEST_UNAVAILABLE', response.status)
     return value
+    }, method, path)
   }
   async connect() {
     return this.command('connect', async () => {
