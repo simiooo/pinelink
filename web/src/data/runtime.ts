@@ -4,6 +4,7 @@ import { LocalStore, storeName } from './store'
 import { preparePage } from './wire'
 import type { Page } from './wire'
 import { requestBackgroundSync } from './background-sync'
+import { registerUpdateGuard, updateFrozen } from '../pwa/guard'
 
 export class DataError extends Error {
   constructor(public status: number, public code: string) { super(code) }
@@ -28,6 +29,7 @@ export class ClientRuntime {
   private lifetime = new AbortController()
   private operations = new Set<Promise<unknown>>()
   private controllers = new Set<AbortController>()
+  private releaseUpdateGuard = registerUpdateGuard(() => !this.operations.size && !this.active)
   private wake = () => { void this.sync(true).catch(() => undefined) }
   private constructor(readonly server: string, readonly owner: string, readonly pin: string, readonly store: LocalStore, readonly profile: DeviceProfile, readonly access: RuntimeAccess = {}) {}
   static async open(server: string, owner: string, device = '', pin = '', store?: LocalStore, access: RuntimeAccess = {}) {
@@ -55,6 +57,7 @@ export class ClientRuntime {
   }
   private track<T>(work: () => Promise<T>): Promise<T> {
     this.assertOpen()
+    if (updateFrozen()) return Promise.reject(new DataError(0, 'UPDATE_IN_PROGRESS'))
     const operation = Promise.resolve().then(work)
     this.operations.add(operation)
     void operation.then(() => this.operations.delete(operation), () => this.operations.delete(operation))
@@ -252,6 +255,7 @@ export class ClientRuntime {
     if (retry) throw retry
   }
   sync(force = false): Promise<void> {
+    if (updateFrozen()) return Promise.resolve()
     if (this.access.localOnly) return Promise.resolve()
     if (this.closed) return Promise.reject(new DataError(0, 'CLIENT_CLOSED'))
     if (this.active) {
@@ -320,7 +324,7 @@ export class ClientRuntime {
     this.stop()
     this.lifetime.abort()
     for (const c of this.controllers) c.abort()
-    this.closing = Promise.allSettled([...this.operations, ...(this.active ? [this.active] : [])]).then(() => { this.store.close() })
+    this.closing = Promise.allSettled([...this.operations, ...(this.active ? [this.active] : [])]).then(() => { this.store.close(); this.releaseUpdateGuard() })
     return this.closing
   }
 }

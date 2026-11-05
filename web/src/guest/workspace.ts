@@ -2,6 +2,7 @@ import { authState, subscribeAuth } from '../auth/client'
 import type { ClientRuntime } from '../data/runtime'
 import { getGuestRuntime, GuestError, GuestRuntime } from './runtime'
 import type { GuestPeer } from './types'
+import { registerUpdateGuard } from '../pwa/guard'
 
 type Snapshot = ReturnType<GuestRuntime['getSnapshot']>
 
@@ -21,9 +22,11 @@ export class WorkspaceRuntime {
   private accountError?: string
   private listeners = new Set<() => void>()
   private snapshot: Snapshot
+  private releaseUpdateGuard: () => void
 
   constructor(readonly guest: GuestRuntime) {
     this.snapshot = guest.getSnapshot()
+    this.releaseUpdateGuard = registerUpdateGuard(() => !this.opening && this.snapshot.ready && !this.snapshot.busy && !this.snapshot.jobs.some(job => !['complete', 'stopped'].includes(job.phase)) && !['preparing', 'show', 'reply', 'verify', 'waiting'].includes(this.local?.getSnapshot?.().phase ?? 'idle'))
     this.guestUnsubscribe = guest.subscribe(() => this.refresh())
     this.authUnsubscribe = subscribeAuth(() => {
       const auth = authState(), current = this.reader
@@ -115,7 +118,8 @@ export class WorkspaceRuntime {
 
   dispose() {
     this.disposed = true; this.generation++; this.guestUnsubscribe(); this.authUnsubscribe(); this.accountUnsubscribe?.(); this.listeners.clear()
-    if (this.account) void this.account.close()
+    if (this.account) void this.account.close().finally(this.releaseUpdateGuard)
+    else this.releaseUpdateGuard()
     this.account = undefined
   }
 }

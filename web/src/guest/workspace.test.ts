@@ -7,6 +7,7 @@ const auth = vi.hoisted(() => ({ session: undefined as unknown, listeners: new S
 vi.mock('../auth/client', () => ({ authState: () => ({ session: auth.session }), subscribeAuth: (listener: () => void) => { auth.listeners.add(listener); return () => auth.listeners.delete(listener) } }))
 import { GuestRuntime } from './runtime'
 import { WorkspaceRuntime } from './workspace'
+import { safeToUpdate } from '../pwa/guard'
 
 const peer = (id: string): GuestPeer => ({ pair_id: id, owner_id: id, device_id: id, device_name: id, encryption_key: 'key', signing_key: 'key', expires_at: '2099-01-01T00:00:00Z', online: true })
 const job = (id: string): GuestJob => ({ id, created: 1, direction: 'send', name: id, plainSize: 1, received: 0, phase: 'waiting', peer: peer(id) })
@@ -53,5 +54,18 @@ it('closes an account runtime that finishes opening after sign-out', async () =>
   resolve(account.runtime as unknown as GuestRuntime); await opening
   expect(workspace.hasAccount).toBe(false); expect(account.runtime.close).toHaveBeenCalledOnce()
   expect(workspace.getSnapshot().connections.peers.map(p => p.pair_id)).toEqual(['guest'])
+  workspace.dispose()
+})
+
+it('blocks an update for account transfers as well as visitor work', async () => {
+  const guest = fixture('guest'), account = fixture('account'); guest.state.jobs = []
+  vi.spyOn(GuestRuntime, 'openAccount').mockResolvedValue(account.runtime as unknown as GuestRuntime)
+  const workspace = new WorkspaceRuntime(guest.runtime as unknown as GuestRuntime)
+  expect(safeToUpdate()).toBe(true)
+  auth.session = { account: { id: 'account' }, device_id: 'account', csrf: 'csrf' }
+  await workspace.setAccount(reader)
+  expect(safeToUpdate()).toBe(false)
+  await workspace.setAccount(undefined)
+  expect(safeToUpdate()).toBe(true)
   workspace.dispose()
 })

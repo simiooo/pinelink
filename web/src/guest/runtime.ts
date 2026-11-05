@@ -8,6 +8,7 @@ import type { GuestJob } from './store'
 import type { GuestLease, GuestConnections, GuestInvite, GuestCandidate, GuestPeer, GuestTransfer, ProgressSnapshot } from './types'
 import { decodeFileFrame, decodeText, decryptDare, encodeFileFrame, hashBlob, openManifest, prepareFile, safeFileName, suite, wireChunkSize } from './crypto'
 import { setGuestHistoryAvailable, setGuestWorkPending } from './continuity'
+import { updateFrozen } from '../pwa/guard'
 import { DirectLink, DirectUnavailable, fallbackSignal } from './direct'
 import type { DirectProof } from './direct'
 import { LocalRuntime } from '../local/runtime'
@@ -101,6 +102,7 @@ export class GuestRuntime {
     return navigator.locks ? navigator.locks.request(this.store.name + ':' + name, { mode: 'exclusive', signal }, task) : task()
   }
   private command<T>(key: string, task: () => Promise<T>) {
+    if (updateFrozen()) return Promise.reject(new GuestError('UPDATE_IN_PROGRESS'))
     const existing = this.commands.get(key); if (existing) return existing as Promise<T>
     const work = task().finally(() => { if (this.commands.get(key) === work) this.commands.delete(key) }); this.commands.set(key, work); return work
   }

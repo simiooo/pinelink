@@ -14,10 +14,13 @@ import type { LocalePreference } from '../i18n'
 import { MotionButton, MotionTooltip } from '../motion/components'
 import { useMotionRef } from '../motion/react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu'
+import { AppUpdate, useUpdateCopy } from './AppUpdate'
+import { appVersion, checkAppUpdate, pwaSnapshot, subscribePwa } from '../pwa'
 
 export function AppShell() {
   const accountCopy = useAuthCopy()
   const guestCopy = useGuestCopy()
+  const updateCopy = useUpdateCopy(), pwa = useSyncExternalStore(subscribePwa, pwaSnapshot)
   useSyncExternalStore(subscribeAuth, authRevision)
   useSyncExternalStore(subscribeGuestContinuity, guestContinuityRevision)
   const account = authState()
@@ -42,8 +45,8 @@ export function AppShell() {
     void owner.to(page.current, { x: 0, opacity: 1 }, 280)
     previous.current = pathname; setMenuOpen(false)
   }, [pathname, owner, page])
-  return <div className="app-shell">
-    <header className="topbar">
+  return <div className="app-shell" data-app-version={appVersion}>
+    <header className="topbar" inert={pwa.locked}>
       <Link to="/" className="brand" aria-label={t('brandHome')}>Pinelink</Link>
       <nav className="topbar-actions" aria-label={t('globalActions')}>
         {workspacePaths.has(pathname) && <MotionTooltip label={t('notifications')}><MotionButton icon className="workspace-notifications" aria-label={t('notifications')} onClick={() => navigate({ to: '/notifications' })}><Bell size={22} />{notifications > 0 && <span className="workspace-unread" aria-label={guestCopy.unread} />}</MotionButton></MotionTooltip>}
@@ -52,6 +55,7 @@ export function AppShell() {
           <DropdownMenuTrigger asChild><MotionButton icon aria-label={t('more')}><Ellipsis size={24} /></MotionButton></DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={8} className="pinelink-menu">
             <DropdownMenuItem onSelect={() => go('/settings')}>{t('settings')}</DropdownMenuItem>
+            <DropdownMenuItem disabled={pwa.status === 'checking'} onSelect={() => { void checkAppUpdate() }}>{updateCopy.check}</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuLabel>{t('language')}</DropdownMenuLabel>
             <DropdownMenuRadioGroup value={preference} onValueChange={value => setPreference(value as LocalePreference)}>
@@ -59,10 +63,13 @@ export function AppShell() {
               <DropdownMenuRadioItem value="zh-CN">{t('languageZh')}</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="en-US">{t('languageEn')}</DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="app-build" title={appVersion}>{updateCopy.version} {appVersion.slice(0,8)}</DropdownMenuLabel>
           </DropdownMenuContent>
         </DropdownMenu>
       </nav>
     </header>
-    <main ref={page} className="page-content">{workspacePaths.has(pathname) ? <GuestHome onNotifications={setNotifications} /> : <Outlet />}</main>
+    <AppUpdate />
+    <main ref={page} className="page-content" inert={pwa.locked}>{workspacePaths.has(pathname) ? <GuestHome onNotifications={setNotifications} /> : <Outlet />}</main>
   </div>
 }

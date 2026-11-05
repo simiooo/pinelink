@@ -5,8 +5,8 @@ RUN npm ci
 COPY web/ ./
 COPY i18n/ /source/i18n/
 ENV VITE_PINELINK_API_URL=/api VITE_PINELINK_OWNER=dev-owner VITE_PINELINK_SERVICE_PROFILE=runtime
-RUN npm run build
 ARG VERSION
+RUN test -n "$VERSION" && VITE_PINELINK_VERSION="$VERSION" npm run build
 RUN node -e 'const fs=require("fs"); if(!process.env.VERSION) throw Error("Missing version"); fs.writeFileSync("dist/version.json",JSON.stringify({version:process.env.VERSION,client:"web",profile:"private-preview"}))'
 
 FROM nginx:stable-alpine@sha256:0e52bd054126cdc040b1276c0af347aeb02a41b9cfe305d6094767ac30e97949

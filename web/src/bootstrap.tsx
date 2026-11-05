@@ -7,6 +7,7 @@ import { ClientWorker } from './data/ClientWorker'
 import type { ClientRuntime } from './data/runtime'
 import { API_URL, IDENTITY } from './api/client'
 import { startPwa } from './pwa'
+import { holdUpdate } from './pwa/guard'
 import { loadServerPin } from './data/service-profile'
 import { completePendingLogout, prepareAuth, sessionExpired, signOut } from './auth/client'
 import { dataAccess } from './data/access'
@@ -17,6 +18,7 @@ let root: Root | undefined
 let router: ReturnType<typeof createAppRouter> | undefined
 let disposed = false
 const stopPwa = startPwa()
+const releaseStartup = holdUpdate()
 import.meta.hot?.dispose(() => {
   disposed = true
   stopPwa()
@@ -52,4 +54,4 @@ async function bootstrap() {
   router = createAppRouter()
   root.render(<StrictMode><ClientWorker runtime={runtime}><App router={router} /></ClientWorker></StrictMode>)
 }
-void bootstrap()
+void bootstrap().finally(releaseStartup)
