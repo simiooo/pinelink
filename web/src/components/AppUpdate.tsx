@@ -17,7 +17,7 @@ export function useUpdateCopy() {
 export function AppUpdate() {
   const state = useSyncExternalStore(subscribePwa, pwaSnapshot), c = useUpdateCopy(), [page, setPage] = useState(() => ({ safe: safeToUpdate(), immersed: false }))
   useEffect(() => {
-    const refresh = () => { const next = { safe: safeToUpdate(), immersed: !!document.querySelector('[role=dialog],.guest-network[data-selected],.guest-error') }; setPage(previous => previous.safe === next.safe && previous.immersed === next.immersed ? previous : next) }
+    const refresh = () => { const next = { safe: safeToUpdate(), immersed: !!document.querySelector('[role=dialog],.guest-network[data-selected]') }; setPage(previous => previous.safe === next.safe && previous.immersed === next.immersed ? previous : next) }
     let frame = 0
     const interacted = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(refresh) }
     const timer = setInterval(refresh, 500)
