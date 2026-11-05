@@ -12,6 +12,8 @@
 .icon-button .action-label { display: flex; }
 .action-busy { position: absolute; left: 12px; display: flex; }
 .motion-button[aria-busy=true] .action-label { padding: 0 8px; }
+.icon-button[aria-busy=true] .action-label { visibility: hidden; padding: 0; }
+.icon-button .action-busy { inset: 0; align-items: center; justify-content: center; }
 .motion-button:disabled { cursor: default; opacity: .55; }
 .motion-spinner { display: inline-flex; width: 16px; height: 16px; vertical-align: middle; }
 .motion-tooltip-host { position: relative; display: inline-flex; }

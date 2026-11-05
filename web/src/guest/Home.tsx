@@ -83,12 +83,12 @@ function VisitorHome({ runtime, onNotifications }: { runtime: WorkspaceRuntime; 
   const selectedJob = state.jobs.find(job => job.id === jobId) ?? active
   const candidate = state.connections.candidates.find(item => item.id === candidateId)
   const maxBytes = authState().capabilities.guest_max_file_bytes ?? (64 << 20)
-  const peers = state.offline || now - (state.checkedAt ?? 0) > 15000 ? state.connections.peers.map(peer => peer.authority==='LOCAL_DEVICE'?peer:({ ...peer, online: false })) : state.connections.peers
+  const peers = state.offline || now - (state.checkedAt ?? 0) > 15000 ? state.connections.peers.map(peer => peer.authority==='LOCAL_DEVICE'?peer:({ ...peer, online: undefined })) : state.connections.peers
   const graphKey = JSON.stringify([active?.id, peers.map(peer => peer.pair_id).sort()])
   const [graphChoice, setGraphChoice] = useState<{ key: string; route: boolean }>()
   const showRoute = !!active && (graphChoice?.key === graphKey ? graphChoice.route : peers.length <= 1)
   const graphJob = showRoute ? active : undefined
-  const errorText = localError(error,lc) || guestErrorText(error ?? (localMode||active?.authority==='LOCAL_DEVICE'?undefined:state.error), c), invite = connectionInvite && state.invite?.id === connectionInvite.id ? state.invite : connectionInvite
+  const errorText = localError(error,lc) || guestErrorText(error, c) || (panel === 'connect' && localMode || !state.error || state.offline ? '' : c.serviceUnavailable), invite = connectionInvite && state.invite?.id === connectionInvite.id ? state.invite : connectionInvite
   const expired = !!invite && (Date.parse(invite.expires_at) <= now || invite.consumed)
   const inviteURL = invite?.token ? new URL('/connect#' + invite.token, location.origin).href : ''
   const pairRequests = state.connections.candidates.filter(item => item.incoming && item.status === 'WAITING' && Date.parse(item.expires_at) > now)
@@ -101,6 +101,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: WorkspaceRuntime; 
   useEffect(() => { setPanel(routePanel(pathname)); setError(undefined); if (['/tasks', '/history', '/local-files'].includes(pathname)) { setFilter(routeFilter(pathname)); setFilePeer(undefined) } }, [pathname])
   useEffect(() => { onNotifications?.(notificationCount) }, [onNotifications, notificationCount])
   const perform = async (task: () => Promise<unknown>) => { setError(undefined); try { await task() } catch (e) { setError(e instanceof Error ? e.message : 'GUEST_UNAVAILABLE') } }
+  const retryService = async () => { setError(undefined); try { await runtime.ensureSession(); await runtime.poll() } catch { setError('SERVICE_UNAVAILABLE') } }
   useEffect(() => { const timer = setInterval(() => setNow(runtime.now()), 1000); return () => clearInterval(timer) }, [runtime])
   useEffect(() => {
     let live = true; setQr('')
@@ -186,7 +187,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: WorkspaceRuntime; 
       <MotionTooltip label={c.connect}><MotionButton icon className="guest-icon-button workspace-add-device" aria-label={c.connect} onClick={connect}><Plus size={24} /></MotionButton></MotionTooltip>
       <MotionTooltip label={c.file}><MotionButton icon className="guest-icon-button" aria-label={c.file} onClick={() => choose()} disabled={state.busy}><FilePlus2 size={23} /></MotionButton></MotionTooltip>
     </footer>
-    {errorText && !panel && <MotionReveal role="alert" className="guest-error"><span>{errorText}</span><MotionButton icon className="guest-icon-button" aria-label={c.retry} onClick={() => active ? perform(() => runtime.retry(active.id)) : perform(() => runtime.ensureSession().then(() => runtime.poll()))}><RefreshCw size={18} /></MotionButton></MotionReveal>}
+    {errorText && !panel && <MotionReveal role="alert" className="guest-error"><span>{errorText}</span><MotionButton icon className="guest-icon-button" aria-label={c.retry} onClick={retryService}><RefreshCw size={18} /></MotionButton></MotionReveal>}
     <MotionSurface open={!!panel} onClose={close} title={title} closeLabel={c.close}>
       <div className="guest-surface-body">
         {visualPanel === 'connect' && <div className="guest-connect">

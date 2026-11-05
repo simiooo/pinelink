@@ -46,8 +46,8 @@ export class WorkspaceRuntime {
     const guest = this.guest.getSnapshot(), account = this.account?.getSnapshot()
     if (!account) this.snapshot = this.accountError ? { ...guest, error: this.accountError } : guest
     else {
-      const accountPeers = account.connections.peers.map(peer => ({ ...peer, authority: 'ACCOUNT' as const, online: Date.now() - (account.checkedAt ?? 0) > 15000 ? false : peer.online }))
-      const guestPeers = guest.connections.peers.map(peer => peer.authority === 'LOCAL_DEVICE' || Date.now() - (guest.checkedAt ?? 0) <= 15000 ? peer : { ...peer, online: false })
+      const accountPeers = account.connections.peers.map(peer => ({ ...peer, authority: 'ACCOUNT' as const, online: account.offline || Date.now() - (account.checkedAt ?? 0) > 15000 ? undefined : peer.online }))
+      const guestPeers = guest.connections.peers.map(peer => peer.authority === 'LOCAL_DEVICE' || !guest.offline && Date.now() - (guest.checkedAt ?? 0) <= 15000 ? peer : { ...peer, online: undefined })
       const accountJobs = account.jobs.map(job => ({ ...job, authority: 'ACCOUNT' as const, peer: { ...job.peer, authority: 'ACCOUNT' as const } }))
       this.snapshot = {
         ...guest,

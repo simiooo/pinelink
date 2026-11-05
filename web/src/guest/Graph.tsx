@@ -1,5 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useState } from 'react'
-import { Check, Cloud, Laptop, MessageSquareText, Pause, Pencil, Plus, Smartphone, Trash2, UserRound, UserRoundCheck, ShieldCheck, WifiOff } from 'lucide-react'
+import { Check, CircleHelp, Cloud, Laptop, MessageSquareText, Pause, Pencil, Plus, Smartphone, Trash2, UserRound, UserRoundCheck, ShieldCheck, WifiOff } from 'lucide-react'
 import { MotionButton, MotionList, MotionReveal, MotionSpinner, MotionTooltip } from '../motion/components'
 import { useMotionRef } from '../motion/react'
 import { confirmedPercent } from '../motion/tokens'
@@ -32,6 +32,7 @@ function Curve({ value, incoming, running, onDetails, ledger, lower, direct = fa
   </svg><button className="guest-curve-hit" data-segment={lower ? 'lower' : 'upper'} aria-label={c.details} onClick={onDetails} /><span className="sr-only" role="progressbar" aria-label={ledger === 'spool' ? c.upload : c.received} aria-valuemin={0} aria-valuemax={100} aria-valuenow={confirmedPercent(fraction)} /></>
 }
 export function GuestGraph({ peers, job, onConnect, onConversation, onDetails, dragging, onFileDrop, localDevice, localAccount=false, onRename, onRemove, onFiles }: { peers: GuestPeer[]; job?: GuestJob; onConnect: () => void; onConversation: (peer: GuestPeer) => void; onDetails: () => void; dragging: boolean; onFileDrop: (file: File, peer: GuestPeer) => void; localDevice: string; localAccount?: boolean; onRename?: (peer: GuestPeer) => void; onRemove?: (peer: GuestPeer) => void; onFiles?: (peer?: GuestPeer) => void }) {
+  const presenceId = useId()
   const c = useGuestCopy(), lc=useLocalCopy(), mobile = /Android|iPhone|iPad/.test(navigator.userAgent)
   const [dropTarget, setDropTarget] = useState<string>()
   const [selected, setSelected] = useState<string>()
@@ -42,22 +43,27 @@ export function GuestGraph({ peers, job, onConnect, onConversation, onDetails, d
   const uploadRunning = !job?.error && !stored && job?.phase !== 'stopped' && ['OPEN', 'SPOOLING', 'VERIFYING'].includes(job?.snapshot?.spool.state ?? '')
   const deliveryRunning = !job?.error && !pending && job?.phase === 'running' && job.snapshot?.delivery.state === 'RUNNING' && (!relay || !job.snapshot.route || job.snapshot.route.kind === 'RELAY')
   const routeStatus = job?.local?.disconnected ? lc.reconnect : pending ? route === 'switching' ? c.switching : job?.transport?.proof ? c.reconnecting : c.connecting : c.paused
-  const shown = job ? [{ ...job.peer, ...peers.find(peer => peer.pair_id === job.peer.pair_id), online: peers.find(peer => peer.pair_id === job.peer.pair_id)?.online ?? false }] : peers
+  const shown = job ? [{ ...job.peer, ...peers.find(peer => peer.pair_id === job.peer.pair_id), online: peers.find(peer => peer.pair_id === job.peer.pair_id)?.online }] : peers
   const choosing = shown.some(peer => peer.pair_id === selected)
   return <div className="guest-stage" data-dragging={dragging || undefined}>
     <div className="guest-network" data-route={route} data-selected={choosing || undefined} onKeyDown={event => { if (event.key === 'Escape' && choosing) { event.preventDefault(); const node = event.currentTarget.querySelector<HTMLButtonElement>('.guest-node[aria-expanded=true]'); setSelected(undefined); node?.focus({ preventScroll: true }) } }} onClick={event => { if (event.target === event.currentTarget) setSelected(undefined) }}>
       {relay && job && <Curve value={upload} incoming={job.direction === 'receive'} running={uploadRunning} onDetails={onDetails} ledger="spool" lower={job.direction === 'send'} />}
       {job?.transfer && <Curve value={delivery} incoming={job.direction === 'receive'} running={deliveryRunning} onDetails={onDetails} ledger="delivery" lower={job.direction === 'receive'} direct={!relay} pending={pending} />}
-      {shown.length ? <MotionList className="guest-peers" count={shown.length} identity={(job ? 'transfer:' : 'idle:') + shown.map(peer => peer.pair_id).join(':')}>{shown.map(peer => <div className="guest-peer" key={peer.pair_id} data-motion-key={peer.pair_id} data-online={peer.online} data-selected={choosing && peer.pair_id === selected || undefined} data-drop-target={dragging && dropTarget === peer.pair_id || undefined}
+      {shown.length ? <MotionList className="guest-peers" count={shown.length} identity={(job ? 'transfer:' : 'idle:') + shown.map(peer => peer.pair_id).join(':')}>{shown.map((peer, index) => {
+        const status = peer.online === undefined ? c.presenceUnknown : !peer.online ? peer.authority === 'LOCAL_DEVICE' ? c.disconnected : c.offline : ''
+        const state = peer.online === undefined ? 'unknown' : peer.online ? 'online' : 'offline'
+        const statusId = presenceId + '-' + index
+        return <div className="guest-peer" data-presence={state} key={peer.pair_id} data-motion-key={peer.pair_id} data-online={peer.online} data-selected={choosing && peer.pair_id === selected || undefined} data-drop-target={dragging && dropTarget === peer.pair_id || undefined}
         onDragOver={event => { if (event.dataTransfer.types.includes('Files')) { event.preventDefault(); setDropTarget(peer.pair_id) } }}
         onDragLeave={event => { if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) setDropTarget(undefined) }}
         onDrop={event => { if (event.dataTransfer.files.length === 1) { event.preventDefault(); event.stopPropagation(); setDropTarget(undefined); onFileDrop(event.dataTransfer.files[0], peer) } }}>
-        <MotionTooltip label={peer.local_name || peer.device_name}><MotionButton className="guest-node" aria-label={peer.local_name || peer.device_name} aria-expanded={choosing && peer.pair_id === selected} onClick={() => setSelected(value => value === peer.pair_id ? undefined : peer.pair_id)} onKeyDown={event => { if (event.key === 'Escape') setSelected(undefined) }}><DeviceGlyph name={peer.device_name} /></MotionButton></MotionTooltip>
-        <GuestBadge device={peer.device_id} local={peer.authority==='LOCAL_DEVICE'} account={peer.owner_id.startsWith('acct-')} /><span className="guest-dot" /><span className="guest-node-label">{peer.local_name || peer.device_name}</span>
+        <MotionTooltip label={peer.local_name || peer.device_name}><MotionButton className="guest-node" aria-label={peer.local_name || peer.device_name} aria-describedby={status ? statusId : undefined} aria-expanded={choosing && peer.pair_id === selected} onClick={() => setSelected(value => value === peer.pair_id ? undefined : peer.pair_id)} onKeyDown={event => { if (event.key === 'Escape') setSelected(undefined) }}><DeviceGlyph name={peer.device_name} /></MotionButton></MotionTooltip>
+        <GuestBadge device={peer.device_id} local={peer.authority==='LOCAL_DEVICE'} account={peer.owner_id.startsWith('acct-')} /><span className="guest-dot" aria-hidden="true" /><span className="guest-node-label">{peer.local_name || peer.device_name}</span>
+        {status && <span className="guest-peer-status" id={statusId} role="status">{state === 'unknown' ? <CircleHelp size={12} aria-hidden="true" /> : <WifiOff size={12} aria-hidden="true" />}{status}</span>}
         {choosing && peer.pair_id === selected && <div className="guest-node-actions" role="group" aria-label={c.deviceActions}>
           {([{ label: c.conversation, icon: MessageSquareText, run: () => onConversation(peer) }, { label: c.rename, icon: Pencil, run: () => onRename?.(peer) }, { label: c.remove, icon: Trash2, run: () => onRemove?.(peer) }]).map(action => <div className="guest-node-action" key={action.label}><MotionTooltip label={action.label}><MotionButton icon className="guest-icon-button" aria-label={action.label} onClick={action.run}><action.icon size={20} /></MotionButton></MotionTooltip></div>)}
         </div>}
-      </div>)}</MotionList> : <div className="guest-connect-node"><MotionTooltip label={c.connect}><MotionButton className="guest-node guest-add" aria-label={c.connect} onClick={onConnect}><Plus /></MotionButton></MotionTooltip><span className="guest-node-label">{c.connect}</span></div>}
+      </div>})}</MotionList> : <div className="guest-connect-node"><MotionTooltip label={c.connect}><MotionButton className="guest-node guest-add" aria-label={c.connect} onClick={onConnect}><Plus /></MotionButton></MotionTooltip><span className="guest-node-label">{c.connect}</span></div>}
       {relay && job && <div className="guest-cloud"><MotionReveal className="guest-cloud-content" identity={job.transfer!.id} distance={4}><MotionTooltip label={stored ? c.stored : c.upload}><MotionButton className="guest-node" aria-label={c.cloud + ' · ' + c.details} onClick={onDetails}><Cloud /></MotionButton></MotionTooltip>{stored && <span className="guest-cloud-stored" aria-label={c.stored}><Check size={11} /></span>}<span className="guest-node-label">{c.cloud}</span></MotionReveal></div>}
       {(pending || !relay && job?.phase === 'paused') && <div className="guest-route-status"><MotionTooltip label={routeStatus}><MotionButton icon className="guest-icon-button" aria-label={routeStatus} onClick={onDetails}>{job?.local?.disconnected ? <WifiOff size={16}/> : pending ? <MotionSpinner /> : <Pause size={16} />}</MotionButton></MotionTooltip><span className="sr-only" role="status">{routeStatus}</span></div>}
       <div className="guest-local"><MotionTooltip label={job ? c.details : c.local}><MotionButton className="guest-node" aria-label={job ? c.details : c.local} onClick={job ? onDetails : () => onFiles?.()}>{mobile ? <Smartphone /> : <Laptop />}</MotionButton></MotionTooltip>

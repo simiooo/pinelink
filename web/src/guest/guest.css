@@ -21,6 +21,8 @@
 .guest-connection-identity code { overflow-wrap: anywhere; user-select: text; color: #404040; }
 .guest-peer[data-online=false] .guest-node .action-label,.guest-peer[data-online=false] .guest-node-label { opacity: .45; }
 .guest-peer[data-online=false] .guest-dot { background: #d4d4d4; }
+.guest-peer[data-presence=unknown] .guest-dot { background: white; border-color: #a3a3a3; }
+.guest-peer-status { display: flex; align-items: center; justify-content: center; gap: 4px; color: #737373; font-size: 11px; line-height: 16px; white-space: nowrap; margin-top: -8px; }
 .guest-node-label { font-size: 13px; line-height: 20px; font-weight: 600; color: #404040; text-align: center; white-space: nowrap; max-width: 156px; overflow: hidden; text-overflow: ellipsis; }
 .guest-connect-node { position: absolute; top: calc(18% - 32px); left: 50%; transform: translateX(-50%); }
 .guest-add { color: white!important; background: #0866ff!important; border-color: #0866ff!important; }
@@ -124,6 +126,7 @@
 .guest-network[data-route=idle] .guest-peer { width: 128px; max-width: 100%; height: 128px; gap: 0; --node-center-y: 48px; }
 .guest-network[data-route=idle] .guest-peer .guest-node { position: absolute; top: 16px; }
 .guest-network[data-route=idle] .guest-peer .guest-node-label { position: absolute; top: 92px; }
+.guest-network[data-route=idle] .guest-peer-status { position: absolute; top: 114px; margin-top: 0; }
 .guest-network[data-route=idle] .guest-peer .guest-dot { top: 66px; }
 .guest-network[data-route=idle] .guest-peer .guest-badge { top: 14px; }
 .guest-network[data-selected] .guest-peer:not([data-selected]),.guest-network[data-selected] .guest-local { opacity: .13!important; }

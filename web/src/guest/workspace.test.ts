@@ -19,6 +19,18 @@ const fixture = (id: string) => {
 const reader = { server: 'https://unit.invalid', owner: 'account', profile: { device: 'account' }, access: { csrf: 'csrf' } } as unknown as ClientRuntime
 afterEach(() => { auth.session = undefined; auth.listeners.clear(); vi.restoreAllMocks() })
 
+it('does not mistake an expired presence check for a remote disconnect or affect a working local link', async () => {
+  const guest = fixture('guest'), account = fixture('account')
+  guest.state.checkedAt = Date.now() - 20000
+  guest.state.connections.peers.push({ ...peer('local'), authority: 'LOCAL_DEVICE' })
+  vi.spyOn(GuestRuntime, 'openAccount').mockResolvedValue(account.runtime as unknown as GuestRuntime)
+  const workspace = new WorkspaceRuntime(guest.runtime as unknown as GuestRuntime)
+  auth.session = { account: { id: 'account' }, device_id: 'account', csrf: 'csrf' }
+  await workspace.setAccount(reader)
+  expect(workspace.getSnapshot().connections.peers.map(p => [p.pair_id, p.online])).toEqual([['guest', undefined], ['local', true], ['account', true]])
+  workspace.dispose()
+})
+
 it('keeps guest and account peers, jobs and actions in their own runtime', async () => {
   const guest = fixture('guest'), account = fixture('account')
   vi.spyOn(GuestRuntime, 'openAccount').mockResolvedValue(account.runtime as unknown as GuestRuntime)

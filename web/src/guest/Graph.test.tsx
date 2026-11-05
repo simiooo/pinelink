@@ -11,6 +11,15 @@ const job = (): GuestJob => ({ id: 'job', created: 0, direction: 'receive', peer
 const view = (value?: GuestJob) => <I18nProvider initialPreference="en-US"><MotionProvider><GuestGraph peers={[peer]} job={value} onConnect={() => {}} onConversation={() => {}} onDetails={() => {}} dragging={false} onFileDrop={() => {}} localDevice="self" /></MotionProvider></I18nProvider>
 afterEach(cleanup)
 
+it('attributes an interruption only to the disconnected node and keeps unknown presence distinct', () => {
+  const peers: GuestPeer[] = [{ ...peer, pair_id: 'live', device_name: 'Working phone', online: true }, { ...peer, pair_id: 'local', device_name: 'Local phone', authority: 'LOCAL_DEVICE', online: false }, { ...peer, pair_id: 'unknown', device_name: 'Unchecked phone', online: undefined }, peer]
+  render(<I18nProvider initialPreference="en-US"><MotionProvider><GuestGraph peers={peers} onConnect={() => {}} onConversation={() => {}} onDetails={() => {}} dragging={false} onFileDrop={() => {}} localDevice="self" /></MotionProvider></I18nProvider>)
+  expect(screen.getByRole('button', { name: 'Working phone' })).not.toHaveAttribute('aria-describedby')
+  expect(screen.getByRole('button', { name: 'Local phone' })).toHaveAccessibleDescription('Connection interrupted')
+  expect(screen.getByRole('button', { name: 'Unchecked phone' })).toHaveAccessibleDescription('Status unknown')
+  expect(screen.getByRole('button', { name: 'Peer phone' })).toHaveAccessibleDescription('Offline')
+})
+
 it('labels the remote identity independently of the local transfer slot', () => {
   const accountPeer = { ...peer, pair_id: 'account', owner_id: 'acct-peer', device_name: 'Account peer' }
   const visitorPeer = { ...peer, pair_id: 'visitor', authority: 'ACCOUNT' as const, device_name: 'Visitor peer' }
