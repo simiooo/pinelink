@@ -190,7 +190,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: WorkspaceRuntime; 
         <MotionTooltip label={c.file}><MotionButton icon className="guest-icon-button" aria-label={c.file} onClick={() => choose()} disabled={state.busy}><FilePlus2 size={24} /></MotionButton></MotionTooltip>
       </div>
     </footer>
-    {errorText && !panel && <MotionReveal role="alert" className="guest-error"><span>{errorText}</span><MotionButton icon className="guest-icon-button" aria-label={c.retry} onClick={retryService}><RefreshCw size={18} /></MotionButton></MotionReveal>}
+    {errorText && !panel && <MotionReveal role="alert" className="guest-error" distance={0}><span>{errorText}</span><MotionButton icon className="guest-icon-button" aria-label={c.retry} onClick={retryService}><RefreshCw size={18} /></MotionButton></MotionReveal>}
     <MotionSurface open={!!panel} onClose={close} title={title} closeLabel={c.close}>
       <div className="guest-surface-body">
         {visualPanel === 'connect' && <div className="guest-connect">

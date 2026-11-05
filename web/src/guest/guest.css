@@ -44,7 +44,7 @@
 .guest-cloud .guest-node { width: 56px!important; height: 56px!important; min-width: 56px; background: white!important; border-color: #d4d4d4!important; }
 .guest-cloud .guest-node .action-label>svg { width: 28px; height: 28px; }
 .guest-cloud-stored { position: absolute; left: calc(50% + 11px); top: 39px; width: 18px; height: 18px; display: grid; place-items: center; border: 1px solid #d4d4d4; border-radius: 50%; background: white; }
-.guest-footer { position: fixed; left: 0; right: 0; bottom: calc(16px + env(safe-area-inset-bottom)); margin-inline: auto; width: 168px; display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 20; }
+.guest-footer { position: fixed; left: auto; right: max(16px,env(safe-area-inset-right)); bottom: calc(16px + env(safe-area-inset-bottom)); margin-inline: 0; width: 168px; display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 20; }
 .guest-toolbar { display: flex; align-items: center; gap: 4px; box-sizing: border-box; width: 168px; height: 64px; padding: 8px; border-radius: 32px; background: #f5f5f5; box-shadow: inset 0 0 0 1px #e5e5e5, 0 4px 16px #00000008; }
 .guest-toolbar .guest-icon-button { flex-shrink: 0; }
 .guest-toolbar .action-face { width: 48px; height: 48px; min-height: 48px; border: 0; border-radius: 50%; background: transparent; color: #111; }
@@ -94,9 +94,9 @@ body:has(.app-update-notice) .guest-footer .guest-offline { visibility: hidden; 
 .guest-history-file>span:last-child { width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; line-height: 20px; }
 .guest-history-icon { display: block; position: relative; width: 48px; height: 48px; color: #888; }
 .guest-file-badge { position: absolute; right: 0; bottom: 0; width: 17px; height: 17px; display: grid; place-items: center; border-radius: 50%; border: 1px solid #d4d4d4; background: white; color: #404040; font-size: 10px; }
-.guest-error { position: absolute; bottom: 88px; left: 0; right: 0; margin-inline: auto; width: min(100%,480px); display: flex; align-items: center; justify-content: space-between; gap: 12px; background: white; border: 1px solid #e5e5e5; border-radius: 16px; padding: 8px 8px 8px 16px; font-size: 13px; }
+.guest-error { position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); right: max(16px,env(safe-area-inset-right)); z-index: 70; width: max-content; max-width: min(480px,calc(100% - 32px)); min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: white; border: 0; border-radius: 16px; padding: 0 8px; font-size: 13px; box-shadow: inset 0 0 0 1px #e5e5e5,0 4px 16px #00000008; }
+.guest-error>span { min-width: 0; }
 .guest-error .icon-button { flex-shrink: 0; }
-.app-shell:has(.app-update-notice) .guest-stage,.guest-page:has(>.guest-error) .guest-stage { height: calc(100dvh - 272px); min-height: 220px; }
 .guest-inline-error { color: #404040; font-size: 13px; line-height: 20px; margin: 24px 0 0; }
 .guest-storage { width: min(100%,400px); margin: 64px auto; text-align: left; }.guest-storage h1 { font-size: 24px; margin: 0 0 12px; }.guest-storage p { color: #737373; margin: 0 0 32px; }
 .guest-download, .guest-startup-retry { display: flex; width: 192px; min-height: 48px; justify-content: center; align-items: center; border-radius: 24px; }
@@ -109,7 +109,6 @@ body:has(.app-update-notice) .guest-footer .guest-offline { visibility: hidden; 
   .app-shell:has(.guest-page) .topbar { height: 72px; padding-inline: 20px; }
   .page-content:has(.guest-page) { padding: 0 20px max(20px,env(safe-area-inset-bottom)); }
   .guest-stage { height: calc(100dvh - 156px); min-height: 420px; }
-  .app-shell:has(.app-update-notice) .guest-stage,.guest-page:has(>.guest-error) .guest-stage { height: calc(100dvh - 252px); }
   .guest-node { width: 56px!important; height: 56px!important; min-width: 56px; }.guest-node .action-label>svg { width: 28px; height: 28px; }
   .guest-peer { --node-center-y: 28px; }
   .guest-peers.motion-list,.guest-connect-node { top: calc(18% - 28px); }
