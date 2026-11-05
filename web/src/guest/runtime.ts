@@ -12,6 +12,7 @@ import { updateFrozen } from '../pwa/guard'
 import { DirectLink, DirectUnavailable, fallbackSignal } from './direct'
 import type { DirectProof } from './direct'
 import { LocalRuntime } from '../local/runtime'
+import { restoreTextHistory } from './restore-text'
 
 export class GuestError extends Error { constructor(public code: string, public status = 0) { super(code) } }
 type Snapshot = { ready: boolean; connected: boolean; busy: boolean; offline: boolean; error?: string; checkedAt?: number; connections: GuestConnections; jobs: GuestJob[]; invite?: GuestInvite }
@@ -42,6 +43,7 @@ export class GuestRuntime {
   private workerTasks = new Set<Promise<unknown>>()
   private closing?: Promise<void>
   private timer?: ReturnType<typeof setTimeout>
+  private failures = 0
   private channel?: BroadcastChannel
   private constructor(readonly server: string, readonly store: GuestStore, readonly profile: DeviceProfile, private readonly account?: { owner: string; csrf?: string; offset: number }) {}
   static async open(server = API_URL,localOnly=false) {
@@ -52,6 +54,7 @@ export class GuestRuntime {
       const runtime = new GuestRuntime(absolute, store, await store.profile())
       runtime.local = await LocalRuntime.open(store, () => runtime.changed())
       runtime.lease = await store.leases.get('self')
+      await restoreTextHistory(store, runtime.profile, runtime.local.profile)
       // Persisted route history is not a live PeerConnection after reopening.
       await store.jobs.filter(job => job.authority !== 'LOCAL_DEVICE' && activeJob(job) && job.transport?.state === 'direct').modify(job => { job.transport = { state: 'connecting', proof: job.transport?.proof } })
       await runtime.refreshLocal()
@@ -70,6 +73,7 @@ export class GuestRuntime {
     try {
       const runtime = new GuestRuntime(reader.server, store, reader.profile, { owner: reader.owner, csrf: reader.access.csrf, offset: (await reader.store.target()).offset })
       runtime.local = local
+      await restoreTextHistory(store, runtime.profile, local.profile)
       if (!reader.access.localOnly) await runtime.ensureSession()
       await store.jobs.filter(job => job.authority !== 'LOCAL_DEVICE' && activeJob(job) && job.transport?.state === 'direct').modify(job => { job.transport = { state: 'connecting', proof: job.transport?.proof } })
       await runtime.refreshLocal()
@@ -85,7 +89,13 @@ export class GuestRuntime {
   now = () => Date.now() + (this.lease?.offset ?? 0)
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener) } }
   private emit(patch: Partial<Snapshot> = {}) { if (this.stopped) return; this.snapshot = { ...this.snapshot, ...patch }; if (!this.account) setGuestWorkPending(this.snapshot.jobs.filter(activeJob).length + (this.snapshot.busy ? 1 : 0)); for (const listener of this.listeners) listener() }
-  private noteError(error: unknown) { if (this.stopped) return; this.emit({ offline: navigator.onLine === false, error: error instanceof Error ? error.message : 'GUEST_UNAVAILABLE' }) }
+  private noteError(error: unknown) { if (this.stopped) return; this.failures++; this.emit({ offline: navigator.onLine === false, error: error instanceof Error ? error.message : 'GUEST_UNAVAILABLE' }); this.schedulePoll() }
+  private schedulePoll() {
+    clearTimeout(this.timer)
+    if (this.stopped || navigator.onLine === false) return
+    const delay = this.snapshot.error ? Math.min(30000, 1000 * 2 ** Math.min(5, Math.max(0, this.failures - 1))) : document.hidden ? 4000 : 1000
+    this.timer = setTimeout(() => { if (this.snapshot.error) void this.ensureSession().then(() => this.poll()).catch(error => this.noteError(error)); else void this.poll() }, delay)
+  }
   private wake = () => { this.emit({ offline: navigator.onLine === false }); if (navigator.onLine !== false && this.lease) void this.ensureSession().then(() => this.poll()).catch(error => this.noteError(error)) }
   private visibility = () => { if (!document.hidden) this.wake() }
   private async refreshLocal() {
@@ -570,26 +580,35 @@ export class GuestRuntime {
       connections.peers = [...await this.store.guestPeers.toArray(),...(await this.store.localPeers.toArray()).map(peer=>({...peer,online:this.local.reachable(peer.root)}))]
       this.emit({ connections, offline: false, error: undefined, checkedAt: this.now(), invite: this.snapshot.invite ? { ...this.snapshot.invite, consumed: connections.invites.find(i => i.id === this.snapshot.invite!.id)?.consumed ?? true } : undefined })
       for (const transfer of transfers.transfers ?? []) {
-        const own = await this.store.jobs.where('transfer.id').equals(transfer.id).first()
-        let job = own
-        if (!job && transfer.recipient_owner_id === this.lease!.owner_id) {
-          const peer = connections.peers.find(p => p.owner_id === transfer.sender_owner_id && p.device_id === transfer.sender_device_id)
-          if (!peer) continue
-          job = { id: transfer.id, created: Date.parse(transfer.created_at ?? '') || this.now(), direction: 'receive', peer, transfer, ...(transfer.content_kind === 'TEXT' ? { payloadKind: 'TEXT' } : {}), received: 0, name: safeFileName(transfer.file_name), plainSize: Math.max(0, transfer.size_bytes - Math.ceil(transfer.size_bytes / (wireChunkSize + 32)) * 32), phase: transfer.state === 'PENDING' ? 'waiting' : 'running' }
-          const candidate = job
-          await this.store.transaction('rw', this.store.jobs, async () => { if (!await this.store.jobs.get(candidate.id)) await this.store.jobs.add(candidate) })
+        try {
+          const own = await this.store.jobs.where('transfer.id').equals(transfer.id).first()
+          let job = own
+          if (!job && transfer.recipient_owner_id === this.lease!.owner_id) {
+            const peer = connections.peers.find(p => p.owner_id === transfer.sender_owner_id && p.device_id === transfer.sender_device_id)
+            if (!peer) continue
+            job = { id: transfer.id, created: Date.parse(transfer.created_at ?? '') || this.now(), direction: 'receive', peer, transfer, ...(transfer.content_kind === 'TEXT' ? { payloadKind: 'TEXT' } : {}), received: 0, name: safeFileName(transfer.file_name), plainSize: Math.max(0, transfer.size_bytes - Math.ceil(transfer.size_bytes / (wireChunkSize + 32)) * 32), phase: transfer.state === 'PENDING' ? 'waiting' : 'running' }
+            const candidate = job
+            await this.store.transaction('rw', this.store.jobs, async () => { if (!await this.store.jobs.get(candidate.id)) await this.store.jobs.add(candidate) })
+          }
+          if (!job) continue
+          const id = job.id
+          await this.store.transaction('rw', this.store.jobs, async () => { const current = await this.store.jobs.get(id); if (current && transfer.content_kind !== current.payloadKind) throw new Error('FILE_JOB_CHANGED'); if (current && transfer.version >= (current.transfer?.version ?? 0)) await this.store.jobs.update(id, { transfer }) })
+          if (job.phase === 'complete' && job.snapshot?.completion.delivered && transfer.state === 'COMPLETED') continue
+          const snap = await this.request<ProgressSnapshot>('GET', `/v1/p2p/${transfer.id}/progress`)
+          await this.applyProgress(job.id, snap)
+        } catch (error) {
+          // A single history projection is not the availability of the service.
+          if (this.stopped || error instanceof GuestError && error.status === 401) throw error
+          const job = await this.store.jobs.where('transfer.id').equals(transfer.id).first()
+          if (job) await this.store.jobs.update(job.id, { error: error instanceof Error ? error.message : 'TRANSFER_INTERRUPTED', retryAt: Date.now() + 30000 })
         }
-        if (!job) continue
-        const id = job.id
-        await this.store.transaction('rw', this.store.jobs, async () => { const current = await this.store.jobs.get(id); if (current && transfer.content_kind !== current.payloadKind) throw new Error('FILE_JOB_CHANGED'); if (current && transfer.version >= (current.transfer?.version ?? 0)) await this.store.jobs.update(id, { transfer }) })
-        const snap = await this.request<ProgressSnapshot>('GET', `/v1/p2p/${transfer.id}/progress`)
-        await this.applyProgress(job.id, snap)
       }
+      this.failures = 0
       await this.refreshLocal()
       for (const job of this.snapshot.jobs.filter(activeJob)) this.startJob(job)
     })().catch(async error => { this.noteError(error); if (error instanceof GuestError && error.status === 401 && error.code === 'GUEST_EXPIRED') await this.ensureSession().catch(error => this.noteError(error)) }).finally(() => {
       this.polling = undefined
-      if (!this.stopped) this.timer = setTimeout(() => { void this.poll() }, document.hidden ? 4000 : 1000)
+      this.schedulePoll()
     })
     return this.polling
   }

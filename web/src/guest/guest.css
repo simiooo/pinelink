@@ -154,6 +154,9 @@ body:has(.app-update-notice) .guest-footer .guest-offline { visibility: hidden; 
 .workspace-tab-label { position: relative; }
 .workspace-file-tabs [data-state=active] .workspace-tab-label:after { content: ''; position: absolute; left: 0; right: 0; bottom: -16px; height: 2px; background: #111; }
 .workspace-files>.guest-history { padding-block: 32px 16px; }
+.workspace-text-history { display: grid; gap: 24px; padding-top: 24px; }
+.workspace-text-peer { color: #737373; font-size: 12px; }
+.workspace-text-history .conversation-list { padding-block: 12px 0; }
 .guest-history-file { border: 0!important; background: transparent!important; padding: 0!important; height: auto!important; font-weight: 600; border-radius: 8px; }
 .guest-history-file .action-face { background: transparent; padding: 0; border: 0; width: 100%; height: auto; }
 .guest-history-file .action-label { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; text-align: left; }

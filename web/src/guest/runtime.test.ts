@@ -18,6 +18,43 @@ const runtime = async () => { const r = await GuestRuntime.open('https://unit.in
 const enrollment = (r: GuestRuntime) => ({ guest: { owner_id: 'guest-fixture', device_id: r.profile.device, device_name: 'Test device', expires_at: new Date(Date.now() + 86400000).toISOString() }, csrf: 'test-csrf' })
 const challenge = () => response({ challenge: 'test-challenge', unix_time: Math.floor(Date.now() / 1000) })
 
+it('recovers a persisted visitor session after its first reopen request fails without another click or reload', async () => {
+  const r = await runtime(), server = r.server, root = r.profile.root
+  let fail = false, challenges = 0
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+    if (url.endsWith('/challenge')) { challenges++; if (fail) { fail = false; throw new TypeError('Failed to fetch') }; return challenge() }
+    if (url.endsWith('/enroll')) return response(enrollment(r))
+    if (url.endsWith('/connections')) return response({ invites: [], candidates: [], peers: [] })
+    if (url.endsWith('/transfers')) return response({ transfers: [] })
+    throw Error('unexpected request')
+  }))
+  await r.ensureSession(); await r.close(); resources.splice(resources.indexOf(r), 1); fail = true
+  const reopened = await GuestRuntime.open(server); resources.push(reopened)
+  await vi.waitFor(() => expect(reopened.getSnapshot().error).toBe('Failed to fetch'))
+  await vi.waitFor(() => expect(reopened.getSnapshot().checkedAt).toBeGreaterThan(0), { timeout: 4000 })
+  expect(reopened.getSnapshot().error).toBeUndefined(); expect(reopened.profile.root).toBe(root); expect(challenges).toBe(3)
+})
+
+it('isolates a failed history projection while still syncing another transfer and the live roster', async () => {
+  const r = await runtime(), make = (id: string): GuestTransfer => ({ id, state: 'PENDING', version: 1, file_name: 'old file', size_bytes: 0, content_root: '0'.repeat(64), encryption_suite: 'DARE20-AGE-X25519-v1', sender_owner_id: 'guest-fixture', sender_device_id: r.profile.device, recipient_owner_id: 'other', recipient_device_id: 'other', expires_at: '2099-01-01T00:00:00Z', received_bytes: 0 })
+  const bad = make('bad'), good = make('good'), processed: string[] = []
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+    if (url.endsWith('/challenge')) return challenge()
+    if (url.endsWith('/enroll')) return response(enrollment(r))
+    if (url.endsWith('/connections')) return response({ invites: [], candidates: [], peers: [] })
+    if (url.endsWith('/transfers')) return response({ transfers: [bad, good] })
+    if (url.includes('/bad/progress')) return new Response(JSON.stringify({ code: 'NOT_FOUND' }), { status: 404 })
+    if (url.includes('/good/progress')) { processed.push('good'); return response({ transfer_id: 'good', state: 'PENDING', state_version: 1, progress_revision: 0, control_revision: 0, delivery: { state: 'WAITING_FOR_ACCEPTANCE' }, completion: { delivered: false, stored: false } }) }
+    throw Error('unexpected request')
+  }))
+  await r.ensureSession()
+  for (const transfer of [bad, good]) await r.store.jobs.add({ id: transfer.id, created: 0, direction: 'send', peer: {} as GuestJob['peer'], transfer, name: 'old file', plainSize: 0, received: 0, phase: 'paused', retryAt: Date.now() + 60000 })
+  await r.poll()
+  expect(r.getSnapshot().error).toBeUndefined(); expect(processed).toEqual(['good'])
+  expect((await r.store.jobs.get('bad'))?.error).toBe('NOT_FOUND')
+  expect((await r.store.jobs.get('good'))?.snapshot?.transfer_id).toBe('good')
+})
+
 it('upgrades a v3 visitor database without replacing keys, saved files, partial chunks or replication peers', async () => {
   const server = 'https://unit.invalid/upgrade-' + crypto.randomUUID(), name = 'pinelink-visitor:' + await digest(utf8.encode(server)), legacy = new LocalStore(name)
   legacy.version(3).stores({ leases: 'id', jobs: 'id,created,transfer.id,direction', chunks: '[job+index],job' })

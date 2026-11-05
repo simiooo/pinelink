@@ -16,6 +16,8 @@ import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { useGuestCopy } from './copy'
 import type { GuestJob } from './store'
 import type { FileFilter } from './navigation'
+import type { DeviceProfile } from '../data/crypto'
+import { Conversation } from './Conversation'
 
 export function useAccountWorkspace() {
   const { reader, ready, owner, device } = useAccountReader()
@@ -32,14 +34,19 @@ export function guestJobStatus(job: GuestJob, c: ReturnType<typeof useGuestCopy>
 function FileTile({ name, status, Badge, onClick }: { name: string; status: string; Badge: LucideIcon; onClick: () => void }) {
   return <MotionTooltip label={status}><MotionButton className="guest-history-file" aria-label={name + ' · ' + status} onClick={onClick}><span className="guest-history-icon"><FileText size={42} strokeWidth={1.2} /><span className="guest-file-badge" aria-hidden="true"><Badge size={11} /></span></span><span title={name}>{name}</span></MotionButton></MotionTooltip>
 }
-export function FilesCollection({ jobs, records, filter, onFilter, onJob, onRecord, error, loading }: { jobs: GuestJob[]; records: TaskRecord[]; filter: FileFilter; onFilter: (filter: FileFilter) => void; onJob: (job: GuestJob) => void; onRecord: (record: TaskRecord) => void; error?: boolean; loading?: boolean }) {
-  const c = useGuestCopy(), { t } = useI18n()
-  const guest = jobs.filter(job => filter === 'all' || filter === 'active' && guestActive(job) || filter === 'saved' && !!job.plain || filter === 'sent' && job.direction === 'send' && job.phase === 'complete' || filter === 'issues' && (job.phase === 'stopped' || !!job.error))
+export function FilesCollection({ jobs, records, filter, onFilter, onJob, onRecord, error, loading, textProfile }: { jobs: GuestJob[]; records: TaskRecord[]; filter: FileFilter; onFilter: (filter: FileFilter) => void; onJob: (job: GuestJob) => void; onRecord: (record: TaskRecord) => void; error?: boolean; loading?: boolean; textProfile?: (job: GuestJob) => DeviceProfile | undefined }) {
+  const c = useGuestCopy(), { t, locale } = useI18n()
+  const guest = jobs.filter(job => filter === 'all' || filter === 'active' && guestActive(job) || filter === 'saved' && (!!job.plain || !!job.text) || filter === 'sent' && job.direction === 'send' && job.phase === 'complete' || filter === 'issues' && (job.phase === 'stopped' || !!job.error))
+  const labels = locale === 'zh-CN' ? { copy: '复制', copied: '已复制', copyFailed: '请选择文字复制', sensitive: '敏感信息', reveal: '显示', hide: '隐藏', unavailable: '不可用', waiting: '等待中', sent: '已发送', received: '已接收', stored: '已存储', file: '文件' } : { copy: 'Copy', copied: 'Copied', copyFailed: 'Select text to copy', sensitive: 'Sensitive', reveal: 'Reveal', hide: 'Hide', unavailable: 'Unavailable', waiting: 'Waiting', sent: 'Sent', received: 'Received', stored: 'Stored', file: 'File' }
   const account = records.filter(record => filter === 'all' ? record.state !== 'DELETED' : filter === 'active' ? taskActive(record) : filter === 'sent' ? record.state !== 'DELETED' && record.deliveredByDevice : filter === 'issues' ? ['FAILED', 'CANCELLED', 'DELETED'].includes(record.state) : false)
   return <div className="workspace-files">
     <Tabs value={filter} onValueChange={value => onFilter(value as FileFilter)}><TabsList variant="line" className="workspace-file-tabs">{(['all', 'active', 'saved', 'sent', 'issues'] as const).map(value => <TabsTrigger key={value} value={value}><span className="workspace-tab-label">{value === 'saved' ? c.savedFilter : value === 'sent' ? c.sentFilter : c[value]}</span></TabsTrigger>)}</TabsList></Tabs>
+    {guest.some(job => job.payloadKind === 'TEXT') && <div className="workspace-text-history">{guest.filter(job => job.payloadKind === 'TEXT').map(job => {
+      const profile = textProfile?.(job)
+      return <div key={job.id}><span className="workspace-text-peer">{job.peer.local_name || job.peer.device_name}</span>{profile ? <Conversation jobs={[job]} profile={profile} labels={labels} locale={locale} onJob={onJob} /> : <p role="status">{labels.unavailable}</p>}</div>
+    })}</div>}
     <div className="guest-history" aria-label={c.files}>
-      {guest.map(job => { const status = (job.direction === 'send' && job.phase === 'complete' ? c.sentFilter + ' · ' : '') + (job.plain ? '' : c.once + ' · ') + guestJobStatus(job, c), Badge = job.error ? AlertCircle : job.phase === 'complete' ? Check : job.phase === 'paused' ? Pause : job.phase === 'stopped' ? Clock3 : job.direction === 'receive' ? ArrowDown : ArrowUp
+      {guest.filter(job => job.payloadKind !== 'TEXT').map(job => { const status = (job.direction === 'send' && job.phase === 'complete' ? c.sentFilter + ' · ' : '') + (job.plain ? '' : c.once + ' · ') + guestJobStatus(job, c), Badge = job.error ? AlertCircle : job.phase === 'complete' ? Check : job.phase === 'paused' ? Pause : job.phase === 'stopped' ? Clock3 : job.direction === 'receive' ? ArrowDown : ArrowUp
         return <FileTile key={'visitor:' + job.id} name={job.name} status={status} Badge={Badge} onClick={() => onJob(job)} /> })}
       {account.map(record => { const status = (record.deliveredByDevice ? c.sentFilter + ' · ' + c.complete + ' · ' : '') + taskStatus(record, t), Badge = record.deliveredByDevice ? Check : record.state === 'COMPLETED' ? Cloud : record.state === 'PAUSED' ? Pause : ['FAILED', 'CANCELLED', 'DELETED'].includes(record.state) ? AlertCircle : Clock3, name = record.encryptedMetadata ? t('encryptedFile') : record.fileName || t(record.kind === 'DOWNLOAD' ? 'receivedFile' : 'sentFile')
         return <FileTile key={'account:' + record.id} name={name} status={c.sourceAccount + ' · ' + status} Badge={Badge} onClick={() => onRecord(record)} /> })}

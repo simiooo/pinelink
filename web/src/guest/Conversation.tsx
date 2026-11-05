@@ -27,7 +27,7 @@ function TextItem({ job, profile, labels, onJob }: { job: GuestJob; profile: Dev
     if (stored) void readStoredText(profile, stored).then(value => { if (alive) setContent({ ...value, id: job.id, manifest: stored.manifest, profile }) }).catch(() => { if (alive) setFailed(true) })
     return () => { alive = false }
   }, [job.id, job.text?.manifest, profile])
-  if (!job.text) return <div className={`conversation-row conversation-row--${job.direction}`}><MotionButton className="conversation-pending" onClick={() => onJob(job)}>{labels.waiting}</MotionButton></div>
+  if (!job.text) return <div className={`conversation-row conversation-row--${job.direction}`}><MotionButton className="conversation-pending" onClick={() => onJob(job)}>{job.error || job.phase === 'complete' || job.phase === 'stopped' ? labels.unavailable : labels.waiting}</MotionButton></div>
   if (!content || content.id !== job.id || content.manifest !== job.text.manifest || content.profile !== profile) return <div className={`conversation-row conversation-row--${job.direction}`}><span className="conversation-pending" role="status">{failed ? labels.unavailable : labels.waiting}</span></div>
   return <div className="conversation-entry"><TextBubble id={job.id} value={content.value} sensitive={content.sensitivity === 'SENSITIVE'} labels={labels} direction={job.direction} /><div className={`conversation-row conversation-row--${job.direction}`}><button type="button" className="conversation-status-button" onClick={() => onJob(job)}>{job.phase === 'complete' ? job.direction === 'send' ? labels.sent : labels.received : job.phase === 'stopped' || job.error ? labels.unavailable : labels.waiting}</button></div></div>
 }
