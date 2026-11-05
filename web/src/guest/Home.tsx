@@ -182,10 +182,13 @@ function VisitorHome({ runtime, onNotifications }: { runtime: WorkspaceRuntime; 
     <GuestGraph peers={peers} job={graphJob} onConnect={connect} onConversation={peer => openFiles(peer)} onDetails={() => openJob(graphJob)} dragging={dragging} localDevice={graphJob ? graphJob.authority === 'ACCOUNT' ? runtime.accountProfile?.device ?? runtime.profile.device : runtime.profile.device : runtime.accountProfile?.device ?? runtime.profile.device} localAccount={graphJob ? graphJob.authority === 'ACCOUNT' : runtime.hasAccount} onFiles={() => openFiles(undefined, 'saved')} onRename={peer => { setSelectedPeer(peer); setName(peer.local_name || peer.device_name); setError(undefined); setPanel('rename') }} onRemove={peer => { setSelectedPeer(peer); setError(undefined); setPanel('remove') }} onFileDrop={(file, peer) => { dragDepth.current = 0; setDragging(false); openFiles(peer); setAttachmentDraft({ peer: peer.pair_id, file }) }} />
     {active && <div className="guest-graph-tools"><MotionTooltip label={showRoute ? c.devices : c.viewTransfer}><MotionButton icon className="guest-icon-button" aria-label={showRoute ? c.devices : c.viewTransfer} onClick={() => setGraphChoice({ key: graphKey, route: !showRoute })}>{showRoute ? <Network size={21} /> : <Route size={21} />}</MotionButton></MotionTooltip></div>}
     {dragging && <div className="guest-drop-label" role="status">{c.file}</div>}
-    <footer className="guest-footer"><MotionTooltip label={c.files}><MotionButton icon className="guest-icon-button" aria-label={c.files} onClick={() => openFiles()}><FolderOpen size={23} /></MotionButton></MotionTooltip>
+    <footer className="guest-footer">
       {state.offline && <span className="guest-offline" role="status">{lc.noInternet}</span>}
-      <MotionTooltip label={c.connect}><MotionButton icon className="guest-icon-button workspace-add-device" aria-label={c.connect} onClick={connect}><Plus size={24} /></MotionButton></MotionTooltip>
-      <MotionTooltip label={c.file}><MotionButton icon className="guest-icon-button" aria-label={c.file} onClick={() => choose()} disabled={state.busy}><FilePlus2 size={23} /></MotionButton></MotionTooltip>
+      <div className="guest-toolbar" role="group" aria-label={c.quickActions}>
+        <MotionTooltip label={c.files}><MotionButton icon className="guest-icon-button" aria-label={c.files} onClick={() => openFiles()}><FolderOpen size={24} /></MotionButton></MotionTooltip>
+        <MotionTooltip label={c.connect}><MotionButton icon className="guest-icon-button workspace-add-device" aria-label={c.connect} onClick={connect}><Plus size={24} /></MotionButton></MotionTooltip>
+        <MotionTooltip label={c.file}><MotionButton icon className="guest-icon-button" aria-label={c.file} onClick={() => choose()} disabled={state.busy}><FilePlus2 size={24} /></MotionButton></MotionTooltip>
+      </div>
     </footer>
     {errorText && !panel && <MotionReveal role="alert" className="guest-error"><span>{errorText}</span><MotionButton icon className="guest-icon-button" aria-label={c.retry} onClick={retryService}><RefreshCw size={18} /></MotionButton></MotionReveal>}
     <MotionSurface open={!!panel} onClose={close} title={title} closeLabel={c.close}>

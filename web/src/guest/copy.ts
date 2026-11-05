@@ -1,6 +1,6 @@
 import { useI18n } from '../i18n'
 const en = {
-  conversation: 'Conversation', scanRequired: 'Scan the other device’s QR code.', codePlaceholder: 'Paste a code or link', connection: 'Connection', direct: 'Direct', switching: 'Switching connection', reconnecting: 'Reconnecting',
+  quickActions: 'Quick actions', conversation: 'Conversation', scanRequired: 'Scan the other device’s QR code.', codePlaceholder: 'Paste a code or link', connection: 'Connection', direct: 'Direct', switching: 'Switching connection', reconnecting: 'Reconnecting',
   disconnected: 'Connection interrupted', presenceUnknown: 'Status unknown', serviceUnavailable: 'Cannot reach Pinelink service.',
   removeOffline: 'Go online to remove this connection.',
   files: 'Files', devices: 'Devices', all: 'All', active: 'Active', savedFilter: 'Saved', issues: 'Issues', notifications: 'Notifications', unread: 'Pending notifications', noNotifications: 'You’re all caught up', wantsConnect: 'Wants to connect', deviceActions: 'Device actions', rename: 'Rename', remove: 'Remove connection', removeTitle: 'Remove connection?', removeHint: 'Files on this device are kept.', nameLabel: 'Name on this device', save: 'Save', nameInvalid: 'Use a name between 1 and 64 characters.', connectionGone: 'This connection is no longer available.', connectionBusy: 'Finish the transfer first.', viewTransfer: 'View transfer', emptyFilter: 'No matching files', backFiles: 'Back to files', sourceAccount: 'Account file', accountFilesError: 'Account files unavailable. Try again.', accountNotificationsError: 'Notifications unavailable. Try again.', confirm: 'Confirm', deleted: 'Removed from the list',
@@ -13,7 +13,7 @@ const en = {
 }
 type Copy = typeof en
 const zh: Copy = {
-  conversation: '对话', scanRequired: '请扫描另一台设备的二维码。', codePlaceholder: '粘贴连接码或链接', connection: '连接方式', direct: '直连', switching: '正在切换连接', reconnecting: '正在重新连接',
+  quickActions: '快捷操作', conversation: '对话', scanRequired: '请扫描另一台设备的二维码。', codePlaceholder: '粘贴连接码或链接', connection: '连接方式', direct: '直连', switching: '正在切换连接', reconnecting: '正在重新连接',
   disconnected: '连接已中断', presenceUnknown: '状态未知', serviceUnavailable: '暂时无法连接 Pinelink 服务。',
   removeOffline: '联网后可移除此连接。',
   files: '文件', devices: '设备', all: '全部', active: '进行中', savedFilter: '本机', issues: '异常', notifications: '通知', unread: '有待处理通知', noNotifications: '暂无待处理通知', wantsConnect: '请求连接', deviceActions: '设备操作', rename: '修改备注', remove: '移除连接', removeTitle: '移除连接？', removeHint: '本机文件仍会保留。', nameLabel: '本机显示的名称', save: '保存', nameInvalid: '请输入 1–64 个字符。', connectionGone: '此连接已失效。', connectionBusy: '请先结束当前传输。', viewTransfer: '查看传输', emptyFilter: '暂无符合条件的文件', backFiles: '返回文件', sourceAccount: '账号文件', accountFilesError: '暂时无法读取账号文件，请重试。', accountNotificationsError: '暂时无法读取通知，请重试。', confirm: '确认', deleted: '已从列表移除',
