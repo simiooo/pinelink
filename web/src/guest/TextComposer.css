@@ -1,6 +1,7 @@
 .conversation-composer[data-slot="input-group"] { display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 8px 12px; border: 1px solid #e4e4e7; border-radius: 16px; background: white; }
 .conversation-composer textarea[data-slot="input-group-control"] { width: 100%; min-height: 44px; max-height: 160px; resize: vertical; border: 0; outline: 0; font: inherit; background: transparent; }
-.conversation-composer textarea:focus-visible { outline: 2px solid #0866ff; outline-offset: 2px; }
+.conversation-composer textarea[data-slot="input-group-control"]:focus-visible { outline: none; box-shadow: none; }
+.conversation-composer[data-slot="input-group"]:has(textarea:focus) { border-color: #a3a3a3; }
 .conversation-attachment { order: -1; display: flex; align-items: center; gap: 8px; min-width: 0; padding-left: 12px; border-radius: 10px; background: #f4f4f5; color: #52525b; }
 .conversation-attachment > span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
 .conversation-compose-status { font-size: 13px; line-height: 18px; color: #737373; }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
-import { ArrowDownToLine, ArrowLeft, Clock3, FilePlus2, FileText, FolderOpen, Pause, Play, Plus, RefreshCw, X } from 'lucide-react'
+import { ArrowDownToLine, ArrowLeft, Clock3, FilePlus2, FileText, FolderOpen, Network, Route, Pause, Play, Plus, RefreshCw, X } from 'lucide-react'
 import { authFetch, authState, AuthError } from '../auth/client'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import QRCode from 'qrcode'
@@ -84,6 +84,10 @@ function VisitorHome({ runtime, onNotifications }: { runtime: WorkspaceRuntime; 
   const candidate = state.connections.candidates.find(item => item.id === candidateId)
   const maxBytes = authState().capabilities.guest_max_file_bytes ?? (64 << 20)
   const peers = state.offline || now - (state.checkedAt ?? 0) > 15000 ? state.connections.peers.map(peer => peer.authority==='LOCAL_DEVICE'?peer:({ ...peer, online: false })) : state.connections.peers
+  const graphKey = JSON.stringify([active?.id, peers.map(peer => peer.pair_id).sort()])
+  const [graphChoice, setGraphChoice] = useState<{ key: string; route: boolean }>()
+  const showRoute = !!active && (graphChoice?.key === graphKey ? graphChoice.route : peers.length <= 1)
+  const graphJob = showRoute ? active : undefined
   const errorText = localError(error,lc) || guestErrorText(error ?? (localMode||active?.authority==='LOCAL_DEVICE'?undefined:state.error), c), invite = state.invite
   const expired = !!invite && (Date.parse(invite.expires_at) <= now || invite.consumed)
   const inviteURL = invite?.token ? new URL('/connect#' + invite.token, location.origin).href : ''
@@ -163,14 +167,17 @@ function VisitorHome({ runtime, onNotifications }: { runtime: WorkspaceRuntime; 
     setFile(chosen); setSelectedPeer(peer ?? state.connections.peers.find(peer => peer.pair_id === selectedPeer?.pair_id) ?? state.connections.peers[0])
     if (!state.connections.peers.length) connect(); else setPanel('send')
   }
-  const title = visualPanel === 'connect' ? c.connect : visualPanel === 'pair' ? c.confirmPair : visualPanel === 'waiting' ? c.waiting : visualPanel === 'files' ? filePeer?.local_name || filePeer?.device_name || c.files : visualPanel === 'notifications' ? c.notifications : visualPanel === 'remove' ? c.removeTitle : visualPanel === 'rename' || visualPanel === 'send' ? selectedPeer?.local_name || selectedPeer?.device_name || c.selectDevice : visualPanel === 'account-job' || visualPanel === 'account-request' ? c.details : selectedJob?.peer.local_name || selectedJob?.peer.device_name || c.details
+  const detailPeer = peers.find(peer => peer.pair_id === selectedJob?.peer.pair_id) ?? selectedJob?.peer
+  const detailTitle = detailPeer ? `${detailPeer.local_name || detailPeer.device_name} · ${detailPeer.device_id.slice(-8).toUpperCase()}` : c.details
+  const title = visualPanel === 'connect' ? c.connect : visualPanel === 'pair' ? c.confirmPair : visualPanel === 'waiting' ? c.waiting : visualPanel === 'files' ? filePeer?.local_name || filePeer?.device_name || c.files : visualPanel === 'notifications' ? c.notifications : visualPanel === 'remove' ? c.removeTitle : visualPanel === 'rename' || visualPanel === 'send' ? selectedPeer?.local_name || selectedPeer?.device_name || c.selectDevice : visualPanel === 'account-job' || visualPanel === 'account-request' ? c.details : detailTitle
   return <section className="guest-page" data-guest-job={active?.transfer?.id} data-phase={active?.phase}
     onDragEnter={event => { if (event.dataTransfer.types.includes('Files')) { event.preventDefault(); dragDepth.current++; setDragging(true) } }}
     onDragOver={event => { if (event.dataTransfer.types.includes('Files')) { event.preventDefault(); event.dataTransfer.dropEffect = 'copy' } }}
     onDragLeave={() => { if (--dragDepth.current <= 0) { dragDepth.current = 0; setDragging(false) } }}
     onDrop={event => { event.preventDefault(); dragDepth.current = 0; setDragging(false); if (event.dataTransfer.files.length === 1) { if (panel === 'files' && filePeer) setAttachmentDraft({ peer: filePeer.pair_id, file: event.dataTransfer.files[0] }); else choose(event.dataTransfer.files[0]) } else setError('ONE_FILE_ONLY') }}>
     <input ref={input} type="file" hidden aria-label={c.file} onChange={event => { choose(event.target.files?.[0]); event.target.value = '' }} />
-    <GuestGraph peers={peers} job={active} onConnect={connect} onConversation={peer => openFiles(peer)} onDetails={() => openJob(active)} dragging={dragging} localDevice={active ? active.authority === 'ACCOUNT' ? runtime.accountProfile?.device ?? runtime.profile.device : runtime.profile.device : runtime.accountProfile?.device ?? runtime.profile.device} localAccount={active ? active.authority === 'ACCOUNT' : runtime.hasAccount} onFiles={() => openFiles(undefined, 'saved')} onRename={peer => { setSelectedPeer(peer); setName(peer.local_name || peer.device_name); setError(undefined); setPanel('rename') }} onRemove={peer => { setSelectedPeer(peer); setError(undefined); setPanel('remove') }} onFileDrop={(file, peer) => { dragDepth.current = 0; setDragging(false); openFiles(peer); setAttachmentDraft({ peer: peer.pair_id, file }) }} />
+    <GuestGraph peers={peers} job={graphJob} onConnect={connect} onConversation={peer => openFiles(peer)} onDetails={() => openJob(graphJob)} dragging={dragging} localDevice={graphJob ? graphJob.authority === 'ACCOUNT' ? runtime.accountProfile?.device ?? runtime.profile.device : runtime.profile.device : runtime.accountProfile?.device ?? runtime.profile.device} localAccount={graphJob ? graphJob.authority === 'ACCOUNT' : runtime.hasAccount} onFiles={() => openFiles(undefined, 'saved')} onRename={peer => { setSelectedPeer(peer); setName(peer.local_name || peer.device_name); setError(undefined); setPanel('rename') }} onRemove={peer => { setSelectedPeer(peer); setError(undefined); setPanel('remove') }} onFileDrop={(file, peer) => { dragDepth.current = 0; setDragging(false); openFiles(peer); setAttachmentDraft({ peer: peer.pair_id, file }) }} />
+    {active && <div className="guest-graph-tools"><MotionTooltip label={showRoute ? c.devices : c.viewTransfer}><MotionButton icon className="guest-icon-button" aria-label={showRoute ? c.devices : c.viewTransfer} onClick={() => setGraphChoice({ key: graphKey, route: !showRoute })}>{showRoute ? <Network size={21} /> : <Route size={21} />}</MotionButton></MotionTooltip></div>}
     {dragging && <div className="guest-drop-label" role="status">{c.file}</div>}
     <footer className="guest-footer"><MotionTooltip label={c.files}><MotionButton icon className="guest-icon-button" aria-label={c.files} onClick={() => openFiles()}><FolderOpen size={23} /></MotionButton></MotionTooltip>
       {state.offline && <span className="guest-offline" role="status">{lc.noInternet}</span>}
@@ -202,6 +209,7 @@ function VisitorHome({ runtime, onNotifications }: { runtime: WorkspaceRuntime; 
           <MotionButton className="primary-button guest-wide" busy={state.busy} disabled={!selectedPeer} onClick={() => perform(async () => { if (!selectedPeer) return; const id = await runtime.send(file, selectedPeer, maxBytes); setJobId(id); setFile(undefined); setPanel(null) })}>{state.busy ? c.preparing : c.send}</MotionButton>
         </div>}
         {visualPanel === 'job' && selectedJob && <div className="guest-job-detail">
+          {detailPeer && <div className="guest-connection-identity"><span>{c.device}</span><code>{detailPeer.device_id}</code></div>}
           <div className="guest-file-row"><FileText size={40} strokeWidth={1.3} /><span>{selectedJob.payloadKind === 'TEXT' ? locale === 'zh-CN' ? '文本' : 'Text' : selectedJob.name}</span></div>
           {fromFiles && <MotionTooltip label={c.backFiles}><MotionButton icon className="guest-icon-button workspace-back" aria-label={c.backFiles} onClick={() => setPanel('files')}><ArrowLeft size={20} /></MotionButton></MotionTooltip>}
           <div className="guest-job-meta"><span>{guestJobStatus(selectedJob, c)}</span><span>{formatBytes(selectedJob.plainSize, locale)}</span></div>

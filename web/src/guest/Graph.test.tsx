@@ -41,6 +41,20 @@ it('keeps the endpoint device and an independent cloud node with two real byte l
   expect(container.querySelector('.guest-peer')).toHaveAttribute('data-online', 'false')
 })
 
+it('opens device management on a route endpoint and details on the cloud', () => {
+  const details = vi.fn(), conversation = vi.fn()
+  render(<I18nProvider initialPreference="en-US"><MotionProvider><GuestGraph peers={[peer]} job={job()} onConnect={() => {}} onConversation={conversation} onDetails={details} dragging={false} onFileDrop={() => {}} localDevice="self" /></MotionProvider></I18nProvider>)
+  fireEvent.click(screen.getByRole('button', { name: 'Peer phone' }))
+  expect(details).not.toHaveBeenCalled()
+  const actions = within(screen.getByRole('group', { name: 'Device actions' }))
+  expect(actions.getByRole('button', { name: 'Rename' })).toBeInTheDocument()
+  expect(actions.getByRole('button', { name: 'Remove connection' })).toBeInTheDocument()
+  fireEvent.click(actions.getByRole('button', { name: 'Conversation' }))
+  expect(conversation).toHaveBeenCalledWith(peer)
+  fireEvent.click(screen.getByRole('button', { name: 'Cloud · Transfer details' }))
+  expect(details).toHaveBeenCalledOnce()
+})
+
 it('stops the paused download while allowing a separately confirmed cloud upload to continue', () => {
   const value = job(); value.phase = 'paused'; value.snapshot!.delivery.state = 'PAUSED'
   value.snapshot!.completion.stored = false; value.snapshot!.spool = { state: 'SPOOLING', acknowledged_bytes: 58, total_bytes: 100 }
